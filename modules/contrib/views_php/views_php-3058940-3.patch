@@ -1,0 +1,13 @@
+diff --git a/views_php.module b/views_php.module
+index 9d6ac0e..c804f9f 100644
+--- a/views_php.module
++++ b/views_php.module
+@@ -175,7 +175,7 @@ function views_php_views_post_execute(ViewExecutable $view) {
+     foreach (array(/*'argument',*/ 'field', 'filter', 'sort', /*'relationship'*/) as $type) {
+       foreach ($view->$type as $id => $handler) {
+         if (is_callable(array($handler, 'phpPostExecute'))) {
+-          $handler->phpPostExecute();
++          $handler->phpPostExecute($values);
+         }
+       }
+     }

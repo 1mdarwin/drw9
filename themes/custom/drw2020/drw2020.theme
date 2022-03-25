@@ -1,0 +1,393 @@
+<?php
+
+
+use Drupal\views\Views;
+
+
+
+/**
+ * @file
+ * Bootstrap sub-theme.
+ *
+ * Place your custom PHP code in this file.
+ */
+
+/**
+ * HOOK_preprocess_page_title
+ */
+function drw2020_preprocess_page_title(&$variables) {
+  $node = \Drupal::routeMatch()->getParameter('node');
+
+  //if( in_array($node->getType() == 'page' )
+  // 171 id page for 404 and 170 id page for 403 codes
+  if(isset($node)){ // avoid views mode
+    if (in_array($node->id(), array(171, 170))) {
+        $variables['title'] = ""; // empty
+    }
+  }
+}
+/**
+ * HOOK_preprocess_page
+ */
+
+function drw2020_preprocess_page(&$variables) {
+
+  $site_config = \Drupal::config('system.site');
+  //ksm($variables['node']->nid);
+
+  $variables['site_name'] = $site_config->get('name');
+
+  $variables['site_slogan'] = $site_config->get('slogan');
+
+  $variables['site_logo'] = file_url_transform_relative(file_create_url(theme_get_setting('logo.url')));
+
+//si quieren tener la url del logo pueden accerlo de esta manera.
+  $variables['url_logo'] = file_create_url(theme_get_setting('logo.url'));
+}
+
+
+/**
+ * HOOK_preprocess_commerce_product
+ */
+
+function drw2020_preprocess_commerce_product(&$variables) {
+
+	$producto = $variables['elements']['#commerce_product'];
+
+	if ($producto->bundle() =='default' ) {
+
+
+			//ksm("esto es una prueba");
+			//ksm($producto->id());
+
+
+			$product = \Drupal\commerce_product\Entity\Product::load(  $producto->id()  );
+
+			//ksm($product->id());
+
+			//dpm($product->get("field_visitas_del_producto")->value	);
+
+
+			if ( isset( $product->get("field_visitas_del_producto")->value ) )  {
+
+				$valor =$product->get("field_visitas_del_producto")->value;
+				$valor++;
+
+				$product->get("field_visitas_del_producto")->value  = $valor;
+
+			}
+			else {
+				$product->get("field_visitas_del_producto")->value = 1;
+			}
+
+
+			//dpm($product->get("field_visitas_del_producto")->value	);
+
+			$product->save();
+
+			$variables['visitas']  = $product->get("field_visitas_del_producto")->value ;
+
+
+
+			//use Drupal\views\Views;
+			/*
+			$arg=[  $product->id()   ];
+
+			$view= Views::getView('totalventasproducto');
+
+			$view->setArguments($arg);
+
+			$view->execute();
+
+			$resultado = $view->result;
+
+			$variables['ventas'] = $resultado[0]->commerce_order_item_quantity;
+			*/
+
+
+			/*   Lista de deseos     */
+
+
+			$roles = Drupal::currentUser()->getRoles();
+
+//			dpm($roles);
+
+			if (  in_array  (  'authenticated'   , $roles) ) {
+
+				$variables['estaautenticado'] = 'Si';
+			} else {
+				$variables['estaautenticado'] = 'No';
+
+			}
+
+
+			$uid = Drupal::currentUser()->id();
+
+			//dpm($uid);
+
+			$usuariocompleto  = Drupal\user\Entity\User::load( $uid  );
+
+			//ksm($usuariocompleto);
+
+
+			$productos_listadedeseos=[];
+			foreach (  $usuariocompleto->get('field_lista_de_deseos')  as $lista     ) {
+
+				$productos_listadedeseos[] = $lista->target_id;
+
+			}
+
+			//dpm($productos_listadedeseos);
+
+			if ( in_array(  $producto->id()    , $productos_listadedeseos) ) {
+				$variables['estaenlalista'] = 'Si';
+
+			}
+			else {
+				$variables['estaenlalista']= 'No';
+
+			}
+
+
+			global $base_url;
+
+			$variables['base_url'] = $base_url;
+
+			$variables['product_id'] = $producto->id()	;
+
+
+
+			// configuraciones para la seccion de calificaciones
+
+			$variables['promedio']  = $product->get("field_promedio_flotante")->value ;
+
+			$variables['total_calificaciones']  = $product->get("field_total_calificaciones")->value ;
+
+			$variables['desglose_calificaciones']  =getdesglose_calificaciones ($producto->id());
+
+
+
+
+
+	        $contenidovista=[];
+	        $args=[$producto->id()];
+
+	        $views = Views::getView('comentarios_de_usuarios');
+
+	        $views->setArguments($args);
+
+	        $views->setDisplay('block_1');
+
+	        $views->execute();
+
+	        $contenidovista = $views->buildRenderable('block_1', $args);
+
+	        $variables['comentarios_de_usuarios'] = $contenidovista;
+
+
+
+
+	        $contenidovista=[];
+	        $args=[$producto->field_marca_reloj->target_id ];
+
+	        $views = Views::getView('productos_recomendados');
+
+	        $views->setArguments($args);
+
+	        $views->setDisplay('block_1');
+
+	        $views->execute();
+
+	        $contenidovista = $views->buildRenderable('block_1', $args);
+
+	        $variables['productos_recomendados'] = $contenidovista;
+
+	}
+
+
+}
+
+
+
+function drw2020_form_alter(&$form, \Drupal\Core\Form\FormStateInterface $form_state, $form_id) {
+
+	// verificamos si estamos accediendo al formulario que tiene el id  commerce_checkout_flow_multistep_default
+	if ($form_id== 'commerce_checkout_flow_multistep_default') {
+
+		//dpm("esto es una prueba");
+	//	dpm($form_id);
+
+		// creamos una variable que obtenga la url completa de la ventana
+		$arg = explode('/', $_SERVER['REQUEST_URI']);
+		//dpm($arg);
+		//creamos una variable para obtener el key donde esta la orden en el array arg.
+		$orden_en_url=0;
+
+		//hacemos un recorrido de la variable para poder obtener el numero de la orden.
+		foreach ($arg as $key => $value) {
+			if ( $value=='checkout') {
+				$orden_en_url = $key +1;
+				break;
+			}
+		}
+
+		//obtenemos el orden actual
+		$orden_actual= $arg[$orden_en_url];
+		//dpm('la orden es:'.$orden_actual     );
+		//dpm('y el key es:'. $orden_en_url);
+
+		// si la palabra complete esta en el array arg entonces .....
+		if (in_array('complete', $arg)) {
+
+		  //accedemos a la orden.
+	      $order = \Drupal\commerce_order\Entity\Order::load(  $orden_actual   );
+	      //ksm($order);
+
+	      //aqui estamos accediendo a todos los items de la orden.
+	      $todos_los_order_items= $order->order_items;
+
+	      foreach ($todos_los_order_items as $item) {
+	      	//dpm($item->target_id);
+
+
+	      	// acceder al orden item completo
+	   	    $order_item = \Drupal\commerce_order\Entity\OrderItem::load(  $item->target_id  );
+	   	    //ksm($order_item->get('purchased_entity')->target_id);
+
+
+	   	    if (!(isset($order_item->field_itemorder_fecha->value))) {
+		   	    $order_item->field_itemorder_calificar_estrel->value='';
+		   	    $order_item->save();
+		   	 }
+
+			//creamos una variable llamada idv el cual va a tener el id de la variacion.
+			$idv = $order_item->get('purchased_entity')->target_id;
+
+			//accedemos a la variacion del producto.
+   	        $variation = \Drupal\commerce_product\Entity\ProductVariation::load( $idv  );
+
+   	        //ksm($variation->product_id->target_id);
+
+   	        //creamos una variable para obtener el id del producto.
+   	        $idproducto=$variation->product_id->target_id;
+
+   	        //accedemos al producto.
+            $product = \Drupal\commerce_product\Entity\Product::load(  $idproducto  );
+
+
+			$arg=[  $product->id()   ];
+
+			$view= Views::getView('totalventasproducto');
+
+			$view->setArguments($arg);
+
+			$view->execute();
+
+			$resultado = $view->result;
+
+			$product->field_ventas->value = $resultado[0]->commerce_order_item_quantity;
+
+            //ksm($product->field_ventas->value);
+
+            $product->save();
+
+	      } // fin foreach
+
+
+	  global $base_url;
+
+
+	  $usuarioactualid= Drupal::currentUser()->id();
+	  $ruta= $base_url.'/calificacompra/'.$orden_actual;
+
+	  $micuenta= $base_url.'/user';
+
+	  $ordenactualdelusuario = $base_url.'/user/'.$usuarioactualid.'/orders'  ;
+
+
+
+      $form['details'] = array(
+		  '#type' => 'details',
+		  '#title' => t('Datos de interés'),
+		  '#open' => true,
+		);
+
+      $form['details']['informacion'] = array(
+		'#type'=> 'item',
+		//'#title'=> t('From'),
+		'#markup'=> 'Para ver el detalle de tu pedido, puedes ir a la opción <a href="' .$micuenta. '">Mi cuenta</a> y presionando la opción <a href="' .$ordenactualdelusuario . '">Ordenes</a>.',
+	   );
+
+      $form['details']['calificar'] = array(
+		'#type'=> 'item',
+		//'#title'=> t('From'),
+		'#markup'=> '<a class="btn btn-success" href="' .$ruta. '"> <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i> Califica esta compra      </a>',
+	   );
+
+
+		}
+
+	}
+
+
+
+
+}
+
+
+function getdesglose_calificaciones ($producto_id) {
+
+//use Drupal\views\Views;
+
+
+$estrellas[5]=0;
+$estrellas[4]=0;
+$estrellas[3]=0;
+$estrellas[2]=0;
+$estrellas[1]=0;
+
+//dpm($estrellas);
+
+
+$arg=[  $producto_id   ];
+
+$view= Views::getView('getdesglose_calificaciones');
+
+$view->setArguments($arg);
+
+$view->execute();
+
+$resultados = $view->result;
+
+foreach ($resultados  as  $resultado ){
+//ksm($resultado);
+
+$valorestrella=$resultado->commerce_order_item__field_itemorder_calificar_estrel_field_ ;
+$valortotal = $resultado->commerce_order_item__field_itemorder_fecha_field_itemorder_f ;
+
+
+$estrellas[ $valorestrella ]=$valortotal;
+
+}
+
+//dpm($estrellas);
+
+$total_evaluaciones =  array_sum($estrellas);
+
+//dpm($total_evaluaciones     );
+
+
+$estrellas_y_porcentaje=[];
+
+foreach (    $estrellas as $clave => $estrella    )  {
+  $estrellas_y_porcentaje [$clave]['porcentaje']   =   (   $estrella  /  $total_evaluaciones  )  *100;
+  $estrellas_y_porcentaje [$clave]['valor']   =  (int) $estrella;
+
+}
+
+//ksm($estrellas_y_porcentaje);
+
+return $estrellas_y_porcentaje;
+
+
+}

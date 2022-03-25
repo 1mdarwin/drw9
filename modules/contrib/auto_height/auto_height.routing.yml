@@ -1,0 +1,7 @@
+auto_height.admin_settings:
+  path: '/admin/config/media/auto_height'
+  defaults:
+    _form: '\Drupal\auto_height\Form\AutoHeightSettingsForm'
+    _title: 'jQuery Auto Height'
+  requirements:
+    _permission: 'administer autoheight'

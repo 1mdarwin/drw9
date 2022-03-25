@@ -1,0 +1,15 @@
+{
+  "name": "drupal/auto_height",
+  "description": "Dynamically adjust column heights, matching the biggest column in each Row.",
+  "type": "drupal-module",
+  "homepage": "https://www.drupal.org/project/auto_height",
+  "authors": [
+    {
+      "name": "Binu Varghese",
+      "email": "myinbox.binu@gmail.com",
+      "homepage": "https://www.drupal.org/u/binu-varghese",
+      "role": "Maintainer"
+    }
+  ],
+  "license": "GPL-2.0+"
+}

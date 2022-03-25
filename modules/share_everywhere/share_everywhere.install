@@ -1,0 +1,100 @@
+<?php
+
+/**
+ * @file
+ * Install, update, and uninstall functions for the Share Everywhere module.
+ */
+
+/**
+ * Update the active configuration due to schema changes.
+ */
+function share_everywhere_update_8001() {
+  $config = \Drupal::configFactory()->getEditable('share_everywhere.settings');
+
+  $config->set('collapsible', intval($config->get('collapsible')));
+
+  $view_modes = $config->get('view_modes');
+  if ($view_modes) {
+    foreach ($view_modes as $bundle => $bundle_view_modes) {
+      $view_modes[$bundle] = array_map('strval', $bundle_view_modes);
+    }
+    $config->set('view_modes', $view_modes);
+  }
+
+  $product_view_modes = $config->get('product_view_modes');
+  if ($product_view_modes) {
+    foreach ($product_view_modes as $bundle => $bundle_view_modes) {
+      $product_view_modes[$bundle] = array_map('strval', $bundle_view_modes);
+    }
+    $config->set('product_view_modes', $product_view_modes);
+  }
+
+  $config->save();
+}
+
+/**
+ * Remove Google+ configuration.
+ */
+function share_everywhere_update_8002() {
+  $config = \Drupal::configFactory()->getEditable('share_everywhere.settings');
+
+  $config->clear('buttons.googleplus')->save();
+}
+
+/**
+ * Add copy URL button configuration.
+ */
+function share_everywhere_update_8003() {
+  $config = \Drupal::configFactory()->getEditable('share_everywhere.settings');
+
+  $config->set('buttons.copy', [
+    'name' => 'Copy URL',
+    'title' => 'Copy site URL',
+    'enabled' => 0,
+    'image' => 'copy-url.svg',
+    'weight' => 6,
+  ])->save();
+}
+
+/**
+ * Update restricted pages config due to schema changes.
+ */
+function share_everywhere_update_8004() {
+  $config = \Drupal::configFactory()->getEditable('share_everywhere.settings');
+  $restricted_pages = $config->get('restricted_pages.pages');
+
+  if (!is_array($restricted_pages)) {
+    $restricted_pages = explode('\r\n', $restricted_pages);
+
+    foreach ($restricted_pages as $key => $page) {
+      if (empty($page)) {
+        unset($restricted_pages[$key]);
+      }
+    }
+
+    $config->set('restricted_pages.pages', $restricted_pages)->save();
+  }
+}
+
+/**
+ * Uodate include_css and include_js configs due to schema changes.
+ */
+function share_everywhere_update_8005() {
+  $config = \Drupal::configFactory()->getEditable('share_everywhere.settings');
+  $configs_to_update = ['include_css', 'include_js'];
+
+  foreach ($configs_to_update as $config_name) {
+    $existing_value = $config->get($config_name);
+
+    if ($existing_value !== NULL) {
+      if ($existing_value) {
+        $config->set($config_name, $config_name);
+      }
+      else {
+        $config->set($config_name, '0');
+      }
+    }
+  }
+
+  $config->save();
+}

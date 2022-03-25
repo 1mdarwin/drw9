@@ -1,0 +1,25 @@
+<?php
+
+/**
+ * @file
+ * Contains module file for starrating.
+ */
+
+/**
+ * Impements hook_theme.
+ */
+function starrating_theme($existing, $type, $theme, $path) {
+  return [
+    'starrating_formatter' => [
+      'variables' => [
+        'rate' => 5,
+        'min' => NULL,
+        'max' => NULL,
+        'icon_type' => NULL,
+        'icon_color' => NULL,
+        'fill_blank' => NULL,
+        'type' => 'starrating',
+      ],
+    ],
+  ];
+}

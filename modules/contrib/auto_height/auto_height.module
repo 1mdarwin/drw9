@@ -1,0 +1,45 @@
+<?php
+
+/**
+ * @file
+ * Provides dynamic adjustment of column heights, matching the biggest column in each Row.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+
+// Defining Constants.
+define("AUTOHEIGHT_PLUGIN_URL", 'https://raw.githubusercontent.com/monocult/jquery-autoheight/master/jquery.autoheight.js');
+define("AUTOHEIGHT_LIBRARY_PATH", '/libraries/autoheight/jquery.autoheight.js');
+
+/**
+ * Implements hook_help().
+ */
+function auto_height_help($route_name, RouteMatchInterface $route_match) {
+
+  switch ($route_name) {
+    case 'help.page.auto_height':
+      return check_markup(file_get_contents(dirname(__FILE__) . '/README.txt'));
+  }
+
+}
+
+/**
+ * Implements hook_page_attachments().
+ */
+function auto_height_page_attachments(array &$page) {
+  
+  // Get all the classes.
+  $config = \Drupal::config('auto_height.settings');
+  $class_selectors = $config->get('class_selectors');
+  
+  // Comma seperated classes for the js file.
+  $js_selectors = implode(',', explode(PHP_EOL, $class_selectors));
+  
+  // Export settings
+  $page['#attached']['drupalSettings']['auto_height']['selectors'] = $js_selectors;
+  
+  // Attach libraries
+  $page['#attached']['library'][] = 'auto_height/autoheight';
+  $page['#attached']['library'][] = 'auto_height/initialize';
+  
+}

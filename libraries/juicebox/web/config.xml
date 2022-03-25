@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<juiceboxgallery
+	galleryTitle="Juicebox Lite Gallery"
+>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+	<title>Welcome to Juicebox!</title>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<caption><![CDATA[<u><a href="http://www.juicebox.net" target="_blank">Juicebox</a></u> is a free, customizable image gallery. Use it to display your images on any web page in a professional, intuitive and simple way.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+    <title>Universal Playback</title>
+    <caption>Juicebox can be viewed on Windows, Mac, Linux, iPhone, iPad and Android. It works on all modern browsers all the way back to Internet Explorer 7.</caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<title>JuiceboxBuilder</title>
+	<caption><![CDATA[Easily create Juicebox galleries using <u><a href="http://www.juicebox.net/tour/juiceboxbuilder/" target="_blank">JuiceboxBuilder</a></u>, our free desktop app.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+	<title>Features</title>
+    <caption>Juicebox features intuitive image navigation, smart image pre-loading and a resizable interface that scales to fit the browser window (try resizing your browser).</caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<title>Toggle Overlay</title>
+    <caption><![CDATA[To hide image overlay on a touch device, tap the screen. On a mouse device, move the mouse ourtside the gallery.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+    <caption><![CDATA[Handles images with different aspect ratios. Images can be tall or wide.]]></caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<title>Smart Preloading</title>
+    <caption><![CDATA[Images are pre-loaded in the background to avoid delays when viewing an image.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+    <caption><![CDATA[Images can be loaded directly from <a href="http://www.flickr.com">Flickr</a> using a Flickr user name and/or tags.]]></caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<title>Easy Navigation</title>
+    <caption><![CDATA[Navigate through the images by clicking or using the keyboard: Cursor keys and Home, End Keys. On a touch device, swipe to view the next image.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+	<title>Button Bar</title>
+    <caption><![CDATA[Supports optional <b>Toggle Thumbnails</b>, <b>Expand Gallery </b> and <b>Open Image</b> buttons in the the Button Bar at top-right.]]></caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<title>Customizable</title>
+    <caption><![CDATA[Modify look and feel by setting configuration options. View available <u><a href="http://www.juicebox.net/support/config_options/" target="_blank">config options</a></u>.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+	<title>Image Titles and Captions</title>
+    <caption><![CDATA[Each image can have an optional title and a caption. Supports non-english characters: ンツを活用して広告収入を得ることが可能]]></caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+    <caption><![CDATA[Captions can be formatted with HTML and CSS. Supported tags are <b>bold</b>, <u>underline</u>, <i>italics</i>, <u><a href="http://www.juicebox.net" target="_blank">hyperlinks</a></u>, linebreaks and <span style="font-size:18px;color:#FFFF00;font-family:serif;">CSS Styles</span>.]]></caption>
+  </image>
+  <image imageURL="images/wide.jpeg"
+	thumbURL="thumbs/wide.jpeg"
+	linkURL="images/wide.jpeg"
+	linkTarget="_blank">
+	<title>Juicebox-Pro</title>
+    <caption><![CDATA[For advanced customization options, no branding and more - upgrade to <u><a href="http://www.juicebox.net/download" target="_blank">Juicebox-Pro</a></u>.]]></caption>
+  </image>
+  <image imageURL="images/tall.jpeg"
+	thumbURL="thumbs/tall.jpeg"
+	linkURL="images/tall.jpeg"
+	linkTarget="_blank">
+	<title>Thanks!</title>
+    <caption><![CDATA[Gallery images kindly provided by John Carey of <u><a href="http://www.fiftyfootshadows.net/" target="_blank">Fifty Foot Shadows</a></u>.]]></caption>
+  </image>
+</juiceboxgallery>

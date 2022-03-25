@@ -1,0 +1,12 @@
+[14-Mar-2014 10:18:46 America/New_York] OAuthException
+[14-Mar-2014 10:18:46 America/New_York] Error validating access token: Session has expired on 12 de Marzo de 2014 9:00. The current time is 14 de Marzo de 2014 7:18.
+[25-Mar-2014 13:27:15 America/New_York] OAuthException
+[25-Mar-2014 13:27:15 America/New_York] Error validating access token: The session is invalid because the user logged out.
+[26-Mar-2014 18:08:26 America/New_York] OAuthException
+[26-Mar-2014 18:08:26 America/New_York] Error validating access token: Session has expired on 25 de marzo de 2014 12:00. The current time is 26 de marzo de 2014 15:08.
+[31-Mar-2014 21:50:24 America/New_York] OAuthException
+[31-Mar-2014 21:50:24 America/New_York] Error validating access token: Session has expired on 26 de marzo de 2014 17:00. The current time is 31 de marzo de 2014 18:50.
+[31-Mar-2014 23:44:04 America/New_York] OAuthException
+[31-Mar-2014 23:44:04 America/New_York] Error validating access token: Session has expired on 31 de marzo de 2014 20:00. The current time is 31 de marzo de 2014 20:44.
+[02-Apr-2014 13:36:16 America/New_York] OAuthException
+[02-Apr-2014 13:36:16 America/New_York] Error validating access token: Session has expired on 31 de marzo de 2014 22:00. The current time is 2 de abril de 2014 10:36.

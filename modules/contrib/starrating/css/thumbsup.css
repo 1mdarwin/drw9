@@ -1,0 +1,63 @@
+.thumbsup-off {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px 0px;
+}
+.thumbsup1-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -14px;
+}
+.thumbsup2-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -28px;
+}
+.thumbsup3-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -42px;
+}
+.thumbsup4-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -56px;
+}
+.thumbsup5-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -70px;
+}
+.thumbsup6-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -84px;
+}
+.thumbsup7-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -98px;
+}
+.thumbsup8-on {
+  float: left;
+  width: 14px;
+  height: 14px;
+  margin-top: 3px;
+  background: url('thumbsup.png') no-repeat 0px -112px;
+}

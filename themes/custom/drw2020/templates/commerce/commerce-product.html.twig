@@ -1,0 +1,339 @@
+{#
+/**
+ * @file
+ *
+ * Default product template.
+ *
+ * Available variables:
+ * - attributes: HTML attributes for the wrapper.
+ * - product: The rendered product fields.
+ *   Use 'product' to print them all, or print a subset such as
+ *   'product.title'. Use the following code to exclude the
+ *   printing of a given field:
+ *   @code
+ *   {{ product|without('title') }}
+ *   @endcode
+ * - product_entity: The product entity.
+ * - product_url: The product URL.
+ *
+ * @ingroup themeable
+ */
+#}
+
+<style type="text/css">
+	.page-header {
+		display: none; 
+	}
+
+	.text-center {
+    text-align: left;
+}
+
+</style>
+
+
+{{ attach_library('calificar_producto/calificar') }}
+
+
+
+
+<article{{ attributes }}>
+  {#   - product|without('variation_attributes') -   #}
+</article>
+
+
+{#  kint( product|keys )  #}
+
+
+
+
+
+<div class="col-md-6">
+  
+	{% set preciodeventa = product.variation_field_precio_de_venta.0["#markup"]|replace({ '$': '' }) %}
+	
+	{% set preciooriginal = product.variation_price.0["#markup"]|replace({ '$': '' }) %}
+
+   	{# kint(preciodeventa)  #}
+
+   	{# kint(preciooriginal) #}
+
+   	{% set preciooferta = ((preciooriginal - preciodeventa)/preciooriginal)*100   %}
+
+
+	{% if preciooferta > 0 %}
+	
+		<span class="badge-offer"><b> - {{ preciooferta }}%</b></span>
+
+	{% endif %}
+
+  	{{ product.variation_field_imagen_categoria }}	
+
+
+
+
+
+</div>
+
+
+
+<div class="col-md-6">
+	
+	<h3>  {{  product.title  }}</h3>
+
+	<br>
+
+	{{ product.field_categoria }}
+
+	{{ product.field_marca_reloj 	}}
+	<br>
+	<div class="price-wrap h5 divpreciodetalle">
+
+		{% if preciodeventa ==0 %}
+			
+			<img class="img-responsive" src="http://localhost/drupal8commerce/themes/custom/jhonatantheme/imagen/gratis.jpg"  >
+
+			
+		{% else %} 
+			<span class="price-new">{{ product.variation_field_precio_de_venta }}</span> 
+		{% endif %}	
+
+		{% if preciooferta > 0 %}	
+			<del class="price-old">{{ product.variation_price }}</del>
+		{% endif %}
+
+	</div>
+	
+<br>
+	
+<span>  <i class="fas fa-eye"> </i> {{   visitas  }} Visita(s)</span>
+
+{% if product.field_ventas|render|trim is not empty %}  
+
+	<span>  <i class="fas fa-shopping-cart"></i> {{   product.field_ventas  }} Venta(s)</span>
+
+{% else %}
+
+	<span>  <i class="fas fa-shopping-cart"></i> 0 Venta(s)</span>
+{% endif %}
+
+
+
+
+
+{% if estaautenticado == 'Si'  %}
+	{% if estaenlalista == 'No'  %}
+
+	<a href="{{ base_url }}/listadedeseos/{{product_id}}/add">
+	  <i class="far fa-heart vacio"></i>
+	</a>
+
+	{% else %}
+	 <a href="{{ base_url }}/listadedeseos/{{product_id}}/remove">
+	  <i class="fas fa-heart lleno"></i>
+	</a>
+	{% endif %}
+{% endif %}
+
+
+<br>
+
+
+{# ventas #}
+
+
+
+	
+
+	<br>
+	{{ product.field_descripcion_corta }}
+	<br>
+
+	{{ product.variations }}
+
+
+</div>
+
+
+
+
+<div class=" row col-md-12">
+	
+	<ul class="nav nav-tabs">
+	  {% if product.body|render|trim is not empty %}  
+	  		<li class="active"><a data-toggle="tab" href="#Descripcion">Descripción</a></li>
+	  {% endif %}
+	  {% if product.field_especificaciones|render|trim is not empty %}  
+	         <li><a data-toggle="tab" href="#Especificaciones">Especificaciones</a></li>
+	  {% endif %}
+
+
+
+{% if total_calificaciones|render|trim is not empty %}  
+	  <li><a data-toggle="tab" href="#rating"> {{ total_calificaciones }}  Calificaciones</a></li>
+{% else %}	  
+	  <li><a data-toggle="tab" href="#rating">0 Calificaciones</a></li>
+{% endif %}	  
+
+
+
+	</ul>
+
+	<div class="tab-content">
+	  <div id="Descripcion" class="tab-pane fade in active">
+	    <h3>Descripción</h3>
+	    <p>{{ product.body }} </p>
+	  </div>
+
+
+	  <div id="Especificaciones" class="tab-pane fade">
+	    <h3>Especificaciones</h3>
+	    <p> {{ product.field_especificaciones }} </p>
+	  </div>
+
+
+	  <div id="rating" class="tab-pane fade">
+	{% if total_calificaciones|render|trim is not empty %} 
+
+	    <h3>Calificación promedio de usuarios</h3>
+	    <p> 
+
+
+
+
+
+
+    <div class="container">
+    			
+		<div class="row">
+			<div class="col-sm-3">
+				<div class="rating-block">
+
+  
+
+    <div id="rating" >
+
+
+   <input    id="input-1" disabled="true" name="input-1" class="rating rating-loading" data-min="0" data-max="5" data-step="0.1" value="{{ promedio }}">
+</div>
+
+				</div>
+			</div>
+			<div class="col-sm-3">
+				<h4>Desglose de calificación</h4>
+
+{# kint ( desglose_calificaciones ) #}
+
+
+				<div class="pull-left">
+					<div class="pull-left" style="width:35px; line-height:1;">
+						<div style="height:9px; margin:5px 0;">5 <span class="glyphicon glyphicon-star"></span></div>
+					</div>
+					<div class="pull-left" style="width:180px;">
+						<div class="progress" style="height:9px; margin:8px 0;">
+						  <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="5" aria-valuemin="0" aria-valuemax="5" style="width: {{ desglose_calificaciones.5.porcentaje  }}%">
+							<span class="sr-only">80% Complete (danger)</span>
+						  </div>
+						</div>
+					</div>
+					<div class="pull-right" style="margin-left:10px;">{{ desglose_calificaciones.5.valor  }}</div>
+				</div>
+				<div class="pull-left">
+					<div class="pull-left" style="width:35px; line-height:1;">
+						<div style="height:9px; margin:5px 0;">4 <span class="glyphicon glyphicon-star"></span></div>
+					</div>
+					<div class="pull-left" style="width:180px;">
+						<div class="progress" style="height:9px; margin:8px 0;">
+						  <div class="progress-bar progress-bar-primary" role="progressbar" aria-valuenow="4" aria-valuemin="0" aria-valuemax="5" style="width: {{ desglose_calificaciones.4.porcentaje  }}%">
+							<span class="sr-only">80% Complete (danger)</span>
+						  </div>
+						</div>
+					</div>
+					<div class="pull-right" style="margin-left:10px;">{{ desglose_calificaciones.4.valor  }}</div>
+				</div>
+				<div class="pull-left">
+					<div class="pull-left" style="width:35px; line-height:1;">
+						<div style="height:9px; margin:5px 0;">3 <span class="glyphicon glyphicon-star"></span></div>
+					</div>
+					<div class="pull-left" style="width:180px;">
+						<div class="progress" style="height:9px; margin:8px 0;">
+						  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="3" aria-valuemin="0" aria-valuemax="5" style="width: {{ desglose_calificaciones.3.porcentaje  }}%">
+							<span class="sr-only">80% Complete (danger)</span>
+						  </div>
+						</div>
+					</div>
+					<div class="pull-right" style="margin-left:10px;">{{ desglose_calificaciones.3.valor  }} </div>
+				</div>
+				<div class="pull-left">
+					<div class="pull-left" style="width:35px; line-height:1;">
+						<div style="height:9px; margin:5px 0;">2 <span class="glyphicon glyphicon-star"></span></div>
+					</div>
+					<div class="pull-left" style="width:180px;">
+						<div class="progress" style="height:9px; margin:8px 0;">
+						  <div class="progress-bar progress-bar-warning" role="progressbar" aria-valuenow="2" aria-valuemin="0" aria-valuemax="5" style="width: {{ desglose_calificaciones.2.porcentaje  }}%">
+							<span class="sr-only">80% Complete (danger)</span>
+						  </div>
+						</div>
+					</div>
+					<div class="pull-right" style="margin-left:10px;">{{ desglose_calificaciones.2.valor  }}</div>
+				</div>
+				<div class="pull-left">
+					<div class="pull-left" style="width:35px; line-height:1;">
+						<div style="height:9px; margin:5px 0;">1 <span class="glyphicon glyphicon-star"></span></div>
+					</div>
+					<div class="pull-left" style="width:180px;">
+						<div class="progress" style="height:9px; margin:8px 0;">
+						  <div class="progress-bar progress-bar-danger" role="progressbar" aria-valuenow="1" aria-valuemin="0" aria-valuemax="5" style="width: {{ desglose_calificaciones.1.porcentaje  }}%">
+							<span class="sr-only">80% Complete (danger)</span>
+						  </div>
+						</div>
+					</div>
+					<div class="pull-right" style="margin-left:10px;">{{ desglose_calificaciones.1.valor  }}</div>
+				</div>
+			</div>			
+		</div>			
+	</div> 	<!-- Container-->
+
+
+
+
+{{ comentarios_de_usuarios }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+	    </p>
+
+{% else %}	  
+No se ha calificado este producto.
+{% endif %}	  
+
+
+
+	  </div>  <!-- <div id="rating" class="tab-pane fade">  -->
+
+
+	</div>
+
+
+
+
+
+</div>
+
+
+<div class="itemlist   row col-md-12">
+
+{{productos_recomendados }}
+
+</div>
+

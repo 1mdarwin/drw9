@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<juiceboxgallery
+	<% local function escape_xml(str)
+		return tostring(str):gsub("&", "&amp;"):gsub("'", "&apos;"):gsub(">", "&gt;"):gsub("<", "&lt;"):gsub("\"", "&quot;")
+	end
+
+	local function line_break(str)
+		return tostring(str):gsub("\r\n", "<br />"):gsub("\r", "<br />"):gsub("\n", "<br />"):gsub(" ", "<br />")
+	end
+
+	local function strip_control_characters(str)
+		local s = ""
+		for i in tostring(str):gmatch("%C+") do
+			s = s .. i
+		end
+		return s
+	end
+
+	local function escape_cdata(str)
+		return tostring(str):gsub("]]>", "]]]]><![CDATA[>")
+	end
+
+	local function get_rgba(hex, opacity)
+		local h = tostring(hex):gsub("#", "")
+		return "rgba(" .. tonumber(h:sub(1, 2), 16) .. "," .. tonumber(h:sub(3, 4), 16) .. "," .. tonumber(h:sub(5, 6), 16) .. "," .. tonumber(opacity, 10) / 100 .. ")"
+	end
+
+	local function ends_with(str ,input)
+		local i = tostring(input)
+		return i == "" or tostring(str):sub(-i:len()) == i
+	end
+
+	for key, val in pairs(model.juicebox) do
+		if ends_with(key, "Color") then
+			local color = key .. "Color"
+			local opacity = key .. "Opacity"
+			val = get_rgba(model.extra[color], model.extra[opacity])
+		end
+		local value = tostring(val)
+		if value ~= tostring(model.default[key]) then
+			val = escape_xml(line_break(value)) %>
+			$key="$val"
+		<% end
+	end %>
+>
+	<% for index = 1, numImages do %>
+		<image imageURL="images/<%= getImage(index).exportFilename %>.jpg" thumbURL="thumbs/<%= getImage(index).exportFilename %>.jpg" linkURL="<%= getImage(index).metadata.linkURL %>" linkTarget="_blank">
+			<title><![CDATA[<%= escape_cdata(strip_control_characters(line_break(getImage(index).metadata.title))) %>]]></title>
+			<caption><![CDATA[<%= escape_cdata(strip_control_characters(line_break(getImage(index).metadata.caption))) %>]]></caption>
+		</image>
+	<% end %>
+</juiceboxgallery>

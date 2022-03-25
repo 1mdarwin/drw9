@@ -1,0 +1,7 @@
+facebook_mcc:
+  js:
+    js/facebook_mcc.js: {}
+  dependencies:
+  - core/drupal
+  - core/jquery
+  - core/drupalSettings

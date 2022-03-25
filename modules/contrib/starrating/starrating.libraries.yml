@@ -1,0 +1,85 @@
+airplane:
+ version: 1.x
+ css:
+  theme:
+   css/airplane.css: {}
+car:
+ version: 1.x
+ css:
+  theme:
+   css/car.css: {}
+check:
+ version: 1.x
+ css:
+  theme:
+   css/check.css: {}
+coffee:
+ version: 1.x
+ css:
+  theme:
+   css/coffee.css: {}
+custom:
+ version: 1.x
+ css:
+  theme:
+   css/custom.css: {}
+dollar:
+ version: 1.x
+ css:
+  theme:
+   css/dollar.css: {}
+drupalicon:
+ version: 1.x
+ css:
+  theme:
+   css/drupalicon.css: {}
+fire:
+ version: 1.x
+ css:
+  theme:
+   css/fire.css: {}
+food:
+ version: 1.x
+ css:
+  theme:
+   css/food.css: {}
+heart:
+ version: 1.x
+ css:
+  theme:
+   css/heart.css: {}
+human:
+ version: 1.x
+ css:
+  theme:
+   css/human.css: {}
+movie:
+ version: 1.x
+ css:
+  theme:
+   css/movie.css: {}
+music:
+ version: 1.x
+ css:
+  theme:
+   css/music.css: {}
+smiley:
+ version: 1.x
+ css:
+  theme:
+   css/smiley.css: {}
+star:
+ version: 1.x
+ css:
+  theme:
+   css/star.css: {}
+starline:
+ version: 1.x
+ css:
+  theme:
+   css/starline.css: {}
+thumbsup:
+ version: 1.x
+ css:
+  theme:
+   css/thumbsup.css: {}

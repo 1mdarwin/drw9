@@ -1,0 +1,17 @@
+name: jQuery Auto Height
+description: Dynamically adjust column heights, matching the biggest column in each Row.
+package: Auto Height
+
+type: module
+# core: 8.x
+
+dependencies:
+  - libraries
+
+configure: auto_height.admin_settings
+
+# Information added by Drupal.org packaging script on 2017-01-03
+version: '8.x-1.1'
+core: '8.x'
+project: 'auto_height'
+datestamp: 1483437560

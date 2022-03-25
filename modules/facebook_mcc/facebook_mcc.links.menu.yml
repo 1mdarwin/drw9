@@ -1,0 +1,5 @@
+facebook_mcc.config_form:
+  title: 'Facebook MCC settings'
+  description: 'Configure settings for Facebook Messenger Customer Chat module.'
+  route_name: facebook_mcc.config_form
+  parent: 'system.admin_config_services'

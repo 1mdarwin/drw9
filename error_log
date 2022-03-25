@@ -1,0 +1,4 @@
+
+[29-Dec-2020 21:22:39 UTC] Symfony\Component\HttpKernel\Exception\BadRequestHttpException: The provided host name is not valid for this server. in /home/drwsoluc/public_html/core/lib/Drupal/Core/DrupalKernel.php on line 1080 #0 /home/drwsoluc/public_html/core/lib/Drupal/Core/DrupalKernel.php(275): Drupal\Core\DrupalKernel->initializeSettings(Object(Symfony\Component\HttpFoundation\Request))
+#1 /home/drwsoluc/public_html/core/modules/statistics/statistics.php(15): Drupal\Core\DrupalKernel::createFromRequest(Object(Symfony\Component\HttpFoundation\Request), Object(Composer\Autoload\ClassLoader), 'prod')
+#2 {main}

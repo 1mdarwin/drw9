@@ -1,0 +1,64 @@
+global-styling:
+  css:
+    theme:
+      css/stylee.css: {}
+
+librefranklin:
+  css:
+    base:
+      '//fonts.googleapis.com/css?family=Libre+Franklin:400,400i,700': { external: true }
+
+opensans:
+  css:
+    base:
+      '//fonts.googleapis.com/css?family=Open+Sans:400,400i,700': { external: true }
+
+lato:
+  css:
+    base:
+      '//fonts.googleapis.com/css?family=Lato:400,400i,700': { external: true }
+
+jhonatan:
+  version: 1.x
+  css:
+    theme:
+      css/style.css: {}
+      css/animate.min.css: {}
+      css/productosporcategorias.css: {}
+      css/fontawesome/css/fontawesome-all.min.css: {}
+      addons/bootstrap/jquery.smartmenus.bootstrap.css: {}
+  js:
+    js/jhonatan/arreglarcssmenu.js: {}
+    jquery.smartmenus.js: {}
+    addons/bootstrap/jquery.smartmenus.bootstrap.js: {}
+    js/drw2020.js: {}
+    #bootstrap/js/affix.js: {}
+    #bootstrap/js/alert.js: {}
+    #bootstrap/js/button.js: {}
+    bootstrap/js/carousel.js: {}
+    js/js/collapse.js: {}
+    bootstrap/js/dropdown.js: {}
+    bootstrap/js/modal.js: {}
+    bootstrap/js/tooltip.js: {}
+    #bootstrap/js/popover.js: {}
+    #bootstrap/js/scrollspy.js: {}
+    #bootstrap/js/tab.js: {}
+    #bootstrap/js/transition.js: {}
+
+
+
+jhonatanslider:
+  version: 1.x
+  css:
+    theme:
+      css/style.css: {}
+  js:
+    js/jhonatan/flex.js: {}
+    js/jhonatan/jquery.elevatezoom.js: {}
+    js/jhonatan/custom.js: {}
+  dependencies:
+    - core/jquery
+    - core/jquery.once
+    - core/drupal
+
+

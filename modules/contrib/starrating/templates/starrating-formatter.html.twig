@@ -1,0 +1,21 @@
+<div class='starrating'>
+{% if type == 'starrating' %}
+    {% for i in min..max if (i < rate or (i > rate and fill_blank)) %}
+      {% if i > rate and fill_blank %}
+        {% set class = icon_type ~ '-off' %}
+      {%else%}
+        {% set class = icon_type ~ icon_color ~ '-on' %}
+      {%endif%}
+      {% if i % 2 %}
+          {% set class = class ~ ' odd' %}
+      {%else%}
+      {% set class = class ~ ' even' %}
+      {%endif%}
+      {% set j = i + 1 %}
+      {% set class = class ~ ' s'~ j %}
+       <div class='rate-image {{class}}'></div>
+    {%endfor%}
+{% else %}
+ {{rate}}
+{%endif%}
+</div>

@@ -1,0 +1,31 @@
+facebook_mcc.settings:
+  type: config_object
+  translateble: true
+  mapping:
+    facebook_mcc_page_id:
+      type: string
+      label: 'Facebook Page ID'
+    facebook_mcc_app_id:
+      type: string
+      label: 'Facebook App ID'
+    facebook_mcc_sdk_version:
+      type: string
+      label: 'Facebook SDK Version'
+    facebook_mcc_theme_color:
+      type: string
+      label: 'Theme Color'
+    facebook_mcc_logged_in_greeting:
+      type: text
+      label: 'Logged In Greeting'
+    facebook_mcc_logged_out_greeting:
+      type: text
+      label: 'Logged Out Greeting'
+    facebook_mcc_greeting_dialog_display:
+      type: string
+      label: 'Greeting Dialog Display'
+    facebook_mcc_greeting_dialog_delay:
+      type: string
+      label: 'Greeting Dialog Delay'
+    facebook_mcc_language_mapping:
+      type: sequence
+      label: 'Language Mapping'

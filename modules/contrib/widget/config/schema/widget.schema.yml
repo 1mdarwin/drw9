@@ -1,0 +1,15 @@
+block.settings.widget_block:
+  type: block_settings
+  label: 'Widget block'
+  mapping:
+    blocks:
+      type: sequence
+      label: 'Blocks'
+      sequence:
+        type: block.settings.[id]
+    layout:
+      type: string
+      label: 'Layout'
+    classes:
+      type: string
+      label: CSS classes
