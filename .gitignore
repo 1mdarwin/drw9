@@ -2,7 +2,7 @@
 sites/*/settings*.php
 sql
 infophp.php
-
+appfb
 # Ignore paths that contain user-generated content.
 sites/*/files
 sites/*/private
