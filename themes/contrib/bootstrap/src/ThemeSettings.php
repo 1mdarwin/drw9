@@ -3,7 +3,6 @@
 namespace Drupal\bootstrap;
 
 use Drupal\bootstrap\Plugin\Setting\DeprecatedSettingInterface;
-use Drupal\bootstrap\Plugin\Setting\SettingInterface;
 use Drupal\Core\Theme\ThemeSettings as CoreThemeSettings;
 use Drupal\Component\Utility\DiffArray;
 use Drupal\Component\Utility\NestedArray;
@@ -305,10 +304,14 @@ class ThemeSettings extends Config {
     // Retrieve a diff of settings that override the defaults.
     $diff = DiffArray::diffAssocRecursive($data, $this->defaults);
 
-    // Ensure core features are always present in the diff. The theme settings
-    // form will not work properly otherwise.
+    // Ensure core features and complex (array) settings are always present in
+    // the diff. The theme settings form will not work properly otherwise.
     // @todo Just rebuild the features section of the form?
-    foreach (['favicon', 'features', 'logo'] as $key) {
+    $core_settings = ['favicon', 'features', 'logo'];
+    $complex_settings = array_keys(array_filter($diff, 'is_array'));
+    $all_complex_settings = array_unique(array_merge($core_settings, $complex_settings));
+
+    foreach ($all_complex_settings as $key) {
       $arrays = [];
       $arrays[] = isset($this->defaults[$key]) ? $this->defaults[$key] : [];
       $arrays[] = isset($data[$key]) ? $data[$key] : [];

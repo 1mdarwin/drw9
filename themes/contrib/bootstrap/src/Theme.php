@@ -354,9 +354,6 @@ class Theme {
       if ($fileSystem = Bootstrap::fileSystem('scanDirectory')) {
         $files = $fileSystem->scanDirectory($path, $mask, $options);
       }
-      else {
-        $files = file_scan_directory($path, $mask, $options);
-      }
       $cache->set($hash, $files);
     }
     return $cache->get($hash, []);
@@ -774,9 +771,7 @@ class Theme {
   }
 
   /****************************************************************************
-   *
-   * Deprecated methods
-   *
+   * Deprecated methods.
    ***************************************************************************/
 
   /**

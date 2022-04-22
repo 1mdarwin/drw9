@@ -101,6 +101,8 @@ drupal.autocomplete:
 drupal.dialog.ajax:
   js:
     js/misc/dialog.ajax.js: {}
+  dependencies:
+    - bootstrap/drupal.bootstrap
 
 drupal.form:
   js:
