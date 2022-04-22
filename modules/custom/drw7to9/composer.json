@@ -8,6 +8,6 @@
     "minimum-stability": "dev",
     "support": {
         "issues": "https://www.drupal.org/project/issues/drwtest",
-        "source": "http://cgit.drupalcode.org/drwtest",
-    },
+        "source": "http://cgit.drupalcode.org/drwtest"
+    }
 }
