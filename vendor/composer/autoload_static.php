@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit2196910fc447131a762694810d3980e7
+class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
@@ -39,7 +39,8 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
         'def43f6c87e4f8dfd0c9e1b1bab14fe8' => __DIR__ . '/..' . '/symfony/polyfill-iconv/bootstrap.php',
         '2f69d3914119f042cca9e44442d5ce95' => __DIR__ . '/../..' . '/core/includes/bootstrap.inc',
         '6db5533840cb1ae1bc049452845aa88e' => __DIR__ . '/../..' . '/core/includes/guzzle_php81_shim.php',
-        '952683d815ff0a7bf322b93c0be7e4e4' => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src/bootstrap.php',
+        '8825ede83f2f289127722d4e842cf7e8' => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme/bootstrap.php',
+        'b6b991a57620e2fb6b2f66f03fe9ddc2' => __DIR__ . '/..' . '/symfony/string/Resources/functions.php',
         '801c31d8ed748cfa537fa45402288c95' => __DIR__ . '/..' . '/psy/psysh/src/functions.php',
         '3917c79c5052b270641b5a200963dbc2' => __DIR__ . '/..' . '/kint-php/kint/init.php',
     );
@@ -63,6 +64,7 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
             'Symfony\\Polyfill\\Mbstring\\' => 26,
             'Symfony\\Polyfill\\Intl\\Normalizer\\' => 33,
             'Symfony\\Polyfill\\Intl\\Idn\\' => 26,
+            'Symfony\\Polyfill\\Intl\\Grapheme\\' => 31,
             'Symfony\\Polyfill\\Iconv\\' => 23,
             'Symfony\\Polyfill\\Ctype\\' => 23,
             'Symfony\\Contracts\\Translation\\' => 30,
@@ -73,6 +75,7 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
             'Symfony\\Component\\VarDumper\\' => 28,
             'Symfony\\Component\\Validator\\' => 28,
             'Symfony\\Component\\Translation\\' => 30,
+            'Symfony\\Component\\String\\' => 25,
             'Symfony\\Component\\Serializer\\' => 29,
             'Symfony\\Component\\Routing\\' => 26,
             'Symfony\\Component\\Process\\' => 26,
@@ -124,7 +127,6 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
-            'Grasmash\\YamlExpander\\' => 22,
             'Grasmash\\Expander\\' => 18,
         ),
         'E' => 
@@ -134,7 +136,6 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
         ),
         'D' => 
         array (
-            'Drush\\Internal\\' => 15,
             'Drush\\' => 6,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
@@ -151,6 +152,7 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
             'Doctrine\\Common\\Cache\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
+            'Dflydev\\DotAccessData\\' => 22,
         ),
         'C' => 
         array (
@@ -211,6 +213,10 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-intl-idn',
         ),
+        'Symfony\\Polyfill\\Intl\\Grapheme\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/polyfill-intl-grapheme',
+        ),
         'Symfony\\Polyfill\\Iconv\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/polyfill-iconv',
@@ -250,6 +256,10 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
         'Symfony\\Component\\Translation\\' => 
         array (
             0 => __DIR__ . '/..' . '/symfony/translation',
+        ),
+        'Symfony\\Component\\String\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/symfony/string',
         ),
         'Symfony\\Component\\Serializer\\' => 
         array (
@@ -384,10 +394,6 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
         ),
-        'Grasmash\\YamlExpander\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/grasmash/yaml-expander/src',
-        ),
         'Grasmash\\Expander\\' => 
         array (
             0 => __DIR__ . '/..' . '/grasmash/expander/src',
@@ -399,10 +405,6 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
         'Egulias\\EmailValidator\\' => 
         array (
             0 => __DIR__ . '/..' . '/egulias/email-validator/src',
-        ),
-        'Drush\\Internal\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/drush/drush/src/internal-forks',
         ),
         'Drush\\' => 
         array (
@@ -471,6 +473,10 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
             2 => __DIR__ . '/..' . '/doctrine/persistence/lib/Doctrine/Common',
             3 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
         ),
+        'Dflydev\\DotAccessData\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
+        ),
         'Consolidation\\SiteProcess\\' => 
         array (
             0 => __DIR__ . '/..' . '/consolidation/site-process/src',
@@ -526,13 +532,6 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
             'Stack' => 
             array (
                 0 => __DIR__ . '/..' . '/stack/builder/src',
-            ),
-        ),
-        'D' => 
-        array (
-            'Dflydev\\DotAccessData' => 
-            array (
-                0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
             ),
         ),
         'C' => 
@@ -595,11 +594,11 @@ class ComposerStaticInit2196910fc447131a762694810d3980e7
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit2196910fc447131a762694810d3980e7::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit2196910fc447131a762694810d3980e7::$prefixDirsPsr4;
-            $loader->prefixesPsr0 = ComposerStaticInit2196910fc447131a762694810d3980e7::$prefixesPsr0;
-            $loader->fallbackDirsPsr0 = ComposerStaticInit2196910fc447131a762694810d3980e7::$fallbackDirsPsr0;
-            $loader->classMap = ComposerStaticInit2196910fc447131a762694810d3980e7::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1::$prefixDirsPsr4;
+            $loader->prefixesPsr0 = ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1::$prefixesPsr0;
+            $loader->fallbackDirsPsr0 = ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1::$fallbackDirsPsr0;
+            $loader->classMap = ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1::$classMap;
 
         }, null, ClassLoader::class);
     }
