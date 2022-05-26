@@ -1,0 +1,34 @@
+uuid: 5976f765-63bf-4b00-b350-51430b9c8eef
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.taxonomyextra
+    - node.type.page
+    - taxonomy.vocabulary.forums
+    - taxonomy.vocabulary.vocabulary_2
+    - taxonomy.vocabulary.vocabulary_3
+    - taxonomy.vocabulary.vocabulary_4
+    - taxonomy.vocabulary.vocabulary_5
+id: node.page.taxonomyextra
+field_name: taxonomyextra
+entity_type: node
+bundle: page
+label: 'Taxonomy upgrade extras'
+description: 'Debris left over after upgrade from Drupal 6'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      forums: forums
+      vocabulary_2: vocabulary_2
+      vocabulary_3: vocabulary_3
+      vocabulary_4: vocabulary_4
+      vocabulary_5: vocabulary_5
+    sort:
+      field: _none
+field_type: entity_reference

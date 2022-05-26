@@ -1,0 +1,20 @@
+uuid: de126002-1bae-44e4-b079-57aca57ad96d
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.story
+  module:
+    - path
+id: node.story.path
+field_name: path
+entity_type: node
+bundle: story
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

@@ -1,0 +1,15 @@
+uuid: caaf3a70-c6e4-4658-a3b6-144047771970
+langcode: es
+status: true
+dependencies: {  }
+name: thumb32
+label: thumb32
+effects:
+  3102a293-d5a1-42c6-be41-63fd1782c5ae:
+    uuid: 3102a293-d5a1-42c6-be41-63fd1782c5ae
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 32
+      height: 32
+      anchor: center-center

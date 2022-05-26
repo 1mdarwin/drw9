@@ -1,0 +1,28 @@
+uuid: 34fc4dea-3692-429b-833e-20a5e90a3812
+langcode: es
+status: true
+dependencies:
+  config:
+    - views.view.faqs
+  module:
+    - block_class
+    - views
+  theme:
+    - drw2020
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3 ourfaqs'
+id: views_block__faqs_block_1
+theme: drw2020
+region: footer
+weight: -9
+provider: null
+plugin: 'views_block:faqs-block_1'
+settings:
+  id: 'views_block:faqs-block_1'
+  label: FAQs
+  label_display: visible
+  provider: views
+  views_label: FAQs
+  items_per_page: none
+visibility: {  }

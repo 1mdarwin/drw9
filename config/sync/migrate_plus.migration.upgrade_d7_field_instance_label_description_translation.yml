@@ -1,0 +1,93 @@
+uuid: b625920d-6b7c-45da-9ff3-117023e323e3
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_d7_field_instance_label_description_translation
+class: Drupal\migrate_drupal\Plugin\migrate\FieldMigration
+field_plugin_method: alterFieldInstanceMigration
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Configuration
+  - Multilingual
+migration_group: migrate_drupal_7
+label: 'Field label and description translation'
+source:
+  plugin: d7_field_instance_label_description_translation
+process:
+  langcode:
+    -
+      plugin: skip_on_empty
+      source: language
+      method: row
+  translation:
+    -
+      plugin: skip_on_empty
+      source: translation
+      method: row
+  entity_type_exists:
+    -
+      plugin: skip_on_empty
+      source: entity_type
+      method: row
+  objectid_exists:
+    -
+      plugin: skip_on_empty
+      source: objectid
+      method: row
+  type_exists:
+    -
+      plugin: skip_on_empty
+      source: type
+      method: row
+  exists:
+    -
+      plugin: migration_lookup
+      migration: upgrade_d7_field_instance
+      source:
+        - entity_type
+        - objectid
+        - type
+    -
+      plugin: skip_on_empty
+      method: row
+  bundle:
+    -
+      plugin: get
+      source: objectid
+  property:
+    -
+      plugin: static_map
+      source: property
+      bypass: true
+      map:
+        label: label
+        description: description
+        title_value: label
+  entity_type:
+    -
+      plugin: get
+      source: entity_type
+  field_name:
+    -
+      plugin: get
+      source: type
+  settings/title:
+    -
+      plugin: static_map
+      source: settings/title
+      bypass: true
+      map:
+        disabled: 0
+        optional: 1
+        required: 2
+destination:
+  plugin: 'entity:field_config'
+migration_dependencies:
+  required:
+    - upgrade_d7_field_instance
+  optional:
+    - upgrade_d7_node_type
+    - upgrade_d7_comment_type
+    - upgrade_d7_taxonomy_vocabulary
+    - upgrade_d7_field_instance

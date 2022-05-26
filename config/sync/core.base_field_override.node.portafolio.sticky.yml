@@ -1,0 +1,22 @@
+uuid: 6aaea558-1179-4cae-9f05-8fbf236a30a1
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.portafolio
+id: node.portafolio.sticky
+field_name: sticky
+entity_type: node
+bundle: portafolio
+label: 'Fijo al comienzo de las listas'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

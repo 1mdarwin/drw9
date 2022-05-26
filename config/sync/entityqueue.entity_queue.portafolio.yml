@@ -1,0 +1,25 @@
+uuid: 8909b419-f43d-4326-8153-f524bd2af055
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: portafolio
+label: Portafolio
+handler: simple
+handler_configuration: {  }
+entity_settings:
+  target_type: node
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      portafolio: portafolio
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+queue_settings:
+  min_size: 3
+  max_size: 3
+  act_as_queue: false
+  reverse: false

@@ -1,0 +1,15 @@
+uuid: d961f316-1cc4-4e83-904e-a07789ee240e
+langcode: es
+status: true
+dependencies: {  }
+name: e-r-200
+label: E-R-200
+effects:
+  ffcab4f1-0f79-436a-b474-e764eb89c97e:
+    uuid: ffcab4f1-0f79-436a-b474-e764eb89c97e
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 200
+      height: 200
+      anchor: center-center

@@ -1,0 +1,33 @@
+uuid: 0ed0ecde-cf40-48ab-ab20-13bea188080f
+langcode: es
+status: true
+dependencies:
+  module:
+    - language
+    - node
+id: node_ddblock_news_item
+label: 'Content - News item'
+type: 'canonical_entities:node'
+pattern: 'publicidad/[node:title]'
+selection_criteria:
+  e941e2bf-d1b8-4461-bfb5-1e5b528542c9:
+    id: 'entity_bundle:node'
+    negate: false
+    uuid: e941e2bf-d1b8-4461-bfb5-1e5b528542c9
+    context_mapping:
+      node: node
+    bundles:
+      ddblock_news_item: ddblock_news_item
+  094ea346-6df6-4751-92a5-e8401f8986d1:
+    id: language
+    negate: false
+    uuid: 094ea346-6df6-4751-92a5-e8401f8986d1
+    context_mapping:
+      language: 'node:langcode:language'
+    langcodes:
+      es: es
+selection_logic: and
+weight: 0
+relationships:
+  'node:langcode:language':
+    label: Language

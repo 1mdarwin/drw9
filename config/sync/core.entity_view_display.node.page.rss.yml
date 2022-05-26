@@ -1,0 +1,37 @@
+uuid: a21ff7ff-cef4-4e9f-9e05-f5dd2b4509aa
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.rss
+    - field.field.node.page.body
+    - field.field.node.page.taxonomy_vocabulary_5
+    - field.field.node.page.taxonomyextra
+    - field.field.node.page.upload
+    - node.type.page
+  module:
+    - file
+    - user
+id: node.page.rss
+targetEntityType: node
+bundle: page
+mode: rss
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  upload:
+    type: file_table
+    label: hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  langcode: true
+  taxonomy_vocabulary_5: true
+  taxonomyextra: true

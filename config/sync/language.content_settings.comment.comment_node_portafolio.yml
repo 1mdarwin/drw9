@@ -1,0 +1,18 @@
+uuid: e715757b-68ce-434f-863c-c5ed493ec53f
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_portafolio
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: comment.comment_node_portafolio
+target_entity_type_id: comment
+target_bundle: comment_node_portafolio
+default_langcode: current_interface
+language_alterable: false

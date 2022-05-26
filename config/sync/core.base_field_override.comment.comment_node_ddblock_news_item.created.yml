@@ -1,0 +1,18 @@
+uuid: d4b89807-e394-4f66-b9ad-4907a5cc8761
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_ddblock_news_item
+id: comment.comment_node_ddblock_news_item.created
+field_name: created
+entity_type: comment
+bundle: comment_node_ddblock_news_item
+label: Creado
+description: 'Fecha en que el comentario fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

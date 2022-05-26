@@ -1,0 +1,20 @@
+uuid: a96c6eaa-be37-4a5e-8f47-2b36dbdafa86
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.portafolio
+  module:
+    - path
+id: node.portafolio.path
+field_name: path
+entity_type: node
+bundle: portafolio
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

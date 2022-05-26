@@ -1,0 +1,18 @@
+uuid: 75a65010-0a2c-4158-a1f1-4c49a712f5b1
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.portafolio
+id: taxonomy_term.portafolio.name
+field_name: name
+entity_type: taxonomy_term
+bundle: portafolio
+label: Name
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

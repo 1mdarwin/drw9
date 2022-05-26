@@ -1,0 +1,18 @@
+uuid: a52e9363-3aa4-416b-9733-68ddb87ff3e4
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main-menu
+    parent: 'main-menu:0:'
+name: Webform
+type: webform
+description: 'Create a new form or questionnaire accessible to users. Submission results and statistics are recorded and accessible to privileged users.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

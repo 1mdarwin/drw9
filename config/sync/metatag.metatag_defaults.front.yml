@@ -1,0 +1,17 @@
+uuid: 9a8cb2aa-114c-41e8-9acb-e65f84647e1c
+langcode: es
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: 1noCXlegCr5HFehQRF1ViXy1jhU1jZ_sNN99a8Sj5jo
+id: front
+label: 'Front page'
+tags:
+  title: DrwSoluciones
+  geo_placename: 'Loja - Ecuador'
+  shortlink: '[site:url]'
+  abstract: 'Agencia Drupal en Ecuador'
+  canonical_url: '[site:url]'
+  description: 'Agencia Drupal en Ecuador con soluciones web para pequeñas y grandes empresas, integración de sistemas a través de servicios web'
+  keywords: 'Drupal, PHP, Linux, HTML, CSS3, ReactJs'
+  geo_region: es_EC

@@ -1,0 +1,18 @@
+uuid: cfca41fa-a2d2-42a3-aa14-97827d20f3ef
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.poll
+id: node.poll.title
+field_name: title
+entity_type: node
+bundle: poll
+label: Pregunta
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

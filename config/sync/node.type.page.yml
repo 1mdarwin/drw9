@@ -1,0 +1,20 @@
+uuid: 9ce75150-1820-43c5-bced-7729ab0fdd2b
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+_core:
+  default_config_hash: KuyA4NHPXcmKAjRtwa0vQc2ZcyrUJy6IlS2TAyMNRbc
+name: Página
+type: page
+description: 'Una <em>página<em>, similar en forma y contenido a un <em>artículo</em>, es un método sencillo de crear y mostrar información que no suele cambiar, como una sección "Acerca de" en un sitio web. Por defecto, una <em>página</em> no permite comentarios de visitantes y no es promovida a la portada del sitio.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: false

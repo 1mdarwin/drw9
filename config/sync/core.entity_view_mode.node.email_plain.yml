@@ -1,0 +1,10 @@
+uuid: c0c93641-11d2-4e25-af38-b7a26ce29fbd
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.email_plain
+label: email_plain
+targetEntityType: node
+cache: true

@@ -1,0 +1,18 @@
+uuid: 5c08b9d5-c061-41da-98bd-d2570f2d4f3b
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.portafolio
+id: taxonomy_term.portafolio.metatag
+field_name: metatag
+entity_type: taxonomy_term
+bundle: portafolio
+label: 'Meta etiquetas'
+description: 'The meta tags for the entity.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: map

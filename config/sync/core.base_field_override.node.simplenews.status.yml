@@ -1,0 +1,22 @@
+uuid: 2d03557f-c78c-420f-b290-57446ded052a
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.simplenews
+id: node.simplenews.status
+field_name: status
+entity_type: node
+bundle: simplenews
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

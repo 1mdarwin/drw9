@@ -1,0 +1,20 @@
+uuid: 2b4fa39d-c465-4e82-b944-f2c11287e8bc
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.taxonomy_vocabulary_5
+field_name: taxonomy_vocabulary_5
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: -1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

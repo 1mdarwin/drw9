@@ -1,0 +1,20 @@
+uuid: d9037179-4398-4f0f-a57c-9c352314e332
+langcode: und
+status: true
+dependencies:
+  module:
+    - datetime
+    - node
+id: node.field_fecevento
+field_name: field_fecevento
+entity_type: node
+type: datetime
+settings:
+  datetime_type: datetime
+module: datetime
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

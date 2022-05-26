@@ -1,0 +1,23 @@
+uuid: e916e862-2f51-4193-be9e-d4895b62237e
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.event
+  module:
+    - text
+id: node.event.body
+field_name: body
+entity_type: node
+bundle: event
+label: Cuerpo
+description: 'Events have a start date and an optional end date as well as a teaser and a body. They can be extended by other modules, too.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

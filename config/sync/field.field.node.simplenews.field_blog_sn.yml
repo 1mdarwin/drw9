@@ -1,0 +1,38 @@
+uuid: f856f236-720e-4c89-bf6b-20329882891c
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_blog_sn
+    - node.type.blog
+    - node.type.event
+    - node.type.page
+    - node.type.portafolio
+    - node.type.simplenews
+    - node.type.story
+id: node.simplenews.field_blog_sn
+field_name: field_blog_sn
+entity_type: node
+bundle: simplenews
+label: Blog
+description: 'Seleccionar los contenidos'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      blog: blog
+      event: event
+      story: story
+      portafolio: portafolio
+      page: page
+    sort:
+      field: _none
+      direction: ASC
+    behaviors:
+      views-select-list:
+        status: 0
+field_type: entity_reference

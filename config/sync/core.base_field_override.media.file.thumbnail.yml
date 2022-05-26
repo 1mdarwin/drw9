@@ -1,0 +1,37 @@
+uuid: 598e13eb-ca16-40c7-8f6e-11e77fb91e55
+langcode: es
+status: true
+dependencies:
+  config:
+    - media.type.file
+  module:
+    - image
+id: media.file.thumbnail
+field_name: thumbnail
+entity_type: media
+bundle: file
+label: Thumbnail
+description: 'La miniatura del elemento de multimedia.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: default
+  handler_settings: {  }
+  file_directory: '[date:custom:Y]-[date:custom:m]'
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: null
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

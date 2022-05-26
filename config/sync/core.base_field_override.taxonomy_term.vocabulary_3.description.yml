@@ -1,0 +1,20 @@
+uuid: a0032865-8cf4-47f4-9800-ea839a4925f1
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_3
+  module:
+    - text
+id: taxonomy_term.vocabulary_3.description
+field_name: description
+entity_type: taxonomy_term
+bundle: vocabulary_3
+label: Descripción
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

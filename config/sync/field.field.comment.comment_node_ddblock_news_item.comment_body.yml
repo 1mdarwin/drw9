@@ -1,0 +1,21 @@
+uuid: b9dcdde4-de31-4085-8c50-f3303e9409ff
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_ddblock_news_item
+    - field.storage.comment.comment_body
+  module:
+    - text
+id: comment.comment_node_ddblock_news_item.comment_body
+field_name: comment_body
+entity_type: comment
+bundle: comment_node_ddblock_news_item
+label: Comentario
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

@@ -1,0 +1,33 @@
+uuid: b48a799a-6394-4d18-8108-bb777d20a394
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.comment_node_story
+    - node.type.story
+  module:
+    - comment
+id: node.story.comment_node_story
+field_name: comment_node_story
+entity_type: node
+bundle: story
+label: Comments
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    status: 0
+    cid: 0
+    last_comment_timestamp: 0
+    last_comment_name: null
+    last_comment_uid: 0
+    comment_count: 0
+default_value_callback: ''
+settings:
+  default_mode: 1
+  per_page: 50
+  anonymous: 0
+  form_location: false
+  preview: 2
+field_type: comment

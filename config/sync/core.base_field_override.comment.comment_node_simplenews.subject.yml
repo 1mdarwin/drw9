@@ -1,0 +1,18 @@
+uuid: 8495240c-edd1-43e5-8487-a1c6e8340aa4
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_simplenews
+id: comment.comment_node_simplenews.subject
+field_name: subject
+entity_type: comment
+bundle: comment_node_simplenews
+label: Asunto
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

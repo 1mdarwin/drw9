@@ -1,0 +1,22 @@
+uuid: f6f4d473-77ea-4826-bdbf-77b4afebb212
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - drwsolution
+_core:
+  default_config_hash: oXUb3JZR2WW5VOdw4HrhRicCsq51mCgLfRyvheG68ck
+id: drwsolution_breadcrumbs
+theme: drwsolution
+region: navigation_collapsible
+weight: -5
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: 'Enlaces de ayuda a la navegación'
+  label_display: '0'
+  provider: system
+visibility: {  }

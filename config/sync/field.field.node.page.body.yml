@@ -1,0 +1,25 @@
+uuid: dfd7d1d7-6cc0-48e8-b2f9-2b52e0343913
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.page
+  module:
+    - text
+_core:
+  default_config_hash: rUop-8b6hvxxDYbv-KobTfNIBNbPY9qOPl8f6kBNSpw
+id: node.page.body
+field_name: body
+entity_type: node
+bundle: page
+label: Cuerpo
+description: 'Una <em>página<em>, similar en forma y contenido a un <em>artículo</em>, es un método sencillo de crear y mostrar información que no suele cambiar, como una sección "Acerca de" en un sitio web. Por defecto, una <em>página</em> no permite comentarios de visitantes y no es promovida a la portada del sitio.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

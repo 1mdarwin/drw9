@@ -1,0 +1,27 @@
+uuid: a067c270-7038-4efb-b9f6-4436ad4c9936
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.upload
+    - node.type.ddblock_news_item
+  module:
+    - file
+id: node.ddblock_news_item.upload
+field_name: upload
+entity_type: node
+bundle: ddblock_news_item
+label: 'File attachments'
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: ''
+  file_extensions: 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'
+  max_filesize: '1 MB'
+  description_field: true
+field_type: file

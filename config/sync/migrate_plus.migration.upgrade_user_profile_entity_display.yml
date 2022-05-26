@@ -1,0 +1,83 @@
+uuid: 6ce35e93-b2f0-4f2a-9099-5d379e87b244
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_user_profile_entity_display
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 6'
+  - 'Drupal 7'
+  - Configuration
+migration_group: migrate_drupal_7
+label: 'User profile display configuration'
+source:
+  plugin: profile_field
+  constants:
+    entity_type: user
+    bundle: user
+    view_mode: default
+    options:
+      label: hidden
+      settings: {  }
+process:
+  entity_type:
+    -
+      plugin: get
+      source: constants/entity_type
+  bundle:
+    -
+      plugin: get
+      source: constants/bundle
+  view_mode:
+    -
+      plugin: get
+      source: constants/view_mode
+  field_name:
+    -
+      plugin: migration_lookup
+      migration: upgrade_user_profile_field
+      source: fid
+    -
+      plugin: skip_on_empty
+      method: row
+    -
+      plugin: extract
+      index:
+        - 1
+  type:
+    -
+      plugin: static_map
+      source: type
+      map:
+        checkbox: list_default
+        date: datetime_default
+        list: text_default
+        selection: list_default
+        textfield: text_default
+        textarea: text_default
+        url: link
+  options:
+    -
+      plugin: get
+      source: constants/options
+  options/type:
+    -
+      plugin: get
+      source: '@type'
+  hidden:
+    -
+      plugin: static_map
+      source: visibility
+      default_value: false
+      map:
+        1: true
+        4: true
+destination:
+  plugin: component_entity_display
+migration_dependencies:
+  required:
+    - upgrade_user_profile_field_instance
+  optional:
+    - upgrade_user_profile_field

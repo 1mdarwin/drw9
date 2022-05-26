@@ -1,0 +1,18 @@
+uuid: d60b7662-9bcc-4d60-9011-7f32794c5f23
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.portafolio
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: true
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: taxonomy_term.portafolio
+target_entity_type_id: taxonomy_term
+target_bundle: portafolio
+default_langcode: current_interface
+language_alterable: true

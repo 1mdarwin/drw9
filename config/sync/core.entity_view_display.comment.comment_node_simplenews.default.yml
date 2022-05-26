@@ -1,0 +1,28 @@
+uuid: cc88f21d-fb19-45c1-b270-73c743237b8d
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_simplenews
+    - field.field.comment.comment_node_simplenews.comment_body
+  module:
+    - text
+id: comment.comment_node_simplenews.default
+targetEntityType: comment
+bundle: comment_node_simplenews
+mode: default
+content:
+  comment_body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

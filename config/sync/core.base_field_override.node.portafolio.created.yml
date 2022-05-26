@@ -1,0 +1,18 @@
+uuid: 4cc17d35-f128-493d-a65e-bc1a41403706
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.portafolio
+id: node.portafolio.created
+field_name: created
+entity_type: node
+bundle: portafolio
+label: Fecha
+description: 'La fecha en que el nodo fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

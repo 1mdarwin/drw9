@@ -1,0 +1,18 @@
+uuid: b90de8d8-3a36-47ef-939b-8c6512e7c520
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.event
+id: node.event.title
+field_name: title
+entity_type: node
+bundle: event
+label: Título
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

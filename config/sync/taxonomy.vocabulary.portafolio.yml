@@ -1,0 +1,8 @@
+uuid: 06806f97-7ab5-4dfd-8a76-53709cb78907
+langcode: es
+status: true
+dependencies: {  }
+name: Portafolio
+vid: portafolio
+description: 'Clasificación de servicios y clientes'
+weight: 0

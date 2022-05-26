@@ -1,0 +1,38 @@
+uuid: 99042860-527a-4c48-8fe1-e8d5de8b558b
+langcode: es
+status: true
+dependencies:
+  config:
+    - filter.format.1
+    - filter.format.2
+    - node.type.forum
+  module:
+    - comment
+    - contact
+    - filter
+    - google_analytics
+    - node
+    - path
+    - search
+    - statistics
+    - system
+_core:
+  default_config_hash: btW6TFHajhy7Eo6YUvdFiPh4TcPggo8GBXYctjV6zag
+id: authenticated
+label: 'Authenticated user'
+weight: 0
+is_admin: false
+permissions:
+  - 'access comments'
+  - 'access content'
+  - 'access user contact forms'
+  - 'create url aliases'
+  - 'delete own forum content'
+  - 'edit own forum content'
+  - 'opt-in or out of google analytics tracking'
+  - 'post comments'
+  - 'search content'
+  - 'use text format 1'
+  - 'use text format 2'
+  - 'view own unpublished content'
+  - 'view post access counter'

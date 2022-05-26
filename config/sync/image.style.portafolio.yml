@@ -1,0 +1,15 @@
+uuid: c4f2f62c-ff6f-4837-9179-e615ad178d13
+langcode: es
+status: true
+dependencies: {  }
+name: portafolio
+label: Portafolio
+effects:
+  1ce04499-8d04-4370-94c4-060c55aa59cc:
+    uuid: 1ce04499-8d04-4370-94c4-060c55aa59cc
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 290
+      height: 220
+      anchor: center-center

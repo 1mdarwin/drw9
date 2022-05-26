@@ -1,0 +1,29 @@
+uuid: 854038d2-0920-44dd-95f8-73b751e49353
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:42100e2e-4733-4846-9da8-b68b2653b48a'
+  module:
+    - block_class
+    - block_content
+  theme:
+    - drw2020
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3 weare'
+id: drw2020_footermessage
+theme: drw2020
+region: footer
+weight: -11
+provider: null
+plugin: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+settings:
+  id: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+  label: 'Quienes Somos'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: 'We are block'
+  view_mode: full
+visibility: {  }

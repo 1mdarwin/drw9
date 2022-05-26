@@ -1,0 +1,33 @@
+uuid: 8d331505-db5d-4663-9cc4-4c7d143ec222
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.comment_node_poll
+    - node.type.poll
+  module:
+    - comment
+id: node.poll.comment_node_poll
+field_name: comment_node_poll
+entity_type: node
+bundle: poll
+label: Comments
+description: ''
+required: true
+translatable: false
+default_value:
+  -
+    status: 0
+    cid: 0
+    last_comment_timestamp: 0
+    last_comment_name: null
+    last_comment_uid: 0
+    comment_count: 0
+default_value_callback: ''
+settings:
+  default_mode: 1
+  per_page: 50
+  anonymous: 0
+  form_location: false
+  preview: 2
+field_type: comment

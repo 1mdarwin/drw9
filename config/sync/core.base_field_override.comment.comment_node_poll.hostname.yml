@@ -1,0 +1,18 @@
+uuid: fbfa12a9-4c17-4f45-b042-dd51a89cc8bb
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_poll
+id: comment.comment_node_poll.hostname
+field_name: hostname
+entity_type: comment
+bundle: comment_node_poll
+label: 'Nombre del servidor'
+description: 'Nombre de equipo del autor del comentario.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\comment\Entity\Comment::getDefaultHostname'
+settings: {  }
+field_type: string

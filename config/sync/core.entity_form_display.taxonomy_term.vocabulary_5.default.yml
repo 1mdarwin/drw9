@@ -1,0 +1,69 @@
+uuid: a7dbe772-ce6b-48f9-892e-73c00e7ba18f
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.vocabulary_5.description_field
+    - field.field.taxonomy_term.vocabulary_5.name_field
+    - taxonomy.vocabulary.vocabulary_5
+  module:
+    - field_layout
+    - layout_discovery
+    - path
+    - text
+third_party_settings:
+  field_layout:
+    id: layout_onecol
+    settings:
+      label: ''
+id: taxonomy_term.vocabulary_5.default
+targetEntityType: taxonomy_term
+bundle: vocabulary_5
+mode: default
+content:
+  description_field:
+    type: text_textarea_with_summary
+    weight: 1
+    region: content
+    settings:
+      rows: 9
+      summary_rows: 3
+      placeholder: ''
+      show_summary: false
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  name:
+    type: string_textfield
+    weight: 0
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+  path:
+    type: path
+    weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  status:
+    type: boolean_checkbox
+    weight: 5
+    region: content
+    settings:
+      display_label: true
+    third_party_settings: {  }
+  translation:
+    weight: 3
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+hidden:
+  description: true
+  name_field: true

@@ -1,0 +1,21 @@
+uuid: c3440f6c-f800-4ee9-90a9-d205ab2a33a9
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatag
+    - node.type.poll
+  module:
+    - metatag
+id: node.poll.field_metatag
+field_name: field_metatag
+entity_type: node
+bundle: poll
+label: Metatags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

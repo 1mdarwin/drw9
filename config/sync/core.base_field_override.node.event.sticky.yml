@@ -1,0 +1,22 @@
+uuid: d78f98df-c8cf-4399-b65a-16aa30049d06
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.event
+id: node.event.sticky
+field_name: sticky
+entity_type: node
+bundle: event
+label: 'Fijo al comienzo de las listas'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

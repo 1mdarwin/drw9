@@ -1,0 +1,73 @@
+uuid: 0d1e9a42-4979-4712-a459-aa314213acd4
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_d7_language_content_comment_settings
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: alterFieldWidgetMigration
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Configuration
+  - Multilingual
+migration_group: migrate_drupal_7
+label: 'Drupal 7 language content comment settings'
+source:
+  plugin: d7_language_content_settings
+  constants:
+    target_type: comment
+    id_prefix: comment_node_
+    label_suffix: comment
+process:
+  target_bundle:
+    -
+      plugin: concat
+      source:
+        - constants/id_prefix
+        - type
+    -
+      plugin: static_map
+      bypass: true
+      map:
+        comment_node_forum: comment_forum
+  target_entity_type_id:
+    -
+      plugin: get
+      source: constants/target_type
+  default_langcode:
+    -
+      plugin: static_map
+      source: language_content_type
+      map:
+        0: site_default
+        1: current_interface
+        2: current_interface
+        4: current_interface
+      default_value: null
+    -
+      plugin: skip_on_empty
+      method: row
+  language_alterable:
+    -
+      plugin: static_map
+      source: language_content_type
+      map:
+        0: false
+        1: true
+        2: true
+        4: true
+  third_party_settings/content_translation/enabled:
+    -
+      plugin: content_translation_enabled_setting
+      source:
+        - language_content_type
+        - entity_translation_entity_types
+        - constants/target_type
+destination:
+  plugin: 'entity:language_content_settings'
+  content_translation_update_definitions:
+    - comment
+migration_dependencies:
+  required:
+    - upgrade_d7_comment_type
+  optional: {  }

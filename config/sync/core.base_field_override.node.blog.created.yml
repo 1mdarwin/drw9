@@ -1,0 +1,18 @@
+uuid: 61b433ab-be1f-4a95-92ef-235edd0231cb
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.blog
+id: node.blog.created
+field_name: created
+entity_type: node
+bundle: blog
+label: Fecha
+description: 'La fecha en que el nodo fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

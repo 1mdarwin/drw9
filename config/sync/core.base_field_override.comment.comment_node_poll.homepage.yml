@@ -1,0 +1,18 @@
+uuid: fea5be12-40da-40ec-a5fc-0578fc4e1e24
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_poll
+id: comment.comment_node_poll.homepage
+field_name: homepage
+entity_type: comment
+bundle: comment_node_poll
+label: 'Página principal'
+description: 'Dirección de la página del autor del comentario.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: uri

@@ -1,0 +1,23 @@
+uuid: d742c302-b960-40a2-99b6-c08f42b01d71
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.ddblock_news_item
+  module:
+    - text
+id: node.ddblock_news_item.body
+field_name: body
+entity_type: node
+bundle: ddblock_news_item
+label: Body
+description: 'News item used for a Dynamic display block slideshow.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

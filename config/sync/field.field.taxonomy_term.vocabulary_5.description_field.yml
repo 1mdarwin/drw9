@@ -1,0 +1,23 @@
+uuid: 6b08a5b9-6b5f-4089-b8ec-71aea6ebf541
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.description_field
+    - taxonomy.vocabulary.vocabulary_5
+  module:
+    - text
+id: taxonomy_term.vocabulary_5.description_field
+field_name: description_field
+entity_type: taxonomy_term
+bundle: vocabulary_5
+label: Descripción
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+field_type: text_with_summary

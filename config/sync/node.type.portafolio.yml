@@ -1,0 +1,17 @@
+uuid: ee0783c6-2126-4563-b5c3-be6731dd8fc7
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: Portafolio
+type: portafolio
+description: 'Permite incluir informacion acerca de los proyectos desarrollados, es decir un portafolio de presentacion'
+help: 'Define las actividades realizadas en el cliente<br />'
+new_revision: false
+preview_mode: 1
+display_submitted: false

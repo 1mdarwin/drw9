@@ -1,0 +1,8 @@
+uuid: 4237be97-7688-4f40-8e32-7fcd280f1de9
+langcode: es
+status: true
+dependencies: {  }
+id: comment_node_story
+label: 'Historia comment'
+target_entity_type_id: node
+description: null

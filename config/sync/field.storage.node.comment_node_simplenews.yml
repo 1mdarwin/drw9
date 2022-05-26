@@ -1,0 +1,20 @@
+uuid: 4e5bd870-54c0-4e83-a7c6-f0c82e27f828
+langcode: es
+status: true
+dependencies:
+  module:
+    - comment
+    - node
+id: node.comment_node_simplenews
+field_name: comment_node_simplenews
+entity_type: node
+type: comment
+settings:
+  comment_type: comment_node_simplenews
+module: comment
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

@@ -1,0 +1,11 @@
+uuid: a77d1b63-f2b6-4268-a00b-cc9e6e1d731a
+langcode: es
+status: true
+dependencies: {  }
+name: Encuesta
+type: poll
+description: 'A <em>poll</em> is a question with a set of possible responses. A <em>poll</em>, once created, automatically provides a simple running count of the number of votes received for each response.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

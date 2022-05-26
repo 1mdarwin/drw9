@@ -1,0 +1,21 @@
+uuid: 2a6172df-38ed-463c-a958-7976d5ff3e4c
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatag
+    - node.type.ddblock_news_item
+  module:
+    - metatag
+id: node.ddblock_news_item.field_metatag
+field_name: field_metatag
+entity_type: node
+bundle: ddblock_news_item
+label: Metatags
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

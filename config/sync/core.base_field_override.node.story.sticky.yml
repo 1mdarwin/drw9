@@ -1,0 +1,22 @@
+uuid: cc078e3f-88b5-4b06-9a05-2304bb62178b
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.story
+id: node.story.sticky
+field_name: sticky
+entity_type: node
+bundle: story
+label: 'Fijo al comienzo de las listas'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

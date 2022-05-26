@@ -1,0 +1,8 @@
+uuid: 2bd29019-0076-478e-a73e-19554781d2c1
+langcode: es
+status: true
+dependencies: {  }
+name: Secciones
+vid: vocabulary_2
+description: ''
+weight: 0

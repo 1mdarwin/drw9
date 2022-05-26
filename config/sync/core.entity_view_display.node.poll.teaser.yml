@@ -1,0 +1,23 @@
+uuid: 2455a3e0-29bb-4236-99cb-62b185d28fb7
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.teaser
+    - field.field.node.poll.upload
+    - node.type.poll
+  module:
+    - user
+id: node.poll.teaser
+targetEntityType: node
+bundle: poll
+mode: teaser
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true
+  upload: true

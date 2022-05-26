@@ -1,0 +1,22 @@
+uuid: d8d9c87e-93cc-46ad-981c-f6435e721c95
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.poll
+id: node.poll.sticky
+field_name: sticky
+entity_type: node
+bundle: poll
+label: 'Fijo al comienzo de las listas'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 0
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

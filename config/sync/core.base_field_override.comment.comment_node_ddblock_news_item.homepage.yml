@@ -1,0 +1,18 @@
+uuid: d0657aa5-305a-4ca8-af24-f1eeddff0363
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_ddblock_news_item
+id: comment.comment_node_ddblock_news_item.homepage
+field_name: homepage
+entity_type: comment
+bundle: comment_node_ddblock_news_item
+label: 'Página principal'
+description: 'Dirección de la página del autor del comentario.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: uri

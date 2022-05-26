@@ -1,0 +1,22 @@
+uuid: 50eb310b-7ac4-419f-85b7-cca22b47c769
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.portafolio
+id: node.portafolio.promote
+field_name: promote
+entity_type: node
+bundle: portafolio
+label: 'Promoted to front page'
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

@@ -1,0 +1,27 @@
+uuid: e7fd60a1-a8b2-4597-bc1b-7653d14c8435
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.main
+  module:
+    - system
+  theme:
+    - drwsolution
+_core:
+  default_config_hash: ChCx7DYNUrPTt5uiRdQAPDKJQMc-_SyAQTrZh8H0o-c
+id: drwsolution_main_menu
+theme: drwsolution
+region: navigation_collapsible
+weight: -8
+provider: null
+plugin: 'system_menu_block:main'
+settings:
+  id: 'system_menu_block:main'
+  label: 'Navegación principal'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 3
+  expand_all_items: false
+visibility: {  }

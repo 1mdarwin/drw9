@@ -1,0 +1,10 @@
+uuid: 2709cd5e-cd7b-4e0b-86b3-d666cf0f4b6d
+langcode: es
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: Q2Ra3jfoIVk0f3SjxJX61byRQFVBAbpzYDQOiY-kno8
+id: main
+label: 'Main menu'
+description: 'Los enlaces primarios se utilizan con frecuencia en el tema para mostrar las principales secciones de un sitio web. Una típica representación de los principales enlaces son las pestañas en la parte superior.'
+locked: true

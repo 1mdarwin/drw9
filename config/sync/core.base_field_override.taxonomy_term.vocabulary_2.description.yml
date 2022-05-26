@@ -1,0 +1,20 @@
+uuid: 22847018-ad3b-4867-8dbe-9809b304493b
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_2
+  module:
+    - text
+id: taxonomy_term.vocabulary_2.description
+field_name: description
+entity_type: taxonomy_term
+bundle: vocabulary_2
+label: Descripción
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

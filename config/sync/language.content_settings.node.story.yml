@@ -1,0 +1,18 @@
+uuid: 83d08609-aaf8-4b3b-a47c-a78f1cc61c70
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.story
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: node.story
+target_entity_type_id: node
+target_bundle: story
+default_langcode: site_default
+language_alterable: false

@@ -1,0 +1,26 @@
+uuid: 988cb2b3-c432-4783-9fa2-78a99b4151b3
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_tipo_porta
+    - node.type.portafolio
+    - taxonomy.vocabulary.portafolio
+id: node.portafolio.field_tipo_porta
+field_name: field_tipo_porta
+entity_type: node
+bundle: portafolio
+label: Tipo
+description: 'Clasificación del tipo de portafolio'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      portafolio: portafolio
+    sort:
+      field: _none
+field_type: entity_reference

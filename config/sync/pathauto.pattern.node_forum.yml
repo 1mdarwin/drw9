@@ -1,0 +1,21 @@
+uuid: b7e18d9c-f671-4822-91ca-ef2f313b5b4c
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node_forum
+label: 'Content - Tema del foro'
+type: 'canonical_entities:node'
+pattern: 'foros/[node:title]'
+selection_criteria:
+  -
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      forum: forum
+selection_logic: and
+weight: 0
+relationships: {  }

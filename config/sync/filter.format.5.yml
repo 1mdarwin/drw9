@@ -1,0 +1,27 @@
+uuid: 6321dc35-0020-4d05-aeca-6b31dfdea344
+langcode: es
+status: true
+dependencies: {  }
+name: 'Plain text'
+format: '5'
+weight: 1
+filters:
+  filter_autop:
+    id: filter_autop
+    provider: filter
+    status: true
+    weight: 2
+    settings: {  }
+  filter_html_escape:
+    id: filter_html_escape
+    provider: filter
+    status: true
+    weight: 0
+    settings: {  }
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: 1
+    settings:
+      filter_url_length: 72

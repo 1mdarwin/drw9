@@ -1,0 +1,50 @@
+uuid: 5b5eb4ce-6eed-4443-9613-5ea3643ebad7
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_portafolio
+    - field.field.comment.comment_node_portafolio.comment_body
+  module:
+    - field_layout
+    - layout_discovery
+    - text
+third_party_settings:
+  field_layout:
+    id: layout_onecol
+    settings:
+      label: ''
+id: comment.comment_node_portafolio.default
+targetEntityType: comment
+bundle: comment_node_portafolio
+mode: default
+content:
+  author:
+    weight: -2
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  comment_body:
+    type: text_textarea
+    weight: 0
+    region: content
+    settings:
+      rows: 5
+      placeholder: ''
+    third_party_settings: {  }
+  langcode:
+    type: language_select
+    weight: 2
+    region: content
+    settings:
+      include_locked: true
+    third_party_settings: {  }
+  subject:
+    type: string_textfield
+    weight: 10
+    region: content
+    settings:
+      size: 60
+      placeholder: ''
+    third_party_settings: {  }
+hidden: {  }

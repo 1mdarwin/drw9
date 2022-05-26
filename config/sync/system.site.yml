@@ -1,0 +1,14 @@
+_core:
+  default_config_hash: yTxtFqBHnEWxQswuWvkjE8mKw2t8oKuCL1q8KnfHuGE
+langcode: es
+uuid: 5333cc44-1652-4e0e-9351-9e4f34a8a34b
+name: 'DRW Soluciones'
+mail: darwinbc@gmail.com
+slogan: ''
+page:
+  403: /node/170
+  404: /node/171
+  front: /node
+admin_compact_mode: false
+weight_select_max: 100
+default_langcode: en

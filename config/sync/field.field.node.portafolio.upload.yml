@@ -1,0 +1,27 @@
+uuid: 5335089a-b5f5-496f-8286-1e8623001d1b
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.upload
+    - node.type.portafolio
+  module:
+    - file
+id: node.portafolio.upload
+field_name: upload
+entity_type: node
+bundle: portafolio
+label: 'File attachments'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: ''
+  file_extensions: 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'
+  max_filesize: '1 MB'
+  description_field: true
+field_type: file

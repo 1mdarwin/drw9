@@ -1,0 +1,60 @@
+uuid: b42cb325-2b92-4631-bed2-ab0ca44f5661
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_simplenews.default
+    - field.field.node.simplenews.body
+    - field.field.node.simplenews.comment_node_simplenews
+    - field.field.node.simplenews.field_blog_sn
+    - field.field.node.simplenews.field_simplenews_term
+    - node.type.simplenews
+  module:
+    - comment
+    - text
+    - user
+id: node.simplenews.default
+targetEntityType: node
+bundle: simplenews
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  comment_node_simplenews:
+    type: comment_default
+    label: hidden
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_blog_sn:
+    type: entity_reference_entity_view
+    label: above
+    settings:
+      view_mode: default
+      link: false
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_simplenews_term:
+    type: entity_reference_label
+    label: hidden
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

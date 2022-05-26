@@ -1,0 +1,44 @@
+uuid: 58d0ee41-2566-44ae-a55f-7db425d622ac
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_d7_metatag_field_instance
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: alterFieldInstanceMigration
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+migration_group: migrate_drupal_7
+label: 'Metatag field instance'
+source:
+  plugin: d7_metatag_field_instance
+  source_module: metatag
+  ignore_map: true
+  constants:
+    field_name: field_metatag
+    label: Metatags
+process:
+  entity_type:
+    -
+      plugin: get
+      source: entity_type
+  field_name:
+    -
+      plugin: get
+      source: constants/field_name
+  bundle:
+    -
+      plugin: get
+      source: bundle
+  label:
+    -
+      plugin: get
+      source: constants/label
+destination:
+  plugin: 'entity:field_config'
+migration_dependencies:
+  required:
+    - upgrade_d7_metatag_field
+    - upgrade_d7_node_type
+    - upgrade_d7_taxonomy_vocabulary
+  optional: {  }

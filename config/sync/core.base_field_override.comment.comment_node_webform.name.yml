@@ -1,0 +1,20 @@
+uuid: 1b3c67d6-ae57-4c6e-8840-c0498cc24b40
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_webform
+id: comment.comment_node_webform.name
+field_name: name
+entity_type: comment
+bundle: comment_node_webform
+label: Name
+description: 'El nombre del autor del comentario.'
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

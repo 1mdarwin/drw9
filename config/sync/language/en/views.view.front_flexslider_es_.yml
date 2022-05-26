@@ -1,0 +1,6 @@
+label: 'Front Flexslider EN'
+description: 'Sliders with frlexslider for frontpage in english'
+display:
+  block_1:
+    display_options:
+      block_description: 'Slider English'

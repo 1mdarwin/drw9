@@ -1,0 +1,20 @@
+uuid: 0b650c76-e95a-4f66-ad2c-6712382ed7e5
+langcode: es
+status: true
+dependencies:
+  theme:
+    - drw2020
+_core:
+  default_config_hash: 13GQpeITIJsp1kyPniXtWZfyFH87vb1xxJCHifL4UeE
+id: drw2020_local_actions
+theme: drw2020
+region: content
+weight: -7
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Acciones primarias de administración'
+  label_display: '0'
+  provider: core
+visibility: {  }

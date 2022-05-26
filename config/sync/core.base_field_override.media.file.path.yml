@@ -1,0 +1,20 @@
+uuid: 84b34fbf-4341-4208-ad49-a696bb985894
+langcode: es
+status: true
+dependencies:
+  config:
+    - media.type.file
+  module:
+    - path
+id: media.file.path
+field_name: path
+entity_type: media
+bundle: file
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

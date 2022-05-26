@@ -1,0 +1,27 @@
+uuid: 2b1d2682-befc-4d50-98d7-f8819b2de011
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.upload
+    - node.type.poll
+  module:
+    - file
+id: node.poll.upload
+field_name: upload
+entity_type: node
+bundle: poll
+label: 'File attachments'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: ''
+  file_extensions: 'jpg jpeg gif png txt doc xls pdf ppt pps odt ods odp'
+  max_filesize: '1 MB'
+  description_field: true
+field_type: file

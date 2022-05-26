@@ -1,0 +1,10 @@
+uuid: 2a26f763-bdb0-4907-8f6f-2a6515c125bc
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node.email_textalt
+label: email_textalt
+targetEntityType: node
+cache: true

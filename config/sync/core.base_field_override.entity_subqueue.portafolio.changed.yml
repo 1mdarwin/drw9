@@ -1,0 +1,18 @@
+uuid: 627ab7e3-6e6a-4ade-ab77-f74995f447d5
+langcode: en
+status: true
+dependencies:
+  config:
+    - entityqueue.entity_queue.portafolio
+id: entity_subqueue.portafolio.changed
+field_name: changed
+entity_type: entity_subqueue
+bundle: portafolio
+label: Changed
+description: 'The time that the subqueue was last edited.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: changed

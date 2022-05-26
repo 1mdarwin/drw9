@@ -1,0 +1,38 @@
+uuid: fb3646fc-75d7-4302-9eb5-12b77cb1fefb
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_image
+    - node.type.blog
+  module:
+    - image
+id: node.blog.field_image
+field_name: field_image
+entity_type: node
+bundle: blog
+label: Image
+description: 'Imagen que identifica al post o articulo publicado en el BLOG'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:file'
+  handler_settings: {  }
+  file_directory: 'blogs/[current-date:custom:Y]/[current-date:custom:m]'
+  file_extensions: 'png gif jpg jpeg'
+  max_filesize: ''
+  max_resolution: ''
+  min_resolution: ''
+  alt_field: true
+  alt_field_required: true
+  title_field: false
+  title_field_required: false
+  default_image:
+    uuid: ''
+    alt: ''
+    title: ''
+    width: null
+    height: null
+field_type: image

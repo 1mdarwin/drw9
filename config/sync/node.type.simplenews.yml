@@ -1,0 +1,11 @@
+uuid: 3cb66abd-c1a1-49db-ad20-0b47923bbe50
+langcode: es
+status: true
+dependencies: {  }
+name: 'Simplenews newsletter'
+type: simplenews
+description: 'A newsletter issue to be sent to subscribed email addresses.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

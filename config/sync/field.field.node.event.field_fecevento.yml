@@ -1,0 +1,21 @@
+uuid: a87508af-ff7c-4dcf-ac51-04a134643363
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_fecevento
+    - node.type.event
+  module:
+    - datetime
+id: node.event.field_fecevento
+field_name: field_fecevento
+entity_type: node
+bundle: event
+label: Fecha
+description: 'Fecha de Inicio del evento'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: datetime

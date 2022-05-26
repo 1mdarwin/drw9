@@ -1,0 +1,17 @@
+uuid: a1c19fee-3dc4-49ee-af94-85af66d62dc5
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus: {  }
+    parent: ''
+name: 'Entrada de blog'
+type: blog
+description: 'Una <em>entrada de blog</em> es un mensaje individual en un diario en línea, o <em>blog</em>.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

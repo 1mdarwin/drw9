@@ -1,0 +1,8 @@
+uuid: dde99e7f-1cc7-47e3-9aed-d4d7c1ff9257
+langcode: es
+status: true
+dependencies: {  }
+name: Empresa
+vid: vocabulary_5
+description: 'Vocabulario acerca de los terminos manejados en la empresa'
+weight: 0

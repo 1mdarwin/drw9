@@ -1,0 +1,40 @@
+uuid: a92450c6-d819-4d88-9572-375d50d9108f
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.token
+    - field.field.node.portafolio.body
+    - field.field.node.portafolio.field_imagen_porta
+    - field.field.node.portafolio.field_tipo_porta
+    - field.field.node.portafolio.field_url_porta
+    - field.field.node.portafolio.upload
+    - node.type.portafolio
+  module:
+    - image
+    - user
+id: node.portafolio.token
+targetEntityType: node
+bundle: portafolio
+mode: token
+content:
+  field_imagen_porta:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  body: true
+  field_tipo_porta: true
+  field_url_porta: true
+  langcode: true
+  upload: true

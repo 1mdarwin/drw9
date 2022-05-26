@@ -1,0 +1,29 @@
+uuid: a91a2959-fed5-40b9-ad90-3e9904410bfc
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:42100e2e-4733-4846-9da8-b68b2653b48a'
+  module:
+    - block_class
+    - block_content
+  theme:
+    - drwsolution
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
+id: footermessage
+theme: drwsolution
+region: footer
+weight: 0
+provider: null
+plugin: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+settings:
+  id: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+  label: 'Footer message'
+  label_display: '0'
+  provider: block_content
+  status: true
+  info: ''
+  view_mode: full
+visibility: {  }

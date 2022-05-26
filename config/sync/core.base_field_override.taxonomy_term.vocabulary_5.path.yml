@@ -1,0 +1,20 @@
+uuid: b23c4fc4-79d5-44f9-98bb-7c9c226c9011
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_5
+  module:
+    - path
+id: taxonomy_term.vocabulary_5.path
+field_name: path
+entity_type: taxonomy_term
+bundle: vocabulary_5
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

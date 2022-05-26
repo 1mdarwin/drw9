@@ -1,0 +1,20 @@
+uuid: b18fb7fa-4906-48f9-b24c-762d22c209da
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_ddblock_news_item
+id: comment.comment_node_ddblock_news_item.name
+field_name: name
+entity_type: comment
+bundle: comment_node_ddblock_news_item
+label: Name
+description: 'El nombre del autor del comentario.'
+required: false
+translatable: false
+default_value:
+  -
+    value: ''
+default_value_callback: ''
+settings: {  }
+field_type: string

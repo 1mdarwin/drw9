@@ -1,0 +1,18 @@
+uuid: 02556156-1941-4291-8bee-36cda3d8f4ca
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.portafolio
+id: taxonomy_term.portafolio.changed
+field_name: changed
+entity_type: taxonomy_term
+bundle: portafolio
+label: Modificado
+description: 'La fecha en que el término fue creado por última vez.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: changed

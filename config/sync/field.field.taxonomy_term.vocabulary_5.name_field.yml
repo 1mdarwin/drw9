@@ -1,0 +1,19 @@
+uuid: 958d160c-b981-45a2-940b-3b51db848333
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.taxonomy_term.name_field
+    - taxonomy.vocabulary.vocabulary_5
+id: taxonomy_term.vocabulary_5.name_field
+field_name: name_field
+entity_type: taxonomy_term
+bundle: vocabulary_5
+label: Nombre
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

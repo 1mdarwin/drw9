@@ -1,0 +1,18 @@
+uuid: a98ab5fa-1e2f-418b-8f11-e7f72d6e4b38
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_2
+id: taxonomy_term.vocabulary_2.metatag
+field_name: metatag
+entity_type: taxonomy_term
+bundle: vocabulary_2
+label: 'Meta etiquetas'
+description: 'The meta tags for the entity.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: map

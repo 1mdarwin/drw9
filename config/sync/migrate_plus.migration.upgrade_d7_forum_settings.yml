@@ -1,0 +1,57 @@
+uuid: cc4d5fb1-6a12-4e56-b2d3-966ac83cdd8d
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_d7_forum_settings
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: alterFieldWidgetMigration
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Configuration
+migration_group: migrate_drupal_7
+label: 'Forum configuration'
+source:
+  plugin: variable
+  variables:
+    - forum_hot_topic
+    - forum_per_page
+    - forum_order
+    - forum_block_num_active
+    - forum_block_num_new
+    - forum_nav_vocabulary
+  source_module: forum
+process:
+  block/active/limit:
+    -
+      plugin: get
+      source: forum_block_num_active
+  block/new/limit:
+    -
+      plugin: get
+      source: forum_block_num_new
+  topics/hot_threshold:
+    -
+      plugin: get
+      source: forum_hot_topic
+  topics/page_limit:
+    -
+      plugin: get
+      source: forum_per_page
+  topics/order:
+    -
+      plugin: get
+      source: forum_order
+  vocabulary:
+    -
+      plugin: migration_lookup
+      migration: upgrade_d7_taxonomy_vocabulary
+      source: forum_nav_vocabulary
+destination:
+  plugin: config
+  config_name: forum.settings
+migration_dependencies:
+  required:
+    - upgrade_d7_taxonomy_vocabulary
+  optional:
+    - upgrade_d7_taxonomy_vocabulary

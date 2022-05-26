@@ -1,0 +1,8 @@
+uuid: 6d597d26-88db-4fa6-b189-0c77e1ca6d9e
+langcode: es
+status: true
+dependencies: {  }
+id: comment_node_faq
+label: 'FAQ comment'
+target_entity_type_id: node
+description: null

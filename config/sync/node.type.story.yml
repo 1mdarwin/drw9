@@ -1,0 +1,11 @@
+uuid: de18260b-d439-4b2b-9062-5fa59d4a3707
+langcode: es
+status: true
+dependencies: {  }
+name: Historia
+type: story
+description: 'Una <em>historia</em>, con estructura similar a una <em>página</em>, es ideal para crear y mostrar contenido que informa a los visitantes del sitio. Notas de prensa, anuncios del sitio, y entradas informales de una bitácora puden ser creadas con una <em>historia</em>. Por defecto, una <em>historia</em> es ubicada automáticamente en la página inicial del sitio, y permite enviar comentarios.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

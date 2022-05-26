@@ -1,0 +1,14 @@
+uuid: 0abd1ad7-fd3c-462a-88f2-10d326d4c87f
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.foros
+  module:
+    - user
+id: user_add_role_action.foros
+label: 'Añade el rol foros al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_add_role_action
+configuration:
+  rid: foros

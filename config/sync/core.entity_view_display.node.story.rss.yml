@@ -1,0 +1,33 @@
+uuid: d8d35735-1871-4731-8a00-8227dbe32f78
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.rss
+    - field.field.node.story.body
+    - field.field.node.story.upload
+    - node.type.story
+  module:
+    - file
+    - user
+id: node.story.rss
+targetEntityType: node
+bundle: story
+mode: rss
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  upload:
+    type: file_table
+    label: hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  langcode: true

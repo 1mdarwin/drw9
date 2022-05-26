@@ -1,0 +1,40 @@
+uuid: 64448143-2bac-4ddf-8618-5d18b30fa2e3
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.search_index
+    - field.field.node.portafolio.body
+    - field.field.node.portafolio.field_imagen_porta
+    - field.field.node.portafolio.field_tipo_porta
+    - field.field.node.portafolio.field_url_porta
+    - field.field.node.portafolio.upload
+    - node.type.portafolio
+  module:
+    - image
+    - user
+id: node.portafolio.search_index
+targetEntityType: node
+bundle: portafolio
+mode: search_index
+content:
+  field_imagen_porta:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  body: true
+  field_tipo_porta: true
+  field_url_porta: true
+  langcode: true
+  upload: true

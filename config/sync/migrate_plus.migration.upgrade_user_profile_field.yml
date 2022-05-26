@@ -1,0 +1,64 @@
+uuid: 16895d1a-1e94-4176-aed7-c5b06bf0bd67
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_user_profile_field
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 6'
+  - 'Drupal 7'
+  - Configuration
+migration_group: migrate_drupal_7
+label: 'User profile field configuration'
+source:
+  plugin: profile_field
+  constants:
+    entity_type: user
+process:
+  entity_type:
+    -
+      plugin: get
+      source: constants/entity_type
+  field_name:
+    -
+      plugin: machine_name
+      source: name
+    -
+      plugin: make_unique_entity_field
+      length: 30
+      entity_type: field_storage_config
+      field: field_name
+  type:
+    -
+      plugin: static_map
+      source: type
+      map:
+        checkbox: boolean
+        date: datetime
+        list: text
+        selection: list_string
+        textfield: text
+        textarea: text_long
+        url: link
+  settings:
+    -
+      plugin: profile_field_settings
+      source: type
+  settings/allowed_values:
+    -
+      plugin: get
+      source: options
+  cardinality:
+    -
+      plugin: static_map
+      default_value: 1
+      source: type
+      map:
+        list: -1
+destination:
+  plugin: 'entity:field_storage_config'
+migration_dependencies:
+  required: {  }
+  optional: {  }

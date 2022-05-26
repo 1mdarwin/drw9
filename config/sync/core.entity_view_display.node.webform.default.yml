@@ -1,0 +1,32 @@
+uuid: a2b5ec24-5bc8-42a7-85ff-707b44a6812f
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_webform.default
+    - field.field.node.webform.comment_node_webform
+    - node.type.webform
+  module:
+    - comment
+    - user
+id: node.webform.default
+targetEntityType: node
+bundle: webform
+mode: default
+content:
+  comment_node_webform:
+    type: comment_default
+    label: hidden
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  langcode: true

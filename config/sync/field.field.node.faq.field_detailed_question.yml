@@ -1,0 +1,21 @@
+uuid: 902261d3-d530-46e9-ad56-1d13b48701b3
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_detailed_question
+    - node.type.faq
+  module:
+    - text
+id: node.faq.field_detailed_question
+field_name: field_detailed_question
+entity_type: node
+bundle: faq
+label: 'Detailed question'
+description: 'Enter the detailed question text'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: text_long

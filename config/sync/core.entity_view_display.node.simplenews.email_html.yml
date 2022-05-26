@@ -1,0 +1,27 @@
+uuid: ad1e6f61-822e-4511-89e8-7cb37f9d4f86
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.email_html
+    - field.field.node.simplenews.body
+    - field.field.node.simplenews.field_blog_sn
+    - field.field.node.simplenews.field_simplenews_term
+    - node.type.simplenews
+  module:
+    - user
+id: node.simplenews.email_html
+targetEntityType: node
+bundle: simplenews
+mode: email_html
+content:
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden:
+  body: true
+  field_blog_sn: true
+  field_simplenews_term: true
+  langcode: true

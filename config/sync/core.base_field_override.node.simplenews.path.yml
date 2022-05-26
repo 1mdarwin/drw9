@@ -1,0 +1,20 @@
+uuid: 623f4039-cdf6-4302-a40f-a3d7d00d9dfe
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.simplenews
+  module:
+    - path
+id: node.simplenews.path
+field_name: path
+entity_type: node
+bundle: simplenews
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

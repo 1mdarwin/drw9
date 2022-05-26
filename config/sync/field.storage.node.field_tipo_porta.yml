@@ -1,0 +1,20 @@
+uuid: 06f828d6-1129-4163-8d9e-9bb16b5ed16d
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+    - taxonomy
+id: node.field_tipo_porta
+field_name: field_tipo_porta
+entity_type: node
+type: entity_reference
+settings:
+  target_type: taxonomy_term
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

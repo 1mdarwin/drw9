@@ -1,0 +1,20 @@
+uuid: dd89cc0b-499c-44b9-95fd-90d291bc2a16
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_2
+  module:
+    - path
+id: taxonomy_term.vocabulary_2.path
+field_name: path
+entity_type: taxonomy_term
+bundle: vocabulary_2
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

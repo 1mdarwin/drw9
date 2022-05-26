@@ -1,0 +1,28 @@
+uuid: a2b269f8-e79f-4b52-aefe-5b24c7017a21
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.taxonomy_vocabulary_5
+    - node.type.page
+    - taxonomy.vocabulary.vocabulary_5
+id: node.page.taxonomy_vocabulary_5
+field_name: taxonomy_vocabulary_5
+entity_type: node
+bundle: page
+label: Empresa
+description: ''
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      vocabulary_5: vocabulary_5
+    sort:
+      field: _none
+    auto_create: false
+    auto_create_bundle: ''
+field_type: entity_reference

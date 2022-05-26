@@ -1,0 +1,15 @@
+uuid: fce90d9d-bd5b-4540-931b-a3b8f4575614
+langcode: es
+status: true
+dependencies: {  }
+name: recortar200
+label: recortar200
+effects:
+  3ad75a80-b11f-4a2f-926e-069f127d677a:
+    uuid: 3ad75a80-b11f-4a2f-926e-069f127d677a
+    id: image_scale
+    weight: 1
+    data:
+      width: 200
+      height: null
+      upscale: false

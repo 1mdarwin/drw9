@@ -1,0 +1,23 @@
+uuid: a91b1ed2-d0e2-4e01-a647-37021b0d5fbd
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.blog
+  module:
+    - text
+id: node.blog.body
+field_name: body
+entity_type: node
+bundle: blog
+label: Cuerpo
+description: 'Una <em>entrada de blog</em> es un mensaje individual en un diario en línea, o <em>blog</em>.'
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

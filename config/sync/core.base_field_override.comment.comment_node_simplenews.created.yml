@@ -1,0 +1,18 @@
+uuid: fe8dc59e-afaf-44d3-997e-e15fe5574f18
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_simplenews
+id: comment.comment_node_simplenews.created
+field_name: created
+entity_type: comment
+bundle: comment_node_simplenews
+label: Creado
+description: 'Fecha en que el comentario fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

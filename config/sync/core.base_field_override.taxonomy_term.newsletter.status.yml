@@ -1,0 +1,22 @@
+uuid: 641ab798-a4f5-44e8-b27b-1e5b4b8f470d
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.newsletter
+id: taxonomy_term.newsletter.status
+field_name: status
+entity_type: taxonomy_term
+bundle: newsletter
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

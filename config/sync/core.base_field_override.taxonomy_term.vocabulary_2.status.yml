@@ -1,0 +1,22 @@
+uuid: 94a73269-ff10-4192-a122-1c59fcf183f5
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_2
+id: taxonomy_term.vocabulary_2.status
+field_name: status
+entity_type: taxonomy_term
+bundle: vocabulary_2
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

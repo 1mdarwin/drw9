@@ -1,0 +1,61 @@
+uuid: 56a5d50b-faa9-4302-83c8-645a820180ea
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.rss
+    - field.field.node.ddblock_news_item.body
+    - field.field.node.ddblock_news_item.field_image
+    - field.field.node.ddblock_news_item.field_pager_item_text
+    - field.field.node.ddblock_news_item.field_slide_text
+    - field.field.node.ddblock_news_item.field_url
+    - field.field.node.ddblock_news_item.upload
+    - node.type.ddblock_news_item
+  module:
+    - file
+    - user
+id: node.ddblock_news_item.rss
+targetEntityType: node
+bundle: ddblock_news_item
+mode: rss
+content:
+  field_pager_item_text:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: -4
+    region: content
+  field_slide_text:
+    type: basic_string
+    label: above
+    settings: {  }
+    third_party_settings: {  }
+    weight: -2
+    region: content
+  field_url:
+    type: string
+    label: above
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  upload:
+    type: file_table
+    label: hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  field_image: true
+  langcode: true

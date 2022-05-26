@@ -1,0 +1,15 @@
+uuid: 5ce85a47-8db8-40c8-a955-0ab3fda2c4b8
+langcode: es
+status: true
+dependencies: {  }
+name: redimensionar64x64
+label: Redimensionar64x64
+effects:
+  548cf71c-c45f-49fb-8c85-50c2a1a8e0c1:
+    uuid: 548cf71c-c45f-49fb-8c85-50c2a1a8e0c1
+    id: image_scale_and_crop
+    weight: 1
+    data:
+      width: 64
+      height: 64
+      anchor: center-center

@@ -1,0 +1,18 @@
+uuid: dc522736-0ce7-4006-9feb-f0f11cf3c387
+langcode: en
+status: true
+dependencies:
+  config:
+    - entityqueue.entity_queue.portafolio
+id: entity_subqueue.portafolio.title
+field_name: title
+entity_type: entity_subqueue
+bundle: portafolio
+label: Title
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,20 @@
+uuid: 6c932b93-63ca-40cb-87da-e00e8f9b70ca
+langcode: es
+status: true
+dependencies:
+  module:
+    - menu_ui
+third_party_settings:
+  menu_ui:
+    available_menus:
+      - main
+    parent: 'main:'
+_core:
+  default_config_hash: AeW1SEDgb1OTQACAWGhzvMknMYAJlcZu0jljfeU3oso
+name: Artículo
+type: article
+description: 'Use los <em>artículos</em> para contenido que tenga relevancia temporal como las noticias o las publicaciones en blogs.'
+help: ''
+new_revision: true
+preview_mode: 1
+display_submitted: true

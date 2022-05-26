@@ -1,0 +1,80 @@
+uuid: 209c7a9b-9353-4b16-81b8-7935a6a88e1a
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_portafolio.default
+    - field.field.node.portafolio.body
+    - field.field.node.portafolio.comment_node_portafolio
+    - field.field.node.portafolio.field_imagen_porta
+    - field.field.node.portafolio.field_metatag
+    - field.field.node.portafolio.field_tipo_porta
+    - field.field.node.portafolio.field_url_porta
+    - field.field.node.portafolio.upload
+    - node.type.portafolio
+  module:
+    - comment
+    - file
+    - image
+    - link
+    - text
+    - user
+id: node.portafolio.default
+targetEntityType: node
+bundle: portafolio
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+  comment_node_portafolio:
+    type: comment_default
+    label: hidden
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  field_imagen_porta:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  field_url_porta:
+    type: link
+    label: hidden
+    settings:
+      trim_length: 80
+      url_only: false
+      url_plain: false
+      rel: ''
+      target: ''
+    third_party_settings: {  }
+    weight: 1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 5
+    region: content
+  upload:
+    type: file_table
+    label: hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 3
+    region: content
+hidden:
+  field_metatag: true
+  field_tipo_porta: true
+  langcode: true

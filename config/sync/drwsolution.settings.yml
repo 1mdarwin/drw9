@@ -1,0 +1,39 @@
+langcode: es
+favicon:
+  mimetype: image/vnd.microsoft.icon
+  path: ''
+  url: 'http://d8test.local.drw/themes/custom/drwsolution/favicon.ico'
+  use_default: true
+features:
+  comment_user_picture: true
+  comment_user_verification: true
+  favicon: true
+  node_user_picture: true
+logo:
+  path: ''
+  url: ''
+  use_default: true
+schemas:
+  bootstrap: 8000
+  drwsolution: 8000
+table_responsive: '-1'
+cdn_provider: ''
+cdn_theme: ''
+cdn_cache_ttl_versions: 0
+cdn_cache_ttl_themes: 0
+cdn_cache_ttl_assets: 0
+cdn_cache_ttl_library: 0
+reset_http_request_cache: ''
+table: ''
+navbar_position: ''
+region_wells:
+  navigation: ''
+  navigation_collapsible: ''
+  header: ''
+  highlighted: ''
+  myregion: ''
+  help: ''
+  content: ''
+  sidebar_first: ''
+  sidebar_second: ''
+  footer: ''

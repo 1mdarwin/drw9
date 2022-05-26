@@ -1,0 +1,26 @@
+uuid: 2ac5fe63-84cc-4633-bdfa-c05ead409ac9
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.field.taxonomy_term.vocabulary_5.description_field
+    - field.field.taxonomy_term.vocabulary_5.name_field
+    - taxonomy.vocabulary.vocabulary_5
+  module:
+    - text
+id: taxonomy_term.vocabulary_5.default
+targetEntityType: taxonomy_term
+bundle: vocabulary_5
+mode: default
+content:
+  description:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  description_field: true
+  langcode: true
+  name_field: true

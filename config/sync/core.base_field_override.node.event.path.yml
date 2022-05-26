@@ -1,0 +1,20 @@
+uuid: 9ab056cf-7a04-4309-b2f9-ab1e03bd7cfa
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.event
+  module:
+    - path
+id: node.event.path
+field_name: path
+entity_type: node
+bundle: event
+label: 'Alias de URL'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: path

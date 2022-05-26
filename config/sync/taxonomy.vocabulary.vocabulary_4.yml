@@ -1,0 +1,8 @@
+uuid: 97bb4223-5b03-435e-8ca5-074a0722eff0
+langcode: es
+status: true
+dependencies: {  }
+name: 'Web Links'
+vid: vocabulary_4
+description: 'Categoria de enlaces a otros Sitios Web'
+weight: 0

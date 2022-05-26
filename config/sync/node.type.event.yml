@@ -1,0 +1,11 @@
+uuid: 4fb30e51-9595-43c4-8fe3-be4c2f6acc81
+langcode: es
+status: true
+dependencies: {  }
+name: Event
+type: event
+description: 'Events have a start date and an optional end date as well as a teaser and a body. They can be extended by other modules, too.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

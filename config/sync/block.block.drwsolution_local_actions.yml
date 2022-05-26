@@ -1,0 +1,20 @@
+uuid: 986974dc-f383-40c5-bdc6-bb4a16455210
+langcode: es
+status: true
+dependencies:
+  theme:
+    - drwsolution
+_core:
+  default_config_hash: 13GQpeITIJsp1kyPniXtWZfyFH87vb1xxJCHifL4UeE
+id: drwsolution_local_actions
+theme: drwsolution
+region: content
+weight: -4
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Acciones primarias de administración'
+  label_display: '0'
+  provider: core
+visibility: {  }

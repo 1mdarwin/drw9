@@ -1,0 +1,18 @@
+uuid: 0a448b1a-4e64-408a-9b71-4327027f7cf4
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_webform
+id: comment.comment_node_webform.subject
+field_name: subject
+entity_type: comment
+bundle: comment_node_webform
+label: Asunto
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

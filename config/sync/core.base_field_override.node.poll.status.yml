@@ -1,0 +1,22 @@
+uuid: 59e515a7-5551-47da-b0ab-0b19def12a06
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.poll
+id: node.poll.status
+field_name: status
+entity_type: node
+bundle: poll
+label: Published
+description: ''
+required: false
+translatable: false
+default_value:
+  -
+    value: 1
+default_value_callback: ''
+settings:
+  on_label: 'On'
+  off_label: 'Off'
+field_type: boolean

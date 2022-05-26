@@ -1,0 +1,22 @@
+uuid: a10ceae7-4035-4954-bc07-c0ab94704a0e
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_pager_item_text
+    - node.type.ddblock_news_item
+id: node.ddblock_news_item.field_pager_item_text
+field_name: field_pager_item_text
+entity_type: node
+bundle: ddblock_news_item
+label: 'Pager item text'
+description: 'Used for the text of a pager_item.'
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+    _error_element: 'default_value_widget][field_pager_item_text][0][value'
+default_value_callback: ''
+settings: {  }
+field_type: string

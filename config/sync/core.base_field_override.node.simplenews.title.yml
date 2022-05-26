@@ -1,0 +1,18 @@
+uuid: 8e374f51-fb24-4afc-bf1e-f7f5835e18e6
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.simplenews
+id: node.simplenews.title
+field_name: title
+entity_type: node
+bundle: simplenews
+label: Title
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

@@ -1,0 +1,20 @@
+uuid: 32fc0c57-a668-4cc4-90cd-05e521c88d4d
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_rol
+  module:
+    - user
+id: user.user.field_rol
+field_name: field_rol
+entity_type: user
+bundle: user
+label: Rol
+description: 'Rol que desempeña en su trabajo (Gerente, Diseñador, Desarrollador, Secretaria, Diseñador Gráfico, Arquitecto)'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

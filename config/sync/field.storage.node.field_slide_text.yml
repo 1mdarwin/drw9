@@ -1,0 +1,19 @@
+uuid: 71ac8106-9c0a-491e-b86f-b7fbd733aeec
+langcode: und
+status: true
+dependencies:
+  module:
+    - node
+id: node.field_slide_text
+field_name: field_slide_text
+entity_type: node
+type: string_long
+settings:
+  case_sensitive: false
+module: core
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

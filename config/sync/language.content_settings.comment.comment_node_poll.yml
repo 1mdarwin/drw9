@@ -1,0 +1,18 @@
+uuid: 664caf4d-fe50-4f43-b5f5-b04a9cebea0d
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_poll
+  module:
+    - content_translation
+third_party_settings:
+  content_translation:
+    enabled: false
+    bundle_settings:
+      untranslatable_fields_hide: '0'
+id: comment.comment_node_poll
+target_entity_type_id: comment
+target_bundle: comment_node_poll
+default_langcode: site_default
+language_alterable: false

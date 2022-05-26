@@ -1,0 +1,21 @@
+uuid: deb9297c-41d8-4656-abc3-b5102a75637e
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node_story
+label: 'Content - Historia'
+type: 'canonical_entities:node'
+pattern: 'articulos/[node:title]'
+selection_criteria:
+  -
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      story: story
+selection_logic: and
+weight: 0
+relationships: {  }

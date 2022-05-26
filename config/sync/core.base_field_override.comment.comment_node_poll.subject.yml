@@ -1,0 +1,18 @@
+uuid: 59ee3f3a-e4fd-498d-b7ec-894081c7fba1
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_poll
+id: comment.comment_node_poll.subject
+field_name: subject
+entity_type: comment
+bundle: comment_node_poll
+label: Asunto
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

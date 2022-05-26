@@ -1,0 +1,14 @@
+uuid: e79b5b57-dab9-498a-87df-2f6cd85a84ea
+langcode: es
+status: true
+dependencies:
+  config:
+    - user.role.foros
+  module:
+    - user
+id: user_remove_role_action.foros
+label: 'Elimina el rol foros al(los) usuario(s) seleccionado(s)'
+type: user
+plugin: user_remove_role_action
+configuration:
+  rid: foros

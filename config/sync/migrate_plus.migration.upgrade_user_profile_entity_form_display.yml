@@ -1,0 +1,94 @@
+uuid: 0df380d8-bde8-497c-8194-6274a1006846
+langcode: es
+status: true
+dependencies: {  }
+id: upgrade_user_profile_entity_form_display
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 6'
+  - 'Drupal 7'
+  - Configuration
+migration_group: migrate_drupal_7
+label: 'User profile form display configuration'
+source:
+  plugin: profile_field
+  constants:
+    empty: {  }
+    entity_type: user
+    bundle: user
+    form_mode: default
+process:
+  entity_type:
+    -
+      plugin: get
+      source: constants/entity_type
+  bundle:
+    -
+      plugin: get
+      source: constants/bundle
+  field_name:
+    -
+      plugin: migration_lookup
+      migration: upgrade_user_profile_field
+      source: fid
+    -
+      plugin: skip_on_empty
+      method: row
+    -
+      plugin: extract
+      index:
+        - 1
+  form_mode:
+    -
+      plugin: get
+      source: constants/form_mode
+  type:
+    -
+      plugin: static_map
+      source: type
+      map:
+        checkbox: boolean_checkbox
+        date: datetime_default
+        list: text_textfield
+        selection: options_select
+        textfield: text_textfield
+        textarea: text_textarea
+        url: link_default
+  options:
+    -
+      plugin: get
+      source: constants/options
+  options/type:
+    -
+      plugin: get
+      source: '@type'
+  options/settings:
+    -
+      plugin: field_instance_widget_settings
+      source:
+        - '@type'
+        - constants/empty
+  options/settings/display_label:
+    -
+      plugin: static_map
+      default_value: false
+      source: type
+      map:
+        checkbox: true
+  hidden:
+    -
+      plugin: static_map
+      source: visibility
+      default_value: false
+      map:
+        1: true
+        4: true
+destination:
+  plugin: component_entity_form_display
+migration_dependencies:
+  required:
+    - upgrade_user_profile_field_instance
+  optional:
+    - upgrade_user_profile_field

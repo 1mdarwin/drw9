@@ -1,0 +1,48 @@
+uuid: f390f965-9e95-4fd5-a77f-9b76fda770f8
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_mode.node.rss
+    - field.field.node.portafolio.body
+    - field.field.node.portafolio.field_imagen_porta
+    - field.field.node.portafolio.field_tipo_porta
+    - field.field.node.portafolio.field_url_porta
+    - field.field.node.portafolio.upload
+    - node.type.portafolio
+  module:
+    - file
+    - image
+    - user
+id: node.portafolio.rss
+targetEntityType: node
+bundle: portafolio
+mode: rss
+content:
+  field_imagen_porta:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+    third_party_settings: {  }
+    weight: -1
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  upload:
+    type: file_table
+    label: hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  body: true
+  field_tipo_porta: true
+  field_url_porta: true
+  langcode: true

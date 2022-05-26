@@ -1,0 +1,26 @@
+uuid: b7f4e939-94e8-42e5-b0a4-99ea2a0555bb
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.taxonomy_vocabulary_3
+    - node.type.blog
+    - taxonomy.vocabulary.vocabulary_3
+id: node.blog.taxonomy_vocabulary_3
+field_name: taxonomy_vocabulary_3
+entity_type: node
+bundle: blog
+label: Tags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      vocabulary_3: vocabulary_3
+    sort:
+      field: _none
+field_type: entity_reference

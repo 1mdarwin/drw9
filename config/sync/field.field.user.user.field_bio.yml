@@ -1,0 +1,23 @@
+uuid: 49294c79-a542-4f8d-ad81-e8e1df3dfe38
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.user.field_bio
+  module:
+    - text
+    - user
+id: user.user.field_bio
+field_name: field_bio
+entity_type: user
+bundle: user
+label: Bio
+description: 'Biografía del autor'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: false
+  required_summary: false
+field_type: text_with_summary

@@ -1,0 +1,18 @@
+uuid: 297da2e0-330b-40aa-97b2-cc36bd07ab92
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_simplenews
+id: comment.comment_node_simplenews.changed
+field_name: changed
+entity_type: comment
+bundle: comment_node_simplenews
+label: Modificado
+description: 'Fecha en que el comentario fue editado por última vez.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: changed

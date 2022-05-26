@@ -1,0 +1,18 @@
+uuid: 6eb7a340-4ac3-4629-916a-ff882831cc32
+langcode: en
+status: true
+dependencies:
+  config:
+    - entityqueue.entity_queue.portafolio
+id: entity_subqueue.portafolio.created
+field_name: created
+entity_type: entity_subqueue
+bundle: portafolio
+label: 'Authored on'
+description: 'The time that the subqueue was created.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

@@ -1,0 +1,22 @@
+uuid: 8ad97c23-5a3a-4f58-98d8-2ea6fcfc4173
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - drw2020
+_core:
+  default_config_hash: oXUb3JZR2WW5VOdw4HrhRicCsq51mCgLfRyvheG68ck
+id: drw2020_breadcrumbs
+theme: drw2020
+region: navigation_collapsible
+weight: -8
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: 'Enlaces de ayuda a la navegación'
+  label_display: '0'
+  provider: system
+visibility: {  }

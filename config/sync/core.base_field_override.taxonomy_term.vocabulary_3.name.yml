@@ -1,0 +1,18 @@
+uuid: d816ff79-5554-456d-ad6b-08b6c84426af
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_3
+id: taxonomy_term.vocabulary_3.name
+field_name: name
+entity_type: taxonomy_term
+bundle: vocabulary_3
+label: Name
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

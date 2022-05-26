@@ -1,0 +1,19 @@
+uuid: 130a2870-31b8-4b68-a3f4-b8f2e0c1031d
+langcode: und
+status: true
+dependencies:
+  module:
+    - link
+    - node
+id: node.field_url_porta
+field_name: field_url_porta
+entity_type: node
+type: link
+settings: {  }
+module: link
+locked: false
+cardinality: 1
+translatable: true
+indexes: {  }
+persist_with_no_fields: false
+custom_storage: false

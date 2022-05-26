@@ -1,0 +1,22 @@
+uuid: 65223157-f8dd-4377-8a59-1effce2d91f5
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_slide_text
+    - node.type.ddblock_news_item
+id: node.ddblock_news_item.field_slide_text
+field_name: field_slide_text
+entity_type: node
+bundle: ddblock_news_item
+label: 'Slide text'
+description: 'Used for the text on a slide.'
+required: false
+translatable: true
+default_value:
+  -
+    value: ''
+    _error_element: 'default_value_widget][field_slide_text][0][value'
+default_value_callback: ''
+settings: {  }
+field_type: string_long

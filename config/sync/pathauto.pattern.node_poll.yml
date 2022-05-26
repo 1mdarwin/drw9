@@ -1,0 +1,21 @@
+uuid: a578a8b0-58ef-43b8-93c0-481d28fc1d5d
+langcode: es
+status: true
+dependencies:
+  module:
+    - node
+id: node_poll
+label: 'Content - Encuesta'
+type: 'canonical_entities:node'
+pattern: 'encuesta/[current-date:custom:Y]-[current-date:custom:m]/[node:title]'
+selection_criteria:
+  -
+    id: 'entity_bundle:node'
+    negate: false
+    context_mapping:
+      node: node
+    bundles:
+      poll: poll
+selection_logic: and
+weight: 0
+relationships: {  }

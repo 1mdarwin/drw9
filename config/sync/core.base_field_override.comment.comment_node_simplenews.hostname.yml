@@ -1,0 +1,18 @@
+uuid: 80254a73-39c7-4614-8875-82b832d313c4
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_simplenews
+id: comment.comment_node_simplenews.hostname
+field_name: hostname
+entity_type: comment
+bundle: comment_node_simplenews
+label: 'Nombre del servidor'
+description: 'Nombre de equipo del autor del comentario.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\comment\Entity\Comment::getDefaultHostname'
+settings: {  }
+field_type: string

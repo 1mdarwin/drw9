@@ -1,0 +1,18 @@
+uuid: 00029bf6-0fac-479f-961a-c50f6c157e39
+langcode: es
+status: true
+dependencies:
+  config:
+    - taxonomy.vocabulary.vocabulary_4
+id: taxonomy_term.vocabulary_4.name
+field_name: name
+entity_type: taxonomy_term
+bundle: vocabulary_4
+label: Name
+description: ''
+required: true
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

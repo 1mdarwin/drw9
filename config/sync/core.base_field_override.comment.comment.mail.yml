@@ -1,0 +1,18 @@
+uuid: a3831ac4-bd5f-4941-953b-df24993ec5a1
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment
+id: comment.comment.mail
+field_name: mail
+entity_type: comment
+bundle: comment
+label: 'Correo electrónico'
+description: 'La dirección de correo electrónico del autor del comentario.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: email

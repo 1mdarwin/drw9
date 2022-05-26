@@ -1,0 +1,18 @@
+uuid: bc676f5d-1cd8-422c-be93-2402547d4aa4
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.poll
+id: node.poll.created
+field_name: created
+entity_type: node
+bundle: poll
+label: Fecha
+description: 'La fecha en que el nodo fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

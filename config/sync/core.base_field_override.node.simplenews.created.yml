@@ -1,0 +1,18 @@
+uuid: 0257c7e4-44d5-4d2d-b356-31b995e9eaeb
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.simplenews
+id: node.simplenews.created
+field_name: created
+entity_type: node
+bundle: simplenews
+label: Fecha
+description: 'La fecha en que el nodo fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

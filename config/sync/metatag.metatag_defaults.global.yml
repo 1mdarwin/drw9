@@ -1,0 +1,15 @@
+uuid: 8b1cd832-ef4f-4eed-b959-d66a00933a78
+langcode: es
+status: true
+dependencies: {  }
+_core:
+  default_config_hash: sL588ui1E_8-2c_UupwyYxcqX2OVyMFp3HTLbbFqvPc
+id: global
+label: Global
+tags:
+  title: '[current-page:title] | [site:name]'
+  abstract: 'Ecuador Drupal Agency'
+  canonical_url: '[current-page:url]'
+  robots: index
+  description: 'DrwSoluciones es una Agencia Drupal que trabaja desde el 2010 con Drupal en módulos personalizados y sitebuilding'
+  keywords: 'Drupal, PHP, Linux, HTML, CSS3, ReactJs'

@@ -1,0 +1,23 @@
+uuid: e03a999a-2500-4359-aa30-b0a09b68c57f
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.body
+    - node.type.story
+  module:
+    - text
+id: node.story.body
+field_name: body
+entity_type: node
+bundle: story
+label: Cuerpo
+description: 'Una <em>historia</em>, con estructura similar a una <em>página</em>, es ideal para crear y mostrar contenido que informa a los visitantes del sitio. Notas de prensa, anuncios del sitio, y entradas informales de una bitácora puden ser creadas con una <em>historia</em>. Por defecto, una <em>historia</em> es ubicada automáticamente en la página inicial del sitio, y permite enviar comentarios.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  display_summary: true
+  required_summary: false
+field_type: text_with_summary

@@ -1,0 +1,18 @@
+uuid: bb4bb90c-1ebf-402c-99d0-d8a65b0b1a1a
+langcode: es
+status: true
+dependencies:
+  config:
+    - block_content.type.basic
+id: block_content.basic.info
+field_name: info
+entity_type: block_content
+bundle: basic
+label: 'Descripción del bloque'
+description: 'Una breve descripción de su bloque.'
+required: true
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

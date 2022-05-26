@@ -1,0 +1,21 @@
+uuid: 2c923ee7-01ea-4aa3-85fb-ce3aeb912515
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatag
+    - node.type.portafolio
+  module:
+    - metatag
+id: node.portafolio.field_metatag
+field_name: field_metatag
+entity_type: node
+bundle: portafolio
+label: Metatags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

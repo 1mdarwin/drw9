@@ -1,0 +1,18 @@
+uuid: e961dd94-c64e-4d3e-bd71-1a453c357a80
+langcode: es
+status: true
+dependencies:
+  config:
+    - node.type.ddblock_news_item
+id: node.ddblock_news_item.title
+field_name: title
+entity_type: node
+bundle: ddblock_news_item
+label: Title
+description: ''
+required: false
+translatable: true
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: string

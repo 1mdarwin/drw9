@@ -1,0 +1,72 @@
+uuid: 8e7734ef-1623-41e5-ad4f-75d1cea1b69e
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_blog.default
+    - field.field.node.blog.body
+    - field.field.node.blog.comment_node_blog
+    - field.field.node.blog.field_image
+    - field.field.node.blog.taxonomy_vocabulary_2
+    - field.field.node.blog.taxonomy_vocabulary_3
+    - field.field.node.blog.upload
+    - node.type.blog
+  module:
+    - comment
+    - image
+    - text
+    - user
+id: node.blog.default
+targetEntityType: node
+bundle: blog
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 3
+    region: content
+  comment_node_blog:
+    type: comment_default
+    label: hidden
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  field_image:
+    type: image
+    label: hidden
+    settings:
+      image_link: ''
+      image_style: ''
+    third_party_settings: {  }
+    weight: 2
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  taxonomy_vocabulary_2:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 4
+    region: content
+  taxonomy_vocabulary_3:
+    type: entity_reference_label
+    label: above
+    settings:
+      link: true
+    third_party_settings: {  }
+    weight: 5
+    region: content
+hidden:
+  langcode: true
+  upload: true

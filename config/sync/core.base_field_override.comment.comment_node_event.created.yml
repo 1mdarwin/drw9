@@ -1,0 +1,18 @@
+uuid: 99b58e3f-a5b7-4506-a43a-6f39a17d8bc2
+langcode: es
+status: true
+dependencies:
+  config:
+    - comment.type.comment_node_event
+id: comment.comment_node_event.created
+field_name: created
+entity_type: comment
+bundle: comment_node_event
+label: Creado
+description: 'Fecha en que el comentario fue creado.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

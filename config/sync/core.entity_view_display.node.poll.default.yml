@@ -1,0 +1,42 @@
+uuid: d64ee8d3-91d4-48c5-a1ef-9e27bb6c96d8
+langcode: es
+status: true
+dependencies:
+  config:
+    - core.entity_view_display.comment.comment_node_poll.default
+    - field.field.node.poll.comment_node_poll
+    - field.field.node.poll.upload
+    - node.type.poll
+  module:
+    - comment
+    - file
+    - user
+id: node.poll.default
+targetEntityType: node
+bundle: poll
+mode: default
+content:
+  comment_node_poll:
+    type: comment_default
+    label: hidden
+    settings:
+      view_mode: default
+      pager_id: 0
+    third_party_settings: {  }
+    weight: 20
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+  upload:
+    type: file_table
+    label: hidden
+    settings:
+      use_description_as_link_text: true
+    third_party_settings: {  }
+    weight: 0
+    region: content
+hidden:
+  langcode: true

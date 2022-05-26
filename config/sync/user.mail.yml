@@ -1,0 +1,30 @@
+_core:
+  default_config_hash: IWzNdUVX2YSiflxrGSTLIiqTrhgIzbV2C-hRL5DniJM
+langcode: es
+cancel_confirm:
+  subject: 'Detalles de la cuenta de [user:name] en [site:name] (borrada)'
+  body: "[user:name],\r\n\r\nSu cuenta en [site:name] ha sido borrada."
+password_reset:
+  subject: 'Información de reemplazo de inicio de sesión para [user:name] en !sitio'
+  body: "[user:name],\r\n\r\nRecibimos en [site:name] una solicitud para restablecer la contraseña de su cuenta.\r\n\r\nAhora se puede conectar en [site:url-brief] haciendo clic en este enlace o copiándolo y pegándolo en su navegador:\r\n\r\n[user:one-time-login-url]\r\n\r\nEste es un acceso de una sola vez, de modo que no podrá ser usado más. Expira después de un día y no ocurrirá nada si no lo utiliza.\r\n\r\nDespués de conectarse, será enviado a [user:edit-url] para que pueda cambiar su contraseña."
+register_admin_created:
+  subject: 'Un administrador creó una cuenta para usted en [site:name].'
+  body: "[user:name],\r\n\r\nUn administrador del sitio %site ha creado una cuenta para usted. Ahora puede iniciar una sesión en %login_uri utilizando el siguiente nombre de usuario y la siguiente contraseña:\r\n\r\nNombre del usuario: [user:name]\r\nContraseña: \r\n\r\nTambién puede ingresar haciendo clic en este enlace o copiándolo y pegándolo en el navegador:\r\n\r\n[user:one-time-login-url]\r\n\r\nEste URL sólo es válido para ingresar una vez, y sólo se puede usar en una ocasión.\r\n\r\nDespués de iniciar sesión, será redirigido a [user:edit-url], donde podrá cambiar su contraseña.\r\n\r\n\r\n--  El equipo de [site:name]"
+register_no_approval_required:
+  subject: 'Detalles de la cuenta de [user:name] en [site:name]'
+  body: "[user:name],\r\n\r\nGracias por registrarse en [site:name]. Ahora puede iniciar una sesión en %login_uri usando el siguiente nombre de usuario y la siguiente contraseña:\r\n\r\nNombre del usuario: [user:name]\r\nContraseña: \r\n\r\nTambién puede ingresar haciendo clic en este enlace o copiándolo y pegándolo en el navegador:\r\n\r\n[user:one-time-login-url]\r\n\r\nEste URL sólo es válido para ingresar una vez, y sólo se puede usar en una ocasión.\r\n\r\nDespués de iniciar sesión, será redirigido a [user:edit-url], donde podrá cambiar su contraseña.\r\n\r\n\r\n--  El equipo de [site:name]"
+register_pending_approval:
+  subject: 'Detalles de cuenta para [user:display-name] en [site:name] (pendiente de aprobación por el administrador)'
+  body: "[user:name],\r\n\r\nGracias por registrarse en !sitio. Su aplicación por una cuenta está pendiente de aprobación. Una vez que haya sido aprobada, usted recibirá otro correo electrónico con información sobre como iniciar sesión, establecer su contraseña y otros detalles.\r\n\r\n\r\n-- el equipo de [site:name]"
+register_pending_approval_admin:
+  subject: 'Detalles de cuenta para [user:display-name] en [site:name] (pendiente de aprobación por el administrador)'
+  body: "[user:display-name] ha solicitado una cuenta.\r\n\r\n[user:edit-url]"
+status_activated:
+  subject: 'Detalles de la cuenta de usuario de [user:name] en [site:name] (aprobada).'
+  body: "[user:name],\r\n\r\nSu cuenta en [site:name] ha sido activada.\r\n\r\nYa puede iniciar sesión haciendo clic en este enlace o copiándolo y pegándolo en su navegador:\r\n\r\n[user:one-time-login-url]\r\n\r\nEste enlace es válido para un único inicio de sesión, entonces solo se puede usar una vez.\r\n\r\nDespués de iniciar sesión, usted será redirigido a [user:edit-url] de forma que pueda cambiar su contraseña.\r\n\r\nUna vez que usted haya establecido su contraseña, usted podrá iniciar sesión en [site:login-url] en el futuro usando:\r\n\r\nnombre de usuario: [user:name]\r\n"
+status_blocked:
+  subject: 'Detalles de la cuenta de [user:name] en [site:name] (bloqueada)'
+  body: "[user:name],\r\n\r\nSu cuenta en [site:name] ha sido bloqueada"
+status_canceled:
+  subject: 'Detalles de cuenta para [user:display-name] en [site:name] (cancelado)'
+  body: "[user:display-name],\r\n\r\nSu cuenta en [site:name] ha sido cancelada.\r\n\r\n--  El equipo de [site:name]"
