@@ -1,0 +1,23 @@
+drw2020.mobile:
+  label: 'Mobile'
+  mediaQuery: '(min-width: 0px)'
+  weight: 0
+  multipliers:
+    - 1x
+    - 2x
+
+drw2020.narrow:
+  label: 'Narrow'
+  mediaQuery: 'all and(min-width: 560px) and (max-width: 850px)'
+  weight: 1
+  multipliers:
+    - 1x
+    - 2x
+
+drw2020.wide:
+  label: 'Wide'
+  mediaQuery: 'all and (min-width: 851px)'
+  weight: 2
+  multipliers:
+    - 1x
+    - 2x
