@@ -7,7 +7,9 @@ dependencies:
     - field.field.user.user.field_name_full
     - field.field.user.user.field_rol
     - field.field.user.user.user_picture
+    - image.style.media_library
   module:
+    - ds
     - field_layout
     - image
     - text
@@ -16,6 +18,41 @@ third_party_settings:
   field_layout:
     id: layout_onecol
     settings: {  }
+  ds:
+    layout:
+      id: bs_2col
+      library: null
+      disable_css: false
+      entity_classes: all_classes
+      settings:
+        label: ''
+        layout:
+          wrapper: div
+          classes:
+            row: row
+          add_layout_class: 1
+          attributes: ''
+        regions:
+          left:
+            wrapper: div
+            classes:
+              col-sm-6: col-sm-6
+            add_region_classes: 1
+            attributes: ''
+          right:
+            wrapper: div
+            classes:
+              col-sm-6: col-sm-6
+            add_region_classes: 1
+            attributes: ''
+    regions:
+      left:
+        - user_picture
+        - field_rol
+      right:
+        - field_name_full
+        - field_bio
+        - member_for
 _core:
   default_config_hash: V51QPCKkgNREKtSmB9Iu2wmAMEpktVpnzklWaZV8UYo
 id: user.user.default
@@ -25,40 +62,40 @@ mode: default
 content:
   field_bio:
     type: text_default
-    label: above
+    label: hidden
     settings: {  }
     third_party_settings: {  }
-    weight: 0
-    region: content
+    weight: 3
+    region: right
   field_name_full:
     type: string
-    label: above
-    settings:
-      link_to_entity: false
-    third_party_settings: {  }
-    weight: 1
-    region: content
-  field_rol:
-    type: string
-    label: above
+    label: hidden
     settings:
       link_to_entity: false
     third_party_settings: {  }
     weight: 2
-    region: content
+    region: right
+  field_rol:
+    type: string
+    label: hidden
+    settings:
+      link_to_entity: false
+    third_party_settings: {  }
+    weight: 1
+    region: left
   member_for:
     settings: {  }
     third_party_settings: {  }
-    weight: 3
-    region: content
+    weight: 4
+    region: right
   user_picture:
     type: image
     label: hidden
     settings:
       image_link: ''
-      image_style: ''
+      image_style: media_library
     third_party_settings: {  }
-    weight: 4
-    region: content
+    weight: 0
+    region: left
 hidden:
   langcode: true

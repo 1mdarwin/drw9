@@ -13,7 +13,7 @@ bundle: user
 label: 'Nombre Completo'
 description: 'Nombre completo del usuario'
 required: true
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings: {  }

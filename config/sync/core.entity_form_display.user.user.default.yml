@@ -63,11 +63,6 @@ content:
       size: 60
       placeholder: ''
     third_party_settings: {  }
-  google_analytics:
-    weight: 3
-    region: content
-    settings: {  }
-    third_party_settings: {  }
   language:
     weight: 0
     region: content

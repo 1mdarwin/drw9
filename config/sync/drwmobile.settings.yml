@@ -1,0 +1,12 @@
+features:
+  name: 1
+  slogan: 0
+  node_user_picture: 0
+  comment_user_picture: 0
+  favicon: 1
+logo:
+  use_default: 1
+  path: ''
+favicon:
+  use_default: 1
+  path: ''

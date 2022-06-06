@@ -10,18 +10,18 @@ label: 'Content - News item'
 type: 'canonical_entities:node'
 pattern: 'ads/[node:title]'
 selection_criteria:
-  56f9a63b-198d-4fbf-83be-061b5bdcb5a2:
+  7d1d75ef-9c00-4918-8543-4a956d89b4a4:
     id: 'entity_bundle:node'
     negate: false
-    uuid: 56f9a63b-198d-4fbf-83be-061b5bdcb5a2
+    uuid: 7d1d75ef-9c00-4918-8543-4a956d89b4a4
     context_mapping:
       node: node
     bundles:
       ddblock_news_item: ddblock_news_item
-  5fddaed7-e511-431d-9d3b-0ec412cd3160:
+  383f90be-0357-422e-b4bd-165287bf07d5:
     id: language
     negate: false
-    uuid: 5fddaed7-e511-431d-9d3b-0ec412cd3160
+    uuid: 383f90be-0357-422e-b4bd-165287bf07d5
     context_mapping:
       language: 'node:langcode:language'
     langcodes:

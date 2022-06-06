@@ -13,7 +13,7 @@ bundle: user
 label: Rol
 description: 'Rol que desempeña en su trabajo (Gerente, Diseñador, Desarrollador, Secretaria, Diseñador Gráfico, Arquitecto)'
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings: {  }

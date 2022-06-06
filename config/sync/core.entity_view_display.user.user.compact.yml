@@ -32,8 +32,5 @@ content:
     weight: 0
     region: content
 hidden:
-  field_bio: true
-  field_name_full: true
-  field_rol: true
   langcode: true
   member_for: true

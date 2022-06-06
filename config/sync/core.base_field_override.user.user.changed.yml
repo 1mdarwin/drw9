@@ -11,7 +11,7 @@ bundle: user
 label: Modificado
 description: 'El momento en que el usuario fue editado por última vez.'
 required: false
-translatable: false
+translatable: true
 default_value: {  }
 default_value_callback: ''
 settings: {  }
