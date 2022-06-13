@@ -82,9 +82,9 @@ class Unicode extends CoreUnicode {
       $callback = implode('::', $callback);
     }
     if ($callback[0] === '\\') {
-      $callback = static::substr($callback, 1);
+      $callback = mb_substr($callback, 1);
     }
-    if ($array && static::strpos($callback, '::') !== FALSE) {
+    if ($array && mb_substr($callback, '::') !== FALSE) {
       $callback = explode('::', $callback);
     }
     return $callback;

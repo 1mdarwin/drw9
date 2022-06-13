@@ -682,7 +682,7 @@ class Element extends DrupalAttributes {
       $form_state->setError($this->array, $message);
     }
     else {
-      Bootstrap::message($message, 'error');
+      \Drupal::messenger()->addMessage($message, 'error');
     }
     return $this;
   }

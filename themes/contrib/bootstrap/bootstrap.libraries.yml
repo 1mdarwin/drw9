@@ -49,7 +49,7 @@ theme-settings:
     js/theme-settings.js: {}
   dependencies:
     - core/jquery
-    - core/jquery.once
+    - core/once
     - core/drupal
     - core/drupalSettings
 
@@ -146,7 +146,7 @@ drupal.batch:
     - bootstrap/theme
     - core/drupal.ajax
     - core/drupal.progress
-    - core/jquery.once
+    - core/once
 
 drupal.filter:
   version: VERSION
@@ -155,14 +155,14 @@ drupal.filter:
   dependencies:
     - core/jquery
     - core/drupal
-    - core/jquery.once
+    - core/once
 
 drupal.text:
   js:
     js/text/text.js: {}
   dependencies:
     - core/jquery
-    - core/jquery.once
+    - core/once
     - core/drupal
 
 drupal.vertical-tabs:
@@ -170,5 +170,5 @@ drupal.vertical-tabs:
     js/misc/vertical-tabs.js: {}
   dependencies:
     - bootstrap/theme
-    - core/jquery.once
+    - core/once
     - core/drupal.form

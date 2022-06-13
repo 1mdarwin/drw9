@@ -1765,26 +1765,26 @@
         },
         {
             "name": "drupal/bootstrap",
-            "version": "3.24.0",
+            "version": "3.25.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/bootstrap.git",
-                "reference": "8.x-3.24"
+                "reference": "8.x-3.25"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/bootstrap-8.x-3.24.zip",
-                "reference": "8.x-3.24",
-                "shasum": "112e9925fd6d694f41b388a81748d1175c776969"
+                "url": "https://ftp.drupal.org/files/projects/bootstrap-8.x-3.25.zip",
+                "reference": "8.x-3.25",
+                "shasum": "1334aad091973f53ddc4d7b426ee85e7428a3684"
             },
             "require": {
-                "drupal/core": "^8 || ^9"
+                "drupal/core": "^9.3 || ^10"
             },
             "type": "drupal-theme",
             "extra": {
                 "drupal": {
-                    "version": "8.x-3.24",
-                    "datestamp": "1648749397",
+                    "version": "8.x-3.25",
+                    "datestamp": "1654873483",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1809,6 +1809,11 @@
                 {
                     "name": "Fabiano Sant'Ana (wundo)",
                     "homepage": "https://www.drupal.org/u/wundo",
+                    "role": "Co-maintainer"
+                },
+                {
+                    "name": "Shelane French (shelane)",
+                    "homepage": "https://www.drupal.org/u/shelane",
                     "role": "Co-maintainer"
                 }
             ],
@@ -2011,16 +2016,16 @@
         },
         {
             "name": "drupal/core",
-            "version": "9.3.15",
+            "version": "9.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "c29310a4d08d5072d7f713da744c0831636b4779"
+                "reference": "eef5b91fa6689410325d569a0653878b2b1782ed"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/c29310a4d08d5072d7f713da744c0831636b4779",
-                "reference": "c29310a4d08d5072d7f713da744c0831636b4779",
+                "url": "https://api.github.com/repos/drupal/core/zipball/eef5b91fa6689410325d569a0653878b2b1782ed",
+                "reference": "eef5b91fa6689410325d569a0653878b2b1782ed",
                 "shasum": ""
             },
             "require": {
@@ -2042,7 +2047,7 @@
                 "ext-spl": "*",
                 "ext-tokenizer": "*",
                 "ext-xml": "*",
-                "guzzlehttp/guzzle": "^6.5.6",
+                "guzzlehttp/guzzle": "^6.5.7",
                 "laminas/laminas-diactoros": "^2.1",
                 "laminas/laminas-feed": "^2.12",
                 "masterminds/html5": "^2.1",
@@ -2261,11 +2266,11 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
-            "time": "2022-06-01T15:45:43+00:00"
+            "time": "2022-06-10T19:08:28+00:00"
         },
         {
             "name": "drupal/core-composer-scaffold",
-            "version": "9.3.15",
+            "version": "9.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-composer-scaffold.git",
@@ -2312,7 +2317,7 @@
         },
         {
             "name": "drupal/core-project-message",
-            "version": "9.3.12",
+            "version": "9.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-project-message.git",
@@ -2350,16 +2355,16 @@
         },
         {
             "name": "drupal/core-recommended",
-            "version": "9.3.15",
+            "version": "9.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-recommended.git",
-                "reference": "36b1d9dbe4f946b3c19fb91831aa1994e1e38782"
+                "reference": "11ea8b32924c646b29d7d767e655ffedd2982092"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-recommended/zipball/36b1d9dbe4f946b3c19fb91831aa1994e1e38782",
-                "reference": "36b1d9dbe4f946b3c19fb91831aa1994e1e38782",
+                "url": "https://api.github.com/repos/drupal/core-recommended/zipball/11ea8b32924c646b29d7d767e655ffedd2982092",
+                "reference": "11ea8b32924c646b29d7d767e655ffedd2982092",
                 "shasum": ""
             },
             "require": {
@@ -2368,9 +2373,9 @@
                 "doctrine/annotations": "1.13.2",
                 "doctrine/lexer": "1.2.1",
                 "doctrine/reflection": "1.2.2",
-                "drupal/core": "9.3.15",
+                "drupal/core": "9.3.16",
                 "egulias/email-validator": "3.1.2",
-                "guzzlehttp/guzzle": "6.5.6",
+                "guzzlehttp/guzzle": "6.5.7",
                 "guzzlehttp/promises": "1.5.1",
                 "guzzlehttp/psr7": "1.8.5",
                 "laminas/laminas-diactoros": "2.8.0",
@@ -2429,11 +2434,11 @@
                 "GPL-2.0-or-later"
             ],
             "description": "Locked core dependencies; require this project INSTEAD OF drupal/core.",
-            "time": "2022-06-01T15:45:43+00:00"
+            "time": "2022-06-10T19:08:28+00:00"
         },
         {
             "name": "drupal/core-vendor-hardening",
-            "version": "9.3.12",
+            "version": "9.3.16",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
@@ -3624,16 +3629,16 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "6.5.6",
+            "version": "6.5.7",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "f092dd734083473658de3ee4bef093ed77d2689c"
+                "reference": "724562fa861e21a4071c652c8a159934e4f05592"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f092dd734083473658de3ee4bef093ed77d2689c",
-                "reference": "f092dd734083473658de3ee4bef093ed77d2689c",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/724562fa861e21a4071c652c8a159934e4f05592",
+                "reference": "724562fa861e21a4071c652c8a159934e4f05592",
                 "shasum": ""
             },
             "require": {
@@ -3731,7 +3736,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-25T13:19:12+00:00"
+            "time": "2022-06-09T21:36:50+00:00"
         },
         {
             "name": "guzzlehttp/promises",
@@ -5272,6 +5277,7 @@
                     "type": "tidelift"
                 }
             ],
+            "abandoned": "symfony/error-handler",
             "time": "2021-09-24T13:30:14+00:00"
         },
         {

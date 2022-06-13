@@ -221,7 +221,7 @@ class CdnProvider extends CdnProviderBase {
 
       // FILE_CREATE_DIRECTORY = 1 | FILE_MODIFY_PERMISSIONS = 2.
       $options = 1 | 2;
-      if ($fileSystem = Bootstrap::fileSystem('prepareDirectory')) {
+      if ($fileSystem = \Drupal::service('file_system')) {
         $fileSystem->prepareDirectory($provider_path, $options);
       }
 
@@ -231,12 +231,12 @@ class CdnProvider extends CdnProviderBase {
       if ($import_data = $form_state->getValue('cdn_provider_import_data', FALSE)) {
         // FILE_EXISTS_REPLACE = 1.
         $replace = 1;
-        if ($fileSystem = Bootstrap::fileSystem('saveData')) {
+        if ($fileSystem = \Drupal::service('file_system')) {
           $fileSystem->saveData($import_data, $file, $replace);
         }
       }
       elseif ($file && file_exists($file)) {
-        if ($fileSystem = Bootstrap::fileSystem('delete')) {
+        if ($fileSystem = \Drupal::service('file_system')) {
           $fileSystem->delete($file);
         }
       }

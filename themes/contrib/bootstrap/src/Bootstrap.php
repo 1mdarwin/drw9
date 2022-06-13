@@ -548,7 +548,7 @@ class Bootstrap {
             break;
 
           case 'contains':
-            if (strpos(Unicode::strtolower($string), Unicode::strtolower($text)) !== FALSE) {
+            if (strpos(mb_strtolower($string), mb_strtolower($text)) !== FALSE) {
               return $class;
             }
             break;
@@ -602,7 +602,7 @@ class Bootstrap {
     }
 
     if ($show_message || (!isset($show_message) && static::isAdmin() && !static::getTheme()->getSetting('suppress_deprecated_warnings', FALSE))) {
-      static::message($message, 'warning');
+      \Drupal::messenger()->addMessage($message, 'warning');
     }
 
     // Log message and accompanying backtrace.
@@ -900,7 +900,7 @@ class Bootstrap {
             break;
 
           case 'contains':
-            if (strpos(Unicode::strtolower($string), Unicode::strtolower($text)) !== FALSE) {
+            if (strpos(mb_strtolower($string), mb_strtolower($text)) !== FALSE) {
               return self::glyphicon($icon, $default);
             }
             break;
