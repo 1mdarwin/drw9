@@ -4,6 +4,12 @@
 * Description: Drupal 8 with drwsolutions migrated from d7
 * Update: 11 dic 2020
 */
+.colors{
+  color: #404040;
+  background-color: #E85322;
+  text-shadow: #AEAEAE;
+  text-decoration-color: #848484;
+}
 header, .navbar-default{
   background:#0B2A3F;
   border-color:#0B2A3F;
@@ -16,7 +22,7 @@ header, .navbar-default{
 body{
   font-family:'Lato', arial, sans-serif;
   background:#0B2A3F;
-  font-size:1.4em;
+  font-size:1.5em;
  }
  .logo img{
    width: 40px;
@@ -211,7 +217,7 @@ body{
 #bodyslide h2 a:hover {
   /*background-color: rgba(0,0,0,0.7);*/
   color: #fff;
-  
+
 }
 /* Called from d7 bootstrap 3 */
 .form-group{
@@ -228,7 +234,9 @@ body{
 */
 .dropdown-menu{
   background: rgba(255,255,255, 0.8);
+  font-size:1.2em;
 }
+
 .navbar-nav ul.sm-nowrap > li > a:hover{
   background: #FF5722; /* child menu level 1 */
   color: #fff;
@@ -309,13 +317,26 @@ ul.navbar-nav{
 }
 .servicios h3{
   color:#FFF;
+
   text-align: center;
+  text-shadow: 2px 1px #848484;
   font-weight: 700;
   text-transform: uppercase;
 }
 .servicios .views-row{
   border-bottom: 5px solid #FFF;
 }
+.servicios a,
+.servicios p{
+  color: #FFF;
+  font-size:1.2em;
+  text-align: center;
+}
+.servicios a:hover{
+  color:#FFF;
+  text-shadow: 1px 1px #268bc6;
+}
+
 /**
 * more-link views page
 */
@@ -335,7 +356,7 @@ ul.navbar-nav{
 }
 
 
-/* Client zone 
+/* Client zone
 =============================================**/
 .clientes1,
 .clientes2,
@@ -668,6 +689,7 @@ transition-delay: 0s;
   margin: 0 10px 10px 0;
   text-decoration: none;
   transition: width 0.2s;
+
 }
 .field--name-taxonomy-vocabulary-5 a::before,
 .field--name-taxonomy-vocabulary-3 a::before,
@@ -749,6 +771,7 @@ footer h2{
   color: #dbdbdb;
   border-bottom: 3px solid #2D4059;
   text-transform: uppercase;
+  text-shadow: 2px 1px #848484;
   font-size: 1.9em;
 }
 footer .piemenu{
@@ -774,6 +797,9 @@ footer .more-link a:hover{
   border-radius: 5px;
   border: thin solid #ff5722;
   color: #eee;
+}
+footer p{
+  font-size: 1.1em;
 }
 .view-id-listablogs .media{
   border-bottom: 1px dashed #2D4059;
