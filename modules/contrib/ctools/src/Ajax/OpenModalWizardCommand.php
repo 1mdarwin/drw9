@@ -16,7 +16,7 @@ class OpenModalWizardCommand extends OpenModalDialogCommand {
       'step' => NULL,
     ];
     $form = \Drupal::service('ctools.wizard.factory')->getWizardForm($object, $parameters, TRUE);
-    $title = isset($form['#title']) ? $form['#title'] : '';
+    $title = $form['#title'] ?? '';
     $content = $form;
 
     parent::__construct($title, $content, $dialog_options, $settings);
