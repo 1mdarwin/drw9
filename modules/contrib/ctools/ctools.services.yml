@@ -31,8 +31,3 @@ services:
   ctools.context_mapper:
     class: Drupal\ctools\ContextMapper
     arguments: ['@entity.repository']
-  ctools.serializable.tempstore.factory:
-    class: Drupal\ctools\SerializableTempstoreFactory
-    arguments: ['@keyvalue.expirable', '@lock', '@request_stack', '%tempstore.expire%', '@current_user']
-    tags:
-      - { name: backend_overridable }

@@ -18,7 +18,7 @@ class BlockDisplayVariantTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['ctools', 'ctools_block_display_test', 'system', 'user'];
+  protected static $modules = ['ctools', 'ctools_block_display_test', 'system', 'user'];
 
   /**
    * Tests that events are fired when manipulating a block variant.
@@ -38,11 +38,11 @@ class BlockDisplayVariantTest extends KernelTestBase {
     // Set up the expected calls to the event dispatcher.
     $event = Argument::type(BlockVariantEvent::class);
 
-    $event_dispatcher->dispatch(BlockVariantEvents::ADD_BLOCK, $event)
+    $event_dispatcher->dispatch($event, BlockVariantEvents::ADD_BLOCK)
       ->shouldBeCalled();
-    $event_dispatcher->dispatch(BlockVariantEvents::UPDATE_BLOCK, $event)
+    $event_dispatcher->dispatch($event, BlockVariantEvents::UPDATE_BLOCK)
       ->shouldBeCalled();
-    $event_dispatcher->dispatch(BlockVariantEvents::DELETE_BLOCK, $event)
+    $event_dispatcher->dispatch($event, BlockVariantEvents::DELETE_BLOCK)
       ->shouldBeCalled();
 
     $block_id = $variant->addBlock(['id' => 'system_powered_by_block']);

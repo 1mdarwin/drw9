@@ -24,7 +24,7 @@ abstract class RelationshipsTestBase extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'user',
     'system',
     'node',
@@ -37,7 +37,7 @@ abstract class RelationshipsTestBase extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installSchema('system', ['sequences']);
@@ -84,12 +84,17 @@ abstract class RelationshipsTestBase extends KernelTestBase {
       'type' => 'foo',
       'uid' => $user->id(),
     ]);
+    $node4 = $this->createEntity('node', [
+      'title' => 'Node 4',
+      'type' => 'foo',
+    ])->set('uid', NULL);
 
     $this->entities = [
       'user' => $user,
       'node1' => $node1,
       'node2' => $node2,
       'node3' => $node3,
+      'node4' => $node4,
     ];
   }
 

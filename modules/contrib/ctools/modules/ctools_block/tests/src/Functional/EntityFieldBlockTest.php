@@ -14,7 +14,7 @@ class EntityFieldBlockTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'ctools_block', 'ctools_block_field_test'];
+  protected static $modules = ['block', 'ctools_block', 'ctools_block_field_test'];
 
   /**
    * {@inheritdoc}
@@ -83,8 +83,15 @@ class EntityFieldBlockTest extends BrowserTestBase {
     $this->drupalGet('node/' . $node->id());
 
     $url = $file->getFileUri();
-    $url = file_create_url($url);
-    $url = file_url_transform_relative($url);
+    // @todo Delete this when dropping Drupal 9.2 support in https://www.drupal.org/node/2940031.
+    if ($this->container->has('file_url_generator')) {
+      $url = $this->container->get('file_url_generator')->generateAbsoluteString($url);
+      $url = $this->container->get('file_url_generator')->transformRelative($url);
+    }
+    else {
+      $url = file_create_url($url); // @phpstan-ignore-line
+      $url = file_url_transform_relative($url); // @phpstan-ignore-line
+    }
     $this->assertSession()->responseContains('src="' . $url . '"');
   }
 
