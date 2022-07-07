@@ -1911,21 +1911,21 @@
     },
     {
         "name": "drupal/config_filter",
-        "version": "1.9.0",
-        "version_normalized": "1.9.0.0",
+        "version": "1.10.0",
+        "version_normalized": "1.10.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/config_filter.git",
-            "reference": "8.x-1.9"
+            "reference": "8.x-1.10"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/config_filter-8.x-1.9.zip",
-            "reference": "8.x-1.9",
-            "shasum": "cf6919fc5039771f8e6c2ed203f29ab0eca8d91f"
+            "url": "https://ftp.drupal.org/files/projects/config_filter-8.x-1.10.zip",
+            "reference": "8.x-1.10",
+            "shasum": "c5002f2b9dece3c684db754123936d1388b80b8d"
         },
         "require": {
-            "drupal/core": "^8 || ^9"
+            "drupal/core": "^8.8 || ^9 || ^10"
         },
         "suggest": {
             "drupal/config_split": "Split site configuration for different environments."
@@ -1933,8 +1933,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.9",
-                "datestamp": "1649336052",
+                "version": "8.x-1.10",
+                "datestamp": "1656936763",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -1979,22 +1979,22 @@
     },
     {
         "name": "drupal/config_split",
-        "version": "1.8.0",
-        "version_normalized": "1.8.0.0",
+        "version": "1.9.0",
+        "version_normalized": "1.9.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/config_split.git",
-            "reference": "8.x-1.8"
+            "reference": "8.x-1.9"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/config_split-8.x-1.8.zip",
-            "reference": "8.x-1.8",
-            "shasum": "15699860dc3617ea820373fb49f0fc3ee22fee0d"
+            "url": "https://ftp.drupal.org/files/projects/config_split-8.x-1.9.zip",
+            "reference": "8.x-1.9",
+            "shasum": "cb2a17f590ae057ff8a1864f57e2e114b2395a86"
         },
         "require": {
             "drupal/config_filter": "^1",
-            "drupal/core": "^8.8 || ^9"
+            "drupal/core": "^9.3 || ^10"
         },
         "conflict": {
             "drupal/console": "<1.3.2"
@@ -2006,8 +2006,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.8",
-                "datestamp": "1649337368",
+                "version": "8.x-1.9",
+                "datestamp": "1656976425",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -2015,7 +2015,7 @@
             },
             "drush": {
                 "services": {
-                    "drush.services.yml": "^9 || ^10"
+                    "drush.services.yml": "^9 || ^10 || ^11"
                 }
             }
         },
@@ -3935,17 +3935,17 @@
     },
     {
         "name": "laminas/laminas-diactoros",
-        "version": "2.11.2",
-        "version_normalized": "2.11.2.0",
+        "version": "2.11.3",
+        "version_normalized": "2.11.3.0",
         "source": {
             "type": "git",
             "url": "https://github.com/laminas/laminas-diactoros.git",
-            "reference": "78846cbce0550ec174508a646f46fd6dee76099b"
+            "reference": "1f97b0c52eafd108e09c76d6b29d83ef4a855f76"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/78846cbce0550ec174508a646f46fd6dee76099b",
-            "reference": "78846cbce0550ec174508a646f46fd6dee76099b",
+            "url": "https://api.github.com/repos/laminas/laminas-diactoros/zipball/1f97b0c52eafd108e09c76d6b29d83ef4a855f76",
+            "reference": "1f97b0c52eafd108e09c76d6b29d83ef4a855f76",
             "shasum": ""
         },
         "require": {
@@ -3974,7 +3974,7 @@
             "psalm/plugin-phpunit": "^0.14.0",
             "vimeo/psalm": "^4.3"
         },
-        "time": "2022-06-29T14:15:02+00:00",
+        "time": "2022-07-06T09:24:53+00:00",
         "type": "library",
         "extra": {
             "laminas": {
