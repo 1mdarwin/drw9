@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.ddblock_news_item.body
     - field.field.node.ddblock_news_item.comment_node_ddblock_news_item
     - field.field.node.ddblock_news_item.field_image
+    - field.field.node.ddblock_news_item.field_metatag
     - field.field.node.ddblock_news_item.field_pager_item_text
     - field.field.node.ddblock_news_item.field_slide_text
     - field.field.node.ddblock_news_item.field_url
@@ -45,6 +46,8 @@ content:
     settings:
       image_link: ''
       image_style: ''
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: -1
     region: content
@@ -69,6 +72,11 @@ content:
     third_party_settings: {  }
     weight: 100
     region: content
+  share_everywhere:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
+    region: content
   upload:
     type: file_table
     label: hidden
@@ -78,5 +86,6 @@ content:
     weight: 0
     region: content
 hidden:
+  field_metatag: true
   field_slide_text: true
   langcode: true

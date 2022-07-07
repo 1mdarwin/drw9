@@ -4,12 +4,14 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.user.compact
+    - field.field.user.user.field_bio
+    - field.field.user.user.field_name_full
+    - field.field.user.user.field_rol
     - field.field.user.user.user_picture
     - image.style.thumbnail
   module:
     - field_layout
     - image
-    - layout_discovery
     - user
 third_party_settings:
   field_layout:
@@ -28,9 +30,14 @@ content:
     settings:
       image_link: content
       image_style: thumbnail
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: 0
     region: content
 hidden:
+  field_bio: true
+  field_name_full: true
+  field_rol: true
   langcode: true
   member_for: true

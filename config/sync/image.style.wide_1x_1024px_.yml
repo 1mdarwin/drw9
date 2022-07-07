@@ -1,0 +1,15 @@
+uuid: 644ab1a0-d6ba-4727-bae7-577e0c32198a
+langcode: en
+status: true
+dependencies: {  }
+name: wide_1x_1024px_
+label: 'Wide 1x (1024px)'
+effects:
+  da911e92-8123-4c8b-9a2d-2718379fdbf2:
+    uuid: da911e92-8123-4c8b-9a2d-2718379fdbf2
+    id: image_scale
+    weight: 1
+    data:
+      width: 1024
+      height: null
+      upscale: false

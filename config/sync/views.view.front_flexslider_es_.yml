@@ -6,10 +6,11 @@ dependencies:
     - field.storage.node.field_image
     - field.storage.node.field_url
     - node.type.ddblock_news_item
+    - responsive_image.styles.portafolio
   module:
     - flexslider_views
-    - image
     - node
+    - responsive_image
     - user
 id: front_flexslider_es_
 label: 'Front Flexslider EN'
@@ -203,10 +204,10 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: image
+          type: responsive_image
           settings:
+            responsive_image_style: portafolio
             image_link: ''
-            image_style: ''
           group_column: ''
           group_columns: {  }
           group_rows: true

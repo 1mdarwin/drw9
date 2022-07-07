@@ -1,0 +1,26 @@
+uuid: 33755f1c-4569-456d-b1ca-47674d88e9bf
+langcode: en
+status: true
+dependencies:
+  module:
+    - node
+id: servicios
+label: Servicios
+handler: simple
+handler_configuration: {  }
+entity_settings:
+  target_type: node
+  handler: 'default:node'
+  handler_settings:
+    target_bundles:
+      portafolio: portafolio
+    sort:
+      field: _none
+      direction: ASC
+    auto_create: false
+    auto_create_bundle: ''
+queue_settings:
+  min_size: 0
+  max_size: 0
+  act_as_queue: false
+  reverse: false

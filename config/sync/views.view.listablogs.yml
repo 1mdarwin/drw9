@@ -146,6 +146,8 @@ display:
           settings:
             image_link: ''
             image_style: thumb32
+            image_loading:
+              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -466,6 +468,8 @@ display:
           settings:
             image_link: ''
             image_style: thumb32
+            image_loading:
+              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -669,6 +673,8 @@ display:
           settings:
             image_link: content
             image_style: medium
+            image_loading:
+              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true

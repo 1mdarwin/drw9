@@ -1,0 +1,15 @@
+uuid: 04d9ff8b-15e8-46af-9295-f71ccd9efb94
+langcode: en
+status: true
+dependencies: {  }
+name: narrow_1x_850px_
+label: 'Narrow 1x (850px)'
+effects:
+  bf4ce078-b902-4ce7-a8d1-d3213506d861:
+    uuid: bf4ce078-b902-4ce7-a8d1-d3213506d861
+    id: image_scale
+    weight: 1
+    data:
+      width: 850
+      height: null
+      upscale: false

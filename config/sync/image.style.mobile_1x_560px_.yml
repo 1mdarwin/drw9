@@ -1,0 +1,15 @@
+uuid: 8db3f0ce-78d6-406a-8337-0bce0c702b8b
+langcode: en
+status: true
+dependencies: {  }
+name: mobile_1x_560px_
+label: 'Mobile 1x (560px)'
+effects:
+  6b161156-10bb-4fc9-9ad2-21583494d275:
+    uuid: 6b161156-10bb-4fc9-9ad2-21583494d275
+    id: image_scale
+    weight: 1
+    data:
+      width: 560
+      height: null
+      upscale: false

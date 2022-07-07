@@ -1,0 +1,15 @@
+uuid: 7f3692b0-3e4c-49ea-9bd4-aefa21e83bef
+langcode: en
+status: true
+dependencies: {  }
+name: wide_2px_1024px_
+label: 'Wide 2px (1024px)'
+effects:
+  ad8b3309-addc-436d-b82a-bbbb53fae5d0:
+    uuid: ad8b3309-addc-436d-b82a-bbbb53fae5d0
+    id: image_scale
+    weight: 1
+    data:
+      width: 2048
+      height: null
+      upscale: false

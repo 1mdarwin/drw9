@@ -17,7 +17,7 @@ base_field: nid
 display:
   default:
     id: default
-    display_title: Master
+    display_title: Default
     display_plugin: default
     position: 0
     display_options:
@@ -601,7 +601,7 @@ display:
       tab_options:
         type: normal
         title: Content
-        description: 'Encontrar y administrar contenido'
+        description: 'Encuentre y gestione el contenido'
         weight: -10
         menu_name: admin
     cache_metadata:

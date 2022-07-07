@@ -5,7 +5,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.rss
     - field.field.node.portafolio.body
+    - field.field.node.portafolio.comment_node_portafolio
     - field.field.node.portafolio.field_imagen_porta
+    - field.field.node.portafolio.field_metatag
     - field.field.node.portafolio.field_tipo_porta
     - field.field.node.portafolio.field_url_porta
     - field.field.node.portafolio.upload
@@ -25,6 +27,8 @@ content:
     settings:
       image_link: ''
       image_style: ''
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: -1
     region: content
@@ -32,6 +36,11 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
     region: content
   upload:
     type: file_table
@@ -43,6 +52,8 @@ content:
     region: content
 hidden:
   body: true
+  comment_node_portafolio: true
+  field_metatag: true
   field_tipo_porta: true
   field_url_porta: true
   langcode: true

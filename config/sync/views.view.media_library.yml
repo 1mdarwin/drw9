@@ -25,7 +25,7 @@ base_field: mid
 display:
   default:
     id: default
-    display_title: Master
+    display_title: Default
     display_plugin: default
     position: 0
     display_options:
@@ -1135,7 +1135,7 @@ display:
         - 'config:core.entity_view_display.media.video.media_library'
   widget_table:
     id: widget_table
-    display_title: 'Widget (table)'
+    display_title: 'Widget (tabla)'
     display_plugin: page
     position: 3
     display_options:
@@ -1163,6 +1163,8 @@ display:
           settings:
             image_link: ''
             image_style: media_library
+            image_loading:
+              attribute: lazy
         name:
           id: name
           table: media_field_data

@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.blog.body
     - field.field.node.blog.comment_node_blog
     - field.field.node.blog.field_image
+    - field.field.node.blog.field_metatag
     - field.field.node.blog.taxonomy_vocabulary_2
     - field.field.node.blog.taxonomy_vocabulary_3
     - field.field.node.blog.upload
@@ -43,6 +44,8 @@ content:
     settings:
       image_link: ''
       image_style: ''
+      image_loading:
+        attribute: lazy
     third_party_settings: {  }
     weight: 2
     region: content
@@ -50,6 +53,11 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 100
+    region: content
+  share_everywhere:
+    weight: 10
+    settings: {  }
+    third_party_settings: {  }
     region: content
   taxonomy_vocabulary_2:
     type: entity_reference_label
@@ -68,5 +76,6 @@ content:
     weight: 5
     region: content
 hidden:
+  field_metatag: true
   langcode: true
   upload: true

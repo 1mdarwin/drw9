@@ -12,11 +12,13 @@ dependencies:
     - field.field.node.portafolio.field_url_porta
     - field.field.node.portafolio.upload
     - node.type.portafolio
+    - responsive_image.styles.portafolio
   module:
     - comment
+    - ds
     - file
-    - image
     - link
+    - responsive_image
     - text
     - user
 id: node.portafolio.default
@@ -41,12 +43,14 @@ content:
     weight: 4
     region: content
   field_imagen_porta:
-    type: image
+    type: responsive_image
     label: hidden
     settings:
+      responsive_image_style: portafolio
       image_link: ''
-      image_style: ''
-    third_party_settings: {  }
+    third_party_settings:
+      ds:
+        ds_limit: ''
     weight: 2
     region: content
   field_url_porta:
@@ -65,6 +69,11 @@ content:
     settings: {  }
     third_party_settings: {  }
     weight: 5
+    region: content
+  share_everywhere:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
     region: content
   upload:
     type: file_table

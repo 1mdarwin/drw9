@@ -1,0 +1,15 @@
+uuid: 8efe82d3-2a1d-4a4c-8533-9d94238eb574
+langcode: en
+status: true
+dependencies: {  }
+name: narrox_2x_850px_
+label: 'Narrox 2x (850px)'
+effects:
+  b8f03da6-fc82-4c96-9292-6ae40f8d72ec:
+    uuid: b8f03da6-fc82-4c96-9292-6ae40f8d72ec
+    id: image_scale
+    weight: 1
+    data:
+      width: 1700
+      height: null
+      upscale: false

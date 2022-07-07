@@ -1,0 +1,15 @@
+uuid: 3f23caef-478e-4f78-8748-1486d4534938
+langcode: en
+status: true
+dependencies: {  }
+name: mobile_2x_560px_
+label: 'Mobile 2x (560px)'
+effects:
+  fb8437ee-5945-4eba-b899-3b03da719f8a:
+    uuid: fb8437ee-5945-4eba-b899-3b03da719f8a
+    id: image_scale
+    weight: 1
+    data:
+      width: 1120
+      height: null
+      upscale: false

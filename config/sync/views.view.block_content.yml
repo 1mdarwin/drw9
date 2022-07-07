@@ -8,20 +8,20 @@ dependencies:
 _core:
   default_config_hash: BmeDSOTSaTVy5QLgxgJ5ye_ZseG5t88JXRP1apFoBkk
 id: block_content
-label: 'Biblioteca de bloques personalizados'
+label: 'Librería de bloques personalizada'
 module: views
-description: 'Encontrar y administrar bloques personalizados.'
+description: 'Buscar y gestionar bloques personalizados.'
 tag: default
 base_table: block_content_field_data
 base_field: id
 display:
   default:
     id: default
-    display_title: Master
+    display_title: Default
     display_plugin: default
     position: 0
     display_options:
-      title: 'Biblioteca de bloques personalizados'
+      title: 'Librería de bloques personalizada'
       fields:
         info:
           id: info
@@ -526,7 +526,7 @@ display:
       path: admin/structure/block/block-content
       menu:
         type: tab
-        title: 'Biblioteca de bloques personalizados'
+        title: 'Librería de bloques personalizada'
         description: ''
         weight: 0
         menu_name: admin

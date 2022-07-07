@@ -364,6 +364,8 @@ display:
           settings:
             image_link: ''
             image_style: redimensionar64x64
+            image_loading:
+              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true

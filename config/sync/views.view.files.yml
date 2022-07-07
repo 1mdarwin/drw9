@@ -10,14 +10,14 @@ _core:
 id: files
 label: Archivos
 module: file
-description: 'Encontrar y administrar archivos.'
+description: 'Buscar y administrar archivos.'
 tag: default
 base_table: file_managed
 base_field: fid
 display:
   default:
     id: default
-    display_title: Master
+    display_title: Default
     display_plugin: default
     position: 0
     display_options:
@@ -735,7 +735,7 @@ display:
       tags: {  }
   page_1:
     id: page_1
-    display_title: 'Vista general de archivos'
+    display_title: 'Resumen de ficheros'
     display_plugin: page
     position: 1
     display_options:
@@ -885,7 +885,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: standard
-          label: 'Registrando módulo'
+          label: 'Módulo de registro'
           exclude: false
           alter:
             alter_text: false
@@ -934,7 +934,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: numeric
-          label: 'Conteo de usos'
+          label: 'Recuento de uso'
           exclude: false
           alter:
             alter_text: false
@@ -1019,7 +1019,7 @@ display:
             title_enable: false
             title: All
           title_enable: true
-          title: 'Información de uso del fichero para {{ arguments.fid }}'
+          title: 'Información de uso de archivos para {{ arguments.fid }}'
           default_argument_type: fixed
           default_argument_options:
             argument: ''
