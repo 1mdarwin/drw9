@@ -5,7 +5,9 @@ namespace Drupal\Tests\ctools\Kernel;
 use Drupal\ctools\Testing\EntityCreationTrait;
 use Drupal\KernelTests\KernelTestBase;
 
-
+/**
+ *
+ */
 abstract class RelationshipsTestBase extends KernelTestBase {
   use EntityCreationTrait;
 

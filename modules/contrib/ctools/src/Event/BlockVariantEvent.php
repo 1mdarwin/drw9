@@ -6,7 +6,9 @@ use Drupal\Component\EventDispatcher\Event;
 use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\ctools\Plugin\BlockVariantInterface;
 
-
+/**
+ *
+ */
 class BlockVariantEvent extends Event {
 
   /**

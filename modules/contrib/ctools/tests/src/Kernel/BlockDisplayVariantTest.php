@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\ctools\Kernel;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\ctools\Event\BlockVariantEvent;
 use Drupal\ctools\Event\BlockVariantEvents;
 use Drupal\ctools_block_display_test\Plugin\DisplayVariant\BlockDisplayVariant;
@@ -15,6 +16,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class BlockDisplayVariantTest extends KernelTestBase {
 
+  use ProphecyTrait;
   /**
    * {@inheritdoc}
    */

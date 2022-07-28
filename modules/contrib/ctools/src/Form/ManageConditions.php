@@ -12,7 +12,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-
+/**
+ *
+ */
 abstract class ManageConditions extends FormBase {
 
   /**
@@ -32,7 +34,9 @@ abstract class ManageConditions extends FormBase {
    */
   protected $machine_name;
 
-  
+  /**
+   *
+   */
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('plugin.manager.condition'),
@@ -40,7 +44,9 @@ abstract class ManageConditions extends FormBase {
     );
   }
 
-  
+  /**
+   *
+   */
   public function __construct(PluginManagerInterface $manager, FormBuilderInterface $form_builder) {
     $this->manager = $manager;
     $this->formBuilder = $form_builder;
@@ -102,7 +108,9 @@ abstract class ManageConditions extends FormBase {
     $form_state->setRedirect($this->getAddRoute($cached_values), $route_parameters);
   }
 
-  
+  /**
+   *
+   */
   public function add(array &$form, FormStateInterface $form_state) {
     $condition = $form_state->getValue('conditions');
     $content = $this->formBuilder->getForm($this->getConditionClass(), $condition, $this->getTempstoreId(), $this->machine_name);
@@ -148,7 +156,9 @@ abstract class ManageConditions extends FormBase {
     return $configured_conditions;
   }
 
-  
+  /**
+   *
+   */
   protected function getOperations($route_name_base, array $route_parameters = []) {
     $operations['edit'] = [
       'title' => $this->t('Edit'),
