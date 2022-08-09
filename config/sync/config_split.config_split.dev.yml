@@ -1,0 +1,15 @@
+uuid: 6193c905-6872-4d4a-bf43-6a9a38f64f30
+langcode: en
+status: true
+dependencies: {  }
+id: dev
+label: dev
+description: 'Development modules and themes'
+weight: 0
+folder: config/dev
+module: {  }
+theme: {  }
+blacklist: {  }
+graylist: {  }
+graylist_dependents: true
+graylist_skip_equal: true
