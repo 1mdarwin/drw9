@@ -1863,18 +1863,18 @@
     },
     {
         "name": "drupal/bootstrap_barrio",
-        "version": "5.5.4",
-        "version_normalized": "5.5.4.0",
+        "version": "5.5.5",
+        "version_normalized": "5.5.5.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/bootstrap_barrio.git",
-            "reference": "5.5.4"
+            "reference": "5.5.5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/bootstrap_barrio-5.5.4.zip",
-            "reference": "5.5.4",
-            "shasum": "2e07e465fa289d1ff500bda7c6bd109b4f8b6d05"
+            "url": "https://ftp.drupal.org/files/projects/bootstrap_barrio-5.5.5.zip",
+            "reference": "5.5.5",
+            "shasum": "ba0565fec955633bdb1e9488b263158191817720"
         },
         "require": {
             "drupal/core": "^8 || ^9|| ^10",
@@ -1883,8 +1883,8 @@
         "type": "drupal-theme",
         "extra": {
             "drupal": {
-                "version": "5.5.4",
-                "datestamp": "1633918193",
+                "version": "5.5.5",
+                "datestamp": "1660515080",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -1899,12 +1899,16 @@
         "authors": [
             {
                 "name": "Alberto Siles",
-                "homepage": "https://www.drupal.org/user/2824325",
+                "homepage": "https://www.drupal.org/user/827704",
                 "email": "alberto@siles.pe"
             },
             {
-                "name": "hatuhay",
-                "homepage": "https://www.drupal.org/user/827704"
+                "name": "Ricardo.Castaneda",
+                "homepage": "https://www.drupal.org/user/3520894"
+            },
+            {
+                "name": "WillAcon",
+                "homepage": "https://www.drupal.org/user/2824325"
             }
         ],
         "description": "Bootstrap 4 base theme.",
@@ -2461,18 +2465,18 @@
     },
     {
         "name": "drupal/ctools",
-        "version": "3.10.0",
-        "version_normalized": "3.10.0.0",
+        "version": "3.11.0",
+        "version_normalized": "3.11.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/ctools.git",
-            "reference": "8.x-3.10"
+            "reference": "8.x-3.11"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/ctools-8.x-3.10.zip",
-            "reference": "8.x-3.10",
-            "shasum": "8b515a3816a47a9eb55e0c4f4df42839ff4f2660"
+            "url": "https://ftp.drupal.org/files/projects/ctools-8.x-3.11.zip",
+            "reference": "8.x-3.11",
+            "shasum": "67da670df43155d1e15c80c7b0e326b3049ac5a2"
         },
         "require": {
             "drupal/core": "^9.3 || ^10"
@@ -2480,8 +2484,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-3.10",
-                "datestamp": "1659040378",
+                "version": "8.x-3.11",
+                "datestamp": "1660167573",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -7754,23 +7758,23 @@
     },
     {
         "name": "twbs/bootstrap",
-        "version": "v5.1.3",
-        "version_normalized": "5.1.3.0",
+        "version": "5.2.0",
+        "version_normalized": "5.2.0.0",
         "source": {
             "type": "git",
             "url": "https://github.com/twbs/bootstrap.git",
-            "reference": "1a6fdfae6be09b09eaced8f0e442ca6f7680a61e"
+            "reference": "edf9c40956d19e6ab3f9151bfe0dfac6be06fa21"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/twbs/bootstrap/zipball/1a6fdfae6be09b09eaced8f0e442ca6f7680a61e",
-            "reference": "1a6fdfae6be09b09eaced8f0e442ca6f7680a61e",
+            "url": "https://api.github.com/repos/twbs/bootstrap/zipball/edf9c40956d19e6ab3f9151bfe0dfac6be06fa21",
+            "reference": "edf9c40956d19e6ab3f9151bfe0dfac6be06fa21",
             "shasum": ""
         },
         "replace": {
             "twitter/bootstrap": "self.version"
         },
-        "time": "2021-10-09T06:43:19+00:00",
+        "time": "2022-07-19T15:43:58+00:00",
         "type": "library",
         "installation-source": "dist",
         "notification-url": "https://packagist.org/downloads/",
@@ -7802,17 +7806,17 @@
     },
     {
         "name": "twig/twig",
-        "version": "v2.15.1",
-        "version_normalized": "2.15.1.0",
+        "version": "v2.15.2",
+        "version_normalized": "2.15.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/twigphp/Twig.git",
-            "reference": "3b7cedb2f736899a7dbd0ba3d6da335a015f5cc4"
+            "reference": "3e43405a9a8b578809426339cc3780e16fba0c52"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/twigphp/Twig/zipball/3b7cedb2f736899a7dbd0ba3d6da335a015f5cc4",
-            "reference": "3b7cedb2f736899a7dbd0ba3d6da335a015f5cc4",
+            "url": "https://api.github.com/repos/twigphp/Twig/zipball/3e43405a9a8b578809426339cc3780e16fba0c52",
+            "reference": "3e43405a9a8b578809426339cc3780e16fba0c52",
             "shasum": ""
         },
         "require": {
@@ -7825,7 +7829,7 @@
             "psr/container": "^1.0",
             "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
         },
-        "time": "2022-05-17T05:46:24+00:00",
+        "time": "2022-08-12T06:43:37+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {
