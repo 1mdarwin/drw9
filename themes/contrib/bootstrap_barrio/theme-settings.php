@@ -57,7 +57,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
         'bootstrap_barrio/bootswatch_cosmo' => t('Bootswatch Cosmo'),
         'bootstrap_barrio/bootswatch_cyborg' => t('Bootswatch Cyborg'),
         'bootstrap_barrio/bootswatch_darkly' => t('Bootswatch Darkly'),
-        'bootstrap_barrio/bootswatch_flaty' => t('Bootswatch Flatly'),
+        'bootstrap_barrio/bootswatch_flatly' => t('Bootswatch Flatly'),
         'bootstrap_barrio/bootswatch_journal' => t('Bootswatch Journal'),
         'bootstrap_barrio/bootswatch_litera' => t('Bootswatch Litera'),
         'bootstrap_barrio/bootswatch_lumen' => t('Bootswatch Lumen'),
