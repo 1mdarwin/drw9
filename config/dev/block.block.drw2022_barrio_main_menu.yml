@@ -12,8 +12,8 @@ _core:
   default_config_hash: ChCx7DYNUrPTt5uiRdQAPDKJQMc-_SyAQTrZh8H0o-c
 id: drw2022_barrio_main_menu
 theme: drw2022_barrio
-region: top_header
-weight: -11
+region: primary_menu
+weight: -12
 provider: null
 plugin: 'system_menu_block:main'
 settings:

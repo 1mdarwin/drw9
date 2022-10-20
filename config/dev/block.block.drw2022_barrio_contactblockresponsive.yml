@@ -14,8 +14,8 @@ third_party_settings:
     classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
 id: drw2022_barrio_contactblockresponsive
 theme: drw2022_barrio
-region: top_header
-weight: -8
+region: footer_fourth
+weight: -12
 provider: null
 plugin: 'block_content:5ce9a3af-e17b-4e0a-ab92-fb8850341e85'
 settings:
