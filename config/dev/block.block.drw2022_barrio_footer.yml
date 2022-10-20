@@ -1,0 +1,31 @@
+uuid: 3c04260a-8af5-4846-af3d-4e923d50aa17
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - block_class
+    - system
+  theme:
+    - drw2022_barrio
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-12 col-lg-12 menupie'
+_core:
+  default_config_hash: 8zRjTNbfNAJ94lQpZDu6MkyD87GYJ2zpH9VQPVmRbcM
+id: drw2022_barrio_footer
+theme: drw2022_barrio
+region: top_header
+weight: -6
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: 'Footer Menu'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

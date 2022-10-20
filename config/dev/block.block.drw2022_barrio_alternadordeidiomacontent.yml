@@ -1,0 +1,24 @@
+uuid: 7c002f2d-59b2-4158-a8f0-d468a89c643c
+langcode: es
+status: true
+dependencies:
+  module:
+    - block_class
+    - language
+  theme:
+    - drw2022_barrio
+third_party_settings:
+  block_class:
+    classes: idioma
+id: drw2022_barrio_alternadordeidiomacontent
+theme: drw2022_barrio
+region: top_header
+weight: -10
+provider: null
+plugin: 'language_block:language_content'
+settings:
+  id: 'language_block:language_content'
+  label: 'Alternador de idioma (Content)'
+  label_display: '0'
+  provider: language
+visibility: {  }

@@ -1,0 +1,27 @@
+uuid: 988d65d5-95e6-4a2e-840c-44e58c4bc8aa
+langcode: es
+status: false
+dependencies:
+  config:
+    - system.menu.tools
+  module:
+    - system
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: rH6PpAn7-RScha1rGkohGAYSSh_1OVeZzioJPzPw6O4
+id: drw2022_barrio_tools
+theme: drw2022_barrio
+region: sidebar_second
+weight: -11
+provider: null
+plugin: 'system_menu_block:tools'
+settings:
+  id: 'system_menu_block:tools'
+  label: Herramientas
+  label_display: visible
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }

@@ -1,0 +1,20 @@
+uuid: 5674be24-c848-483c-a4b8-322b1dffd19e
+langcode: es
+status: true
+dependencies:
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: 13GQpeITIJsp1kyPniXtWZfyFH87vb1xxJCHifL4UeE
+id: drw2022_barrio_local_actions
+theme: drw2022_barrio
+region: content
+weight: -7
+provider: null
+plugin: local_actions_block
+settings:
+  id: local_actions_block
+  label: 'Acciones primarias de administración'
+  label_display: '0'
+  provider: core
+visibility: {  }

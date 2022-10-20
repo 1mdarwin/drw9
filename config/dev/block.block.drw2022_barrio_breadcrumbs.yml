@@ -1,0 +1,22 @@
+uuid: 8b47e808-6cdd-45d2-944a-22881ca4a05c
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: oXUb3JZR2WW5VOdw4HrhRicCsq51mCgLfRyvheG68ck
+id: drw2022_barrio_breadcrumbs
+theme: drw2022_barrio
+region: top_header
+weight: -8
+provider: null
+plugin: system_breadcrumb_block
+settings:
+  id: system_breadcrumb_block
+  label: 'Enlaces de ayuda a la navegación'
+  label_display: '0'
+  provider: system
+visibility: {  }

@@ -1,0 +1,22 @@
+uuid: 6ba5cd30-d541-444e-84e8-a2c61e94dd21
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: 9EoWV2Lot6FVSr50t4hoKgiz1LIXYWNG-IIPYsWxBqo
+id: drw2022_barrio_content
+theme: drw2022_barrio
+region: content
+weight: -6
+provider: null
+plugin: system_main_block
+settings:
+  id: system_main_block
+  label: 'Contenido principal de la página'
+  label_display: '0'
+  provider: system
+visibility: {  }

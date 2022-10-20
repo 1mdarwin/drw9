@@ -1,0 +1,22 @@
+uuid: ac5a528c-ad4a-4f40-aebd-b19ed2e438e4
+langcode: es
+status: true
+dependencies:
+  module:
+    - help
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: 8I8iACSa0sKO3k3jlvUG1ge52rfcKX7USJAQYnzuBgg
+id: drw2022_barrio_help
+theme: drw2022_barrio
+region: content
+weight: -8
+provider: null
+plugin: help_block
+settings:
+  id: help_block
+  label: Ayuda
+  label_display: '0'
+  provider: help
+visibility: {  }

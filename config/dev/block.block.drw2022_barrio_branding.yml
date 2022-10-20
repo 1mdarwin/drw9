@@ -1,0 +1,25 @@
+uuid: 473b2322-dfc4-4ae8-baf6-37ceae6e85e9
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: NDwadleLD3YVSbDUaakxyYZyINYtkFtOVGShfq4kWy8
+id: drw2022_barrio_branding
+theme: drw2022_barrio
+region: header
+weight: -12
+provider: null
+plugin: system_branding_block
+settings:
+  id: system_branding_block
+  label: 'Marca del sitio'
+  label_display: '0'
+  provider: system
+  use_site_logo: true
+  use_site_name: true
+  use_site_slogan: true
+visibility: {  }

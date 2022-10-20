@@ -1,0 +1,22 @@
+uuid: 9275abce-5821-4661-b7e1-0f3994653446
+langcode: es
+status: true
+dependencies:
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: X9I1OB0W3WlWtrK-CNcg6hNWwa8wficanpH8pYnDZDE
+id: drw2022_barrio_local_tasks
+theme: drw2022_barrio
+region: content
+weight: -9
+provider: null
+plugin: local_tasks_block
+settings:
+  id: local_tasks_block
+  label: Pestañas
+  label_display: '0'
+  provider: core
+  primary: true
+  secondary: true
+visibility: {  }
