@@ -2,3 +2,39 @@
  * @file
  * Subtheme specific CSS.
  */
+ /********************************************************
+ *  HEADER
+ ********************************************************/
+ .navbar-nav>li>a{
+  border-bottom: 2px solid transparent;
+  color: #fff !important;
+  font-weight: 700;
+  padding-bottom: 0px;
+  padding-left: 1.2em;
+  padding-right: 1.2em;
+  padding-top: 10px;
+  text-transform: uppercase;
+ }
+
+
+ /********************************************************
+ *  CONTENT
+ ********************************************************/
+ body{
+  font-size: 1.5rem;
+ }
+
+ /********************************************************
+ *  SIDEBAR
+ ********************************************************/
+
+
+ /********************************************************
+ *  FOOTER
+ ********************************************************/
+ .site-footer .block{
+  width: 100%;
+ }
+ .site-footer .content{
+  font-size:1.1em;
+ }
