@@ -2,9 +2,12 @@ global-styling:
   version: VERSION
   js:
     js/global.js: {}
+    js/drw2022.js: {}
   css:
     component:
       css/style.css: {}
+      css/animate.min.css: {}
+      css/fontawesome/css/fontawesome-all.min.css: {}
       css/colors.css: {}
 bootstrap:
   js:
