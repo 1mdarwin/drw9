@@ -1,0 +1,12 @@
+name: jQuery UI Draggable
+type: module
+description: 'Provides jQuery UI Draggable library.'
+package: jQuery UI
+core_version_requirement: ^9.2 || ^10
+dependencies:
+  - jquery_ui:jquery_ui
+
+# Information added by Drupal.org packaging script on 2022-11-14
+version: '8.x-1.5'
+project: 'jquery_ui_draggable'
+datestamp: 1668452748
