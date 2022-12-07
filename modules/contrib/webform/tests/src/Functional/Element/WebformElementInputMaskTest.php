@@ -29,13 +29,11 @@ class WebformElementInputMaskTest extends WebformElementBrowserTestBase {
    * Test element input mask.
    */
   public function testInputMask() {
-    $assert_session = $this->assertSession();
-
     $webform = Webform::load('test_element_input_mask');
 
     // Check default values.
     $this->postSubmission($webform);
-    $assert_session->responseContains("currency: '$ 1.00'
+    $this->assertRaw("currency: '$ 1.00'
 currency_negative: '-$ 1.00'
 currency_positive_negative: '$ 1.00'
 datetime: ''
@@ -75,7 +73,7 @@ module: ''");
       'module' => '999',
     ];
     $this->postSubmission($webform, $edit);
-    $assert_session->responseContains("currency: '$ 9.99'
+    $this->assertRaw("currency: '$ 9.99'
 currency_negative: '-$ 9.99'
 currency_positive_negative: '-$ 9.99'
 datetime: '2007-06-09''T''17:46:21'
@@ -110,14 +108,14 @@ module: '999'");
     ];
     $this->postSubmission($webform, $edit);
     foreach ($edit as $name => $value) {
-      $assert_session->responseContains('<em class="placeholder">' . $name . '</em> field is not in the right format.');
+      $this->assertRaw('<em class="placeholder">' . $name . '</em> field is not in the right format.');
     }
 
     // Check currency submitted as the default input (ie $ 0.00) triggers
     // required validation.
     // @see \Drupal\webform\Plugin\WebformElement\TextBase::validateInputMask
     $this->postSubmission($webform, ['currency' => '$ 0.00']);
-    $assert_session->responseContains('currency field is required.');
+    $this->assertRaw('currency field is required.');
 
   }
 

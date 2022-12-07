@@ -1,5 +1,4 @@
 <?php
-// phpcs:ignoreFile
 
 namespace Drupal\webform\Commands;
 

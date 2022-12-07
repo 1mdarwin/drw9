@@ -16,7 +16,7 @@ class EntityQueueUiTest extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = ['entityqueue_test'];
+  public static $modules = ['entityqueue_test'];
 
   /**
    * A user with the 'administer entityqueue' permission.
@@ -33,7 +33,7 @@ class EntityQueueUiTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp(): void {
+  protected function setUp() {
     parent::setUp();
 
     $this->webUser = $this->drupalCreateUser(['administer entityqueue']);

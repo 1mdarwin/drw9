@@ -70,12 +70,7 @@ class EntitySubqueueForm extends ContentEntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    if ($this->operation === 'add') {
-      $form['#title'] = $this->t('Add subqueue');
-    }
-    else {
-      $form['#title'] = $this->t('Edit subqueue %label', ['%label' => $this->entity->label()]);
-    }
+    $form['#title'] = $this->t('Edit subqueue %label', ['%label' => $this->entity->label()]);
 
     // Since the form has ajax buttons, the $wrapper_id will change each time
     // one of those buttons is clicked. Therefore the whole form has to be

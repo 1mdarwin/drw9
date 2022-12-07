@@ -34,9 +34,8 @@ use Drupal\user\EntityOwnerTrait;
  *     "storage" = "\Drupal\entityqueue\EntitySubqueueStorage",
  *     "form" = {
  *       "default" = "Drupal\entityqueue\Form\EntitySubqueueForm",
- *       "add" = "Drupal\entityqueue\Form\EntitySubqueueForm",
- *       "edit" = "Drupal\entityqueue\Form\EntitySubqueueForm",
  *       "delete" = "\Drupal\entityqueue\Form\EntitySubqueueDeleteForm",
+ *       "edit" = "Drupal\entityqueue\Form\EntitySubqueueForm"
  *     },
  *     "access" = "Drupal\entityqueue\EntitySubqueueAccessControlHandler",
  *     "route_provider" = {

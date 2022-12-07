@@ -187,6 +187,7 @@ class EntityQueueListBuilder extends ConfigEntityListBuilder {
   protected function getQueueItemsStatus(EntityQueueInterface $queue) {
     $handler = $queue->getHandlerPlugin();
 
+    $items = NULL;
     if ($handler->supportsMultipleSubqueues()) {
       $subqueues_count = $this->entityTypeManager->getStorage('entity_subqueue')->getQuery()
         ->condition('queue', $queue->id(), '=')
@@ -197,9 +198,8 @@ class EntityQueueListBuilder extends ConfigEntityListBuilder {
     }
     else {
       $subqueue = EntitySubqueue::load($queue->id());
-      $count = $subqueue ? count($subqueue->items) : 0;
 
-      $items = $this->formatPlural($count, '@count item', '@count items');
+      $items = $this->formatPlural(count($subqueue->items), '@count item', '@count items');
     }
 
     return $items;
