@@ -43,6 +43,11 @@ content:
   links:
     weight: 100
     region: content
+  share_everywhere:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
   taxonomy_forums:
     type: entity_reference_label
     label: above
@@ -52,4 +57,5 @@ content:
     weight: 10
     region: content
 hidden:
+  field_metatag: true
   langcode: true
