@@ -27,9 +27,15 @@ content:
   links:
     weight: 100
     region: content
+  share_everywhere:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 10
+    region: content
 hidden:
   body: true
   comment: true
   field_image: true
+  field_metatag: true
   field_tags: true
   langcode: true

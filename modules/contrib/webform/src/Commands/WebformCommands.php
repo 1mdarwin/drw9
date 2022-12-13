@@ -16,9 +16,9 @@ use Consolidation\AnnotatedCommand\CommandData;
  */
 class WebformCommands extends WebformCommandsBase {
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:export. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:export
@@ -52,7 +52,6 @@ class WebformCommands extends WebformCommandsBase {
    * @option range-latest Integer specifying the latest X submissions will be downloaded. Used if "range-type" is "latest" or no other range options are provided.
    * @option range-start The submission ID or start date at which to start exporting.
    * @option range-end The submission ID or end date at which to end exporting.
-   * @option uid The ID of the user who submitted the form.
    * @option order The submission order "asc" (default) or "desc".
    * @option state Submission state to be included: "completed", "draft" or "all" (default).
    * @option sticky Flagged/starred submission status.
@@ -60,13 +59,13 @@ class WebformCommands extends WebformCommandsBase {
    * @option destination The full path and filename in which the CSV or archive should be stored. If omitted the CSV file or archive will be outputted to the command line.
    * @aliases wfx,webform-export
    */
-  public function drush_webform_export($webform = NULL, array $options = ['exporter' => NULL, 'delimiter' => NULL, 'multiple-delimiter' => NULL, 'file-name' => NULL, 'archive-type' => NULL, 'header-format' => NULL, 'options-item-format' => NULL, 'options-single-format' => NULL, 'options-multiple-format' => NULL, 'entity-reference-items' => NULL, 'excluded-columns' => NULL, 'uuid' => NULL, 'entity-type' => NULL, 'entity-id' => NULL, 'range-type' => NULL, 'range-latest' => NULL, 'range-start' => NULL, 'range-end' => NULL, 'uid' => NULL, 'order' => NULL, 'state' => NULL, 'sticky' => NULL, 'files' => NULL, 'destination' => NULL]) {
+  public function drush_webform_export($webform = NULL, array $options = ['exporter' => NULL, 'delimiter' => NULL, 'multiple-delimiter' => NULL, 'file-name' => NULL, 'archive-type' => NULL, 'header-format' => NULL, 'options-item-format' => NULL, 'options-single-format' => NULL, 'options-multiple-format' => NULL, 'entity-reference-items' => NULL, 'excluded-columns' => NULL, 'uuid' => NULL, 'entity-type' => NULL, 'entity-id' => NULL, 'range-type' => NULL, 'range-latest' => NULL, 'range-start' => NULL, 'range-end' => NULL, 'order' => NULL, 'state' => NULL, 'sticky' => NULL, 'files' => NULL, 'destination' => NULL]) {
     $this->cliService->drush_webform_export($webform);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:import. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:import
@@ -93,9 +92,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_import($webform, $import_uri);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:purge. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:purge
@@ -126,9 +125,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_purge($webform_id);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:tidy. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:tidy
@@ -154,9 +153,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_tidy($target);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:libraries:status. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Displays the status of third party libraries required by the Webform module.
@@ -170,9 +169,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_libraries_status();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:libraries:composer. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Generates the Webform module's composer.json with libraries as repositories.
@@ -187,9 +186,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_libraries_composer();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:libraries:download. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Download third party libraries required by the Webform module.
@@ -203,9 +202,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_libraries_download();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:libraries:remove. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Removes all downloaded third party libraries required by the Webform module.
@@ -219,9 +218,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_libraries_remove();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:generate. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:generate
@@ -248,9 +247,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_generate($webform_id, $num);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:repair. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Makes sure all Webform admin configuration and webform settings are up-to-date.
@@ -264,9 +263,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_repair();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:remove:orphans. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Removes orphaned submissions where the submission's webform was deleted.
@@ -280,9 +279,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_remove_orphans();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:docs. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:docs
@@ -305,9 +304,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_docs();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:composer:update. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * @hook validate webform:composer:update
@@ -331,9 +330,9 @@ class WebformCommands extends WebformCommandsBase {
     $this->cliService->drush_webform_composer_update();
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // drush webform:generate:commands. DO NOT EDIT.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Generate Drush commands from webform.drush.inc for Drush 8.x to WebformCommands for Drush 9.x.

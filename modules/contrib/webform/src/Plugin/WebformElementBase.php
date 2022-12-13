@@ -6,12 +6,15 @@ use Drupal\Component\Plugin\PluginBase;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Access\AccessResult;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\OptGroup;
 use Drupal\Core\Link;
 use Drupal\Core\Messenger\MessengerTrait;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
@@ -21,7 +24,6 @@ use Drupal\webform\Element\WebformCompositeFormElementTrait;
 use Drupal\webform\Element\WebformHtmlEditor;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Entity\WebformOptions;
-use Drupal\webform\EntityStorage\WebformEntityStorageTrait;
 use Drupal\webform\Plugin\WebformElement\Checkbox;
 use Drupal\webform\Plugin\WebformElement\Checkboxes;
 use Drupal\webform\Plugin\WebformElement\ContainerBase;
@@ -35,10 +37,12 @@ use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformHtmlHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
-use Drupal\webform\Utility\WebformXss;
 use Drupal\webform\WebformInterface;
+use Drupal\webform\WebformLibrariesManagerInterface;
 use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
+use Drupal\webform\WebformTokenManagerInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -55,7 +59,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   use MessengerTrait;
   use WebformCompositeFormElementTrait;
   use WebformEntityInjectionTrait;
-  use WebformEntityStorageTrait;
 
   /**
    * A logger instance.
@@ -70,13 +73,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
   protected $configFactory;
-
-  /**
-   * The module handler.
-   *
-   * @var \Drupal\Core\Extension\ModuleHandlerInterface
-   */
-  protected $moduleHandler;
 
   /**
    * The current user.
@@ -121,6 +117,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   protected $librariesManager;
 
   /**
+   * The webform submission storage.
+   *
+   * @var \Drupal\webform\WebformSubmissionStorageInterface
+   */
+  protected $submissionStorage;
+
+  /**
    * An associative array of an element's default properties names and values.
    *
    * @var array
@@ -135,27 +138,66 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   protected $translatableProperties;
 
   /**
+   * Constructs a WebformElementBase object.
+   *
+   * @param array $configuration
+   *   A configuration array containing information about the plugin instance.
+   * @param string $plugin_id
+   *   The plugin_id for the plugin instance.
+   * @param mixed $plugin_definition
+   *   The plugin implementation definition.
+   * @param \Psr\Log\LoggerInterface $logger
+   *   A logger instance.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\Core\Session\AccountInterface $current_user
+   *   The current user.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
+   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
+   *   The element info manager.
+   * @param \Drupal\webform\Plugin\WebformElementManagerInterface $element_manager
+   *   The webform element manager.
+   * @param \Drupal\webform\WebformTokenManagerInterface $token_manager
+   *   The webform token manager.
+   * @param \Drupal\webform\WebformLibrariesManagerInterface $libraries_manager
+   *   The webform libraries manager.
+   */
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, LoggerInterface $logger, ConfigFactoryInterface $config_factory, AccountInterface $current_user, EntityTypeManagerInterface $entity_type_manager, ElementInfoManagerInterface $element_info, WebformElementManagerInterface $element_manager, WebformTokenManagerInterface $token_manager, WebformLibrariesManagerInterface $libraries_manager) {
+    parent::__construct($configuration, $plugin_id, $plugin_definition);
+    $this->logger = $logger;
+    $this->configFactory = $config_factory;
+    $this->currentUser = $current_user;
+    $this->entityTypeManager = $entity_type_manager;
+    $this->elementInfo = $element_info;
+    $this->elementManager = $element_manager;
+    $this->tokenManager = $token_manager;
+    $this->librariesManager = $libraries_manager;
+    $this->submissionStorage = $entity_type_manager->getStorage('webform_submission');
+  }
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = new static($configuration, $plugin_id, $plugin_definition);
-
-    $instance->logger = $container->get('logger.factory')->get('webform');
-    $instance->configFactory = $container->get('config.factory');
-    $instance->moduleHandler = $container->get('module_handler');
-    $instance->currentUser = $container->get('current_user');
-    $instance->entityTypeManager = $container->get('entity_type.manager');
-    $instance->elementInfo = $container->get('plugin.manager.element_info');
-    $instance->elementManager = $container->get('plugin.manager.webform.element');
-    $instance->tokenManager = $container->get('webform.token_manager');
-    $instance->librariesManager = $container->get('webform.libraries_manager');
-
-    return $instance;
+    return new static(
+      $configuration,
+      $plugin_id,
+      $plugin_definition,
+      $container->get('logger.factory')->get('webform'),
+      $container->get('config.factory'),
+      $container->get('current_user'),
+      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.element_info'),
+      $container->get('plugin.manager.webform.element'),
+      $container->get('webform.token_manager'),
+      $container->get('webform.libraries_manager')
+    );
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Property definitions.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Define an element's default properties.
@@ -295,6 +337,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       'placeholder',
       'markup',
       'test',
+      'default_value',
       'header_label',
       'add_more_button_label',
       'add_more_input_label',
@@ -302,9 +345,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     ];
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Property methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -313,16 +356,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     if (!isset($this->defaultProperties)) {
       $properties = $this->defineDefaultProperties();
       $definition = $this->getPluginDefinition();
-      // Apply default format settings to element edit form properties.
-      // This approach prevents having to refactor how default formats
-      // are handled.
-      $config = $this->configFactory->get('webform.settings');
-      if (isset($properties['format'])) {
-        $properties['format'] = $config->get('format.' . $this->getPluginId() . '.item') ?? $properties['format'];
-      }
-      if (isset($properties['format_items'])) {
-        $properties['format_items'] = $config->get('format.' . $this->getPluginId() . '.items') ?? $properties['format_items'];
-      }
       \Drupal::moduleHandler()->alter(
         'webform_element_default_properties',
         $properties,
@@ -351,6 +384,34 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
   }
 
   /**
+   * Get default multiple properties used by most elements.
+   *
+   * @return array
+   *   An associative array containing default multiple properties.
+   *
+   * @deprecated Scheduled for removal in Webform 8.x-6.x
+   *   Use \Drupal\webform\Plugin\WebformElementBase::defineDefaultBaseProperties instead.
+   */
+  protected function getDefaultMultipleProperties() {
+    @trigger_error('\Drupal\webform\Plugin\WebformElementBase::getDefaultMultipleProperties is scheduled for removal in Webform 8.x-6.x. Use \Drupal\webform\Plugin\WebformElementBase::defineDefaultBaseProperties instead.', E_USER_DEPRECATED);
+    return $this->defineDefaultBaseProperties();
+  }
+
+  /**
+   * Get default base properties used by all elements.
+   *
+   * @return array
+   *   An associative array containing base properties used by all elements.
+   *
+   * @deprecated Scheduled for removal in Webform 8.x-6.x
+   *   Use \Drupal\webform\Plugin\WebformElementBase::defineDefaultBaseProperties instead.
+   */
+  protected function getDefaultBaseProperties() {
+    @trigger_error('\Drupal\webform\Plugin\WebformElementBase::getDefaultBaseProperties is scheduled for removal in Webform 8.x-6.x. Use \Drupal\webform\Plugin\WebformElementBase::defineDefaultBaseProperties instead.', E_USER_DEPRECATED);
+    return $this->defineDefaultBaseProperties();
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function hasProperty($property_name) {
@@ -370,7 +431,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    * {@inheritdoc}
    */
   public function getElementProperty(array $element, $property_name) {
-    return $element["#$property_name"] ?? $this->getDefaultProperty($property_name);
+    return (isset($element["#$property_name"])) ? $element["#$property_name"] : $this->getDefaultProperty($property_name);
   }
 
   /**
@@ -417,9 +478,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       ?: $this->elementInfo->getInfoProperty("webform_$type", $property_name, NULL);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Definition and meta data methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -476,7 +537,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    * {@inheritdoc}
    */
   public function getDefaultKey() {
-    return $this->pluginDefinition['default_key'] ?? NULL;
+    return (isset($this->pluginDefinition['default_key'])) ? $this->pluginDefinition['default_key'] : NULL;
   }
 
   /**
@@ -613,9 +674,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return $this->elementInfo->getInfo($this->getBaseId());
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Element relationship methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -666,9 +727,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return $types;
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Element rendering methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -794,12 +855,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       if (!empty($element['#required_error'])) {
         $element['#attributes']['data-webform-required-error'] = WebformHtmlHelper::toPlainText($element['#required_error']);
         $element['#required_error'] = WebformHtmlHelper::toHtmlMarkup($element['#required_error']);
-      }
-
-      // Convert #title to HTML markup so that it can displayed properly
-      // in error messages.
-      if (isset($element['#title'])) {
-        $element['#title'] = WebformHtmlHelper::toHtmlMarkup($element['#title'], WebformXss::getHtmlTagList());
       }
     }
 
@@ -1127,7 +1182,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       return $element;
     }
 
-    $flex = $element['#flex'] ?? 1;
+    $flex = (isset($element['#flex'])) ? $element['#flex'] : 1;
     $element += ['#prefix' => '', '#suffix' => ''];
     $element['#prefix'] = '<div class="webform-flex webform-flex--' . $flex . '"><div class="webform-flex--container">' . $element['#prefix'];
     $element['#suffix'] = $element['#suffix'] . '</div></div>';
@@ -1181,7 +1236,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     foreach ($multiple_properties as $multiple_property => $multiple_value) {
       if (strpos($multiple_property, 'multiple__') === 0) {
         $property_name = str_replace('multiple__', '', $multiple_property);
-        $element["#$property_name"] = $element["#$multiple_property"] ?? $multiple_value;
+        $element["#$property_name"] = (isset($element["#$multiple_property"])) ? $element["#$multiple_property"] : $multiple_value;
       }
     }
 
@@ -1251,9 +1306,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return $element['#webform_key'];
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Display submission value methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -1493,7 +1548,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
           'comma' => ', ',
           'space' => ' ',
         ];
-        $delimiter = $delimiters[$format] ?? $format;
+        $delimiter = (isset($delimiters[$format])) ? $delimiters[$format] : $format;
 
         $total = count($items);
 
@@ -1527,7 +1582,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     // Get items.
     $items = [];
     foreach (array_keys($value) as $delta) {
-      $item = $this->formatTextItem($element, $webform_submission, ['delta' => $delta] + $options);
+      $item = $this->formatTextItem($element, $webform_submission, ['delta' => $delta] + $options);;
       if ($item) {
         $items[] = $item;
       }
@@ -1571,7 +1626,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
           'comma' => ', ',
           'space' => ' ',
         ];
-        $delimiter = $delimiters[$format] ?? $format;
+        $delimiter = (isset($delimiters[$format])) ? $delimiters[$format] : $format;
         return implode($delimiter, $items);
     }
   }
@@ -1712,7 +1767,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       return $element['#value'];
     }
 
-    $webform_key = $options['webform_key'] ?? $element['#webform_key'];
+    $webform_key = (isset($options['webform_key'])) ? $options['webform_key'] : $element['#webform_key'];
     $value = $webform_submission->getElementData($webform_key);
     // Is value is NULL and there is a #default_value, then use it.
     if ($value === NULL && isset($element['#default_value'])) {
@@ -1724,13 +1779,13 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       // Return $options['delta'] which is used by tokens.
       // @see _webform_token_get_submission_value()
       if (isset($options['delta'])) {
-        $value = $value[$options['delta']] ?? NULL;
+        $value = (isset($value[$options['delta']])) ? $value[$options['delta']] : NULL;
       }
 
       // Return $options['composite_key'] which is used by composite elements.
       // @see \Drupal\webform\Plugin\WebformElement\WebformCompositeBase::formatTableColumn
       if ($value && isset($options['composite_key'])) {
-        $value = $value[$options['composite_key']] ?? NULL;
+        $value = (isset($value[$options['composite_key']])) ? $value[$options['composite_key']] : NULL;
       }
     }
 
@@ -1812,9 +1867,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     }
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Preview method.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -1826,9 +1881,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     ];
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Test methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -1837,9 +1892,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return FALSE;
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Table methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -1875,9 +1930,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return !empty($options['exclude_empty']);
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Export methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -1943,9 +1998,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return [$this->formatText($element, $webform_submission, $export_options)];
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Validation methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Form API callback. Validate element #minlength value.
@@ -2121,9 +2176,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     }
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // #states API methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -2244,9 +2299,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     }
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Operation methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -2283,9 +2338,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    */
   public function postSave(array &$element, WebformSubmissionInterface $webform_submission, $update = TRUE) {}
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Element configuration methods.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -2304,9 +2359,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
 
     $element_properties = $form_state->get('element_properties');
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // General.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     /* Element settings */
 
@@ -2568,7 +2623,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
           "bday-day" => $this->t('Birthday day'),
           "bday-month" => $this->t('Birthday month'),
           "bday-year" => $this->t('Birthday year'),
-          "sex" => $this->t('Sex'),
+          "sex" => $this->t('Gender'),
           "url" => $this->t('Contact URL'),
           "photo" => $this->t('Contact photo'),
           "email" => $this->t('Email'),
@@ -2764,9 +2819,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       '#options' => [0 => $this->t('0 (none)')] + array_combine($flex_range, $flex_range),
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Conditions.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     /* Conditional logic */
 
@@ -2804,9 +2859,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       ];
     }
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Advanced.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     /* Default value */
 
@@ -2973,11 +3028,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
         'form_element' => $this->t('Form element'),
         'container' => $this->t('Container'),
       ],
-      // phpcs:disable
       '#description' => '<b>' . $this->t('Fieldset') . ':</b> ' . $this->t('Wraps inputs in a fieldset.') . ' <strong>' . $this->t('Recommended') . '</strong>' .
         '<br/><br/><b>' . $this->t('Form element') . ':</b> ' . $this->t('Wraps inputs in a basic form element with title and description.') .
         '<br/><br/><b>' . $this->t('Container') . ':</b> ' . $this->t('Wraps inputs in a basic div with no title or description.'),
-      // phpcs:enable
     ];
     // Hide element description and display when using a container wrapper.
     if ($this->hasProperty('wrapper_type')) {
@@ -3087,7 +3140,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       '#description' => $this->t('Select how a single value is displayed.'),
       '#options' => WebformOptionsHelper::appendValueToText($this->getItemFormats()),
     ];
-    $format = $element_properties['format'] ?? NULL;
+    $format = isset($element_properties['format']) ? $element_properties['format'] : NULL;
     $format_custom = ($has_edit_twig_access || $format === 'custom');
     if ($format_custom) {
       $form['display']['item']['format']['#options'] += ['custom' => $this->t('Custom…')];
@@ -3160,7 +3213,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       '#description' => $this->t('Select how multiple values are displayed.'),
       '#options' => WebformOptionsHelper::appendValueToText($this->getItemsFormats()),
     ];
-    $format_items = $element_properties['format_items'] ?? NULL;
+    $format_items = isset($element_properties['format_items']) ? $element_properties['format_items'] : NULL;
     $format_items_custom = ($has_edit_twig_access || $format_items === 'custom');
     if ($format_items_custom) {
       $form['display']['items']['format_items']['#options'] += ['custom' => $this->t('Custom…')];
@@ -3234,9 +3287,9 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       '#description' => $this->t("Admin notes/comments are display next to the element title in the form builder and visible in the form's YAML source"),
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Access.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     /* Access */
 
@@ -3273,7 +3326,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
             ':input[name="properties[access]"]' => [
               'checked' => TRUE,
             ],
-          ],
+          ]
         ],
       ];
       $form['access']['access_' . $operation]['access_' . $operation . '_roles'] = [
@@ -3299,12 +3352,12 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       '#return_value' => TRUE,
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Disable #multiple if the element has submission data.
     if (!$form_object->isNew() && $this->hasProperty('multiple')) {
       $element_key = $form_object->getKey();
-      if ($this->getSubmissionStorage()->hasSubmissionValue($webform, $element_key)) {
+      if ($this->submissionStorage->hasSubmissionValue($webform, $element_key)) {
         $form['element']['multiple']['#disabled'] = TRUE;
         $form['element']['multiple']['#description'] = '<em>' . $this->t('There is data for this element in the database. This setting can no longer be changed.') . '</em>';
       }
@@ -3331,14 +3384,20 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    * {@inheritdoc}
    */
   public function buildConfigurationForm(array $form, FormStateInterface $form_state) {
-    $element = $form_state->get('element');
-    if (is_null($element)) {
-      throw new \Exception('Element must be defined in the $form_state.');
-    }
-
     $default_properties = $this->getDefaultProperties();
-    $element_properties = WebformArrayHelper::removePrefix($form_state->get('element'))
+    $element_properties = WebformArrayHelper::removePrefix($this->configuration)
       + $default_properties;
+
+    // Make sure 'format_items' is removed if the element does not
+    // support multiple values.
+    // @todo Webform 8.x-6.x: Remove and assume custom element are fixed.
+    if (!$this->supportsMultipleValues()) {
+      unset(
+        $default_properties['format_items'],
+        $default_properties['format_items_html'],
+        $default_properties['format_items_text']
+      );
+    }
 
     // Set default and element properties.
     // Note: Storing this information in the webform's state allows modules to view
@@ -3400,7 +3459,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       '#description' => $this->t('Properties do not have to be prepended with a hash (#) character, the hash character will be automatically added to the custom properties.') .
         '<br /><br />' .
         $this->t('These properties and callbacks are not allowed: @properties', ['@properties' => WebformArrayHelper::toString(WebformArrayHelper::addPrefix(WebformElementHelper::$ignoredProperties))]),
-      '#default_value' => $custom_properties,
+      '#default_value' => $custom_properties ,
       '#parents' => ['properties', 'custom'],
     ];
 
@@ -3554,12 +3613,12 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
    */
   protected function setConfigurationFormDefaultValue(array &$form, array &$element_properties, array &$property_element, $property_name) {
     $default_value = $element_properties[$property_name];
-    $type = $property_element['#type'] ?? NULL;
+    $type = (isset($property_element['#type'])) ? $property_element['#type'] : NULL;
 
     switch ($type) {
       case 'entity_autocomplete':
         $target_type = $property_element['#target_type'];
-        $target_storage = $this->getEntityStorage($target_type);
+        $target_storage = $this->entityTypeManager->getStorage($target_type);
         if (!empty($property_element['#tags'])) {
           $property_element['#default_value'] = ($default_value) ? $target_storage->loadMultiple($default_value) : [];
         }

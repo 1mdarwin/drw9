@@ -34,8 +34,6 @@ class WebformHandlerEmailRenderingTest extends WebformBrowserTestBase {
    * Test email handler rendering.
    */
   public function testEmailRendering() {
-    $assert_session = $this->assertSession();
-
     $this->drupalLogin($this->rootUser);
 
     /** @var \Drupal\webform\WebformInterface $webform */
@@ -43,7 +41,7 @@ class WebformHandlerEmailRenderingTest extends WebformBrowserTestBase {
 
     // Check that we are currently using the bartik.theme.
     $this->drupalGet('/webform/contact');
-    $assert_session->responseContains('core/themes/bartik/css/base/elements.css');
+    $this->assertRaw('core/themes/bartik/css/base/elements.css');
 
     // Post submission and send emails.
     $edit = [
@@ -72,7 +70,7 @@ class WebformHandlerEmailRenderingTest extends WebformBrowserTestBase {
 
     // Check that we are now using the seven.theme.
     $this->drupalGet('/webform/contact');
-    $assert_session->responseNotContains('core/themes/bartik/css/base/elements.css');
+    $this->assertNoRaw('core/themes/bartik/css/base/elements.css');
 
     // Post submission and send emails.
     $this->postSubmission($webform, $edit);

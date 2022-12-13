@@ -76,8 +76,6 @@ class WebformSanitizeSubmissionsCommands extends DrushCommands implements Saniti
   }
 
   /**
-   * Sanitization options.
-   *
    * @hook option sql-sanitize
    * @option sanitize-webform-submissions
    *   By default, submissions are truncated. Specify 'no' to disable that.
@@ -85,8 +83,6 @@ class WebformSanitizeSubmissionsCommands extends DrushCommands implements Saniti
   public function options($options = ['sanitize-webform-submissions' => NULL]) {}
 
   /**
-   * Sanitization messages.
-   *
    * @hook on-event sql-sanitize-confirms
    *
    * {@inheritdoc}

@@ -1,8 +1,5 @@
 <?php
 
-// phpcs:disable Drupal.Semantics.FunctionT.ConcatString
-// phpcs:disable Drupal.Strings.UnnecessaryStringConcat.Found
-
 namespace Drupal\webform;
 
 use Drupal\Component\Utility\Xss;
@@ -152,7 +149,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
    */
   public function getGroup($id = NULL) {
     if ($id !== NULL) {
-      return $this->groups[$id] ?? NULL;
+      return (isset($this->groups[$id])) ? $this->groups[$id] : NULL;
     }
     else {
       return $this->groups;
@@ -164,7 +161,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
    */
   public function getHelp($id = NULL) {
     if ($id !== NULL) {
-      return $this->help[$id] ?? NULL;
+      return (isset($this->help[$id])) ? $this->help[$id] : NULL;
     }
     else {
       return $this->help;
@@ -176,7 +173,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
    */
   public function getVideo($id = NULL) {
     if ($id !== NULL) {
-      return $this->videos[$id] ?? NULL;
+      return (isset($this->videos[$id])) ? $this->videos[$id] : NULL;
     }
     else {
       return $this->videos;
@@ -223,7 +220,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
   public function getNotifications($type = NULL) {
     $notifications = $this->state->get('webform_help_notifications', []);
     if ($type) {
-      return $notifications[$type] ?? [];
+      return (isset($notifications[$type])) ? $notifications[$type] : [];
     }
     else {
       return $notifications;
@@ -331,9 +328,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     return $build;
   }
 
-  /* *********************************************************************** */
+  /***************************************************************************/
   // Index sections.
-  /* *********************************************************************** */
+  /***************************************************************************/
 
   /**
    * {@inheritdoc}
@@ -365,7 +362,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       // Content.
       $row['content'] = ['data' => []];
       $row['content']['data']['title'] = [
-        '#markup' => $video['title'] . ' | ' . ($video['owner'] ?? $this->t('Jacob Rockowitz')),
+        '#markup' => $video['title'] . ' | ' . (isset($video['owner']) ? $video['owner'] : $this->t('Jacob Rockowitz')),
         '#prefix' => '<h3>',
         '#suffix' => '</h3>',
       ];
@@ -757,7 +754,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           '#markup' => '<div class="note-warning"><p>' . $this->t('Please post comments and feedback to this <a href=":href">Google Sheet</a>.', [':href' => 'https://docs.google.com/spreadsheets/d/1zNt3WsKxDq2ZmMHeYAorNUUIx5_yiDtDVUIKXtXaq4s/edit?usp=sharing']) . '</p></div>',
         ],
         'description' => [
-          '#markup' => '<p>' . $this->t("Here is a detailed feature-comparison of Webform and Contact Storage 8.x-1.x.&nbsp;It's worth noting that Contact Storage relies on the Contact module which in turn relies on the Field UI; Contact Storage out of the box is a minimalistic solution with limited (but useful!) functionality. This means it can be extended with core mechanisms such as CRUD entity hooks and overriding services; also there's a greater chance that a general purpose module will play nicely with it (eg. the Conditional Fields module is for entity form displays in general, not the Contact module).") . '</p>' .
+          '#markup' => '<p>' . $this->t("Here is a detailed feature-comparison of Webform 8.x-5.x and Contact Storage 8.x-1.x.&nbsp;It's worth noting that Contact Storage relies on the Contact module which in turn relies on the Field UI; Contact Storage out of the box is a minimalistic solution with limited (but useful!) functionality. This means it can be extended with core mechanisms such as CRUD entity hooks and overriding services; also there's a greater chance that a general purpose module will play nicely with it (eg. the Conditional Fields module is for entity form displays in general, not the Contact module).") . '</p>' .
             '<p>' . $this->t("Webform is much heavier; it has a great deal of functionality enabled right within the one module, and that's on top of supplying all the normal field elements (because it doesn't just use the Field API)") . '</p>',
         ],
         'table' => ['#markup' => $html],
@@ -765,9 +762,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     ];
   }
 
-  /* *********************************************************************** */
+  /***************************************************************************/
   // Module.
-  /* *********************************************************************** */
+  /***************************************************************************/
 
   /**
    * Get the current version number of the Webform module.
@@ -795,9 +792,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     return ($this->getVersion() !== $this->state->get('webform.version')) ? TRUE : FALSE;
   }
 
-  /* *********************************************************************** */
+  /***************************************************************************/
   // Groups.
-  /* *********************************************************************** */
+  /***************************************************************************/
 
   /**
    * Initialize group.
@@ -829,9 +826,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     ];
   }
 
-  /* *********************************************************************** */
+  /***************************************************************************/
   // Videos.
-  /* *********************************************************************** */
+  /***************************************************************************/
 
   /**
    * Initialize videos.
@@ -1527,9 +1524,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     return $videos;
   }
 
-  /* ************************************************************************ */
+  /****************************************************************************/
   // Help.
-  /* ************************************************************************ */
+  /****************************************************************************/
 
   /**
    * Initialize help.
@@ -1540,9 +1537,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
   protected function initHelp() {
     $help = [];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Notifications.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     if ($this->currentUser->hasPermission('administer webform')) {
       $notifications = $this->getNotifications();
@@ -1565,11 +1562,11 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       }
     }
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Promotions.
     // Disable promotions via Webform admin settings.
     // (/admin/structure/webform/config/advanced).
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Promotions: Webform.
     $t_args = [
@@ -1594,9 +1591,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Installation.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Installation.
     $t_args = [
@@ -1624,9 +1621,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Forms.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Webforms.
     $help['webforms_manage'] = [
@@ -1640,9 +1637,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Addons.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Addons.
     $help['addons'] = [
@@ -1656,9 +1653,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Help.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     $help['help'] = [
       'group' => 'help',
@@ -1670,9 +1667,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Configuration.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Configuration: Forms.
     $help['config_forms'] = [
@@ -1705,7 +1702,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       'content' => $this->t('The <strong>Options configuration</strong> page lists reusable predefined options/values available for select menus, radio buttons, checkboxes and Likert elements.'),
       'video_id' => 'configuration',
       'routes' => [
-        // @see /admin/structure/webform/options
+        // @see /admin/structure/webform/config/options
         'entity.webform_options.collection',
       ],
     ];
@@ -1779,16 +1776,12 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       '@webform-libraries-download' => 'webform-libraries-download',
       '@webform-composer-update' => 'webform-composer-update',
     ];
-    // phpcs:ignore Drupal.Classes.FullyQualifiedNamespace.UseStatementMissing
     $drush_version = (class_exists('\Drush\Drush')) ? \Drush\Drush::getMajorVersion() : 8;
     if ($drush_version >= 9) {
       foreach ($t_args as $command_name => $command) {
         $t_args[$command_name] = str_replace('-', ':', $command);
       }
     }
-    $t_args += [
-      ':href_6x' => 'https://git.drupalcode.org/sandbox/jrockowitz-2941983/-/raw/6.x/libraries.zip',
-    ];
     $help['config_libraries_help'] = [
       'group' => 'configuration',
       'title' => $this->t('Configuration: Libraries: Help'),
@@ -1800,14 +1793,14 @@ class WebformHelpManager implements WebformHelpManagerInterface {
         '<p>' . $this->t('There are several ways to download the needed third-party libraries.') . '</p>' .
         '<p><strong>' . $this->t('Recommended') . '</strong></p>' .
         '<ul>' .
-        '<li>' . $this->t('Use the <a href="https://github.com/wikimedia/composer-merge-plugin">Composer Merge plugin</a> to include the Webform module\'s <a href="https://cgit.drupalcode.org/webform/tree/composer.libraries.json">composer.libraries.json</a> or generate a custom file using <code>drush @webform-libraries-composer &gt; DRUPAL_ROOT/composer.libraries.json</code>.', $t_args) . '<br/><strong>' . $this->t('<a href="https://www.drupal.org/node/3003140">Learn more &raquo;</a>') . '</strong>' . '</li>' .
+        '<li>' . $this->t('Use the <a href="https://github.com/wikimedia/composer-merge-plugin">Composer Merge plugin</a> to include the Webform module\'s <a href="https://cgit.drupalcode.org/webform/tree/composer.libraries.json">composer.libraries.json</a> or generate a custom file using <code>drush @webform-libraries-composer &gt; DRUPAL_ROOT/composer.libraries.json</code>.', $t_args) . '<br/><strong>' . t('<a href="https://www.drupal.org/node/3003140">Learn more &raquo;</a>') . '</strong>'. '</li>' .
         '</ul>' .
         '<p><strong>' . $this->t('Alternatives') . '</strong></p>' .
         '<ul>' .
         '<li>' . $this->t('Generate a composer.json file using <code>drush @webform-libraries-composer</code>.', $t_args) . '</li>' .
         '<li>' . $this->t('Execute <code>drush @webform-libraries-download</code>, to download third-party libraries required by the Webform module. (OSX/Linux)', $t_args) . '</li>' .
         '<li>' . $this->t("Execute <code>drush @webform-composer-update</code>, to update your Drupal installation's composer.json to include the Webform module's selected libraries as repositories.", $t_args) . '</li>' .
-        '<li>' . $this->t('Download and extract a zipped archive containing all webform libraries (<a href=":href_6x">6.x</a>) and extract the directories and files to /libraries or /web/libraries', $t_args) . '</li>' .
+        '<li>' . $this->t('Download and extract a <a href=":href">zipped archive containing all webform libraries</a> and extract the directories and files to /libraries or /web/libraries', [':href' => 'https://git.drupalcode.org/sandbox/jrockowitz-2941983/raw/8.x-5.x/libraries.zip']) . '</li>' .
         '</ul>',
       'message_type' => 'info',
       'message_close' => TRUE,
@@ -1842,9 +1835,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Plugins.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Plugins: Elements.
     $help['plugins_elements'] = [
@@ -1897,9 +1890,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Webform.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Webform: Source.
     $help['webform_source'] = [
@@ -1954,9 +1947,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Elements.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Elements.
     $help['elements'] = [
@@ -1970,9 +1963,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Handlers.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Handlers.
     $help['handlers'] = [
@@ -1987,9 +1980,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Variants.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Variants.
     $help['variants'] = [
@@ -2003,9 +1996,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Settings.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Settings.
     $help['settings'] = [
@@ -2079,9 +2072,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Submissions/Results.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Submissions.
     $help['submissions'] = [
@@ -2118,9 +2111,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Submission.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     $help['submission'] = [
       'group' => 'submission',
@@ -2225,9 +2218,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Export.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Export: Config.
     $config_import_href = ($this->moduleHandler->moduleExists('config') && $this->currentUser->hasPermission('import configuration'))
@@ -2246,9 +2239,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       ],
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Modules.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Webform Entity Print (PDF).
     $help['webform_entity_print'] = [
@@ -2326,9 +2319,9 @@ class WebformHelpManager implements WebformHelpManagerInterface {
       'weight' => -10,
     ];
 
-    /* ********************************************************************** */
+    /**************************************************************************/
     // Messages.
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Webform: Elements -- Warning.
     $help['message_webform_ui'] = [
@@ -2352,7 +2345,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
     $help += $this->moduleHandler->invokeAll('webform_help_info');
     $this->moduleHandler->alter('webform_help_info', $help);
 
-    /* ********************************************************************** */
+    /**************************************************************************/
 
     // Initialize help.
     foreach ($help as $id => &$help_info) {
