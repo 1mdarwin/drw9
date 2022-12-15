@@ -1,6 +1,6 @@
 uuid: 6193c905-6872-4d4a-bf43-6a9a38f64f30
 langcode: en
-status: true
+status: false
 dependencies: {  }
 id: dev
 label: dev
@@ -62,6 +62,7 @@ blacklist:
   - block.block.drw2022_barrio_widget
   - bootstrap_barrio.settings
   - drw2022_barrio.settings
+  - system.performance
 graylist: {  }
 graylist_dependents: true
 graylist_skip_equal: true
