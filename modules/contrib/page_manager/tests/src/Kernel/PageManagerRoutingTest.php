@@ -7,7 +7,7 @@ use Drupal\entity_test\Entity\EntityTest;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 use Drupal\page_manager\Entity\Page;
 use Drupal\page_manager\Entity\PageVariant;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -20,12 +20,12 @@ class PageManagerRoutingTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'page_manager_routing_test', 'path_alias'];
+  protected static $modules = ['page_manager', 'page_manager_routing_test', 'path_alias'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // If we are on Drupal 8.8 or later, we need to install the path_alias
@@ -125,7 +125,7 @@ class PageManagerRoutingTest extends EntityKernelTestBase {
     }
 
     if ($expected) {
-      $this->assertArrayHasKey(RouteObjectInterface::ROUTE_NAME, $parameters);
+      $this->assertArrayHasKey( RouteObjectInterface::ROUTE_NAME, $parameters);
       $this->assertSame($expected, $parameters[RouteObjectInterface::ROUTE_NAME]);
     }
     else {

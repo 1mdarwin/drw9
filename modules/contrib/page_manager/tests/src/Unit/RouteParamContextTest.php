@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Plugin\Context\Context;
 use Drupal\Core\Routing\RouteProviderInterface;
 use Drupal\Core\TypedData\DataDefinition;
@@ -22,6 +23,7 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class RouteParamContextTest extends PageContextTestBase {
 
+  use ProphecyTrait;
   /**
    * @covers ::onPageContext
    */

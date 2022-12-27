@@ -4,6 +4,9 @@ namespace Drupal\page_manager_ui\Form;
 
 use Drupal\ctools\Form\ConditionConfigure;
 
+/**
+ * Access Configuration Forms.
+ */
 class AccessConfigure extends ConditionConfigure {
 
   /**
@@ -16,8 +19,8 @@ class AccessConfigure extends ConditionConfigure {
     $route_name = $page->isNew() ? 'entity.page.add_step_form' : 'entity.page.edit_form';
     return [$route_name,
       [
-      'machine_name' => $this->machine_name,
-      'step' => 'access',
+        'machine_name' => $this->machine_name,
+        'step' => 'access',
       ],
     ];
   }

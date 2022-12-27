@@ -311,7 +311,7 @@ class WidgetBlock extends BlockBase implements ContainerFactoryPluginInterface {
   public function getContexts() {
     // When editing, attempt to get the contexts from the block display.
     if ($block_display = \Drupal::routeMatch()->getParameter('block_display')) {
-      $cached_values = \Drupal::service('user.shared_tempstore')
+      $cached_values = \Drupal::service('tempstore.shared')
         ->get('page_manager.block_display')
         ->get($block_display);
       if (!empty($cached_values['contexts'])) {

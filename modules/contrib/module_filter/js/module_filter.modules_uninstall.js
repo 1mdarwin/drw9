@@ -3,7 +3,7 @@
  * Module filter behaviors.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
 
   'use strict';
 
@@ -11,8 +11,8 @@
    * Filter enhancements.
    */
   Drupal.behaviors.moduleFilterModulesUninstall = {
-    attach: function(context, settings) {
-      var $input = $('input.table-filter-text', context).once('module-filter');
+    attach: function (context, settings) {
+      var $input = $(once('module-filter', 'input.table-filter-text', context));
       if ($input.length) {
         var wrapperId = $input.attr('data-table');
         var $wrapper = $(wrapperId);
@@ -27,7 +27,7 @@
           clearLabel: Drupal.t('clear'),
           wrapper: $modulesWrapper,
           additionalOperators: {
-            description: function(string, item) {
+            description: function (string, item) {
               if (item.description == undefined) {
                 // Soft cache.
                 item.description = $('.module-description', item.element).text().toLowerCase();
@@ -40,7 +40,7 @@
           }
         }).focus();
 
-        $input.bind('winnow:finish', function() {
+        $input.bind('winnow:finish', function () {
           Drupal.announce(
             Drupal.formatPlural(
               $modulesWrapper.find(selector + ':visible').length,
@@ -53,4 +53,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

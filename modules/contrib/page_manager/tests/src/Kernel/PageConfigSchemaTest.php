@@ -19,12 +19,12 @@ class PageConfigSchemaTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'block', 'node', 'user'];
+  protected static $modules = ['page_manager', 'block', 'node', 'user'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installConfig(['page_manager']);
   }
@@ -42,7 +42,7 @@ class PageConfigSchemaTest extends KernelTestBase {
 
     // Add an access condition.
     $page->addAccessCondition([
-      'id' => 'node_type',
+      'id' => 'entity_bundle:node',
       'bundles' => [
         'article' => 'article',
       ],
@@ -68,7 +68,7 @@ class PageConfigSchemaTest extends KernelTestBase {
 
     // Add a selection condition.
     $page_variant->addSelectionCondition([
-      'id' => 'node_type',
+      'id' => 'entity_bundle:node',
       'bundles' => [
         'page' => 'page',
       ],

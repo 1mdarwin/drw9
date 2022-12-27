@@ -2,7 +2,7 @@
 
 namespace Drupal\page_manager\Routing;
 
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\Routing\Route;
 
 /**
@@ -27,7 +27,7 @@ class RouteAttributes {
    */
   public static function extractRawAttributes(Route $route, $name, $path) {
     // See \Symfony\Component\Routing\Matcher\UrlMatcher::matchCollection().
-    preg_match($route->compile()->getRegex(), $path, $matches);
+    preg_match($route->compile()->getRegex(), (string) $path, $matches);
 
     // See \Symfony\Component\Routing\Matcher\UrlMatcher::mergeDefaults().
     $attributes = $route->getDefaults();

@@ -21,12 +21,12 @@ class PageManagerAdminTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'page_manager_ui', 'page_manager_test'];
+  protected static $modules = ['block', 'page_manager_ui', 'page_manager_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('local_tasks_block');
@@ -34,7 +34,7 @@ class PageManagerAdminTest extends WebDriverTestBase {
     $this->drupalPlaceBlock('system_branding_block');
     $this->drupalPlaceBlock('page_title_block');
 
-    \Drupal::service('theme_installer')->install(['bartik']);
+    \Drupal::service('theme_installer')->install(['olivero']);
     $this->config('system.theme')->set('admin', 'classy')->save();
 
     $this->drupalLogin($this->drupalCreateUser(['administer pages', 'access administration pages', 'view the administration theme']));
@@ -74,45 +74,45 @@ class PageManagerAdminTest extends WebDriverTestBase {
       'wizard_options[access]' => TRUE,
       'wizard_options[selection]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Test the 'Page access' step.
-    $this->assertTitle('Page access | Drupal');
+    $this->titleEquals('Page access | Drupal');
     $access_path = 'admin/structure/page_manager/add/foo/access';
-    $this->assertUrl($access_path . '?js=nojs');
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->assertSession()->addressEquals($access_path . '?js=nojs');
+    $this->submitForm([], 'Next');
 
     // Test the 'Selection criteria' step.
-    $this->assertTitle('Selection criteria | Drupal');
+    $this->titleEquals('Selection criteria | Drupal');
     $selection_path = 'admin/structure/page_manager/add/foo/selection';
-    $this->assertUrl($selection_path . '?js=nojs');
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->assertSession()->addressEquals($selection_path . '?js=nojs');
+    $this->submitForm([], 'Next');
 
     // Configure the variant.
     $edit = [
       'page_variant_label' => 'Status Code',
       'variant_settings[status_code]' => 200,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Finish');
-    $this->assertRaw(new FormattableMarkup('The page %label has been added.', ['%label' => 'Foo']));
+    $this->submitForm($edit, 'Finish');
+    $this->assertSession()->responseContains(new FormattableMarkup('The page %label has been added.', ['%label' => 'Foo']));
     // We've gone from the add wizard to the edit wizard.
     $this->drupalGet('admin/structure/page_manager/manage/foo/general');
 
     $this->drupalGet('admin/foo');
-    $this->assertTitle('Foo | Drupal');
+    $this->titleEquals('Foo | Drupal');
 
     // Change the status code to 403.
     $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-http_status_code-0__general');
     $edit = [
       'variant_settings[status_code]' => 403,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update and save');
+    $this->submitForm($edit, 'Update and save');
   }
 
   /**
    * {@inheritdoc}
    */
-  protected function assertTitle($expected_title) {
+  protected function titleEquals($expected_title) {
     $actual_title = $this->assertSession()->elementExists('css', 'title')->getHtml();
     $this->assertSame($expected_title, $actual_title);
   }

@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Cache\Context\CacheContextsManager;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -23,15 +24,16 @@ use Prophecy\Argument;
  */
 class PageAccessTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The context handler.
    *
-   * @var \Drupal\Core\Plugin\Context\ContextHandlerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Plugin\Context\ContextHandlerInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $contextHandler;
 
   /**
-   * @var \Drupal\Core\Entity\EntityTypeInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\EntityTypeInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $entityType;
 
@@ -48,7 +50,7 @@ class PageAccessTest extends UnitTestCase {
   /**
    * @covers ::__construct
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
     $this->contextHandler = $this->prophesize(ContextHandlerInterface::class);
     $this->entityType = $this->prophesize(EntityTypeInterface::class);

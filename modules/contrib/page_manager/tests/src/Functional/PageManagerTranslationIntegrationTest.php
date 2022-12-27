@@ -22,7 +22,7 @@ class PageManagerTranslationIntegrationTest extends ContentTranslationTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'page_manager', 'node', 'content_translation'];
+  protected static $modules = ['block', 'page_manager', 'node', 'content_translation'];
 
   /**
    * {@inheritdoc}
@@ -58,10 +58,10 @@ class PageManagerTranslationIntegrationTest extends ContentTranslationTestBase {
 
     $node = $this->drupalCreateNode(['type' => 'article']);
     $this->drupalGet('node/' . $node->id());
-    $this->assertResponse(200);
-    $this->assertText($node->label());
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains($node->label());
     $this->clickLink('Translate');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Create a new variant.
     $http_status_variant = PageVariant::create([
@@ -75,9 +75,9 @@ class PageManagerTranslationIntegrationTest extends ContentTranslationTestBase {
     $this->triggerRouterRebuild();
 
     $this->drupalGet('node/' . $node->id());
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $this->clickLink('Translate');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

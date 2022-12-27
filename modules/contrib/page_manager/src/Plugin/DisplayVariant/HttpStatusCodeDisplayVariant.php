@@ -212,7 +212,7 @@ class HttpStatusCodeDisplayVariant extends VariantBase implements ContextAwareVa
    *   An array of parameter names for the given path.
    */
   public function getParameterNames($path) {
-    if (preg_match_all('|\{(\w+)\}|', $path, $matches)) {
+    if (preg_match_all('|\{(\w+)\}|', (string) $path, $matches)) {
       return $matches[1];
     }
     return [];

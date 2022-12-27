@@ -2,11 +2,10 @@ name: 'Upgrade status test error'
 type: module
 description: 'Support module for upgrade status module testing.'
 package: Testing
-# version: VERSION
 dependencies:
   -drupal:upgrade_status_contrib_error
 
-# Information added by Drupal.org packaging script on 2021-04-27
-version: '8.x-3.5'
+# Information added by Drupal.org packaging script on 2022-11-23
+version: '8.x-3.18'
 project: 'upgrade_status'
-datestamp: 1619515834
+datestamp: 1669215751

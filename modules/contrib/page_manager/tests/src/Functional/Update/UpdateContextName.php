@@ -17,7 +17,7 @@ class UpdateContextName extends UpdatePathTestBase {
    */
   protected function setDatabaseDumpFiles() {
     $this->databaseDumpFiles = [
-      DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-8.8.0.filled.standard.php.gz',
+      DRUPAL_ROOT . '/core/modules/system/tests/fixtures/update/drupal-9.3.0.filled.standard.php.gz',
       __DIR__ . '/../../../fixtures/update/page_manager.2960739.php',
     ];
   }
@@ -32,10 +32,10 @@ class UpdateContextName extends UpdatePathTestBase {
       ->load('test_page-block_display-0');
 
     $selection_criteria = $pageVariant->get('selection_criteria');
-    $this->assertEqual($selection_criteria[0]['context_mapping']['user'], '@user.current_user_context:current_user');
+    $this->assertEquals($selection_criteria[0]['context_mapping']['user'], '@user.current_user_context:current_user');
 
     $variant_settings = $pageVariant->get('variant_settings');
-    $this->assertEqual($variant_settings['blocks']['29550d0e-39f1-4fb9-bad6-c390dda5bd00']['context_mapping']['entity'], '@user.current_user_context:current_user');
+    $this->assertEquals($variant_settings['blocks']['29550d0e-39f1-4fb9-bad6-c390dda5bd00']['context_mapping']['entity'], '@user.current_user_context:current_user');
   }
 
 }

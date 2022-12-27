@@ -2,10 +2,10 @@
 
 namespace Drupal\page_manager\EventSubscriber;
 
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Drupal\Core\Cache\CacheableResponseInterface;
 use Drupal\Core\Routing\StackedRouteMatchInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -33,10 +33,10 @@ class RouteNameResponseSubscriber implements EventSubscriberInterface {
   /**
    * Adds the route name as a cache tag to all cacheable responses.
    *
-   * @param \Symfony\Component\HttpKernel\Event\FilterResponseEvent $event
+   * @param \Symfony\Component\HttpKernel\Event\ResponseEvent $event
    *   The event to process.
    */
-  public function onResponse(FilterResponseEvent $event) {
+  public function onResponse(ResponseEvent $event) {
     $response = $event->getResponse();
     if ($response instanceof CacheableResponseInterface) {
       $cacheability_metadata = $response->getCacheableMetadata();

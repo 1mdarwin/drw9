@@ -167,7 +167,7 @@ class PageManagerController extends ControllerBase {
    *   The title for the parameter edit form.
    */
   public function editParameterTitle(PageInterface $page, $name) {
-    return $this->t('Edit @label parameter', ['@label' => $page->getParameter($name)['label']]);
+    return $this->t('Edit @label parameter', ['@label' => $page->getParameter($name)['label'] ?? '']);
   }
 
   /**

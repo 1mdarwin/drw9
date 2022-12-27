@@ -3,7 +3,7 @@
  * Module filter behaviors.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
 
   'use strict';
 
@@ -14,8 +14,8 @@
    * Filter enhancements.
    */
   Drupal.behaviors.moduleFilterModules = {
-    attach: function(context, settings) {
-      var $input = $('input.table-filter-text', context).once('module-filter');
+    attach: function (context, settings) {
+      var $input = $(once('module-filter', 'input.table-filter-text', context));
       if ($input.length) {
         ModuleFilter.input = $input;
         ModuleFilter.selector = 'tbody tr';
@@ -50,7 +50,7 @@
           clearLabel: Drupal.t('clear'),
           wrapper: ModuleFilter.modulesWrapper,
           buildIndex: [
-            function(item) {
+            function (item) {
               var $checkbox = $('td.checkbox :checkbox', item.element);
               if ($checkbox.length > 0) {
                 item.status = $checkbox.is(':checked');
@@ -64,7 +64,7 @@
             }
           ],
           additionalOperators: {
-            description: function(string, item) {
+            description: function (string, item) {
               if (item.description == undefined) {
                 // Soft cache.
                 item.description = $('.module-description', item.element).text().toLowerCase();
@@ -74,11 +74,11 @@
                 return true;
               }
             },
-            requiredBy: function(string, item) {
+            requiredBy: function (string, item) {
               if (item.requiredBy === undefined) {
                 // Soft cache.
                 item.requiredBy = [];
-                $('.admin-requirements.required-by li', item.element).each(function() {
+                $('.admin-requirements.required-by li', item.element).each(function () {
                   var moduleName = $(this)
                     .text()
                     .toLowerCase()
@@ -95,11 +95,11 @@
                 }
               }
             },
-            requires: function(string, item) {
+            requires: function (string, item) {
               if (item.requires === undefined) {
                 // Soft cache.
                 item.requires = [];
-                $('.admin-requirements.requires li', item.element).each(function() {
+                $('.admin-requirements.requires li', item.element).each(function () {
                   var moduleName = $(this)
                     .text()
                     .toLowerCase()
@@ -118,7 +118,7 @@
             }
           },
           rules: [
-            function(item) {
+            function (item) {
               if (showEnabled) {
                 if (item.status === true && item.disabled === true) {
                   return true;
@@ -142,7 +142,7 @@
         ModuleFilter.winnow = ModuleFilter.input.data('winnow');
 
         var $details = ModuleFilter.modulesWrapper.children('details');
-        ModuleFilter.input.bind('winnow:finish', function() {
+        ModuleFilter.input.bind('winnow:finish', function () {
           Drupal.announce(
             Drupal.formatPlural(
               ModuleFilter.modulesWrapper.find(ModuleFilter.selector + ':visible').length,
@@ -152,17 +152,17 @@
           );
         });
 
-        $enabled.change(function(e, el) {
+        $enabled.change(function (e, el) {
           showEnabled = $(this).is(':checked');
           ModuleFilter.localStorage.setItem('modules.enabled', showEnabled);
           ModuleFilter.winnow.filter();
         });
-        $disabled.change(function() {
+        $disabled.change(function () {
           showDisabled = $disabled.is(':checked');
           ModuleFilter.localStorage.setItem('modules.disabled', showDisabled);
           ModuleFilter.winnow.filter();
         });
-        $unavailable.change(function() {
+        $unavailable.change(function () {
           showUnavailable = $unavailable.is(':checked');
           ModuleFilter.localStorage.setItem('modules.unavailable', showUnavailable);
           ModuleFilter.winnow.filter();
@@ -171,4 +171,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

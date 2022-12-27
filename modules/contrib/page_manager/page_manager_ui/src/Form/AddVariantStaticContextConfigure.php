@@ -5,6 +5,9 @@ namespace Drupal\page_manager_ui\Form;
 use Drupal\Core\Plugin\Context\ContextInterface;
 use Drupal\ctools\Form\ContextConfigure;
 
+/**
+ * Configuration form for Add Static Variant Context.
+ */
 class AddVariantStaticContextConfigure extends ContextConfigure {
 
   /**
@@ -14,8 +17,9 @@ class AddVariantStaticContextConfigure extends ContextConfigure {
    *   The cached values from the wizard.
    *
    * @return \Drupal\page_manager\PageVariantInterface
+   *   The Page Variant.
    */
-  protected function getPageVariant($cached_values) {
+  protected function getPageVariant(array $cached_values) {
     return $cached_values['page_variant'];
   }
 
@@ -43,13 +47,13 @@ class AddVariantStaticContextConfigure extends ContextConfigure {
    * {@inheritdoc}
    */
   protected function addContext($cached_values, $context_id, ContextInterface $context) {
-    /** @var $page_variant \Drupal\page_manager\PageVariantInterface */
+    /** @var \Drupal\page_manager\PageVariantInterface $page_variant */
     $page_variant = $this->getPageVariant($cached_values);
     $context_config = [
       'label' => $context->getContextDefinition()->getLabel(),
       'type' => $context->getContextDefinition()->getDataType(),
       'description' => $context->getContextDefinition()->getDescription(),
-      'value' => strpos($context->getContextDefinition()->getDataType(), 'entity:') === 0 ? $context->getContextValue()->uuid() : $context->getContextValue(),
+      'value' => strpos((string) $context->getContextDefinition()->getDataType(), 'entity:') === 0 ? $context->getContextValue()->uuid() : $context->getContextValue(),
     ];
     $page_variant->setStaticContext($context_id, $context_config);
     $cached_values['page_variant'] = $page_variant;

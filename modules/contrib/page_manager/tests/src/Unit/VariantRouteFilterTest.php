@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Component\Plugin\Exception\ContextException;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -21,6 +22,7 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class VariantRouteFilterTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The mocked entity type manager.
    *
@@ -59,7 +61,7 @@ class VariantRouteFilterTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->pageVariantStorage = $this->prophesize(ConfigEntityStorageInterface::class);
 
     $this->entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);
@@ -74,7 +76,7 @@ class VariantRouteFilterTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function tearDown() {
+  protected function tearDown(): void {
     // The request stack begins empty, ensure it is empty after filtering.
     $this->assertNull($this->requestStack->getCurrentRequest());
     parent::tearDown();
@@ -187,6 +189,7 @@ class VariantRouteFilterTest extends UnitTestCase {
       'page_manager_page_variant' => 'a_variant',
       '_route_object' => $route,
       '_route' => 'a_route',
+      '_page_manager_attributes_prepared' => TRUE,
     ];
     $this->assertSame($expected_attributes, $request->attributes->all());
   }
@@ -220,6 +223,7 @@ class VariantRouteFilterTest extends UnitTestCase {
       'page_manager_page_variant_weight' => 0,
       '_route_object' => $route1,
       '_route' => 'route_1',
+      '_page_manager_attributes_prepared' => TRUE,
     ];
     $this->assertSame($expected_attributes, $request->attributes->all());
   }
@@ -258,6 +262,7 @@ class VariantRouteFilterTest extends UnitTestCase {
     $expected_attributes = $defaults + [
       '_route_object' => $route2,
       '_route' => 'overridden_route_name_for_selected_route',
+      '_page_manager_attributes_prepared' => TRUE,
     ];
     $this->assertSame($expected_attributes, $request->attributes->all());
   }
@@ -304,6 +309,7 @@ class VariantRouteFilterTest extends UnitTestCase {
     $expected_attributes = $defaults + [
       '_route_object' => $route2,
       '_route' => 'route_1',
+      '_page_manager_attributes_prepared' => TRUE,
     ];
     $this->assertSame($expected_attributes, $request->attributes->all());
   }
@@ -347,6 +353,7 @@ class VariantRouteFilterTest extends UnitTestCase {
       'page_manager_page_variant' => 'a_variant',
       '_route_object' => $route,
       '_route' => 'a_route',
+      '_page_manager_attributes_prepared' => TRUE,
     ];
     $this->assertSame($expected_attributes, $request->attributes->all());
   }
@@ -441,7 +448,10 @@ class VariantRouteFilterTest extends UnitTestCase {
     $method->setAccessible(TRUE);
     $attributes = $method->invoke($this->routeFilter, $route, $route_name, $request);
 
-    $this->assertSame(['slug' => 'slug 1'], $attributes);
+    $this->assertSame([
+      'slug' => 'slug 1',
+      '_page_manager_attributes_prepared' => TRUE,
+    ], $attributes);
   }
 
 }

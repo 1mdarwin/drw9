@@ -3,16 +3,14 @@
 namespace Drupal\upgrade_status;
 
 use Drupal\Component\Datetime\TimeInterface;
-use Drupal\Component\Serialization\Yaml;
-use Drupal\Component\Serialization\Exception\InvalidDataTypeException;
 use Drupal\Core\Extension\Extension;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
-use Drupal\Core\Template\TwigEnvironment;
 use DrupalFinder\DrupalFinder;
 use GuzzleHttp\Client;
 use Psr\Log\LoggerInterface;
-use Twig\Util\DeprecationCollector;
+use Symfony\Component\Process\PhpExecutableFinder;
+use Symfony\Component\Process\Process;
 
 final class DeprecationAnalyzer {
 
@@ -52,6 +50,13 @@ final class DeprecationAnalyzer {
   protected $binPath;
 
   /**
+   * Path to the PHP binary.
+   *
+   * @var string
+   */
+  protected $phpPath;
+
+  /**
    * Temporary directory to use for running phpstan.
    *
    * @var string
@@ -73,11 +78,11 @@ final class DeprecationAnalyzer {
   protected $fileSystem;
 
   /**
-   * The Twig environment.
+   * The Twig deprecation analyzer.
    *
-   * @var \Drupal\Core\Template\TwigEnvironment
+   * @var \Drupal\upgrade_status\TwigDeprecationAnalyzer
    */
-  protected $twigEnvironment;
+  protected $twigDeprecationAnalyzer;
 
   /**
    * The library deprecation analyzer.
@@ -92,6 +97,27 @@ final class DeprecationAnalyzer {
    * @var \Drupal\upgrade_status\ThemeFunctionDeprecationAnalyzer
    */
   protected $themeFunctionDeprecationAnalyzer;
+
+  /**
+   * The route deprecation analyzer.
+   *
+   * @var \Drupal\upgrade_status\RouteDeprecationAnalyzer
+   */
+  protected $routeDeprecationAnalyzer;
+
+  /**
+   * The extension metadata deprecation analyzer.
+   *
+   * @var \Drupal\upgrade_status\ExtensionMetadataDeprecationAnalyzer
+   */
+  protected $extensionMetadataDeprecationAnalyzer;
+
+  /**
+   * The CSS deprecation analyzer.
+   *
+   * @var \Drupal\upgrade_status\CSSDeprecationAnalyzer
+   */
+  protected $CSSDeprecationAnalyzer;
 
   /**
    * The time service.
@@ -125,12 +151,18 @@ final class DeprecationAnalyzer {
    *   HTTP client.
    * @param \Drupal\Core\File\FileSystemInterface $file_system
    *   File system service.
-   * @param \Drupal\Core\Template\TwigEnvironment $twig_environment
-   *   The Twig environment.
+   * @param \Drupal\upgrade_status\TwigDeprecationAnalyzer $twig_deprecation_analyzer
+   *   The Twig deprecation analyzer.
    * @param \Drupal\upgrade_status\LibraryDeprecationAnalyzer $library_deprecation_analyzer
    *   The library deprecation analyzer.
    * @param \Drupal\upgrade_status\ThemeFunctionDeprecationAnalyzer $theme_function_deprecation_analyzer
    *   The theme function deprecation analyzer.
+   * @param \Drupal\upgrade_status\RouteDeprecationAnalyzer $route_deprecation_analyzer
+   *   The route deprecation analyzer.
+   * @param \Drupal\upgrade_status\ExtensionMetadataDeprecationAnalyzer $extension_metadata_analyzer
+   *   The extension metadata analyzer.
+   * @param \Drupal\upgrade_status\CSSDeprecationAnalyzer $css_deprecation_analyzer
+   *   The CSS deprecation analyzer.
    * @param \Drupal\Component\Datetime\TimeInterface $time
    *   The time service.
    */
@@ -139,18 +171,24 @@ final class DeprecationAnalyzer {
     LoggerInterface $logger,
     Client $http_client,
     FileSystemInterface $file_system,
-    TwigEnvironment $twig_environment,
+    TwigDeprecationAnalyzer $twig_deprecation_analyzer,
     LibraryDeprecationAnalyzer $library_deprecation_analyzer,
     ThemeFunctionDeprecationAnalyzer $theme_function_deprecation_analyzer,
+    RouteDeprecationAnalyzer $route_deprecation_analyzer,
+    ExtensionMetadataDeprecationAnalyzer $extension_metadata_analyzer,
+    CSSDeprecationAnalyzer $css_deprecation_analyzer,
     TimeInterface $time
   ) {
     $this->scanResultStorage = $key_value_factory->get('upgrade_status_scan_results');
     $this->logger = $logger;
     $this->httpClient = $http_client;
     $this->fileSystem = $file_system;
-    $this->twigEnvironment = $twig_environment;
+    $this->twigDeprecationAnalyzer = $twig_deprecation_analyzer;
     $this->libraryDeprecationAnalyzer = $library_deprecation_analyzer;
     $this->themeFunctionDeprecationAnalyzer = $theme_function_deprecation_analyzer;
+    $this->routeDeprecationAnalyzer = $route_deprecation_analyzer;
+    $this->extensionMetadataDeprecationAnalyzer = $extension_metadata_analyzer;
+    $this->CSSDeprecationAnalyzer = $css_deprecation_analyzer;
     $this->time = $time;
   }
 
@@ -166,8 +204,29 @@ final class DeprecationAnalyzer {
       return;
     }
 
+    $this->phpPath = $this->findPhpPath();
+
     $this->finder = new DrupalFinder();
     $this->finder->locateRoot(DRUPAL_ROOT);
+
+    // If a Drupal project is built with Composer scaffolding, the "name"
+    // property in composer.json MUST NOT be "drupal/drupal". If it is, the
+    // webflo/drupal-finder package will assume we are NOT in a Composer
+    // scaffolded project and assume Drupal core is in the root directory.
+    // @see https://www.drupal.org/project/upgrade_status/issues/3229725
+    if (!is_dir($this->finder->getDrupalRoot() . '/core')) {
+      $composer_json_path = dirname(DRUPAL_ROOT) . '/composer.json';
+      if (!file_exists($composer_json_path)) {
+        throw new \Exception('Could not find the composer.json file for your Drupal site, assumed: ' . $composer_json_path);
+      }
+      $composer_data = \json_decode(file_get_contents($composer_json_path), TRUE);
+      if ($composer_data['name'] === 'drupal/drupal') {
+        throw new \Exception('Change the "name" property in ' . $composer_json_path . ' from "drupal/drupal" to a custom value.');
+      }
+      else {
+        throw new \Exception('Could not detect the location of "drupal/core", please open an issue at https://www.drupal.org/project/issues/upgrade_status.');
+      }
+    }
 
     $this->vendorPath = $this->finder->getVendorDir();
     $this->binPath = $this->findBinPath();
@@ -221,7 +280,7 @@ final class DeprecationAnalyzer {
 
     // If a bin-dir is specified, that is most specific.
     if (isset($json['config']['bin-dir'])) {
-      $binPath = $this->finder->getComposerRoot() . '/' . $json['config']['bin-dir'];
+      $binPath = $this->finder->getComposerRoot() . '/' . rtrim($json['config']['bin-dir'], '/');
       if (file_exists($binPath . '/phpstan')) {
         return $binPath;
       }
@@ -232,7 +291,7 @@ final class DeprecationAnalyzer {
 
     // If a vendor-dir is specified, that is slightly less specific.
     if (isset($json['config']['vendor-dir'])) {
-      $binPath = $this->finder->getComposerRoot() . '/' . $json['config']['vendor-dir'] . '/bin';
+      $binPath = $this->finder->getComposerRoot() . '/' . rtrim($json['config']['vendor-dir'], '/') . '/bin';
       if (file_exists($binPath . '/phpstan')) {
         return $binPath;
       }
@@ -251,15 +310,37 @@ final class DeprecationAnalyzer {
   }
 
   /**
+   * Finds the PHP path.
+   *
+   * This ensures we execute PHPStan with the same PHP binary that is used by
+   * the web server.
+   *
+   * @return string
+   *   PHP path if found.
+   *
+   * @throws \Exception
+   */
+  protected function findPhpPath() {
+    $finder = new PhpExecutableFinder();
+    $binary = $finder->find();
+    if ($binary === FALSE) {
+      throw new \Exception('The PHP binary was not found.');
+    }
+    return $binary;
+  }
+
+  /**
    * Analyze the codebase of an extension including all its sub-components.
    *
    * @param \Drupal\Core\Extension\Extension $extension
    *   The extension to analyze.
+   * @param array $options
+   *   Options for the analysis.
    *
    * @return null
    *   Errors are logged to the logger, data is stored to keyvalue storage.
    */
-  public function analyze(Extension $extension) {
+  public function analyze(Extension $extension, array $options = []) {
     try {
       $this->initEnvironment();
     }
@@ -275,17 +356,26 @@ final class DeprecationAnalyzer {
     $project_dir = DRUPAL_ROOT . '/' . $extension->getPath();
     $this->logger->notice('Processing %path.', ['%path' => $project_dir]);
 
-    $output = [];
-    $error_filename = $this->temporaryDirectory . '/phpstan_error_output';
-    $command = $this->binPath . '/phpstan analyse --error-format=json -c ' . $this->phpstanNeonPath . ' ' . $project_dir . ' 2> ' . $error_filename;
-    exec($command, $output);
+    $memory_limit = $options['phpstan-memory-limit'] ?? '1500M';
+    $command = [
+      $this->phpPath,
+      $this->binPath . '/phpstan',
+      'analyse',
+      '--memory-limit=' . $memory_limit,
+      '--error-format=json',
+      '--configuration=' . $this->phpstanNeonPath,
+      $project_dir
+    ];
 
-    $json = json_decode(implode('', $output), TRUE);
-    if (!isset($json['files']) || !is_array($json['files'])) {
-       $stdout = trim(implode('', $output)) ?: 'Empty.';
-       $stderr = trim(file_get_contents($error_filename)) ?: 'Empty.';
+    $process = new Process($command, DRUPAL_ROOT, NULL, NULL, NULL);
+    $process->run();
+
+    $json = json_decode($process->getOutput(), TRUE);
+    if (json_last_error() !== JSON_ERROR_NONE) {
+      $stdout = trim($process->getOutput()) ?: 'Empty.';
+      $stderr = trim($process->getErrorOutput()) ?: 'Empty.';
        $formatted_error =
-         "<h6>PHPStan command failed:</h6> <p>" . $command .
+         "<h6>PHPStan command failed:</h6> <p>" . implode(" ", $command) .
          "</p> <h6>Command output:</h6> <p>" . $stdout .
          "</p> <h6>Command error:</h6> <p>" . $stderr . '</p>';
        $this->logger->error('%phpstan_fail', ['%phpstan_fail' => strip_tags($formatted_error)]);
@@ -313,106 +403,30 @@ final class DeprecationAnalyzer {
       'data' => $json,
     ];
 
-    $twig_deprecations = $this->analyzeTwigTemplates($extension->getPath());
-    foreach ($twig_deprecations as $twig_deprecation) {
-      preg_match('/\s([a-zA-Z0-9\_\-\/]+.html\.twig)\s/', $twig_deprecation, $file_matches);
-      preg_match('/\s(\d+).?$/', $twig_deprecation, $line_matches);
-      $twig_deprecation = preg_replace('! in (.+)\.twig at line \d+\.!', '.', $twig_deprecation);
-      $twig_deprecation .= ' See https://drupal.org/node/3071078.';
-      $result['data']['files'][$file_matches[1]]['messages'][] = [
-        'message' => $twig_deprecation,
-        'line' => $line_matches[1] ?: 0,
+    $metadataDeprecations = $this->extensionMetadataDeprecationAnalyzer->analyze($extension);
+    $result['data']['totals']['upgrade_status_split']['declared_ready'] = empty($metadataDeprecations);
+
+    // Run further deprecation analyzers and collect results.
+    $more_deprecations = array_merge(
+      $this->twigDeprecationAnalyzer->analyze($extension),
+      $this->libraryDeprecationAnalyzer->analyze($extension),
+      $this->themeFunctionDeprecationAnalyzer->analyze($extension),
+      $metadataDeprecations
+    );
+    if (projectCollector::getDrupalCoreMajorVersion() > 8) {
+      $more_deprecations = array_merge($more_deprecations,
+        $this->routeDeprecationAnalyzer->analyze($extension),
+        $this->CSSDeprecationAnalyzer->analyze($extension)
+      );
+    }
+
+    foreach ($more_deprecations as $one_deprecation) {
+      $result['data']['files'][$one_deprecation->getFile()]['messages'][] = [
+        'message' => $one_deprecation->getMessage(),
+        'line' => $one_deprecation->getLine(),
       ];
       $result['data']['totals']['errors']++;
       $result['data']['totals']['file_errors']++;
-    }
-
-    $deprecation_messages = $this->libraryDeprecationAnalyzer->analyze($extension);
-    foreach ($deprecation_messages as $deprecation_message) {
-      $result['data']['files'][$deprecation_message->getFile()]['messages'][] = [
-        'message' => $deprecation_message->getMessage(),
-        'line' => $deprecation_message->getLine(),
-      ];
-      $result['data']['totals']['errors']++;
-      $result['data']['totals']['file_errors']++;
-    }
-
-    $theme_function_deprecations = $this->themeFunctionDeprecationAnalyzer->analyze($extension);
-    foreach ($theme_function_deprecations as $deprecation_message) {
-      $result['data']['files'][$deprecation_message->getFile()]['messages'][] = [
-        'message' => $deprecation_message->getMessage(),
-        'line' => $deprecation_message->getLine(),
-      ];
-      $result['data']['totals']['errors']++;
-      $result['data']['totals']['file_errors']++;
-    }
-
-    // Assume this project is ready for the next major core version unless proven otherwise.
-    $result['data']['totals']['upgrade_status_split']['declared_ready'] = TRUE;
-
-    $info_files = $this->getSubExtensionInfoFiles($project_dir);
-    foreach ($info_files as $info_file) {
-      try {
-        // Manually add on info file incompatibility to results. Reding
-        // .info.yml files directly, not from extension discovery because that
-        // is cached.
-        $info = Yaml::decode(file_get_contents($info_file)) ?: [];
-        if (!empty($info['package']) && $info['package'] == 'Testing' && !strpos($info_file, '/upgrade_status_test')) {
-          // If this info file was for a testing project other than our own
-          // testing projects, ignore it.
-          continue;
-        }
-        $error_path = str_replace(DRUPAL_ROOT . '/', '', $info_file);
-        if (!isset($info['core_version_requirement'])) {
-          $result['data']['files'][$error_path]['messages'][] = [
-            'message' => "Add core_version_requirement: ^8 || ^9 to designate that the module is compatible with Drupal 9. See https://drupal.org/node/3070687.",
-            'line' => 0,
-          ];
-          $result['data']['totals']['errors']++;
-          $result['data']['totals']['file_errors']++;
-          $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
-        }
-        elseif (!ProjectCollector::isCompatibleWithNextMajorDrupal($info['core_version_requirement'])) {
-          $result['data']['files'][$error_path]['messages'][] = [
-            'message' => "Value of core_version_requirement: {$info['core_version_requirement']} is not compatible with the next major version of Drupal core. See https://drupal.org/node/3070687.",
-            'line' => 0,
-          ];
-          $result['data']['totals']['errors']++;
-          $result['data']['totals']['file_errors']++;
-          $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
-        }
-      } catch (InvalidDataTypeException $e) {
-        $result['data']['files'][$error_path]['messages'][] = [
-          'message' => 'Parse error. ' . $e->getMessage(),
-          'line' => 0,
-        ];
-        $result['data']['totals']['errors']++;
-        $result['data']['totals']['file_errors']++;
-        $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
-      }
-    }
-
-    // Manually add on composer.json file incompatibility to results.
-    if (file_exists($project_dir . '/composer.json')) {
-      $composer_json = json_decode(file_get_contents($project_dir . '/composer.json'));
-      if (empty($composer_json) || !is_object($composer_json)) {
-        $result['data']['files'][$extension->getPath() . '/composer.json']['messages'][] = [
-          'message' => "Parse error in composer.json. Having a composer.json is not a requirement in general, but if there is one, it should be valid. See https://drupal.org/node/2514612.",
-          'line' => 0,
-        ];
-        $result['data']['totals']['errors']++;
-        $result['data']['totals']['file_errors']++;
-        $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
-      }
-      elseif (!empty($composer_json->require->{'drupal/core'}) && !projectCollector::isCompatibleWithNextMajorDrupal($composer_json->require->{'drupal/core'})) {
-        $result['data']['files'][$extension->getPath() . '/composer.json']['messages'][] = [
-          'message' => "The drupal/core requirement is not compatible with the next major version of Drupal. Either remove it or update it to be compatible. See https://drupal.org/node/2514612#s-drupal-9-compatibility.",
-          'line' => 0,
-        ];
-        $result['data']['totals']['errors']++;
-        $result['data']['totals']['file_errors']++;
-        $result['data']['totals']['upgrade_status_split']['declared_ready'] = FALSE;
-      }
     }
 
     // Assume next step is to relax (there were no errors found).
@@ -478,18 +492,6 @@ final class DeprecationAnalyzer {
   }
 
   /**
-   * Analyzes twig templates for calls of deprecated code.
-   *
-   * @param $directory
-   *   The directory which Twig templates should be analyzed.
-   *
-   * @return array
-   */
-  protected function analyzeTwigTemplates($directory) {
-    return (new DeprecationCollector($this->twigEnvironment))->collectDir($directory, '.html.twig');
-  }
-
-  /**
    * Prepare temporary directories for Upgrade Status.
    *
    * The created directories in Drupal's temporary directory are needed to
@@ -520,7 +522,7 @@ final class DeprecationAnalyzer {
    */
   protected function createModifiedNeonFile() {
     $module_path = DRUPAL_ROOT . '/' . drupal_get_path('module', 'upgrade_status');
-    $config = file_get_contents($module_path . '/deprecation_testing.neon');
+    $config = file_get_contents($module_path . '/deprecation_testing_template.neon');
     $config = str_replace(
       'parameters:',
       "parameters:\n\ttmpDir: '" . $this->temporaryDirectory . '/phpstan' . "'\n" .
@@ -535,6 +537,14 @@ final class DeprecationAnalyzer {
         throw new \Exception('Vendor source files were not found. You may need to configure a vendor-dir in composer.json. See https://getcomposer.org/doc/06-config.md#vendor-dir. Missing ' . $extension_neon . ' and ' . $rules_neon . '.');
       }
       $config .= "\nincludes:\n\t- '" . $extension_neon . "'\n\t- '" . $rules_neon . "'\n";
+
+      // phpstan-drupal 1.1.16 introduced a new rules.neon file, include it if
+      // it exists. phpstan-drupal 1.1.4 and earlier are the only versions that
+      // still support PHP 7.3 and earlier, and this file does not exist there.
+      $drupal_rules_neon = $this->vendorPath . '/mglaman/phpstan-drupal/rules.neon';
+      if (file_exists($drupal_rules_neon)) {
+        $config .= "\t- '" . $drupal_rules_neon . "'\n";
+      }
     }
 
     $success = file_put_contents($this->phpstanNeonPath, $config);
@@ -556,9 +566,9 @@ final class DeprecationAnalyzer {
    */
   protected function categorizeMessage(string $error, Extension $extension) {
     // Make the error more readable in case it has the deprecation text.
+    $error = preg_replace('!\s+!', ' ', trim($error));
     $error = preg_replace('!:\s+(in|as of)!', '. Deprecated \1', $error);
     $error = preg_replace('!(u|U)se \\\\Drupal!', '\1se Drupal', $error);
-    $error = str_replace("\n", ' ', $error);
 
     // TestBase and WebTestBase replacements are available at least from Drupal
     // 8.6.0, so use that version number. Otherwise use the number from the
@@ -662,7 +672,7 @@ final class DeprecationAnalyzer {
       // 0.5.2
       'Call to deprecated function entity_get_form_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityDisplayRepositoryInterface::getFormDisplay() instead.',
       'Call to deprecated function entity_get_display(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use EntityDisplayRepositoryInterface::getViewDisplay() instead.',
-      'Call to deprecated const REQUEST_TIME. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal::time()->getRequestTime().',
+      'Call to deprecated constant REQUEST_TIME: Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use Drupal::time()->getRequestTime();',
       'Call to deprecated method urlInfo() of class Drupal\Core\Entity\EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\Entity\EntityInterface::toUrl() instead.',
       'Call to deprecated function file_scan_directory(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal\Core\File\FileSystemInterface::scanDirectory() instead.',
       'Call to deprecated function file_default_scheme(). Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Use Drupal::config(\'system.file\')->get(\'default_scheme\') instead.',
@@ -671,6 +681,7 @@ final class DeprecationAnalyzer {
       // 0.5.3
       'Call to deprecated method strtolower() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strtolower() instead.',
       'Call to deprecated method strlen() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_strlen() instead.',
+      'Call to deprecated method substr() of class Drupal\Component\Utility\Unicode. Deprecated in drupal:8.6.0 and is removed from drupal:9.0.0. Use mb_substr() instead.',
       'Call to deprecated method link() of class Drupal\Core\Entity\EntityInterface. Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\Core\EntityInterface::toLink()->toString() instead.',
       'Call to deprecated function entity_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity type storage\'s load() method.',
       'Call to deprecated function node_load(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use Drupal\node\Entity\Node::load().',
@@ -695,35 +706,94 @@ final class DeprecationAnalyzer {
       'Call to deprecated constant DATETIME_STORAGE_TIMEZONE: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::STORAGE_TIMEZONE instead.',
       'Call to deprecated constant DATETIME_DATETIME_STORAGE_FORMAT: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::DATETIME_STORAGE_FORMAT instead.',
       'Call to deprecated constant DATETIME_DATE_STORAGE_FORMAT: Deprecated in drupal:8.5.0 and is removed from drupal:9.0.0. Use Drupal\datetime\Plugin\Field\FieldType\DateTimeItemInterface::DATE_STORAGE_FORMAT instead.',
+
+      // 0.10.0
+      'Call to deprecated method getLowercaseLabel() of class Drupal\Core\Entity\EntityTypeInterface. Deprecated in drupal:8.8.0 and is removed from drupal:9.0.0. Instead, you should call getSingularLabel(). See https://www.drupal.org/node/3075567',
+      'Call to deprecated function entity_delete_multiple(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity storage\'s \Drupal\Core\Entity\EntityStorageInterface::delete() method to delete multiple entities:',
+      'Call to deprecated function entity_view(). Deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use the entity view builder\'s view() method for creating a render array:',
+
+      // 0.11.0
+      // No new rules
+
+      // 0.11.1
+      'Call to deprecated method drupalPostForm() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use $this->submitForm() instead.',
+
+      // 0.11.2
+      'Call to deprecated method assertText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use - $this->assertSession()->responseContains() for non-HTML responses, like XML or Json. - $this->assertSession()->pageTextContains() for HTML responses. Unlike the deprecated assertText(), the passed text should be HTML decoded, exactly as a human sees it in the browser.',
+      'Call to deprecated method assertEqual() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertEquals() instead.',
+      'Call to deprecated method assertEqual() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertEquals() instead.',
+      'Call to deprecated method assertIdentical() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertSame() instead.',
+      'Call to deprecated method assertIdentical() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertSame() instead.',
+      'Call to deprecated method assertResponse() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->statusCodeEquals() instead.',
+      'Call to deprecated method assertRaw() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseContains() instead.',
+      'Call to deprecated method assertFieldByName() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldExists() or $this->assertSession()->buttonExists() or $this->assertSession()->fieldValueEquals() instead.',
+      'Call to deprecated method buildXPathQuery() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->buildXPathQuery() instead.',
+      'Call to deprecated method assertHeader() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.3.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseHeaderEquals() instead.',
+      'Call to deprecated method assertNoCacheTag() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.4.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseHeaderNotContains() instead.',
+      'Call to deprecated method assertCacheTag() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseHeaderContains() instead.',
+      'Call to deprecated method assertNoPattern() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.4.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseNotMatches() instead.',
+      'Call to deprecated method assertPattern() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseMatches() instead.',
+      'Call to deprecated method assertEscaped() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->assertEscaped() instead.',
+      'Call to deprecated method assertNoEscaped() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->assertNoEscaped() instead.',
+      'Call to deprecated method assertNotEqual() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertNotEquals() instead.',
+      'Call to deprecated method assertNotEqual() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertNotEquals() instead.',
+      'Call to deprecated method assertNotIdentical() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertNotSame() instead.',
+      'Call to deprecated method assertNotIdentical() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertNotSame() instead.',
+      'Call to deprecated method assertIdenticalObject() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertEquals() instead.',
+      'Call to deprecated method assertIdenticalObject() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertEquals() instead.',
+      'Call to deprecated method assert() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertTrue() instead.',
+      'Call to deprecated method assert() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. Use $this->assertTrue() instead.',
+      'Call to deprecated method assertElementNotPresent() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->elementNotExists() instead.',
+      'Call to deprecated method assertElementPresent() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->elementExists() instead.',
+      'Call to deprecated method assertNoText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use - $this->assertSession()->responseNotContains() for non-HTML responses, like XML or Json. - $this->assertSession()->pageTextNotContains() for HTML responses. Unlike the deprecated assertNoText(), the passed text should be HTML decoded, exactly as a human sees it in the browser.',
+      'Call to deprecated method assertNoRaw() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->responseNotContains() instead.',
+      'Call to deprecated method assertTitle() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->titleEquals() instead.',
+      'Call to deprecated method assertNoLink() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkNotExists() instead.',
+      'Call to deprecated method assertLink() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkExists() instead.',
+      'Call to deprecated method assertLinkByHref() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkByHrefExists() instead.',
+      'Call to deprecated method assertNoLinkByHref() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->linkByHrefNotExists() instead.',
+
+      // 0.11.3
+      'Call to deprecated method pass() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. PHPUnit interrupts a test as soon as a test assertion fails, so there is usually no need to call this method. If a test\'s logic relies on this method, refactor the test.',
+      'Call to deprecated method pass() of class Drupal\KernelTests\KernelTestBase. Deprecated in drupal:8.0.0 and is removed from drupal:10.0.0. PHPUnit interrupts a test as soon as a test assertion fails, so there is usually no need to call this method. If a test\'s logic relies on this method, refactor the test.',
+      'Call to deprecated method assertNoUniqueText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Instead, use $this->getSession()->pageTextMatchesCount() if you know the cardinality in advance, or $this->getSession()->getPage()->getText() and substr_count().',
+      'Call to deprecated method assertUniqueText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->getSession()->pageTextContainsOnce() or $this->getSession()->pageTextMatchesCount() instead.',
+      'Call to deprecated method assertNoFieldByName() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldNotExists() or $this->assertSession()->buttonNotExists() or $this->assertSession()->fieldValueNotEquals() instead.',
+      'Call to deprecated method assertFieldChecked() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->checkboxChecked() instead.',
+      'Call to deprecated method assertNoFieldChecked() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->checkboxNotChecked() instead.',
+      'Call to deprecated method assertNoOption() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionNotExists() instead.',
+      'Call to deprecated method assertOptionByText() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.4.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionExists() instead.',
+      'Call to deprecated method assertOption() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionExists() instead.',
+      'Call to deprecated method assertUrl() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->addressEquals() instead.',
+      'Call to deprecated method constructFieldXpath() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.5.0 and is removed from drupal:10.0.0. Use $this->getSession()->getPage()->findField() instead.',
+      // getAllOptions: rule exists but no instance in contrib.
+      'Call to deprecated method getRawContent() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->getSession()->getPage()->getContent() instead.',
+      'Call to deprecated method assertFieldById() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldExists() or $this->assertSession()->buttonExists() or $this->assertSession()->fieldValueEquals() instead.',
+      'Call to deprecated method assertField() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldExists() or $this->assertSession()->buttonExists() instead.',
+      'Call to deprecated method assertNoFieldById() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldNotExists() or $this->assertSession()->buttonNotExists() or $this->assertSession()->fieldValueNotEquals() instead.',
+      'Call to deprecated method assertNoField() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->fieldNotExists() or $this->assertSession()->buttonNotExists() instead.',
+      'Call to deprecated method assertOptionSelected() of class Drupal\Tests\BrowserTestBase. Deprecated in drupal:8.2.0 and is removed from drupal:10.0.0. Use $this->assertSession()->optionExists() instead and check the "selected" attribute yourself.',
+
+      // 0.12.1
+      'Call to deprecated function drupal_get_path(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\Extension\ExtensionPathResolver::getPath() instead.',
+      'Call to deprecated function file_create_url(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use the appropriate method on \Drupal\Core\File\FileUrlGeneratorInterface instead.',
+      'Call to deprecated function file_url_transform_relative(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\File\FileUrlGenerator::transformRelative() instead.',
+      'Call to deprecated function render(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\Render\RendererInterface::render() instead.',
+      // MetadataBag::clearCsrfTokenSeed()
+      'Call to deprecated function drupal_get_filename(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\Core\Extension\ExtensionPathResolver::getPathname() instead.',
+      'Call to deprecated function file_copy(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\file\FileRepositoryInterface::copy() instead.',
+      'Call to deprecated function file_move(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\file\FileRepositoryInterface::move() instead.',
+      'Call to deprecated function file_save_data(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0. Use Drupal\file\FileRepositoryInterface::writeData() instead.',
+
+      // 0.12.3 (0.12.2 has no rule additions.)
+      'Call to deprecated function user_password(). Deprecated in drupal:9.1.0 and is removed from drupal:10.0.0. Use \Drupal\Core\Password\PasswordGeneratorInterface::generate() instead.',
+
+      // 0.12.4
+      'Call to deprecated function file_build_uri(). Deprecated in drupal:9.3.0 and is removed from drupal:10.0.0 without replacement.',
     ];
     return
       in_array($string, $rector_covered) ||
       strpos($string, 'Call to deprecated method l() of class Drupal') === 0;
-  }
-
-  /**
-   * Finds all .info.yml files for non-test extensions under a path.
-   *
-   * @param string $path
-   *   Base path to find all info.yml files in.
-   *
-   * @return array
-   *   A list of paths to .info.yml files found under the base path.
-   */
-  private function getSubExtensionInfoFiles(string $path) {
-    $files = [];
-    foreach(glob($path . '/*.info.yml') as $file) {
-      // Make sure the filename matches rules for an extension. There may be
-      // info.yml files in shipped configuration which would have more parts.
-      $parts = explode('.', basename($file));
-      if (count($parts) == 3) {
-        $files[] = $file;
-      }
-    }
-    foreach (glob($path . '/*', GLOB_ONLYDIR|GLOB_NOSORT) as $dir) {
-      $files = array_merge($files, $this->getSubExtensionInfoFiles($dir));
-    }
-    return $files;
   }
 
 }

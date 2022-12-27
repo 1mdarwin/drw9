@@ -38,7 +38,7 @@ class ContextMapper implements ContextMapperInterface {
       $context_definition = ContextDefinitionFactory::create($context_configuration['type'])
         ->setLabel($context_configuration['label']);
 
-      if (strpos($context_configuration['type'], 'entity:') === 0) {
+      if (strpos((string) $context_configuration['type'], 'entity:') === 0) {
         $context = new EntityLazyLoadContext($context_definition, $this->entityRepository, $context_configuration['value']);
       }
       else {

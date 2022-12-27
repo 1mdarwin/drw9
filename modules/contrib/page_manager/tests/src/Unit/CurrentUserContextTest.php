@@ -23,13 +23,9 @@ class CurrentUserContextTest extends PageContextTestBase {
    * @covers ::onPageContext
    */
   public function testOnPageContext() {
-    $currentUser = $this->getMockBuilder(AccountProxyInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $currentUser = $this->createMock(AccountProxyInterface::class);
 
-    $contextRepository = $this->getMockBuilder(LazyContextRepository::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $contextRepository = $this->createMock(LazyContextRepository::class);
     $currentUserContext = new EntityContext(new EntityContextDefinition('user', 'current_user_context'), $currentUser->getAccount());
     $contextRepository->expects($this->once())
       ->method('getRunTimeContexts')

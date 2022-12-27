@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\Cache\CacheTagsInvalidatorInterface;
 use Drupal\Core\Config\Entity\ConfigEntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -22,17 +23,18 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class PageManagerRoutesTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The mocked entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $entityTypeManager;
 
   /**
    * The mocked page storage.
    *
-   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface|\PHPUnit_Framework_MockObject_MockObject
+   * @var \Drupal\Core\Config\Entity\ConfigEntityStorageInterface|\PHPUnit\Framework\MockObject\MockObject
    */
   protected $pageStorage;
 
@@ -55,7 +57,7 @@ class PageManagerRoutesTest extends UnitTestCase {
    *
    * @covers ::__construct
    */
-  protected function setUp() {
+  protected function setUp(): void {
     $this->pageStorage = $this->prophesize(ConfigEntityStorageInterface::class);
 
     $this->entityTypeManager = $this->prophesize(EntityTypeManagerInterface::class);

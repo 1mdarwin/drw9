@@ -42,7 +42,7 @@ class PageBlockDisplayVariantContextualLinksTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     BlockContentType::create(['id' => 'test_block_type'])->save();

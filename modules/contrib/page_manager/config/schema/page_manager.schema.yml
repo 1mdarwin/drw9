@@ -42,6 +42,9 @@ page_manager.page.*:
             type:
               type: string
               label: 'Context type'
+            optional:
+              type: boolean
+              label: 'Optional'
 
 page_manager.page_variant.*:
   type: config_entity

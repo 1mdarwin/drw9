@@ -2,6 +2,8 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Drupal\Core\Cache\CacheableResponse;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Routing\StackedRouteMatchInterface;
@@ -9,7 +11,6 @@ use Drupal\page_manager\EventSubscriber\RouteNameResponseSubscriber;
 use Drupal\Tests\UnitTestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 /**
@@ -18,6 +19,7 @@ use Symfony\Component\HttpKernel\HttpKernelInterface;
  */
 class RouteNameResponseSubscriberTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * @covers ::onResponse
    */
@@ -83,13 +85,13 @@ class RouteNameResponseSubscriberTest extends UnitTestCase {
    * @param \Symfony\Component\HttpFoundation\Response $response
    *   The response to be sent as the event payload.
    *
-   * @return \Symfony\Component\HttpKernel\Event\FilterResponseEvent
+   * @return \Symfony\Component\HttpKernel\Event\ResponseEvent
    *   An event suitable for a KernelEvents::RESPONSE subscriber to process.
    */
   protected function buildEvent(Response $response) {
     $kernel = $this->prophesize(HttpKernelInterface::class);
     $request = Request::create('');
-    return new FilterResponseEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST, $response);
+    return new ResponseEvent($kernel->reveal(), $request, HttpKernelInterface::SUB_REQUEST, $response);
   }
 
 }

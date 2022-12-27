@@ -58,9 +58,9 @@ class PageWizardBase extends EntityFormWizardBase {
     /** @var $page \Drupal\page_manager\Entity\Page */
     $page = $cached_values['page'];
 
-    if ($page) {
+    if ($page && $page->getPath()) {
       $matches = [];
-      preg_match_all('|\{\w+\}|', $page->getPath(), $matches);
+      preg_match_all('|\{\w+\}|', (string) $page->getPath(), $matches);
       if (array_filter($matches)) {
         $operations['parameters'] = [
           'title' => $this->t('Page parameters'),

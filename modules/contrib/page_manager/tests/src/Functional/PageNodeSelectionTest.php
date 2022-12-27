@@ -22,12 +22,12 @@ class PageNodeSelectionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'node'];
+  protected static $modules = ['page_manager', 'node'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
@@ -46,15 +46,15 @@ class PageNodeSelectionTest extends BrowserTestBase {
     $node2 = $this->drupalCreateNode(['title' => '<em>First</em> & <Second>', 'type' => 'article']);
     $node3 = $this->drupalCreateNode(['type' => 'article']);
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(200);
-    $this->assertText($node1->label());
-    $this->assertTitle($node1->label() . ' | Drupal');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains($node1->label());
+    $this->assertSession()->titleEquals($node1->label() . ' | Drupal');
     $this->drupalGet('node/' . $node2->id());
-    $this->assertResponse(200);
-    $this->assertCacheTag('page_manager_route_name:entity.node.canonical');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'page_manager_route_name:entity.node.canonical');
     $expected_title = '&lt;em&gt;First&lt;/em&gt; &amp; &lt;Second&gt;';
-    $this->assertRaw($expected_title);
-    $this->assertTitle(html_entity_decode($expected_title) . ' | Drupal');
+    $this->assertSession()->responseContains($expected_title);
+    $this->assertSession()->titleEquals(html_entity_decode($expected_title) . ' | Drupal');
 
     // Create a new variant to always return 404, the node_view page exists by
     // default.
@@ -69,12 +69,12 @@ class PageNodeSelectionTest extends BrowserTestBase {
     $this->triggerRouterRebuild();
 
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(404);
-    $this->assertCacheTag('page_manager_route_name:entity.node.canonical');
-    $this->assertNoText($node1->label());
+    $this->assertSession()->statusCodeEquals(404);
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'page_manager_route_name:entity.node.canonical');
+    $this->assertSession()->pageTextNotContains($node1->label());
     $this->drupalGet('node/' . $node2->id());
-    $this->assertResponse(404);
-    $this->assertNoText($node2->label());
+    $this->assertSession()->statusCodeEquals(404);
+    $this->assertSession()->pageTextNotContains($node2->label());
 
     // Add a new variant.
     /** @var \Drupal\page_manager\PageVariantInterface $block_page_variant */
@@ -89,7 +89,7 @@ class PageNodeSelectionTest extends BrowserTestBase {
     $uuid = $block_page_plugin->getConfiguration()['uuid'];
     $block_page_plugin->setConfiguration(['page_title' => '[node:title]']);
     $second_uuid = $block_page_plugin->getConfiguration()['uuid'];
-    $this->assertEqual($uuid, $second_uuid);
+    $this->assertEquals($uuid, $second_uuid);
     /** @var \Drupal\page_manager\Plugin\DisplayVariant\PageBlockDisplayVariant $block_page_plugin */
     $block_page_plugin->addBlock([
       'id' => 'entity_view:node',
@@ -102,7 +102,7 @@ class PageNodeSelectionTest extends BrowserTestBase {
       ],
     ]);
     $block_page_variant->addSelectionCondition([
-      'id' => 'node_type',
+      'id' => 'entity_bundle:node',
       'bundles' => [
         'article' => 'article',
       ],
@@ -116,33 +116,33 @@ class PageNodeSelectionTest extends BrowserTestBase {
 
     // The page node will 404, but the article node will display the variant.
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(404);
-    $this->assertNoText($node1->label());
+    $this->assertSession()->statusCodeEquals(404);
+    $this->assertSession()->pageTextNotContains($node1->label());
 
     $this->drupalGet('node/' . $node2->id());
-    $this->assertResponse(200);
-    $this->assertTitle(html_entity_decode($expected_title) . ' | Drupal');
-    $this->assertText($node2->body->value);
-    $this->assertRaw('<h1 class="page-title">' . $expected_title . '</h1>');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->titleEquals(html_entity_decode($expected_title) . ' | Drupal');
+    $this->assertSession()->pageTextContains($node2->body->value);
+    $this->assertSession()->responseContains('<h1 class="page-title">' . $expected_title . '</h1>');
 
     // Test cacheability metadata.
     $this->drupalGet('node/' . $node3->id());
-    $this->assertTitle($node3->label() . ' | Drupal');
-    $this->assertText($node3->body->value);
-    $this->assertNoText($node2->label());
+    $this->assertSession()->titleEquals($node3->label() . ' | Drupal');
+    $this->assertSession()->pageTextContains($node3->body->value);
+    $this->assertSession()->pageTextNotContains($node2->label());
 
     // Ensure that setting the same title directly in the block display results
     // in the same output.
     $block_page_plugin->setConfiguration(['page_title' => '<em>First</em> & <Second>']);
     $block_page_variant->save();
     $this->drupalGet('node/' . $node2->id());
-    $this->assertResponse(200);
-    $this->assertTitle(html_entity_decode($expected_title) . ' | Drupal');
-    $this->assertRaw('<h1 class="page-title">' . $expected_title . '</h1>');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->titleEquals(html_entity_decode($expected_title) . ' | Drupal');
+    $this->assertSession()->responseContains('<h1 class="page-title">' . $expected_title . '</h1>');
 
     // Ensure this doesn't affect the /node/add page.
     $this->drupalGet('node/add');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
 }

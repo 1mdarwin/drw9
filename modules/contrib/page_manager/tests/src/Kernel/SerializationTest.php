@@ -23,12 +23,12 @@ class SerializationTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'path_alias', 'system', 'user'];
+  protected static $modules = ['page_manager', 'path_alias', 'system', 'user'];
 
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
     // @todo: Remove the silent dependency on user.

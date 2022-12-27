@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -17,6 +18,7 @@ use Drupal\Tests\UnitTestCase;
  */
 class PageVariantTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * @var \Drupal\page_manager\Entity\PageVariant
    */
@@ -35,7 +37,7 @@ class PageVariantTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->pageVariant = new PageVariant(['id' => 'the_page_variant', 'page' => 'the_page'], 'page_variant');

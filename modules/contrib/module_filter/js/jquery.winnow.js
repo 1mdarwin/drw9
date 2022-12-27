@@ -1,11 +1,11 @@
 /**
- * jQuery plugin
- * Filter out elements based on user input.
+ * @file
+ * JQuery plugin to filter out elements based on user input.
  */
 
 (function ($) {
 
-  var now = Date.now || function() {
+  var now = Date.now || function () {
       return new Date().getTime();
     };
 
@@ -16,7 +16,7 @@
     var timestamp;
     var result;
 
-    var later = function() {
+    var later = function () {
       var last = now() - timestamp;
 
       if (last < wait && last >= 0) {
@@ -33,7 +33,7 @@
       }
     };
 
-    return function() {
+    return function () {
       context = this;
       args = arguments;
       timestamp = now();
@@ -61,7 +61,7 @@
     }
   };
 
-  var Winnow = function(element, selector, options) {
+  var Winnow = function (element, selector, options) {
     var self = this;
 
     self.element = element;
@@ -97,7 +97,7 @@
     if (self.element.val() == '') {
       self.clearButton.hide();
     }
-    self.clearButton.click(function(e) {
+    self.clearButton.click(function (e) {
       e.preventDefault();
 
       self.clearFilter();
@@ -105,7 +105,7 @@
     self.element.after(self.clearButton);
 
     self.element.on({
-      keyup: debounce(function() {
+      keyup: debounce(function () {
         var value = self.element.val();
         if (!value || explode(value).pop().slice(-1) !== ':') {
           // Only filter if we aren't using the operator autocomplete.
@@ -115,7 +115,7 @@
       keydown: preventEnterKey
     });
     self.element.on({
-      keyup: function() {
+      keyup: function () {
         // Show/hide the clear button.
         if (self.element.val() != '') {
           self.clearButton.show();
@@ -141,15 +141,15 @@
       }
 
       self.element.autocomplete({
-        'search': function(event) {
+        'search': function (event) {
           if (explode(event.target.value).pop() != ':') {
             return false;
           }
         },
-        'source': function(request, response) {
+        'source': function (request, response) {
           return response(source);
         },
-        'select': function(event, ui) {
+        'select': function (event, ui) {
           var terms = explode(event.target.value);
           // Remove the current input.
           terms.pop();
@@ -159,7 +159,7 @@
           // Return false to tell jQuery UI that we've filled in the value already.
           return false;
         },
-        'focus': function() {
+        'focus': function () {
           return false;
         }
       });
@@ -168,7 +168,7 @@
     self.element.data('winnow', self);
   };
 
-  Winnow.prototype.setQueries = function(string) {
+  Winnow.prototype.setQueries = function (string) {
     var self = this;
     var strings = explode(string);
 
@@ -201,11 +201,11 @@
     }
   };
 
-  Winnow.prototype.buildIndex = function() {
+  Winnow.prototype.buildIndex = function () {
     var self = this;
     this.index = [];
 
-    $(self.selector, self.wrapper).each(function(i) {
+    $(self.selector, self.wrapper).each(function (i) {
       var text = (self.options.textSelector) ? $(self.options.textSelector, this).text() : $(this).text();
       var item = {
         key: i,
@@ -224,21 +224,21 @@
     return self.trigger('finishIndexing', [ self ]);
   };
 
-  Winnow.prototype.bind = function() {
+  Winnow.prototype.bind = function () {
     var args = arguments;
     args[0] = 'winnow:' + args[0];
 
     return this.element.bind.apply(this.element, args);
   };
 
-  Winnow.prototype.trigger = function(event) {
+  Winnow.prototype.trigger = function (event) {
     var args = arguments;
     args[0] = 'winnow:' + args[0];
 
     return this.element.trigger.apply(this.element, args);
   };
 
-  Winnow.prototype.filter = function() {
+  Winnow.prototype.filter = function () {
     var self = this;
 
     self.results = [];
@@ -250,7 +250,7 @@
 
     var start = self.trigger('start');
 
-    $.each(self.index, function(key, item) {
+    $.each(self.index, function (key, item) {
       var $item = item.element;
       var operatorMatch = true;
 
@@ -300,9 +300,9 @@
     }
   };
 
-  Winnow.prototype.getOperators = function() {
+  Winnow.prototype.getOperators = function () {
     return $.extend({}, {
-      text: function(string, item) {
+      text: function (string, item) {
         if (item.text.indexOf(string) >= 0) {
           return true;
         }
@@ -310,7 +310,7 @@
     }, this.options.additionalOperators);
   };
 
-  Winnow.prototype.processRules = function(item) {
+  Winnow.prototype.processRules = function (item) {
     var self = this;
     var $item = item.element;
     var result = true;
@@ -327,11 +327,11 @@
     return result;
   };
 
-  Winnow.prototype.stripe = function() {
+  Winnow.prototype.stripe = function () {
     var flip = { even: 'odd', odd: 'even' };
     var stripe = 'odd';
 
-    $.each(this.index, function(key, item) {
+    $.each(this.index, function (key, item) {
       if (!item.element.is(':visible')) {
         item.element.removeClass('odd even').addClass(stripe);
         stripe = flip[stripe];
@@ -339,17 +339,17 @@
     });
   };
 
-  Winnow.prototype.clearFilter = function() {
+  Winnow.prototype.clearFilter = function () {
     this.element.val('');
     this.filter();
     this.clearButton.hide();
     this.element.focus();
   };
 
-  $.fn.winnow = function(selector, options) {
+  $.fn.winnow = function (selector, options) {
     var $input = this.not('.winnow-processed').addClass('winnow-processed');
 
-    $input.each(function() {
+    $input.each(function () {
       var winnow = new Winnow($input, selector, options);
     });
 

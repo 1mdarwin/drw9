@@ -25,7 +25,7 @@ class DevelControllerTest extends DevelBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $entity_type_manager = $this->container->get('entity_type.manager');
 

@@ -23,12 +23,12 @@ class PagePlaceholderTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'page_manager_test'];
+  protected static $modules = ['page_manager', 'page_manager_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->drupalLogin($this->drupalCreateUser(['administer pages']));
   }
@@ -40,9 +40,9 @@ class PagePlaceholderTest extends BrowserTestBase {
     // Access the page callback and check whether string is printed.
     $page_string = 'test-page';
     $this->drupalGet('page-manager-test/' . $page_string);
-    $this->assertResponse(200);
-    $this->assertCacheTag('page_manager_route_name:page_manager_test.page_view');
-    $this->assertText('Hello World! Page ' . $page_string);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'page_manager_route_name:page_manager_test.page_view');
+    $this->assertSession()->pageTextContains('Hello World! Page ' . $page_string);
 
     // Create a new page entity with the same path as in the test module.
     $page = Page::create([
@@ -69,9 +69,9 @@ class PagePlaceholderTest extends BrowserTestBase {
 
     // Access the page callback again and check that now the text is not there.
     $this->drupalGet('page-manager-test/' . $page_string);
-    $this->assertResponse(200);
-    $this->assertCacheTag('page_manager_route_name:page_manager_test.page_view');
-    $this->assertNoText('Hello World! Page ' . $page_string);
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->responseHeaderContains('X-Drupal-Cache-Tags', 'page_manager_route_name:page_manager_test.page_view');
+    $this->assertSession()->pageTextNotContains('Hello World! Page ' . $page_string);
   }
 
 }

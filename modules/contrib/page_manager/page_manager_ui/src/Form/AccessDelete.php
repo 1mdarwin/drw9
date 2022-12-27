@@ -4,6 +4,9 @@ namespace Drupal\page_manager_ui\Form;
 
 use Drupal\ctools\Form\ConditionDelete;
 
+/**
+ * Delete Access Form.
+ */
 class AccessDelete extends ConditionDelete {
 
   /**
@@ -16,8 +19,8 @@ class AccessDelete extends ConditionDelete {
     $route_name = $page->isNew() ? 'entity.page.add_step_form' : 'entity.page.edit_form';
     return [$route_name,
       [
-      'machine_name' => $this->machine_name,
-      'step' => 'access',
+        'machine_name' => $this->machine_name,
+        'step' => 'access',
       ],
     ];
   }

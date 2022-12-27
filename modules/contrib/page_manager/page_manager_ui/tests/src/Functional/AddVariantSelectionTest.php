@@ -19,12 +19,12 @@ class AddVariantSelectionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'page_manager_ui', 'node'];
+  protected static $modules = ['page_manager', 'page_manager_ui', 'node'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalCreateContentType(['type' => 'article', 'name' => 'Article']);
@@ -42,9 +42,9 @@ class AddVariantSelectionTest extends BrowserTestBase {
     $node = $this->drupalCreateNode(['type' => 'article']);
     $node2 = $this->drupalCreateNode(['type' => 'article']);
     $this->drupalGet('node/' . $node->id());
-    $this->assertResponse(200);
-    $this->assertText($node->label());
-    $this->assertTitle($node->label() . ' | Drupal');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains($node->label());
+    $this->assertSession()->titleEquals($node->label() . ' | Drupal');
 
     // Create a new page entity.
     $edit_page = [
@@ -53,9 +53,10 @@ class AddVariantSelectionTest extends BrowserTestBase {
       'path' => 'selection-criteria',
       'variant_plugin_id' => 'block_display',
     ];
-    $this->drupalPostForm('admin/structure/page_manager/add', $edit_page, 'Next');
-    $this->drupalPostForm(NULL, [], 'Next');
-    $this->drupalPostForm(NULL, [], 'Finish');
+    $this->drupalGet('admin/structure/page_manager/add');
+    $this->submitForm($edit_page, 'Next');
+    $this->submitForm([], 'Next');
+    $this->submitForm([], 'Finish');
     $this->clickLink('Add variant');
     $edit = [
       'label' => 'Variant two',
@@ -63,7 +64,7 @@ class AddVariantSelectionTest extends BrowserTestBase {
       'wizard_options[contexts]' => TRUE,
       'wizard_options[selection]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
     // Add a static context for each node to the page variant.
     $contexts = [
       [
@@ -83,48 +84,48 @@ class AddVariantSelectionTest extends BrowserTestBase {
       $edit = [
         'context' => 'entity:node',
       ];
-      $this->drupalPostForm(NULL, $edit, 'Add new context');
+      $this->submitForm($edit, 'Add new context');
       $edit = [
         'label' => $context['title'],
         'machine_name' => $context['machine_name'],
         'description' => $context['description'],
         'context_value' => $context['node']->getTitle() . ' (' . $context['node']->id() . ')',
       ];
-      $this->drupalPostForm(NULL, $edit, 'Save');
-      $this->assertText($context['title']);
+      $this->submitForm($edit, 'Save');
+      $this->assertSession()->pageTextContains($context['title']);
     }
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->submitForm([], 'Next');
 
     // Configure selection criteria.
     $edit = [
       'conditions' => 'entity_bundle:node',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add Condition');
+    $this->submitForm($edit, 'Add Condition');
 
     $edit = [
       'bundles[article]' => TRUE,
       'bundles[page]' => TRUE,
       'context_mapping[node]' => 'static_node_2',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertText('Content type is article or page');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains('Content type is article or page');
     $this->clickLink('Edit');
     $edit = [
       'bundles[article]' => TRUE,
       'context_mapping[node]' => 'static_node_2',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertText('Content type is article');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->pageTextContains('Content type is article');
     $this->clickLink('Delete');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertNoText('Content type is article');
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->pageTextNotContains('Content type is article');
+    $this->submitForm([], 'Next');
 
     // Configure the new variant.
     $variant_edit = [
       'variant_settings[page_title]' => 'Variant two criteria test',
     ];
-    $this->drupalPostForm(NULL, $variant_edit, 'Next');
+    $this->submitForm($variant_edit, 'Next');
 
     // Add a block that renders the node from the first static context.
     $this->clickLink('Add new block');
@@ -135,8 +136,8 @@ class AddVariantSelectionTest extends BrowserTestBase {
       'settings[view_mode]' => 'default',
       'region' => 'top',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add block');
-    $this->assertText($edit['settings[label]']);
+    $this->submitForm($edit, 'Add block');
+    $this->assertSession()->pageTextContains($edit['settings[label]']);
 
     // Add a block that renders the node from the second static context.
     $this->clickLink('Add new block');
@@ -148,9 +149,9 @@ class AddVariantSelectionTest extends BrowserTestBase {
       'region' => 'bottom',
       'context_mapping[entity]' => $contexts[1]['machine_name'],
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add block');
-    $this->assertText($edit['settings[label]']);
-    $this->drupalPostForm(NULL, [], 'Finish');
+    $this->submitForm($edit, 'Add block');
+    $this->assertSession()->pageTextContains($edit['settings[label]']);
+    $this->submitForm([], 'Finish');
   }
 
 }

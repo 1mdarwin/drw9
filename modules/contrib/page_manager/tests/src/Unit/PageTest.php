@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -24,6 +25,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class PageTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * @var \Drupal\page_manager\Entity\Page
    */
@@ -32,7 +34,7 @@ class PageTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->page = new Page(['id' => 'the_page'], 'page');
@@ -182,9 +184,13 @@ class PageTest extends UnitTestCase {
     $context = new Context(new ContextDefinition('bar'));
 
     $event_dispatcher = $this->prophesize(EventDispatcherInterface::class);
-    $event_dispatcher->dispatch(PageManagerEvents::PAGE_CONTEXT, Argument::type(PageManagerContextEvent::class))
+    $event_dispatcher->dispatch(Argument::type(PageManagerContextEvent::class), PageManagerEvents::PAGE_CONTEXT)
+      ->shouldBeCalled()
       ->will(function ($args) use ($context) {
-        $args[1]->getPage()->addContext('foo', $context);
+        /** @var \Drupal\page_manager\Event\PageManagerContextEvent $event */
+        $event = $args[0];
+        $event->getPage()->addContext('foo', $context);
+        return $event;
       });
 
     $container = new ContainerBuilder();

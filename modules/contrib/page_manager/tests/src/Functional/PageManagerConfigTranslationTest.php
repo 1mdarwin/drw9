@@ -24,12 +24,12 @@ class PageManagerConfigTranslationTest extends BrowserTestBase {
    * @todo Remove page_manager_ui from the list once config_translation does not
    *   require a UI in https://www.drupal.org/node/2670718.
    */
-  public static $modules = ['block', 'page_manager', 'page_manager_ui', 'node', 'config_translation'];
+  protected static $modules = ['block', 'page_manager', 'page_manager_ui', 'node', 'config_translation'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     ConfigurableLanguage::createFromLangcode('de')->save();
@@ -49,20 +49,20 @@ class PageManagerConfigTranslationTest extends BrowserTestBase {
    */
   public function testTranslation() {
     $this->drupalGet('admin/config/regional/config-translation');
-    $this->assertLinkByHref('admin/config/regional/config-translation/page');
-    $this->assertLinkByHref('admin/config/regional/config-translation/page_variant');
+    $this->assertSession()->linkByHrefExists('admin/config/regional/config-translation/page');
+    $this->assertSession()->linkByHrefExists('admin/config/regional/config-translation/page_variant');
 
     $this->drupalGet('admin/config/regional/config-translation/page');
-    $this->assertText('Node view');
+    $this->assertSession()->pageTextContains('Node view');
     $this->clickLink('Translate');
     $this->clickLink('Add');
-    $this->assertField('translation[config_names][page_manager.page.node_view][label]');
+    $this->assertSession()->fieldExists('translation[config_names][page_manager.page.node_view][label]');
 
     $this->drupalGet('admin/config/regional/config-translation/page_variant');
-    $this->assertText('HTTP status code');
+    $this->assertSession()->pageTextContains('HTTP status code');
     $this->clickLink('Translate');
     $this->clickLink('Add');
-    $this->assertField('translation[config_names][page_manager.page_variant.http_status_code][label]');
+    $this->assertSession()->fieldExists('translation[config_names][page_manager.page_variant.http_status_code][label]');
   }
 
 }

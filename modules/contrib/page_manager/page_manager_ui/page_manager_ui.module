@@ -85,10 +85,10 @@ function page_manager_ui_theme() {
  * Preprocess function for page-manager-wizard-tree.html.twig.
  */
 function template_preprocess_page_manager_wizard_tree(&$variables) {
-  /** @var $wizard \Drupal\ctools\Wizard\FormWizardInterface|\Drupal\ctools\Wizard\EntityFormWizardInterface */
+  /** @var \Drupal\ctools\Wizard\FormWizardInterface|\Drupal\ctools\Wizard\EntityFormWizardInterface $wizard */
   $wizard = $variables['wizard'];
   $cached_values = $variables['cached_values'];
-  $tree = $variables['tree'];
+  $tree = !empty($variables['tree']) ? $variables['tree'] : [];
   $variables['step'] = $wizard->getStep($cached_values);
 
   foreach ($wizard->getOperations($cached_values) as $step => $operation) {
@@ -98,19 +98,22 @@ function template_preprocess_page_manager_wizard_tree(&$variables) {
 
     // Fill in parents if there are breadcrumbs.
     $parent =& $tree;
-    if (isset($operation['breadcrumbs'])) {
-      foreach ($operation['breadcrumbs'] as $breadcrumb) {
-        $breadcrumb_string = (string) $breadcrumb;
-        if (!isset($parent[$breadcrumb_string])) {
-          $parent[$breadcrumb_string] = [
-            'title' => $breadcrumb,
-            'children' => [],
-          ];
+    if (is_array($parent)) {
+      if (isset($operation['breadcrumbs'])) {
+        foreach ($operation['breadcrumbs'] as $breadcrumb) {
+          $breadcrumb_string = (string) $breadcrumb;
+          if (!isset($parent[$breadcrumb_string])) {
+            $parent[$breadcrumb_string] = [
+              'title' => $breadcrumb,
+              'children' => [],
+            ];
+          }
+          $parent =& $parent[$breadcrumb_string]['children'];
         }
-        $parent =& $parent[$breadcrumb_string]['children'];
       }
     }
 
+    $parent = ($parent === FALSE) ? [] : $parent;
     $parent[$step] = [
       'title' => !empty($operation['title']) ? $operation['title'] : '',
       'url' => new Url($wizard->getRouteName(), $parameters),
@@ -126,9 +129,13 @@ function template_preprocess_page_manager_wizard_tree(&$variables) {
  */
 function page_manager_ui_config_translation_info_alter(&$info) {
   // Alter page and page variant config translation classes.
-  $info['page']['class'] = PageConfigMapper::class;
-  $info['page_variant']['class'] = PageVariantConfigMapper::class;
-  $info['page_variant']['base_route_name'] = 'entity.page.edit_form';
+  if (isset($info['page'])) {
+    $info['page']['class'] = PageConfigMapper::class;
+  }
+  if (isset($info['page_variant'])) {
+    $info['page_variant']['class'] = PageVariantConfigMapper::class;
+    $info['page_variant']['base_route_name'] = 'entity.page.edit_form';
+  }
 }
 
 /**

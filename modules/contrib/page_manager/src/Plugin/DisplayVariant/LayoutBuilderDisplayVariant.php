@@ -7,7 +7,7 @@ use Drupal\Core\Display\VariantBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ctools\Plugin\PluginWizardInterface;
 use Drupal\layout_builder\LayoutEntityHelperTrait;
-use Drupal\layout_builder\SectionStorage\SectionStorageTrait;
+use Drupal\layout_builder\SectionListTrait;
 use Drupal\page_manager\Form\LayoutBuilderForm;
 
 /**
@@ -20,7 +20,7 @@ use Drupal\page_manager\Form\LayoutBuilderForm;
  */
 class LayoutBuilderDisplayVariant extends VariantBase implements PluginWizardInterface, ContextAwareVariantInterface {
 
-  use SectionStorageTrait;
+  use SectionListTrait;
   use LayoutEntityHelperTrait;
 
   /**
@@ -116,6 +116,21 @@ class LayoutBuilderDisplayVariant extends VariantBase implements PluginWizardInt
   public function setContexts(array $contexts) {
     $this->contexts = $contexts;
     return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function calculateDependencies() {
+    $configuration = $this->getConfiguration();
+    foreach ($configuration['sections'] as $section) {
+      $this->calculatePluginDependencies($section->getLayout());
+      foreach ($section->getComponents() as $component) {
+        $this->calculatePluginDependencies($component->getPlugin());
+      }
+    }
+
+    return parent::calculateDependencies();
   }
 
 }

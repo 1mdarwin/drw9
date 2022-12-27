@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Block\BlockManager;
@@ -29,6 +30,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
  */
 class PageBlockDisplayVariantTest extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * Tests the build() method when a block is empty.
    *
@@ -71,8 +73,8 @@ class PageBlockDisplayVariantTest extends UnitTestCase {
       '#block_plugin' => $block1->reveal(),
       '#cache' => [
         'tags' => [
-          'page:page_id',
           'block_plugin:block_plugin_id',
+          'page:page_id',
         ],
       ],
     ];
@@ -93,6 +95,9 @@ class PageBlockDisplayVariantTest extends UnitTestCase {
   public function testBuild() {
     $container = new ContainerBuilder();
     $cache_contexts = $this->prophesize(CacheContextsManager::class);
+    // This needs to be mocked here otherwise the cache context manager cannot
+    // be found when rendering the blocks together.
+    $cache_contexts->assertValidTokens(['user.permissions', 'url', 'user'])->willReturn(TRUE);
     $container->set('cache_contexts_manager', $cache_contexts->reveal());
     \Drupal::setContainer($container);
 
@@ -128,9 +133,7 @@ class PageBlockDisplayVariantTest extends UnitTestCase {
         'block2' => $block2->reveal(),
       ],
     ];
-    $block_collection = $this->getMockBuilder(BlockPluginCollection::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $block_collection = $this->createMock(BlockPluginCollection::class);
     $block_collection->expects($this->once())
       ->method('getAllByRegion')
       ->willReturn($blocks);
@@ -142,14 +145,13 @@ class PageBlockDisplayVariantTest extends UnitTestCase {
     $module_handler->alter();
     $uuid_generator = $this->prophesize(UuidInterface::class);
     $page_title = 'Page title';
-    $token = $this->getMockBuilder(Token::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $token = $this->createMock(Token::class);
     $block_manager = $this->prophesize(BlockManager::class);
     $condition_manager = $this->prophesize(ConditionManager::class);
+
     $variant_plugin = $this->getMockBuilder(PageBlockDisplayVariant::class)
       ->setConstructorArgs([['page_title' => $page_title, 'uuid' => 'UUID'], 'test', [], $context_handler->reveal(), $account->reveal(), $uuid_generator->reveal(), $token, $block_manager->reveal(), $condition_manager->reveal(), $module_handler->reveal()])
-      ->setMethods(['renderPageTitle'])
+      ->onlyMethods(['renderPageTitle'])
       ->getMock();
 
     $property = new \ReflectionProperty($variant_plugin, 'blockPluginCollection');
@@ -178,11 +180,10 @@ class PageBlockDisplayVariantTest extends UnitTestCase {
     // possible.
     $expected_cache_page = [
       'keys' => ['page_manager_block_display', 'UUID'],
-      'contexts' => ['url', 'user', 'user.permissions'],
+      'contexts' => ['user.permissions', 'url', 'user'],
       'tags' => ['block_plugin1:block_plugin_id'],
       'max-age' => 3600,
     ];
-    $cache_contexts->assertValidTokens(['url', 'user.permissions', 'user'])->willReturn(TRUE);
 
     // Build the variant and ensure that pre_render is set only for the first
     // block.

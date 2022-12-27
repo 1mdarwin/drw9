@@ -8,7 +8,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Path\CurrentPathStack;
 use Drupal\Core\Routing\Enhancer\RouteEnhancerInterface;
 use Drupal\Core\Routing\FilterInterface;
-use Symfony\Cmf\Component\Routing\RouteObjectInterface;
+use Drupal\Core\Routing\RouteObjectInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\Routing\Route;
@@ -144,6 +144,8 @@ class VariantRouteFilter implements FilterInterface {
         $this->requestStack->pop();
       }
     }
+
+    return NULL;
   }
 
   /**
@@ -213,12 +215,21 @@ class VariantRouteFilter implements FilterInterface {
    *   An array of request attributes or FALSE if any route enhancers fail.
    */
   protected function getRequestAttributes(Route $route, $name, Request $request) {
+    $attributes = $request->attributes->all();
+    if (isset($attributes['_page_manager_attributes_prepared'])) {
+      // Already done.
+      return $attributes;
+    }
+
     // Extract the raw attributes from the current path. This performs the same
     // functionality as \Drupal\Core\Routing\UrlMatcher::finalMatch().
     $path = $this->currentPath->getPath($request);
     $raw_attributes = RouteAttributes::extractRawAttributes($route, $name, $path);
-    $attributes = $request->attributes->all();
     $attributes = NestedArray::mergeDeep($attributes, $raw_attributes);
+
+    $attributes = array_filter($attributes, function($attribute){
+      return !is_null($attribute);
+    });
 
     // Run the route enhancers on the raw attributes. This performs the same
     // functionality as \Symfony\Cmf\Component\Routing\DynamicRouter::match().
@@ -237,6 +248,8 @@ class VariantRouteFilter implements FilterInterface {
       }
     }
 
+    // Ensures to be run once per request.
+    $attributes['_page_manager_attributes_prepared'] = TRUE;
     return $attributes;
   }
 

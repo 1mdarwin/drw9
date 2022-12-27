@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\page_manager\Unit;
 
+use Prophecy\PhpUnit\ProphecyTrait;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\TypedData\TypedDataManager;
 use Drupal\page_manager\Event\PageManagerContextEvent;
@@ -13,6 +14,7 @@ use Drupal\Tests\UnitTestCase;
  */
 abstract class PageContextTestBase extends UnitTestCase {
 
+  use ProphecyTrait;
   /**
    * The typed data manager.
    *
@@ -37,7 +39,7 @@ abstract class PageContextTestBase extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->typedDataManager = $this->prophesize(TypedDataManager::class);
