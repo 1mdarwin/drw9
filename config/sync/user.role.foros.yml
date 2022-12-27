@@ -3,7 +3,6 @@ langcode: es
 status: true
 dependencies:
   config:
-    - filter.format.2
     - node.type.forum
   module:
     - comment
