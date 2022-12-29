@@ -7,7 +7,6 @@ dependencies:
   module:
     - comment
     - contact
-    - filter
     - google_analytics
     - node
     - path

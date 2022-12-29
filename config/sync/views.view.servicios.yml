@@ -1121,7 +1121,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<div class=\"thumbnail servicios{{counter}}\">\r\n{{field_imagen_porta}}\r\n  <div class=\"caption\">\r\n     <h3>{{title_1}}</h3>\r\n     <p>{{body}}</p>\r\n </div>\r\n<div class=\"masinfo1\"><div class=\"masinfo\">{{field_url_porta}}</div></div>\r\n</div>"
+            text: "<div class=\"thumbnail servicios1{{counter}}\">\r\n{{field_imagen_porta}}\r\n  <div class=\"caption\">\r\n     <h3>{{title_1}}</h3>\r\n     <p>{{body}}</p>\r\n </div>\r\n<div class=\"masinfo1\"><div class=\"masinfo\">{{field_url_porta}}</div></div>\r\n</div>"
             make_link: false
             path: ''
             absolute: false
