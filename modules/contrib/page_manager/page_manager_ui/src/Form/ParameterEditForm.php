@@ -136,7 +136,7 @@ class ParameterEditForm extends FormBase {
     $form['label'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Label'),
-      '#default_value' => $parameter['label'] ?: ucfirst($parameter['machine_name']),
+      '#default_value' => !empty($parameter['label']) ? $parameter['label'] : (ucfirst($parameter['machine_name'] ?? '')),
       '#states' => [
         'invisible' => [
           ':input[name="type"]' => ['value' => static::NO_CONTEXT_KEY],
@@ -149,7 +149,13 @@ class ParameterEditForm extends FormBase {
       '#title' => $this->t('Type'),
       '#required' => TRUE,
       '#options' => $this->buildParameterTypeOptions(),
-      '#default_value' => $parameter['type'],
+      '#default_value' => $parameter['type'] ?? '',
+    ];
+
+    $form['optional'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Optional'),
+      '#default_value' => !empty($parameter['optional']),
     ];
 
     $form['actions'] = ['#type' => 'actions'];
@@ -160,6 +166,36 @@ class ParameterEditForm extends FormBase {
     ];
 
     return $form;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function validateForm(array &$form, FormStateInterface $form_state) {
+    $cached_values = $this->getTempstore();
+    /** @var \Drupal\page_manager\PageInterface $page */
+    $page = $cached_values['page'];
+
+    $edited_parameter_name = $form_state->getValue('machine_name');
+    $edited_parameter_optional = $form_state->getValue('optional');
+
+    // Checks that no optional parameter is before a required one.
+    $required_allowed = TRUE;
+    foreach ($page->getParameterNames() as $parameter_name) {
+      $parameter = $page->getParameter($parameter_name);
+      $parameter_optional = $parameter_name == $edited_parameter_name
+        ? $edited_parameter_optional
+        : !empty($parameter['optional']);
+
+      if ($parameter_optional) {
+        $required_allowed = FALSE;
+      }
+      elseif (!$required_allowed) {
+        $form_state->setErrorByName('optional', $this->t('Optional path parameters not allowed before required parameters.'));
+      }
+    }
+
+    parent::validateForm($form, $form_state);
   }
 
   /**
@@ -201,13 +237,14 @@ class ParameterEditForm extends FormBase {
     $page = $cache_values['page'];
     $name = $form_state->getValue('machine_name');
     $type = $form_state->getValue('type');
+    $optional = $form_state->getValue('optional');
     if ($type === static::NO_CONTEXT_KEY) {
       $page->removeParameter($name);
       $label = NULL;
     }
     else {
       $label = $form_state->getValue('label');
-      $page->setParameter($name, $type, $label);
+      $page->setParameter($name, $type, $label, $optional);
     }
 
     $this->setTempstore($cache_values);

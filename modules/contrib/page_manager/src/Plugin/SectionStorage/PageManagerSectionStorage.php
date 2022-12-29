@@ -224,7 +224,8 @@ class PageManagerSectionStorage extends SectionStorageBase implements ContainerF
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
   public function isLayoutBuilderEnabled() {
-    return $this->getContextValue('entity')->getVariantPlugin() instanceof LayoutBuilderDisplayVariant;
+    $entity = $this->getContextValue('entity');
+    return method_exists($entity, 'getVariantPlugin') && $entity->getVariantPlugin() instanceof LayoutBuilderDisplayVariant;
   }
 
   /**
@@ -252,7 +253,7 @@ class PageManagerSectionStorage extends SectionStorageBase implements ContainerF
     foreach ($contexts as $name => $context) {
       if (!$context->hasContextValue()) {
         $data_type = $context->getContextDefinition()->getDataType();
-        if (strpos($data_type, 'entity:') === 0) {
+        if (strpos((string) $data_type, 'entity:') === 0) {
           list(, $entity_type_id) = explode(':', $data_type, 2);
 
           $bundle = $entity_type_id;

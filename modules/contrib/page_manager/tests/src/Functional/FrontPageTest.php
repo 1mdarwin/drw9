@@ -26,7 +26,7 @@ class FrontPageTest extends BrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['page_manager', 'block'];
+  protected static $modules = ['page_manager', 'block'];
 
   /**
    * Tests the front page title.
@@ -68,14 +68,14 @@ class FrontPageTest extends BrowserTestBase {
       ],
     ]);
 
-    $this->verbose(var_export($page_variant->toArray(), TRUE));
+    // dump(var_export($page_variant->toArray(), TRUE));
 
     $this->triggerRouterRebuild();
 
     // The title should default to "Home" on the front page.
     // @todo This gives 404 :(
     $this->drupalGet('');
-    $this->assertTitle('Home | Drupal');
+    $this->assertSession()->titleEquals('Home | Drupal');
   }
 
 }

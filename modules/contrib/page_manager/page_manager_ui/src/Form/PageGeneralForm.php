@@ -8,6 +8,9 @@ use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+/**
+ * A Page's General Config Form.
+ */
 class PageGeneralForm extends FormBase {
 
   /**
@@ -59,7 +62,7 @@ class PageGeneralForm extends FormBase {
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    /** @var $page \Drupal\page_manager\Entity\Page */
+    /** @var \Drupal\page_manager\Entity\Page $page */
     $page = $cached_values['page'];
     $form['description'] = [
       '#type' => 'textarea',
@@ -120,7 +123,7 @@ class PageGeneralForm extends FormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    /** @var $page \Drupal\page_manager\Entity\Page */
+    /** @var \Drupal\page_manager\Entity\Page $page */
     $page = $cached_values['page'];
     $page->set('description', $form_state->getValue('description'));
     $page->set('path', $form_state->getValue('path'));
@@ -131,7 +134,7 @@ class PageGeneralForm extends FormBase {
       $page->set('label', $form_state->getValue('label'));
       if (empty($cached_values['variant_plugin_id'])) {
         $variant_plugin_id = $cached_values['variant_plugin_id'] = $form_state->getValue('variant_plugin_id');
-        /* @var \Drupal\page_manager\PageVariantInterface $page_variant */
+        /** @var \Drupal\page_manager\PageVariantInterface $page_variant */
         $page_variant = \Drupal::entityTypeManager()
           ->getStorage('page_variant')
           ->create([
@@ -146,7 +149,7 @@ class PageGeneralForm extends FormBase {
       }
       if ($cached_values['variant_plugin_id'] != $form_state->getValue('variant_plugin_id') && !empty($cached_values['page_variant'])) {
         $page_variant = $cached_values['page_variant'];
-        /** @var $page_variant \Drupal\page_manager\Entity\PageVariant */
+        /** @var \Drupal\page_manager\Entity\PageVariant $page_variant */
         $page_variant->set('variant', $form_state->getValue('variant_plugin_id'));
         $page_variant->set('variant_settings', []);
         $cached_values['variant_plugin_id'] = $form_state->getValue('variant_plugin_id');
@@ -162,7 +165,7 @@ class PageGeneralForm extends FormBase {
    */
   public function validatePath(&$element, FormStateInterface $form_state) {
     $cached_values = $form_state->getTemporaryValue('wizard');
-    /** @var $page \Drupal\page_manager\Entity\Page */
+    /** @var \Drupal\page_manager\Entity\Page $page */
     $page = $cached_values['page'];
 
     // Ensure the path has a leading slash.

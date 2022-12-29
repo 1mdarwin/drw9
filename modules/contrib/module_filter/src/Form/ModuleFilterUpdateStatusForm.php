@@ -33,7 +33,7 @@ class ModuleFilterUpdateStatusForm extends FormBase {
       '#title' => $this->t('Filter projects'),
       '#title_display' => 'invisible',
       '#size' => 30,
-      '#placeholder' => $this->t('Filter by name'),
+      '#placeholder' => $this->t('Filter by project'),
       '#attributes' => [
         'class' => ['table-filter-text'],
         'data-table' => '#update-status',
@@ -45,8 +45,8 @@ class ModuleFilterUpdateStatusForm extends FormBase {
         ],
       ],
     ];
-    if (!empty($_GET['filter'])) {
-      $form['filters']['text']['#default_value'] = $_GET['filter'];
+    if (!empty($this->getRequest()->query->get('filter'))) {
+      $form['filters']['text']['#default_value'] = $this->getRequest()->query->get('filter');
     }
 
     $form['filters']['radios'] = [
@@ -63,6 +63,7 @@ class ModuleFilterUpdateStatusForm extends FormBase {
           'all' => $this->t('All'),
           'updates' => $this->t('Update available'),
           'security' => $this->t('Security update'),
+          'unsupported' => $this->t('Unsupported'),
         ],
       ],
     ];

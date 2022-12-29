@@ -89,7 +89,7 @@ class StaticContextConfigure extends ContextConfigure {
       'label' => $context->getContextDefinition()->getLabel(),
       'type' => $context->getContextDefinition()->getDataType(),
       'description' => $context->getContextDefinition()->getDescription(),
-      'value' => strpos($context->getContextDefinition()->getDataType(), 'entity:') === 0 ? $context->getContextValue()->uuid() : $context->getContextValue(),
+      'value' => strpos((string) $context->getContextDefinition()->getDataType(), 'entity:') === 0 ? $context->getContextValue()->uuid() : $context->getContextValue(),
     ];
     $page_variant->setStaticContext($context_id, $context_config);
     $cached_values['page_variant'] = $page_variant;

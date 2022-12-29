@@ -168,10 +168,12 @@ interface PageInterface extends ConfigEntityInterface, EntityWithPluginCollectio
    *   The parameter context type.
    * @param string $label
    *   (optional) The parameter context label.
+   * @param bool $optional
+   *   (optional) If the parameter context is optional.
    *
    * @return $this
    */
-  public function setParameter($name, $type, $label = '');
+  public function setParameter($name, $type, $label = '', $optional = FALSE);
 
   /**
    * Removes a specific parameter context.

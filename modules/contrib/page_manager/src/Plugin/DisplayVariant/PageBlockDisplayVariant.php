@@ -310,7 +310,7 @@ class PageBlockDisplayVariant extends BlockDisplayVariant implements PluginWizar
     foreach ($this->getContexts() as $context) {
       // @todo Simplify this when token and typed data types are unified in
       //   https://drupal.org/node/2163027.
-      if (strpos($context->getContextDefinition()->getDataType(), 'entity:') === 0) {
+      if (strpos((string) $context->getContextDefinition()->getDataType(), 'entity:') === 0) {
         $token_type = substr($context->getContextDefinition()->getDataType(), 7);
         if ($token_type == 'taxonomy_term') {
           $token_type = 'term';

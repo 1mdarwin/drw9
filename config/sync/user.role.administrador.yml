@@ -3,7 +3,6 @@ langcode: es
 status: true
 dependencies:
   config:
-    - filter.format.2
     - node.type.blog
     - node.type.ddblock_news_item
     - node.type.event
@@ -19,7 +18,6 @@ dependencies:
     - content_translation
     - contextual
     - entityqueue
-    - filter
     - flexslider
     - forum
     - google_analytics

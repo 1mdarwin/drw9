@@ -25,7 +25,7 @@ class PageNodeAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager', 'node', 'user'];
+  protected static $modules = ['page_manager', 'node', 'user'];
 
   /**
    * @var \Drupal\page_manager\PageInterface
@@ -35,7 +35,7 @@ class PageNodeAccessTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Remove the 'access content' permission from anonymous and auth users.
@@ -57,9 +57,9 @@ class PageNodeAccessTest extends BrowserTestBase {
 
     $this->drupalLogin($this->drupalCreateUser(['access content']));
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(200);
-    $this->assertText($node1->label());
-    $this->assertTitle($node1->label() . ' | Drupal');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains($node1->label());
+    $this->assertSession()->titleEquals($node1->label() . ' | Drupal');
 
     // Add a variant and an access condition.
     /** @var \Drupal\page_manager\Entity\PageVariant $page_variant */
@@ -82,7 +82,7 @@ class PageNodeAccessTest extends BrowserTestBase {
       ],
     ]);
     $this->page->addAccessCondition([
-      'id' => 'node_type',
+      'id' => 'entity_bundle:node',
       'bundles' => [
         'page' => 'page',
       ],
@@ -95,26 +95,26 @@ class PageNodeAccessTest extends BrowserTestBase {
 
     $this->drupalLogout();
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(403);
-    $this->assertNoText($node1->label());
-    $this->assertTitle('Access denied | Drupal');
+    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()->pageTextNotContains($node1->label());
+    $this->assertSession()->titleEquals('Access denied | Drupal');
 
     $this->drupalLogin($this->drupalCreateUser());
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(403);
-    $this->assertNoText($node1->label());
-    $this->assertTitle('Access denied | Drupal');
+    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()->pageTextNotContains($node1->label());
+    $this->assertSession()->titleEquals('Access denied | Drupal');
 
     $this->drupalLogin($this->drupalCreateUser(['access content']));
     $this->drupalGet('node/' . $node1->id());
-    $this->assertResponse(200);
-    $this->assertNoText($node1->label());
-    $this->assertTitle('The overridden page | Drupal');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextNotContains($node1->label());
+    $this->assertSession()->titleEquals('The overridden page | Drupal');
 
     $this->drupalGet('node/' . $node2->id());
-    $this->assertResponse(403);
-    $this->assertNoText($node2->label());
-    $this->assertTitle('Access denied | Drupal');
+    $this->assertSession()->statusCodeEquals(403);
+    $this->assertSession()->pageTextNotContains($node2->label());
+    $this->assertSession()->titleEquals('Access denied | Drupal');
   }
 
 }

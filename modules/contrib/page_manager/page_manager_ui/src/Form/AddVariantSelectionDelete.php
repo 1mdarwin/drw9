@@ -4,6 +4,9 @@ namespace Drupal\page_manager_ui\Form;
 
 use Drupal\ctools\Form\ConditionDelete;
 
+/**
+ * Delete form for Add Variant Selection.
+ */
 class AddVariantSelectionDelete extends ConditionDelete {
 
   /**
@@ -13,8 +16,9 @@ class AddVariantSelectionDelete extends ConditionDelete {
    *   The cached values from the wizard.
    *
    * @return \Drupal\page_manager\PageVariantInterface
+   *   The Page Variant.
    */
-  protected function getPageVariant($cached_values) {
+  protected function getPageVariant(array $cached_values) {
     return $cached_values['page_variant'];
   }
 
@@ -25,9 +29,9 @@ class AddVariantSelectionDelete extends ConditionDelete {
     $page_variant = $this->getPageVariant($cached_values);
     return ['entity.page_variant.add_step_form',
       [
-      'page' => $page_variant->getPage()->id(),
-      'machine_name' => $this->machine_name,
-      'step' => 'selection',
+        'page' => $page_variant->getPage()->id(),
+        'machine_name' => $this->machine_name,
+        'step' => 'selection',
       ],
     ];
   }

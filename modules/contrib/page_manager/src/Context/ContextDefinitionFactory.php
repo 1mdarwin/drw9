@@ -23,7 +23,7 @@ class ContextDefinitionFactory {
     // supported version of core.
     $class = '\Drupal\Core\Plugin\Context\EntityContextDefinition';
 
-    if (strpos($data_type, 'entity:') === 0 && class_exists($class)) {
+    if (strpos((string) $data_type, 'entity:') === 0 && class_exists($class)) {
       return $class::create($data_type);
     }
     return ContextDefinition::create($data_type);

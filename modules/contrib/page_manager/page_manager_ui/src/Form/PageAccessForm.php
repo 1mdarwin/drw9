@@ -5,6 +5,9 @@ namespace Drupal\page_manager_ui\Form;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\ctools\Form\ManageConditions;
 
+/**
+ * The Page Access Form.
+ */
 class PageAccessForm extends ManageConditions {
 
   /**
@@ -32,14 +35,19 @@ class PageAccessForm extends ManageConditions {
    * {@inheritdoc}
    */
   protected function getOperationsRouteInfo($cached_values, $machine_name, $row) {
-    return ['entity.page.condition', ['machine_name' => $machine_name, 'condition' => $row]];
+    return [
+      'entity.page.condition', [
+        'machine_name' => $machine_name,
+        'condition' => $row
+      ],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getConditions($cached_values) {
-    /** @var $page \Drupal\page_manager\Entity\Page */
+    /** @var \Drupal\page_manager\Entity\Page $page */
     $page = $cached_values['page'];
     return $page->get('access_conditions');
   }
@@ -48,7 +56,7 @@ class PageAccessForm extends ManageConditions {
    * {@inheritdoc}
    */
   protected function getContexts($cached_values) {
-    /** @var $page \Drupal\page_manager\Entity\Page */
+    /** @var \Drupal\page_manager\Entity\Page $page */
     $page = $cached_values['page'];
     return $page->getContexts();
   }
@@ -57,6 +65,7 @@ class PageAccessForm extends ManageConditions {
    * The route to which condition 'add' actions should submit.
    *
    * @return string
+   *   The add condition route.
    */
   protected function getAddRoute($cached_values) {
     return 'entity.page.condition.add';

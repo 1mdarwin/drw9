@@ -27,18 +27,14 @@ class LanguageInterfaceContextTest extends PageContextTestBase {
   /**
    * {@inheritdoc}
    */
-  public function setUp() {
+  public function setUp(): void {
     parent::setUp();
 
-    $language_manager = $this->getMockBuilder('\Drupal\Core\Language\LanguageManagerInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $language_manager = $this->createMock('\Drupal\Core\Language\LanguageManagerInterface');
 
     $context = new Context(new ContextDefinition('language', 'current_language_context'), $language_manager->getCurrentLanguage(LanguageInterface::TYPE_INTERFACE));
 
-    $this->contextRepository = $this->getMockBuilder('\Drupal\Core\Plugin\Context\ContextRepositoryInterface')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->contextRepository = $this->createMock('\Drupal\Core\Plugin\Context\ContextRepositoryInterface');
     $this->contextRepository->expects($this->once())
       ->method('getRunTimeContexts')
       ->willReturn(['@language.current_language_context:language_interface' => $context]);

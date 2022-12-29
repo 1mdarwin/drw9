@@ -23,12 +23,12 @@ class PageManagerAdminTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['block', 'page_manager_ui', 'page_manager_test'];
+  protected static $modules = ['block', 'page_manager_ui', 'page_manager_test'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('local_tasks_block');
@@ -36,19 +36,19 @@ class PageManagerAdminTest extends BrowserTestBase {
     $this->drupalPlaceBlock('system_branding_block');
     $this->drupalPlaceBlock('page_title_block');
 
-    \Drupal::service('theme_installer')->install(['bartik']);
+    \Drupal::service('theme_installer')->install(['olivero']);
     $this->config('system.theme')->set('admin', 'classy')->save();
 
     $this->drupalLogin($this->drupalCreateUser(['administer pages', 'access administration pages', 'view the administration theme']));
-
-    // Remove the default node_view page to start with a clean UI.
-    Page::load('node_view')->delete();
   }
 
   /**
    * Tests the Page Manager admin UI.
    */
   public function testAdmin() {
+    // Remove the default node_view page to start with a clean UI.
+    Page::load('node_view')->delete();
+
     $this->doTestAddPage();
     $this->doTestAccessConditions();
     $this->doTestSelectionCriteria();
@@ -71,12 +71,25 @@ class PageManagerAdminTest extends BrowserTestBase {
   }
 
   /**
-   * Tests adding a page.
+   * Tests the Page Manager List Links.
    */
-  protected function doTestAddPage() {
+  public function testListLinks() {
+    $this->doTestAddPage(FALSE);
+    $this->doTestListLink();
+  }
+
+  /**
+   * Tests adding a page.
+   *
+   * @param bool $empty
+   *   Boolean indicating whether we must expect the empty list message.
+   */
+  protected function doTestAddPage($empty = TRUE) {
     $this->drupalGet('admin/structure');
     $this->clickLink('Pages');
-    $this->assertText('Add a new page.');
+    if ($empty) {
+      $this->assertSession()->pageTextContains('Add a new page.');
+    }
 
     // Add a new page without a label.
     $this->clickLink('Add page');
@@ -90,55 +103,65 @@ class PageManagerAdminTest extends BrowserTestBase {
       'wizard_options[access]' => TRUE,
       'wizard_options[selection]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
-    $this->assertText('Administrative title field is required.');
+    $this->submitForm($edit, 'Next');
+    $this->assertSession()->pageTextContains('Administrative title field is required.');
 
     // Add a new page with a label.
     $edit += ['label' => 'Foo'];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Test the 'Page access' step.
-    $this->assertTitle('Page access | Drupal');
+    $this->assertSession()->titleEquals('Page access | Drupal');
     $access_path = 'admin/structure/page_manager/add/foo/access';
-    $this->assertUrl($access_path . '?js=nojs');
+    $this->assertSession()->addressEquals($access_path . '?js=nojs');
     $this->doTestAccessConditions($access_path, FALSE);
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->submitForm([], 'Next');
 
     // Test the 'Selection criteria' step.
-    $this->assertTitle('Selection criteria | Drupal');
+    $this->assertSession()->titleEquals('Selection criteria | Drupal');
     $selection_path = 'admin/structure/page_manager/add/foo/selection';
-    $this->assertUrl($selection_path . '?js=nojs');
+    $this->assertSession()->addressEquals($selection_path . '?js=nojs');
     $this->doTestSelectionCriteria($selection_path, FALSE);
-    $this->drupalPostForm(NULL, [], 'Next');
+    $this->submitForm([], 'Next');
 
     // Configure the variant.
     $edit = [
       'page_variant_label' => 'Status Code',
       'variant_settings[status_code]' => 200,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Finish');
-    $this->assertRaw(new FormattableMarkup('The page %label has been added.', ['%label' => 'Foo']));
+    $this->submitForm($edit, 'Finish');
+    $this->assertSession()->responseContains(new FormattableMarkup('The page %label has been added.', ['%label' => 'Foo']));
     // We've gone from the add wizard to the edit wizard.
     $this->drupalGet('admin/structure/page_manager/manage/foo/general');
 
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
-    $this->assertTitle('Foo | Drupal');
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->titleEquals('Foo | Drupal');
 
     // Change the status code to 403.
     $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-http_status_code-0__general');
     $edit = [
       'variant_settings[status_code]' => 403,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update');
+    $this->submitForm($edit, 'Update');
 
     // Set the weight of the 'Status Code' variant to 10.
     $this->drupalGet('admin/structure/page_manager/manage/foo/reorder_variants');
     $edit = [
       'variants[foo-http_status_code-0][weight]' => 10,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update');
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm($edit, 'Update');
+    $this->submitForm([], 'Update and save');
+  }
+
+  /**
+   * Tests links behavior in list page.
+   */
+  protected function doTestListLink() {
+    $this->drupalGet('/admin/structure/page_manager');
+    $this->assertSession()->linkNotExists('/node/{node}');
+    $this->assertSession()->responseContains('/node/{node}');
+    $this->assertSession()->linkExists('/admin/foo');
   }
 
   /**
@@ -154,38 +177,38 @@ class PageManagerAdminTest extends BrowserTestBase {
       $this->drupalGet($path);
     }
 
-    $this->assertRaw('No required conditions have been configured.');
+    $this->assertSession()->responseContains('No required conditions have been configured.');
 
     // Configure a new condition.
     $edit = [
       'conditions' => 'user_role',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add Condition');
-    $this->assertTitle('Add access condition | Drupal');
+    $this->submitForm($edit, 'Add Condition');
+    $this->assertSession()->titleEquals('Add access condition | Drupal');
     $edit = [
       'roles[authenticated]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertRaw('The user is a member of Authenticated user');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->responseContains('The user is a member of Authenticated user');
     // Make sure we're still on the same wizard.
-    $this->assertUrl($path);
+    $this->assertSession()->addressEquals($path);
 
     // Edit the condition.
     $this->clickLink('Edit');
-    $this->assertTitle('Edit access condition | Drupal');
+    $this->assertSession()->titleEquals('Edit access condition | Drupal');
     $edit = [
       'roles[anonymous]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertRaw('The user is a member of Anonymous user, Authenticated user');
-    $this->assertUrl($path);
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->responseContains('The user is a member of Anonymous user, Authenticated user');
+    $this->assertSession()->addressEquals($path);
 
     // Delete the condition.
     $this->clickLink('Delete');
-    $this->assertTitle('Are you sure you want to delete the user_role condition? | Drupal');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertRaw('No required conditions have been configured.');
-    $this->assertUrl($path);
+    $this->assertSession()->titleEquals('Are you sure you want to delete the user_role condition? | Drupal');
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->responseContains('No required conditions have been configured.');
+    $this->assertSession()->addressEquals($path);
   }
 
   /**
@@ -200,38 +223,38 @@ class PageManagerAdminTest extends BrowserTestBase {
     if ($this->getUrl() !== $path && $redirect) {
       $this->drupalGet($path);
     }
-    $this->assertRaw('No required conditions have been configured.');
+    $this->assertSession()->responseContains('No required conditions have been configured.');
 
     // Configure a new condition.
     $edit = [
       'conditions' => 'user_role',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add Condition');
-    $this->assertTitle('Add new selection condition | Drupal');
+    $this->submitForm($edit, 'Add Condition');
+    $this->assertSession()->titleEquals('Add new selection condition | Drupal');
     $edit = [
       'roles[authenticated]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertRaw('The user is a member of Authenticated user');
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->responseContains('The user is a member of Authenticated user');
     // Make sure we're still on the add wizard (not the edit wizard).
-    $this->assertUrl($path);
+    $this->assertSession()->addressEquals($path);
 
     // Edit the condition.
     $this->clickLink('Edit');
-    $this->assertTitle('Edit selection condition | Drupal');
+    $this->assertSession()->titleEquals('Edit selection condition | Drupal');
     $edit = [
       'roles[anonymous]' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Save');
-    $this->assertRaw('The user is a member of Anonymous user, Authenticated user');
-    $this->assertUrl($path);
+    $this->submitForm($edit, 'Save');
+    $this->assertSession()->responseContains('The user is a member of Anonymous user, Authenticated user');
+    $this->assertSession()->addressEquals($path);
 
     // Delete the condition.
     $this->clickLink('Delete');
-    $this->assertTitle('Are you sure you want to delete the user_role condition? | Drupal');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertRaw('No required conditions have been configured.');
-    $this->assertUrl($path);
+    $this->assertSession()->titleEquals('Are you sure you want to delete the user_role condition? | Drupal');
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->responseContains('No required conditions have been configured.');
+    $this->assertSession()->addressEquals($path);
   }
 
   /**
@@ -239,19 +262,19 @@ class PageManagerAdminTest extends BrowserTestBase {
    */
   protected function doTestDisablePage() {
     $this->drupalGet('admin/foo');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
 
     $this->drupalGet('admin/structure/page_manager');
     $this->clickLink('Disable');
     $this->drupalGet('admin/foo');
     // The page should not be found if the page is enabled.
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
 
     $this->drupalGet('admin/structure/page_manager');
     $this->clickLink('Enable');
     $this->drupalGet('admin/foo');
     // Re-enabling the page should make this path available.
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**
@@ -266,34 +289,31 @@ class PageManagerAdminTest extends BrowserTestBase {
       'variant_plugin_id' => 'block_display',
       'label' => 'First',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Set the page title.
     $edit = [
       'variant_settings[page_title]' => 'Example title',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Finish variant wizard without adding blocks.
-    $this->drupalPostForm(NULL, [], 'Finish');
+    $this->submitForm([], 'Finish');
 
     // Save page to apply variant changes.
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm([], 'Update and save');
 
     // Test that the variant is still used but empty.
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     // Tests that the content region has no content at all.
     $elements = $this->getSession()->getPage()->findAll('css', 'div.region.region-content *');
-    // From Drupal 8.7, fallback area for messages is added by default.
-    // @see https://www.drupal.org/node/3002643
-    if (version_compare(\Drupal::VERSION, '8.7', '<')) {
-      $this->assertEmpty($elements);
-    }
-    else {
-      $this->assertCount(1, $elements);
-      $this->assertTrue($elements[0]->hasAttribute('data-drupal-messages-fallback'));
-    }
+    // From Drupal 9.4 the system-branding-block and the site-logo have
+    // been placed in the region-content element. Before that, it had only the
+    // drupal fallback messages element.
+    $expected_count = version_compare(\Drupal::VERSION, '9.4', '<') ? 1 : 8;
+    $this->assertCount($expected_count, $elements);
+    $this->assertTrue($elements[0]->hasAttribute('data-drupal-messages-fallback'));
   }
 
   /**
@@ -305,28 +325,28 @@ class PageManagerAdminTest extends BrowserTestBase {
     $this->clickLink('Add new block');
 
     // Assert that the broken/missing block is not visible.
-    $this->assertNoText('Broken/Missing');
+    $this->assertSession()->pageTextNotContains('Broken/Missing');
 
     $this->clickLink('User account menu');
     $edit = [
       'region' => 'top',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add block');
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm($edit, 'Add block');
+    $this->submitForm([], 'Update and save');
 
     // Test that the block is displayed.
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $elements = $this->xpath('//div[@class="block-region-top"]/nav/ul[@class="menu"]/li/a');
-    $this->assertTitle('Example title | Drupal');
+    $this->assertSession()->titleEquals('Example title | Drupal');
     $expected = ['My account', 'Log out'];
     $links = [];
     foreach ($elements as $element) {
       $links[] = $element->getText();
     }
-    $this->assertEqual($expected, $links);
+    $this->assertEquals($expected, $links);
     // Check the block label.
-    $this->assertRaw('User account menu');
+    $this->assertSession()->responseContains('User account menu');
   }
 
   /**
@@ -343,24 +363,24 @@ class PageManagerAdminTest extends BrowserTestBase {
       'path' => 'second',
       'variant_plugin_id' => 'block_display',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Configure the variant.
     $edit = [
       'page_variant_label' => 'Second variant',
       'variant_settings[page_title]' => 'Second title',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // We're now on the content step, but we don't need to add any blocks.
-    $this->drupalPostForm(NULL, [], 'Finish');
-    $this->assertRaw(new FormattableMarkup('The page %label has been added.', ['%label' => 'Second']));
+    $this->submitForm([], 'Finish');
+    $this->assertSession()->responseContains(new FormattableMarkup('The page %label has been added.', ['%label' => 'Second']));
 
     // Visit both pages, make sure that they do not interfere with each other.
     $this->drupalGet('admin/foo');
-    $this->assertTitle('Example title | Drupal');
+    $this->assertSession()->titleEquals('Example title | Drupal');
     $this->drupalGet('second');
-    $this->assertTitle('Second title | Drupal');
+    $this->assertSession()->titleEquals('Second title | Drupal');
   }
 
   /**
@@ -372,12 +392,12 @@ class PageManagerAdminTest extends BrowserTestBase {
       'variant_settings[page_title]' => 'Updated block label',
       'page_variant_label' => 'Updated block label',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update and save');
+    $this->submitForm($edit, 'Update and save');
     // Test that the block is displayed.
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     // Check the block label.
-    $this->assertRaw($edit['variant_settings[page_title]']);
+    $this->assertSession()->responseContains($edit['variant_settings[page_title]']);
   }
 
   /**
@@ -392,18 +412,18 @@ class PageManagerAdminTest extends BrowserTestBase {
     $block_config = $block->getConfiguration();
     $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__content');
 
-    $this->assertOptionSelected('edit-blocks-' . $block_config['uuid'] . '-region', 'top');
-    $this->assertOptionSelected('edit-blocks-' . $block_config['uuid'] . '-weight', 0);
+    $this->assertTrue($this->assertSession()->optionExists('edit-blocks-' . $block_config['uuid'] . '-region', 'top')->hasAttribute('selected'));
+    $this->assertTrue($this->assertSession()->optionExists('edit-blocks-' . $block_config['uuid'] . '-weight', 0)->hasAttribute('selected'));
 
     $form_name = 'blocks[' . $block_config['uuid'] . ']';
     $edit = [
       $form_name . '[region]' => 'bottom',
       $form_name . '[weight]' => -10,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update');
-    $this->assertOptionSelected('edit-blocks-' . $block_config['uuid'] . '-region', 'bottom');
-    $this->assertOptionSelected('edit-blocks-' . $block_config['uuid'] . '-weight', -10);
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm($edit, 'Update');
+    $this->assertTrue($this->assertSession()->optionExists('edit-blocks-' . $block_config['uuid'] . '-region', 'bottom')->hasAttribute('selected'));
+    $this->assertTrue($this->assertSession()->optionExists('edit-blocks-' . $block_config['uuid'] . '-weight', -10)->hasAttribute('selected'));
+    $this->submitForm([], 'Update and save');
   }
 
   /**
@@ -411,14 +431,14 @@ class PageManagerAdminTest extends BrowserTestBase {
    */
   protected function doTestReorderVariants() {
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $elements = $this->xpath('//div[@class="block-region-bottom"]/nav/ul[@class="menu"]/li/a');
     $expected = ['My account', 'Log out'];
     $links = [];
     foreach ($elements as $element) {
       $links[] = $element->getText();
     }
-    $this->assertEqual($expected, $links);
+    $this->assertEquals($expected, $links);
 
     $this->drupalGet('admin/structure/page_manager/manage/foo/general');
     $this->clickLink('Reorder variants');
@@ -426,10 +446,10 @@ class PageManagerAdminTest extends BrowserTestBase {
     $edit = [
       'variants[foo-http_status_code-0][weight]' => -10,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update');
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm($edit, 'Update');
+    $this->submitForm([], 'Update and save');
     $this->drupalGet('admin/foo');
-    $this->assertResponse(403);
+    $this->assertSession()->statusCodeEquals(403);
   }
 
   /**
@@ -442,17 +462,18 @@ class PageManagerAdminTest extends BrowserTestBase {
       'id' => 'bar',
       'path' => 'admin/foo',
     ];
-    $this->drupalPostForm('admin/structure/page_manager/add', $edit, 'Next');
-    $this->assertText('The page path must be unique.');
+    $this->drupalGet('admin/structure/page_manager/add');
+    $this->submitForm($edit, 'Next');
+    $this->assertSession()->pageTextContains('The page path must be unique.');
     $this->drupalGet('admin/structure/page_manager');
-    $this->assertNoText('Bar');
+    $this->assertSession()->pageTextNotContains('Bar');
   }
 
   /**
    * Tests changing the admin theme of a page.
    */
   protected function doTestAdminPath() {
-    $this->config('system.theme')->set('default', 'bartik')->save();
+    $this->config('system.theme')->set('default', 'olivero')->save();
     $this->drupalGet('admin/foo');
     $this->assertTheme('classy');
 
@@ -460,9 +481,9 @@ class PageManagerAdminTest extends BrowserTestBase {
     $edit = [
       'use_admin_theme' => FALSE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Update and save');
+    $this->submitForm($edit, 'Update and save');
     $this->drupalGet('admin/foo');
-    $this->assertTheme('bartik');
+    $this->assertTheme('olivero');
 
     // Reset theme.
     $this->config('system.theme')->set('default', 'classy')->save();
@@ -474,10 +495,10 @@ class PageManagerAdminTest extends BrowserTestBase {
   protected function doTestRemoveVariant() {
     $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-http_status_code-0__general');
     $this->clickLink('Delete this variant');
-    $this->assertRaw('Are you sure you want to delete this variant?');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertRaw(new FormattableMarkup('The variant %label has been removed.', ['%label' => 'Status Code']));
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->assertSession()->responseContains('Are you sure you want to delete this variant?');
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->responseContains(new FormattableMarkup('The variant %label has been removed.', ['%label' => 'Status Code']));
+    $this->submitForm([], 'Update and save');
   }
 
   /**
@@ -486,25 +507,25 @@ class PageManagerAdminTest extends BrowserTestBase {
   protected function doTestRemoveBlock() {
     // Assert that the block is displayed.
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $elements = $this->xpath('//div[@class="block-region-bottom"]/nav/ul[@class="menu"]/li/a');
     $expected = ['My account', 'Log out'];
     $links = [];
     foreach ($elements as $element) {
       $links[] = $element->getText();
     }
-    $this->assertEqual($expected, $links);
+    $this->assertEquals($expected, $links);
 
     $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__content');
     $this->clickLink('Delete');
-    $this->assertRaw(new FormattableMarkup('Are you sure you want to delete the block %label?', ['%label' => 'User account menu']));
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertRaw(new FormattableMarkup('The block %label has been removed.', ['%label' => 'User account menu']));
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->assertSession()->responseContains(new FormattableMarkup('Are you sure you want to delete the block %label?', ['%label' => 'User account menu']));
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->responseContains(new FormattableMarkup('The block %label has been removed.', ['%label' => 'User account menu']));
+    $this->submitForm([], 'Update and save');
 
     // Assert that the block is now gone.
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
     $elements = $this->xpath('//div[@class="block-region-bottom"]/nav/ul[@class="menu"]/li/a');
     $this->assertTrue(empty($elements));
   }
@@ -520,15 +541,15 @@ class PageManagerAdminTest extends BrowserTestBase {
     $edit = [
       'region' => 'top',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Add block');
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm($edit, 'Add block');
+    $this->submitForm([], 'Update and save');
 
     // Test that the block is displayed.
     $this->drupalGet('admin/foo');
-    $this->assertResponse(200);
-    $this->assertText(t('Example output'));
+    $this->assertSession()->statusCodeEquals(200);
+    $this->assertSession()->pageTextContains(t('Example output'));
     // Check the block label.
-    $this->assertRaw('Page Manager Test Block');
+    $this->assertSession()->responseContains('Page Manager Test Block');
   }
 
   /**
@@ -537,7 +558,7 @@ class PageManagerAdminTest extends BrowserTestBase {
   protected function doTestExistingPathWithoutParameters() {
     // Test an existing path.
     $this->drupalGet('admin');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     $this->drupalGet('admin/structure/page_manager');
     // Add a new page with existing path 'admin'.
@@ -548,18 +569,18 @@ class PageManagerAdminTest extends BrowserTestBase {
       'path' => 'admin',
       'variant_plugin_id' => 'http_status_code',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Configure the variant.
     $edit = [
       'page_variant_label' => 'Status Code',
       'variant_settings[status_code]' => 404,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Finish');
+    $this->submitForm($edit, 'Finish');
 
     // Ensure the existing path leads to the new page.
     $this->drupalGet('admin');
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
   }
 
   /**
@@ -575,37 +596,41 @@ class PageManagerAdminTest extends BrowserTestBase {
       'variant_plugin_id' => 'block_display',
       'label' => 'First',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Set the page title.
     $edit = [
       'variant_settings[page_title]' => 'Example title',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     // Finish variant wizard without adding blocks.
-    $this->drupalPostForm(NULL, [], 'Finish');
+    $this->submitForm([], 'Finish');
 
     // Update the description and click on Update.
     $edit = [
       'page_variant_label' => 'First updated',
       'variant_settings[page_title]' => 'Example title updated',
     ];
-    $this->drupalPostForm('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__general', $edit, 'Update');
-    $this->assertFieldByName('page_variant_label', 'First updated');
-    $this->assertFieldByName('variant_settings[page_title]', 'Example title updated');
+    $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__general');
+    $this->submitForm($edit, 'Update');
+    $this->assertSession()->fieldValueEquals('page_variant_label', 'First updated');
+    $this->assertSession()->fieldValueEquals('variant_settings[page_title]', 'Example title updated');
+    $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__contexts');
 
     // Click on Update at Contexts. Nothing should happen.
-    $this->drupalPostForm('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__contexts', [], 'Update');
-    $this->assertUrl('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__contexts');
+    $this->submitForm([], 'Update');
+    $this->assertSession()->addressEquals('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__contexts');
+    $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__selection');
 
     // Click on Update at Selection criteria. Nothing should happen.
-    $this->drupalPostForm('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__selection', [], 'Update');
-    $this->assertUrl('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__selection');
+    $this->submitForm([], 'Update');
+    $this->assertSession()->addressEquals('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__selection');
+    $this->drupalGet('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__content');
 
     // Click on Update at Content. Nothing should happen.
-    $this->drupalPostForm('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__content', [], 'Update');
-    $this->assertUrl('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__content');
+    $this->submitForm([], 'Update');
+    $this->assertSession()->addressEquals('admin/structure/page_manager/manage/foo/page_variant__foo-block_display-0__content');
   }
 
   /**
@@ -614,19 +639,19 @@ class PageManagerAdminTest extends BrowserTestBase {
   protected function doTestDeletePage() {
     $this->drupalGet('admin/structure/page_manager');
     $this->clickLink('Delete');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertRaw(new FormattableMarkup('The page %name has been removed.', ['%name' => 'existing']));
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->responseContains(new FormattableMarkup('The page %name has been removed.', ['%name' => 'existing']));
     $this->drupalGet('admin');
     // The overridden page is back to its default.
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     $this->drupalGet('admin/structure/page_manager');
     $this->clickLink('Delete');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->assertRaw(new FormattableMarkup('The page %name has been removed.', ['%name' => 'Foo']));
+    $this->submitForm([], 'Delete');
+    $this->assertSession()->responseContains(new FormattableMarkup('The page %name has been removed.', ['%name' => 'Foo']));
     $this->drupalGet('admin/foo');
     // The custom page is no longer found.
-    $this->assertResponse(404);
+    $this->assertSession()->statusCodeEquals(404);
   }
 
   /**
@@ -641,27 +666,27 @@ class PageManagerAdminTest extends BrowserTestBase {
       'path' => '/page-manager-test',
       'variant_plugin_id' => 'http_status_code',
     ];
-    $this->drupalPostForm(NULL, $edit, 'Next');
+    $this->submitForm($edit, 'Next');
 
     $edit = [
       'variant_settings[status_code]' => 418,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Finish');
+    $this->submitForm($edit, 'Finish');
     $this->drupalGet('page-manager-test');
-    $this->assertResponse(418);
+    $this->assertSession()->statusCodeEquals(418);
 
     // Test that the page test is accessible.
     $page_string = 'test-page';
     $this->drupalGet('page-manager-test/' . $page_string);
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
 
     // Without a single variant, it will fall through to the original.
     $this->drupalGet('admin/structure/page_manager/manage/placeholder2/page_variant__placeholder2-http_status_code-0__general');
     $this->clickLink('Delete this variant');
-    $this->drupalPostForm(NULL, [], 'Delete');
-    $this->drupalPostForm(NULL, [], 'Update and save');
+    $this->submitForm([], 'Delete');
+    $this->submitForm([], 'Update and save');
     $this->drupalGet('page-manager-test');
-    $this->assertResponse(200);
+    $this->assertSession()->statusCodeEquals(200);
   }
 
   /**
@@ -671,9 +696,9 @@ class PageManagerAdminTest extends BrowserTestBase {
    *   The theme name.
    */
   protected function assertTheme($theme_name) {
-    $url = Url::fromUri('base:core/themes/' . $theme_name . '/logo.svg')->toString();
-    $elements = $this->xpath('//img[contains(@src, :url)]', [':url' => $url]);
-    $this->assertEqual(count($elements), 1, new FormattableMarkup('Page is rendered in @theme', ['@theme' => $theme_name]));
+    //$logo_url = Url::fromUri('base:core/themes/' . $theme_name . '/logo.svg')->toString();
+    $elements = $this->xpath('//link[contains(@href, :url)]', [':url' => $theme_name]);
+    $this->assertGreaterThanOrEqual(1, count($elements), new FormattableMarkup('Page is rendered in @theme', ['@theme' => $theme_name]));
   }
 
   /**

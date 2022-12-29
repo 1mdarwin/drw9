@@ -16,14 +16,14 @@ class PageVariantPageEntityTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['page_manager'];
+  protected static $modules = ['page_manager'];
 
   /**
    * Tests that a page gets cached on the page variant.
    */
   public function testPageGetsCached() {
     /* @var \Drupal\page_manager\PageInterface $page */
-    $page = Page::create(['id' => 'test_page']);
+    $page = Page::create(['id' => 'test_page', 'path' => '/test_page_path']);
     $page->save();
 
     /* @var \Drupal\page_manager\PageVariantInterface $page_variant */

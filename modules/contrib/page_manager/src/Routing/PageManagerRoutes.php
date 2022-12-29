@@ -80,6 +80,9 @@ class PageManagerRoutes extends RouteSubscriberBase {
       foreach ($entity->getParameters() as $parameter_name => $parameter) {
         if (!empty($parameter['type'])) {
           $parameters[$parameter_name]['type'] = $parameter['type'];
+          if (!empty($parameter['optional'])) {
+            $parameters[$parameter_name]['optional'] = TRUE;
+          }
         }
       }
 
@@ -108,6 +111,11 @@ class PageManagerRoutes extends RouteSubscriberBase {
             '_admin_route' => $entity->usesAdminTheme(),
           ]
         );
+        foreach ($parameters as $key => $parameter) {
+          if (!empty($parameter['optional'])) {
+            $route->addDefaults([$key => NULL]);
+          }
+        }
         $collection->add($route_name . '_' . $variant_id, $route);
       }
 
@@ -147,12 +155,14 @@ class PageManagerRoutes extends RouteSubscriberBase {
         return $name;
       }
     }
+
+    return NULL;
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     // Run after EntityRouteAlterSubscriber.
     $events[RoutingEvents::ALTER][] = ['onAlterRoutes', -160];
     return $events;

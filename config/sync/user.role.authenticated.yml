@@ -3,13 +3,10 @@ langcode: es
 status: true
 dependencies:
   config:
-    - filter.format.1
-    - filter.format.2
     - node.type.forum
   module:
     - comment
     - contact
-    - filter
     - google_analytics
     - node
     - path

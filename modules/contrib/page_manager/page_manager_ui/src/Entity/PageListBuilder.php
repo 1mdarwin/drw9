@@ -18,6 +18,10 @@ class PageListBuilder extends ConfigEntityListBuilder {
   public function buildHeader() {
     $header['label'] = $this->t('Label');
     $header['id'] = $this->t('Machine name');
+    $header['description'] = [
+      'data' => $this->t('Description'),
+      'class' => [RESPONSIVE_PRIORITY_LOW],
+    ];
     $header['path'] = $this->t('Path');
     return $header + parent::buildHeader();
   }
@@ -29,6 +33,11 @@ class PageListBuilder extends ConfigEntityListBuilder {
     /** @var \Drupal\page_manager\PageInterface $entity */
     $row['label'] = $entity->label();
     $row['id'] = $entity->id();
+    $row['description'] = [
+      'data' => [
+        '#plain_text' => $entity->getDescription(),
+      ],
+    ];
     $row['path'] = $this->getPath($entity);
 
     return $row + parent::buildRow($entity);
@@ -39,7 +48,9 @@ class PageListBuilder extends ConfigEntityListBuilder {
    */
   public function getDefaultOperations(EntityInterface $entity) {
     $operations = parent::getDefaultOperations($entity);
-    $operations['edit']['url'] = new Url('entity.page.edit_form', ['machine_name' => $entity->id(), 'step' => 'general']);
+    $operations['edit']['url'] = new Url('entity.page.edit_form', [
+      'machine_name' => $entity->id(), 'step' => 'general'
+    ]);
 
     return $operations;
   }
@@ -57,7 +68,9 @@ class PageListBuilder extends ConfigEntityListBuilder {
     // If the page is enabled and not dynamic, show the path as a link,
     // otherwise as plain text.
     $path = $entity->getPath();
-    if ($entity->status() && strpos($path, '%') === FALSE) {
+    $matches = [];
+    preg_match_all('|\{\w+\}|', (string) $path, $matches);
+    if (empty(array_filter($matches))) {
       return [
         'data' => [
           '#type' => 'link',

@@ -9,6 +9,9 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\ctools\Form\ManageContext;
 
+/**
+ * Add a Variant Context Form.
+ */
 class AddVariantContextsForm extends ManageContext {
 
   /**
@@ -30,7 +33,7 @@ class AddVariantContextsForm extends ManageContext {
     $context = $form_state->getValue('context');
     $content = $this->formBuilder->getForm($this->getContextClass($cached_values), $context, $this->getTempstoreId(), $this->machine_name, $page_variant->id());
     $content['#attached']['library'][] = 'core/drupal.dialog.ajax';
-    list(, $route_parameters) = $this->getContextOperationsRouteInfo($cached_values, $this->machine_name, $context);
+    [, $route_parameters] = $this->getContextOperationsRouteInfo($cached_values, $this->machine_name, $context);
     $content['submit']['#attached']['drupalSettings']['ajax'][$content['submit']['#id']]['url'] = Url::fromRoute(
       $this->getContextAddRoute($cached_values),
       $route_parameters,
@@ -120,7 +123,14 @@ class AddVariantContextsForm extends ManageContext {
     ];
   }
 
-
+  /**
+   * Check if context is editable.
+   *
+   * @param $cached_values
+   * @param $row
+   *
+   * @return bool
+   */
   protected function isEditableContext($cached_values, $row) {
     /** @var \Drupal\page_manager\PageVariantInterface $page_variant */
     $page_variant = $cached_values['page_variant'];

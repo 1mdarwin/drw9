@@ -1,11 +1,14 @@
-(function($) {
+/**
+ * @file
+ */
+
+  (function ($) {
 
   // 'use strict';
-
   Drupal.ModuleFilter = Drupal.ModuleFilter || {};
   var ModuleFilter = Drupal.ModuleFilter;
 
-  var Tabs = function(tabs, $pane) {
+  var Tabs = function (tabs, $pane) {
     var $tabs = $('<ul class="modules-tabs__menu"></ul>');
 
     // Add our three special tabs.
@@ -93,13 +96,13 @@
     }
   };
 
-  Tabs.prototype.getActive = function() {
+  Tabs.prototype.getActive = function () {
     if (this.activeTab) {
       return this.activeTab;
     }
   };
 
-  Tabs.prototype.setActive = function(tab) {
+  Tabs.prototype.setActive = function (tab) {
     if (this.activeTab) {
       this.activeTab.hideSummary();
       this.activeTab.element.removeClass('is-selected');
@@ -112,19 +115,19 @@
     return this.activeTab;
   };
 
-  Tabs.prototype.get = function(packageId) {
+  Tabs.prototype.get = function (packageId) {
     if (this.tabs[packageId]) {
       return this.tabs[packageId];
     }
   };
 
-  Tabs.prototype.resetResults = function() {
+  Tabs.prototype.resetResults = function () {
     for (var i in this.tabs) {
       this.tabs[i].resetResults();
     }
   };
 
-  Tabs.prototype.showResults = function() {
+  Tabs.prototype.showResults = function () {
     var staticTabs = [ 'all', 'recent', 'new' ];
 
     for (var i in this.tabs) {
@@ -140,14 +143,14 @@
     }
   };
 
-  Tabs.prototype.hideResults = function() {
+  Tabs.prototype.hideResults = function () {
     for (var i in this.tabs) {
       this.tabs[i].hideResults();
       this.tabs[i].element.show();
     }
   };
 
-  var Tab = function(name, packageId) {
+  var Tab = function (name, packageId) {
     this.name = name;
     this.packageId = packageId;
     this.element = $('<li class="modules-tabs__menu-item tab__' + this.packageId + '"></li>');
@@ -158,7 +161,7 @@
     this.summary = null;
   };
 
-  Tab.prototype.select = function() {
+  Tab.prototype.select = function () {
     ModuleFilter.tabs.setActive(this);
 
     if (ModuleFilter.winnow) {
@@ -166,19 +169,19 @@
     }
   };
 
-  Tab.prototype.resetResults = function() {
+  Tab.prototype.resetResults = function () {
     this.results = [];
   };
 
-  Tab.prototype.showResults = function() {
+  Tab.prototype.showResults = function () {
     $('span.result', this.element).text(this.results.length);
   };
 
-  Tab.prototype.hideResults = function() {
+  Tab.prototype.hideResults = function () {
     $('span.result', this.element).empty();
   };
 
-  Tab.prototype.setSummary = function(summary, key, persistent) {
+  Tab.prototype.setSummary = function (summary, key, persistent) {
     if (!this.summary) {
       this.summary = new Summary();
       this.link.append(this.summary.element);
@@ -187,21 +190,21 @@
     this.summary.set(summary, key, persistent);
   };
 
-  Tab.prototype.showSummary = function() {
+  Tab.prototype.showSummary = function () {
     this.toggleSummary(true);
   };
 
-  Tab.prototype.hideSummary = function() {
+  Tab.prototype.hideSummary = function () {
     this.toggleSummary(false);
   };
 
-  Tab.prototype.toggleSummary = function(display) {
+  Tab.prototype.toggleSummary = function (display) {
     if (this.summary) {
       this.summary.toggle(Boolean(display));
     }
   };
 
-  Tab.prototype.toggleEnabling = function(name) {
+  Tab.prototype.toggleEnabling = function (name) {
     this.enabling = this.enabling || {};
     if (this.enabling[name] != undefined) {
       delete this.enabling[name];
@@ -228,21 +231,21 @@
     }
   };
 
-  var Summary = function() {
+  var Summary = function () {
     this.element = $('<div class="summary"></div>');
     this.element.hide();
     this.items = {};
   };
 
-  Summary.prototype.show = function() {
+  Summary.prototype.show = function () {
     this.toggle(true);
   };
 
-  Summary.prototype.hide = function() {
+  Summary.prototype.hide = function () {
     this.toggle(false);
   };
 
-  Summary.prototype.toggle = function(display) {
+  Summary.prototype.toggle = function (display) {
     display = Boolean(display);
 
     this.element.children(':not(.persistent)').toggle(display);
@@ -255,7 +258,7 @@
     }
   };
 
-  Summary.prototype.set = function(summary, key, persistent) {
+  Summary.prototype.set = function (summary, key, persistent) {
     if (!key) {
       key = 'default';
     }
@@ -305,7 +308,7 @@
   };
 
   Drupal.behaviors.moduleFilterModulesTabs = {
-    attach: function(context) {
+    attach: function (context) {
       if (ModuleFilter.input != undefined) {
         var tabs = {};
 
@@ -324,7 +327,7 @@
           // Because the table headers are visually hidden, we use col to set
           // the column widths.
           var $colgroup = $('<colgroup></colgroup>');
-          $('thead th', $originalTable).each(function() {
+          $('thead th', $originalTable).each(function () {
             $colgroup.append('<col class="' + $(this).attr('class') + '">');
           });
           $('col', $colgroup).removeClass('visually-hidden');
@@ -342,18 +345,18 @@
               tabs[packageId] = new Tab(packageName, packageId);
             }
 
-            $('.details-wrapper tbody tr', $details).each(function() {
+            $('.details-wrapper tbody tr', $details).each(function () {
               var $row = $(this);
               $row.addClass('package__' + packageId);
               $row.data('moduleFilter.packageId', packageId);
 
-              $row.hover(function() {
+              $row.hover(function () {
                 tabs[packageId].element.addClass('suggest');
-              }, function() {
+              }, function () {
                 tabs[packageId].element.removeClass('suggest');
               });
 
-              $('td.checkbox input', $row).change(function() {
+              $('td.checkbox input', $row).change(function () {
                 $row.toggleClass('enabling', $(this).is(':checked'));
 
                 var packageId = $row.data('moduleFilter.packageId');
@@ -371,7 +374,7 @@
 
           // Sort rows by module name.
           var $rows = $('tbody tr', $table);
-          $rows.sort(function(a, b) {
+          $rows.sort(function (a, b) {
             var aname = $('td.module label', a).text();
             var bname = $('td.module label', b).text();
 
@@ -408,7 +411,7 @@
         buildTable();
         ModuleFilter.tabs = new Tabs(tabs, ModuleFilter.wrapper);
 
-        ModuleFilter.winnow.options.rules.push(function(item) {
+        ModuleFilter.winnow.options.rules.push(function (item) {
           var activeTab = ModuleFilter.tabs.getActive();
 
           // Update tab results. The results are updated prior to hiding the
@@ -453,18 +456,18 @@
             return false;
           }
         });
-        ModuleFilter.winnow.bind('finishIndexing', function(e, winnow) {
-          $.each(winnow.index, function(key, item) {
+        ModuleFilter.winnow.bind('finishIndexing', function (e, winnow) {
+          $.each(winnow.index, function (key, item) {
             var packageId = item.element.data('moduleFilter.packageId');
             if (packageId) {
               item.tab = ModuleFilter.tabs.get(packageId);
             }
           });
         });
-        ModuleFilter.winnow.bind('start', function() {
+        ModuleFilter.winnow.bind('start', function () {
           ModuleFilter.tabs.resetResults();
         });
-        ModuleFilter.winnow.bind('finish', function() {
+        ModuleFilter.winnow.bind('finish', function () {
           if (ModuleFilter.input.val() != '') {
             ModuleFilter.tabs.showResults();
           }

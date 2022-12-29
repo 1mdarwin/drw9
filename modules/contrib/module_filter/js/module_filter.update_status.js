@@ -3,7 +3,7 @@
  * Module filter behaviors.
  */
 
-(function($, Drupal) {
+(function ($, Drupal) {
 
   'use strict';
 
@@ -13,8 +13,8 @@
    * Filter enhancements.
    */
   Drupal.behaviors.moduleFilterUpdateStatus = {
-    attach: function(context, settings) {
-      var $input = $('input.table-filter-text').once('module-filter');
+    attach: function (context, settings) {
+      var $input = $(once('module-filter', 'input.table-filter-text'));
       if ($input.length) {
         var selector = 'tbody tr';
         var wrapperId = $input.attr('data-table');
@@ -29,7 +29,7 @@
           clearLabel: Drupal.t('clear'),
           wrapper: $wrapper,
           buildIndex: [
-            function(item) {
+            function (item) {
               if (item.element.is('.color-success')) {
                 item.state = 'ok';
               }
@@ -38,25 +38,42 @@
               }
               else if (item.element.is('.color-error')) {
                 item.state = 'error';
+                if (item.element.has('.project-update__status--security-error').length) {
+                  item.state = 'security-error'
+                } else if (item.element.has('.project-update__status--not-supported').length) {
+                  item.state = 'unsupported-error'
+                }
               }
 
               return item;
             }
           ],
           rules: [
-            function(item) {
+            function (item) {
               switch (show) {
                 case 'all':
                   return true;
 
                 case 'updates':
-                  if (item.state == 'warning' || item.state == 'error') {
+                  if (item.state == 'warning' || item.state == 'error' || item.state == 'security-error' || item.state == 'unsupported-error') {
                     return true;
                   }
                   break;
 
                 case 'ignore':
                   if (item.state == 'ignored') {
+                    return true;
+                  }
+                  break;
+
+                case 'security':
+                  if (item.state == 'security-error') {
+                    return true;
+                  }
+                  break;
+
+                case 'unsupported':
+                  if (item.state == 'unsupported-error') {
                     return true;
                   }
                   break;
@@ -69,8 +86,8 @@
         Drupal.ModuleFilter.winnow = $input.data('winnow');
 
         var $titles = $('h3', $wrapper);
-        $input.bind('winnow:finish', function() {
-          $titles.each(function(index, element) {
+        $input.bind('winnow:finish', function () {
+          $titles.each(function (index, element) {
             var $title = $(element);
             var $table = $title.next();
             if ($table.is('table')) {
@@ -88,7 +105,7 @@
           );
         });
 
-        $show.change(function() {
+        $show.change(function () {
           show = $(this).val();
           Drupal.ModuleFilter.localStorage.setItem('updateStatus.show', show);
           Drupal.ModuleFilter.winnow.filter();
@@ -98,4 +115,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

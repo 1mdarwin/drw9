@@ -33,6 +33,7 @@ function module_filter_help($route_name, RouteMatchInterface $route_match) {
  * Implements hook_form_FORM_ID_alter().
  */
 function module_filter_form_system_modules_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $request_object = \Drupal::request();
   $config = \Drupal::config('module_filter.settings');
 
   $key = array_search('system/drupal.system.modules', $form['#attached']['library']);
@@ -41,15 +42,15 @@ function module_filter_form_system_modules_alter(&$form, FormStateInterface $for
   }
   $form['#attached']['library'][] = $config->get('tabs') ? 'module_filter/modules.tabs' : 'module_filter/modules.bare';
   unset($form['filters']['text']['#description']);
-  $form['filters']['text']['#placeholder'] = t('Filter by name');
-  if (!empty($_GET['filter'])) {
-    $form['filters']['text']['#default_value'] = $_GET['filter'];
+  $form['filters']['text']['#placeholder'] = t('Filter by module');
+  if (!empty($request_object->query->get('filter'))) {
+    $form['filters']['text']['#default_value'] = $request_object->query->get('filter');
   }
 
   $status_defaults = [
-    ((isset($_GET['enabled'])) ? $_GET['enabled'] : 1) ? 'enabled' : '',
-    ((isset($_GET['disabled'])) ? $_GET['disabled'] : 1) ? 'disabled' : '',
-    ((isset($_GET['unavailable'])) ? $_GET['unavailable'] : 1) ? 'unavailable' : '',
+    ((!empty($request_object->query->get('enabled'))) ? $request_object->query->get('enabled') : 1) ? 'enabled' : '',
+    ((!empty($request_object->query->get('disabled'))) ? $request_object->query->get('disabled') : 1) ? 'disabled' : '',
+    ((!empty($request_object->query->get('unavailable'))) ? $request_object->query->get('unavailable') : 1) ? 'unavailable' : '',
   ];
   $form['filters']['status'] = [
     '#type' => 'container',
@@ -89,17 +90,15 @@ function module_filter_form_system_modules_alter(&$form, FormStateInterface $for
     }
   }
 
-  $modules = \Drupal::service('extension.list.module')->reset()->getList();
+  $modules = \Drupal::service('extension.list.module')->getList();
 
   foreach ($modules as $name => $module) {
-    if ($name == 'module_filter') {
-      $ctime = filectime($module->getPathname());
-      if (($ctime - strtotime('-1 week')) > 0) {
-        foreach (Element::children($form['modules']) as $package) {
-          if (isset($form['modules'][$package][$name])) {
-            $form['modules'][$package][$name]['#attributes']['class'][] = 'new';
-            break;
-          }
+    $ctime = filectime($module->getPathname());
+    if (($ctime - strtotime('-1 week')) > 0) {
+      foreach (Element::children($form['modules']) as $package) {
+        if (isset($form['modules'][$package][$name])) {
+          $form['modules'][$package][$name]['#attributes']['class'][] = 'new';
+          break;
         }
       }
     }
@@ -113,9 +112,10 @@ function module_filter_form_system_modules_alter(&$form, FormStateInterface $for
  * Implements hook_form_FORM_ID_alter().
  */
 function module_filter_form_system_modules_confirm_form_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $request_object = \Drupal::request();
   $form['filters']['text'] = [
     '#type' => 'value',
-    '#value' => isset($_GET['filter']) ? $_GET['filter'] : '',
+    '#value' => !empty($request_object->query->get('filter')) ? $request_object->query->get('filter') : '',
   ];
   $form['#submit'][] = 'module_filter_system_modules_redirect_submit';
 }
@@ -124,15 +124,16 @@ function module_filter_form_system_modules_confirm_form_alter(&$form, FormStateI
  * Implements hook_form_FORM_ID_alter().
  */
 function module_filter_form_system_modules_uninstall_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $request_object = \Drupal::request();
   $key = array_search('system/drupal.system.modules', $form['#attached']['library']);
   if ($key !== FALSE) {
     unset($form['#attached']['library'][$key]);
   }
   $form['#attached']['library'][] = 'module_filter/modules.uninstall';
   unset($form['filters']['text']['#description']);
-  $form['filters']['text']['#placeholder'] = t('Filter by name');
-  if (!empty($_GET['filter'])) {
-    $form['filters']['text']['#default_value'] = $_GET['filter'];
+  $form['filters']['text']['#placeholder'] = t('Filter by module');
+  if (!empty($request_object->query->get('filter'))) {
+    $form['filters']['text']['#default_value'] = $request_object->query->get('filter');
   }
 }
 
@@ -140,6 +141,7 @@ function module_filter_form_system_modules_uninstall_alter(&$form, FormStateInte
  * Implements hook_form_FORM_ID_alter().
  */
 function module_filter_form_user_admin_permissions_alter(&$form, FormStateInterface $form_state, $form_id) {
+  $request_object = \Drupal::request();
   $form['filters'] = [
     '#type' => 'container',
     '#attributes' => [
@@ -151,7 +153,7 @@ function module_filter_form_user_admin_permissions_alter(&$form, FormStateInterf
     '#title' => t('Filter modules'),
     '#title_display' => 'invisible',
     '#size' => 30,
-    '#placeholder' => t('Filter by name'),
+    '#placeholder' => t('Filter by module'),
     '#attributes' => [
       'class' => ['table-filter-text'],
       'data-table' => '#permissions',
@@ -159,8 +161,8 @@ function module_filter_form_user_admin_permissions_alter(&$form, FormStateInterf
     ],
     '#weight' => -1000,
   ];
-  if (!empty($_GET['filter'])) {
-    $form['filters']['text']['#default_value'] = $_GET['filter'];
+  if (!empty($request_object->query->get('filter'))) {
+    $form['filters']['text']['#default_value'] = $request_object->query->get('filter');
   }
   $form['#attached']['library'][] = 'module_filter/permissions';
 }
@@ -171,7 +173,7 @@ function module_filter_form_user_admin_permissions_alter(&$form, FormStateInterf
 function module_filter_theme_registry_alter(&$theme_registry) {
   // We need to alter the system-modules-details template so we can add
   // applicable requires and required-by classes.
-  $theme_registry['system_modules_details']['path'] = drupal_get_path('module', 'module_filter') . '/templates';
+  $theme_registry['system_modules_details']['path'] = \Drupal::service('extension.list.module')->getPath('module_filter') . '/templates';
 }
 
 /**
@@ -182,9 +184,10 @@ function module_filter_preprocess_system_modules_details(&$variables) {
   if ($display_path) {
     foreach ($variables['modules'] as &$module) {
       // Get the module id from parents.
-      // Because core does not provide it in template_preprocess_system_modules_details.
+      // Because core does not provide it in
+      // template_preprocess_system_modules_details.
       $id = $module['name']['#parents'][1];
-      $path = drupal_get_path('module', $id);
+      $path = \Drupal::service('extension.list.module')->getPath($id);
       if (!empty($path)) {
         $module['path'] = $path;
       }
@@ -228,7 +231,7 @@ function module_filter_system_modules_recent_enabled_submit($form, FormStateInte
  */
 function module_filter_system_modules_redirect_submit($form, FormStateInterface $form_state) {
   if ($text = $form_state->getValue('text')) {
-    /** @var \Drupal\Core\Url $redirect */
+    /** @var \Drupal\Core\Url $route_name */
     $route_name = ($redirect = $form_state->getRedirect()) ? $redirect->getRouteName() : 'system.modules_list';
     $form_state->setRedirect($route_name, ['filter' => $text]);
   }

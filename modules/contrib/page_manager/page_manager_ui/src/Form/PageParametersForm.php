@@ -36,34 +36,35 @@ class PageParametersForm extends FormBase {
         $this->t('Machine name'),
         $this->t('Label'),
         $this->t('Type'),
+        $this->t('Optional'),
         $this->t('Operations'),
       ],
-      '#rows' => $this->renderRows($cached_values),
+      '#rows' => $this->renderRows($cached_values, $form, $form_state),
       '#empty' => $this->t('There are no parameters defined for this page.'),
     ];
     return $form;
   }
 
-  protected function renderRows($cached_values) {
+  protected function renderRows($cached_values, array &$form, FormStateInterface $form_state) {
     $rows = [];
-    /** @var $page \Drupal\page_manager\Entity\Page */
+    /** @var \Drupal\page_manager\Entity\Page $page */
     $page = $cached_values['page'];
-    /**
-     * @var string $parameter
-     */
     foreach ($page->getParameterNames() as $parameter_name) {
       $parameter = $page->getParameter($parameter_name);
-      $row = [];
-      $row['machine_name'] = $parameter['machine_name'];
-      if ($label = $parameter['label']) {
-        $row['label'] = $label;
-      }
-      else {
-        $row['type']['colspan'] = 2;
-      }
-      $row['type']['data'] = $parameter['type'] ?: $this->t('<em>No context assigned</em>');
 
-      list($route_partial, $route_parameters) = $this->getOperationsRouteInfo($cached_values, $cached_values['id'], $parameter_name);
+      // Use parameter defaults for new parameters.
+      if (empty($parameter)) {
+        $parameter = (array) $page->parameterDefaults();
+      }
+
+      $parameter += ['optional' => FALSE];
+      $row = [];
+      $row['machine_name'] = $parameter['machine_name'] ?? '';
+      $row['label'] = $parameter['label'] ?? '';
+      $row['type']['data'] = $parameter['type'] ?: $this->t('<em>No context assigned</em>');
+      $row['optional'] = $parameter['optional'] ? $this->t('Optional') : $this->t('Required');
+
+      [$route_partial, $route_parameters] = $this->getOperationsRouteInfo($cached_values, $cached_values['id'], $parameter_name);
       $build = [
         '#type' => 'operations',
         '#links' => $this->getOperations($route_partial, $route_parameters),
@@ -82,7 +83,17 @@ class PageParametersForm extends FormBase {
     $cached_values = $form_state->getTemporaryValue('wizard');
   }
 
-
+  /**
+   * Operations for Page Parameters form.
+   *
+   * @param $route_name_base
+   *   The base route name.
+   * @param array $route_parameters
+   *   The route parameters.
+   *
+   * @return array
+   *   The set of operations for the form.
+   */
   protected function getOperations($route_name_base, array $route_parameters = []) {
     $operations['edit'] = [
       'title' => t('Edit'),
@@ -103,13 +114,32 @@ class PageParametersForm extends FormBase {
    * Returns the tempstore id to use.
    *
    * @return string
+   *   The default tempstore ID.
    */
   protected function getTempstoreId() {
     return 'page_manager.page';
   }
 
+  /**
+   * Get Operation Route Information.
+   *
+   * @param $cached_values
+   *   The Cached Values.
+   * @param $machine_name
+   *   Machine name of the route.
+   * @param $row
+   *   The row being operated on.
+   *
+   * @return array
+   *
+   */
   protected function getOperationsRouteInfo($cached_values, $machine_name, $row) {
-    return ['page_manager.parameter', ['machine_name' => $machine_name, 'name' => $row]];
+    return [
+      'page_manager.parameter', [
+        'machine_name' => $machine_name,
+        'name' => $row
+      ],
+    ];
   }
 
 }

@@ -32,7 +32,7 @@ class LayoutBuilderDisplayVariantTest extends WebDriverTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalLogin($this->createUser(array_keys($this->container->get('user.permissions')
@@ -108,7 +108,10 @@ class LayoutBuilderDisplayVariantTest extends WebDriverTestBase {
 
     // Test contextual links.
     $assert_session->waitForElement('css', '.block-system-powered-by-block .contextual');
-    $this->clickContextualLink('.block-system-powered-by-block', 'Configure');
+    $contextual_link_class = version_compare(\Drupal::VERSION, '9.4', '<')
+      ? '.block-system-powered-by-block'
+      : '.layout-builder-block.contextual-region';
+    $this->clickContextualLink($contextual_link_class, 'Configure');
     $this->assertNotEmpty($assert_session->waitForElementVisible('css', '#drupal-off-canvas'));
 
     // Save page.
@@ -121,6 +124,10 @@ class LayoutBuilderDisplayVariantTest extends WebDriverTestBase {
     $assert_session->waitForElementVisible('css', '.layout__region--second');
     $assert_session->elementTextContains('css', '.layout__region--second', 'User account menu');
     $assert_session->elementTextContains('css', '.layout__region--second', 'Entity view (User)');
+
+    // Check that dependencies are saved.
+    $dependencies = $this->config('page_manager.page_variant.example-layout_builder-0')->get('dependencies');
+    $this->assertContains('ctools', $dependencies['module']);
   }
 
 }
