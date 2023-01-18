@@ -35,9 +35,9 @@ class WebformClientSideValidationJavaScriptTest extends WebformWebDriverTestBase
     $page = $this->getSession()->getPage();
     $assert_session = $this->assertSession();
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Table select.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check that all radios and checkbox tables triggers client side validation.
     $this->drupalGet('/webform/test_clientside_validation');
@@ -46,7 +46,7 @@ class WebformClientSideValidationJavaScriptTest extends WebformWebDriverTestBase
     $this->assertCssSelect('#edit-tableselect-radios.required');
     $this->assertCssSelect('#edit-tableselect-radios-one[required]');
     $this->submitForm([], 'Submit');
-    $this->assertRaw('This field is required.');
+    $assert_session->responseContains('This field is required.');
     $assert_session->waitForText('tableselect_radios field is required.');
 
     // Check that all radios and checkbox tables triggers client side validation
@@ -63,9 +63,9 @@ class WebformClientSideValidationJavaScriptTest extends WebformWebDriverTestBase
     $this->assertCssSelect('#edit-tableselect-radios.required');
     $this->assertCssSelect('#edit-tableselect-radios-one[required]');
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Other elements.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check that custom 'other' error messages work.
     $this->drupalGet('/webform/test_clientside_validation');

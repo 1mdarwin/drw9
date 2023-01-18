@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
  */
 abstract class WebformDeleteMultipleFormBase extends DeleteMultipleForm {
 
-    /**
+  /**
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $entity_type_id = NULL) {
@@ -74,7 +74,6 @@ abstract class WebformDeleteMultipleFormBase extends DeleteMultipleForm {
 
   /**
    * Returns warning message to display.
-   *
    */
   public function getWarning() {
     $message = $this->formatPlural(count($this->selection), 'Are you sure you want to delete this @item?', 'Are you sure you want to delete these @items?', [
@@ -82,7 +81,7 @@ abstract class WebformDeleteMultipleFormBase extends DeleteMultipleForm {
       '@items' => $this->entityType->getPluralLabel(),
     ]);
 
-    return[
+    return [
       '#type' => 'webform_message',
       '#message_type' => 'warning',
       '#message_message' => $message,
@@ -99,7 +98,7 @@ abstract class WebformDeleteMultipleFormBase extends DeleteMultipleForm {
   public function getConfirmInput() {
     return [
       '#type' => 'checkbox',
-      '#title' => $this->formatPlural(count($this->selection), 'Yes, I want to delete this @item?', 'Yes, I want to delete these @items?', [
+      '#title' => $this->formatPlural(count($this->selection), 'Yes, I want to delete this @item.', 'Yes, I want to delete these @items.', [
         '@item' => $this->entityType->getSingularLabel(),
         '@items' => $this->entityType->getPluralLabel(),
       ]),

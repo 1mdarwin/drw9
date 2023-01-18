@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 
 namespace Drupal\webform\Commands;
 
@@ -69,22 +70,8 @@ abstract class WebformCommandsBase extends DrushCommands {
   }
 
   public function drush_download_file($url, $destination) {
-    // Copied from: \Drush\Commands\SyncViaHttpCommands::downloadFile
-    static $use_wget;
-    if ($use_wget === NULL) {
-      $use_wget = ExecTrait::programExists('wget');
-    }
-
     $destination_tmp = drush_tempnam('download_file');
-    if ($use_wget) {
-      $args = ['wget', '-q', '--timeout=30', '-O', $destination_tmp, $url];
-    }
-    else {
-      $args = ['curl', '-s', '-L', '--connect-timeout', '30', '-o', $destination_tmp, $url];
-    }
-    $process = Drush::process($args);
-    $process->mustRun();
-
+    \Drupal::httpClient()->get($url, ['sink' => $destination_tmp]);
     if (!drush_file_not_empty($destination_tmp) && $file = @file_get_contents($url)) {
       @file_put_contents($destination_tmp, $file);
     }
@@ -123,7 +110,11 @@ abstract class WebformCommandsBase extends DrushCommands {
       drush_op('chdir', $cwd);
 
       if (!$return) {
-        throw new \Exception(dt('Unable to extract !filename.' . PHP_EOL . implode(PHP_EOL, $process->getOutput()), ['!filename' => $path]));
+        throw new \Exception(dt('Unable to extract @filename to @destination.<br /><pre>@process_output</pre>', [
+          '@filename' => $path,
+          '@destination' => $destination,
+          '@process_output' => print_r($process->getOutput(), TRUE),
+        ]));
       }
     }
     else {
@@ -134,7 +125,11 @@ abstract class WebformCommandsBase extends DrushCommands {
       drush_op('chdir', $cwd);
 
       if (!$return) {
-        throw new \Exception(dt('Unable to extract !filename.' . PHP_EOL . implode(PHP_EOL, $process->getOutput()), ['!filename' => $path]));
+        throw new \Exception(dt('Unable to extract @filename to @destination.<br /><pre>@process_output</pre>', [
+          '@filename' => $path,
+          '@destination' => $destination,
+          '@process_output' => print_r($process->getOutput(), TRUE),
+        ]));
       }
     }
     return $return;

@@ -233,22 +233,12 @@ class WebformCodeMirror extends Textarea {
     return (isset(static::$modes[$mode])) ? static::$modes[$mode] : static::$modes['text'];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Language/markup validation callback.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Validate HTML.
-   *
-   * @param array $element
-   *   The form element whose value is being validated.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array|null
-   *   An array of error messages.
    */
   protected static function validateHtml($element, FormStateInterface $form_state, $complete_form) {
     // @see: http://stackoverflow.com/questions/3167074/which-function-in-php-validate-if-the-string-is-valid-html
@@ -273,16 +263,6 @@ class WebformCodeMirror extends Textarea {
 
   /**
    * Validate Twig.
-   *
-   * @param array $element
-   *   The form element whose value is being validated.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array|null
-   *   An array of error messages.
    */
   protected static function validateTwig($element, FormStateInterface $form_state, $complete_form) {
     $template = $element['#value'];
@@ -323,23 +303,13 @@ class WebformCodeMirror extends Textarea {
 
   /**
    * Validate YAML.
-   *
-   * @param array $element
-   *   The form element whose value is being validated.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array|null
-   *   An array of error messages.
    */
   protected static function validateYaml($element, FormStateInterface $form_state, $complete_form) {
     try {
       $value = $element['#value'];
       $data = Yaml::decode($value);
       if (!is_array($data) && $value) {
-        throw new \Exception(t('YAML must contain an associative array of elements.'));
+        throw new \Exception('YAML must contain an associative array of elements.');
       }
       return NULL;
     }

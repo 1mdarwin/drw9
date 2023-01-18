@@ -116,9 +116,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
 
     $projects = [];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Applications.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Applications: Academic Applications.
     $projects['academic_applications'] = [
@@ -128,9 +128,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'applications',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Element.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Element: Address.
     $projects['address'] = [
@@ -157,14 +157,6 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
-   // Element: OpenLayers.
-    $projects['openlayersd8'] = [
-      'title' => $this->t('OpenLayers'),
-      'description' => $this->t('Provides an example that shows how to create a Webform composite.'),
-      'url' => Url::fromUri('https://www.drupal.org/project/openlayersd8'),
-      'category' => 'element',
-    ];
-
     // Element: Range Slider.
     $projects['range_slider'] = [
       'title' => $this->t('Range Slider'),
@@ -173,6 +165,13 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
+    // Element: Radios to Slider.
+    $projects['radiostoslider'] = [
+      'title' => $this->t('Radios to Slider'),
+      'description' => $this->t('Provide a webform element with the radios-to-slider jQuery plugin support.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/radiostoslider'),
+      'category' => 'element',
+    ];
     // Element: Webform Alias Container.
     $projects['webform_alias_container'] = [
       'title' => $this->t('Webform Alias Container'),
@@ -229,6 +228,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
+    // Element: Dropzonejs Webform.
+    $projects['dropzonejs_webform'] = [
+      'title' => $this->t('Dropzonejs Webform'),
+      'description' => $this->t('Creates a new DropzoneJS element that you can add to webforms. It provides a user-friendly way for users to upload multiple files in a form field.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/dropzonejs_webform'),
+      'category' => 'element',
+    ];
+
     // Element: Webform Dynamic Autocomplete.
     $projects['webform_dynamic_autocomplete'] = [
       'title' => $this->t('Webform Dynamic Autocomplete'),
@@ -242,6 +249,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Entity View'),
       'description' => $this->t('Provides an Entity Reference Webform element that can be picked in the build of a webform and will be rendered in the view.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_entity_view'),
+      'category' => 'element',
+    ];
+
+    // Element: Webform GMap Field.
+    $projects['webform_gmap_field'] = [
+      'title' => $this->t('Webform GMap Field'),
+      'description' => $this->t('Adds a "Map location" component to a webform, which gives users the ability to pick a location from the map by dragging a marker.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_gmap_field'),
       'category' => 'element',
     ];
 
@@ -269,11 +284,27 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
+    // Element: Webform Javascript Field.
+    $projects['webform_javascript_field'] = [
+      'title' => $this->t('Webform Javascript Field'),
+      'description' => $this->t('Provides ability to specify JavaScript snippet for Webform components.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_javascript_field'),
+      'category' => 'element',
+    ];
+
     // Element: Webform Layout Container.
     $projects['webform_layout_container'] = [
       'title' => $this->t('Webform Layout Container'),
       'description' => $this->t("Provides a layout container element to add to a webform, which uses old fashion floats to support legacy browsers that don't support CSS Flexbox (IE9 and IE10)."),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_layout_container'),
+      'category' => 'element',
+    ];
+
+    // Element: Webform Location HTML5.
+    $projects['webform_location_html5'] = [
+      'title' => $this->t('Webform Location HTML5'),
+      'description' => $this->t('Provides a webform field, that when the page loads it autofills with the user location, using the browser Geolocation API.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_location_html5'),
       'category' => 'element',
     ];
 
@@ -317,14 +348,6 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
-    // Element: Webform Select Collection.
-    $projects['webform_select_collection'] = [
-      'title' => $this->t('Webform Select Collection'),
-      'description' => $this->t('Provides a webform element that groups multiple select elements into single collection.'),
-      'url' => Url::fromUri('https://www.drupal.org/project/webform_select_collection'),
-      'category' => 'element',
-    ];
-
     // Element: Webform RUT.
     $projects['webform_rut'] = [
       'title' => $this->t('Webform RUT'),
@@ -365,9 +388,17 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Enhancement.
-    /**************************************************************************/
+    /* ********************************************************************** */
+
+    // Enhancement: Config Entity Reference Selection.
+    $projects['config_entity_reference_selection'] = [
+      'title' => $this->t('Config Entity Reference Selection'),
+      'description' => $this->t('Provides an entity reference selection plugin for limiting allowed (webform) config entity choices.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/config_entity_reference_selection'),
+      'category' => 'enhancement',
+    ];
 
     // Enhancement: Dopup.
     $projects['dopup'] = [
@@ -382,6 +413,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Formset'),
       'description' => $this->t('Enables the creation of webform sets.'),
       'url' => Url::fromUri('https://github.com/simesy/formset'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: Webform Anonymizer.
+    $projects['webform_anonymizer'] = [
+      'title' => $this->t('Webform Anonymizer'),
+      'description' => $this->t('Anonymizes submissions even when the user is logged in.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_anonymizer'),
       'category' => 'enhancement',
     ];
 
@@ -425,6 +464,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
+    // Enhancement: Webform Creation Date.
+    $projects['webform_creation_date'] = [
+      'title' => $this->t('Webform Creation Date'),
+      'description' => $this->t('Allows to store information about creation/update dates for webforms.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_creation_date'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Webform Deter.
     $projects['webform_deter'] = [
       'title' => $this->t('Webform Deter'),
@@ -446,14 +493,6 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Email Reply'),
       'description' => $this->t('Allows users to send an email reply to submissions.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_email_reply'),
-      'category' => 'enhancement',
-    ];
-
-    // Enhancement: Webform Entity Email.
-    $projects['webform_entity_email'] = [
-      'title' => $this->t('Webform Entity Email'),
-      'description' => $this->t('Allow send a node in a specific display mode.'),
-      'url' => Url::fromUri('https://www.drupal.org/project/webform_entity_email'),
       'category' => 'enhancement',
     ];
 
@@ -481,12 +520,19 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
-
     // Enhancement: Webform GeoIP Restriction.
     $projects['webform_geoip_restriction'] = [
       'title' => $this->t('Webform GeoIP Restriction'),
       'description' => $this->t('Adds the possibility of restricting access to webforms by country using the geoip system.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_geoip_restriction'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: Webform Import Tab.
+    $projects['webform_import_tab'] = [
+      'title' => $this->t('Webform Import Tab'),
+      'description' => $this->t('Provides an import tab in the webform module so that users who can create webforms can import them without needing access to the entire configuration synchronization system.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_import_tab'),
       'category' => 'enhancement',
     ];
 
@@ -546,11 +592,19 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
-    // Enhancement: Webform Unsubscribe.
-    $projects['webform_unsubscribe'] = [
-      'title' => $this->t('Webform Unsubscribe'),
-      'description' => $this->t('Provides the token for creation of the link for removing a webform submission by an anonymous user.'),
-      'url' => Url::fromUri('https://www.drupal.org/project/webform_unsubscribe'),
+    // Enhancement: Webform Sign PDF Example.
+    $projects['webform_sign_pdf_example'] = [
+      'title' => $this->t('Webform Sign PDF Example'),
+      'description' => $this->t('Digitally sign and print to a form with a header and a footer.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_sign_pdf_example'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: Webform Simplify.
+    $projects['webform_simplify'] = [
+      'title' => $this->t('Webform Simplify'),
+      'description' => $this->t('Allows certain parts of the Webform user interface to be hidden.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_simplify'),
       'category' => 'enhancement',
     ];
 
@@ -562,11 +616,27 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
+    // Enhancement: Webform Unsubscribe.
+    $projects['webform_unsubscribe'] = [
+      'title' => $this->t('Webform Unsubscribe'),
+      'description' => $this->t('Provides the token for creation of the link for removing a webform submission by an anonymous user.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_unsubscribe'),
+      'category' => 'enhancement',
+    ];
+
     // Enhancement: Webform Validation.
     $projects['webform_validation'] = [
       'title' => $this->t('Webform Validation'),
       'description' => $this->t('Add validation rules to Webforms.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_validation'),
+      'category' => 'enhancement',
+    ];
+
+    // Enhancement: WetBoew Webform Example.
+    $projects['wetboew_webform_example'] = [
+      'title' => $this->t('WetBoew Webform Example'),
+      'description' => $this->t('Provides two webforms that demonstrate how to use server side and clientside wxt style form validation.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/wetboew_webform_example'),
       'category' => 'enhancement',
     ];
 
@@ -578,9 +648,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'enhancement',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Integrations.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Integrations: Webform CiviCRM Integration.
     $projects['webform_civicrm'] = [
@@ -609,7 +679,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Integrations: Ansible.
     $projects['ansible'] = [
@@ -646,7 +716,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: Domain Webform.
     $projects['domain_webform'] = [
       'title' => $this->t('Domain Webform'),
-      'description' => $this->t('Domain intergration for the Webform module.'),
+      'description' => $this->t('Domain integration for the Webform module.'),
       'url' => Url::fromUri('https://github.com/h3rj4n/domain_webform'),
       'category' => 'integration',
     ];
@@ -699,6 +769,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
+    // Integrations: (Google) Datalayer Webform.
+    $projects['datalayer_webform'] = [
+      'title' => $this->t('(Google) Datalayer Webform'),
+      'description' => $this->t('Send datalayer events on Webform submission.'),
+      'url' => Url::fromUri('https://www.drupal.org/sandbox/mistermoper/3199908'),
+      'category' => 'integration',
+    ];
+
     // Integrations: Group Webform.
     $projects['group_webform'] = [
       'title' => $this->t('Group Webform'),
@@ -744,6 +822,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Marketo MA Webform'),
       'description' => $this->t('Integrates Marketo MA with Webform module forms.'),
       'url' => Url::fromUri('https://www.drupal.org/project/marketo_ma'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Maropost Subscription Webform Handler.
+    $projects['maropost_sub_webform_handler'] = [
+      'title' => $this->t('Maropost Subscription Webform Handler'),
+      'description' => $this->t('A simple Webform handler that allows site builders and developers to easily submit new leads to Maropost Subscriptions.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/maropost_sub_webform_handler'),
       'category' => 'integration',
     ];
 
@@ -966,6 +1052,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
+    // Integration: Webform JIRA service desk integration.
+    $projects['webform_jira_service_desk'] = [
+      'title' => $this->t('Webform JIRA service desk integration'),
+      'description' => $this->t('Enables the user to map Webform elements to Jira Service Desk fields and create an issue on Jira by using the REST API.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_jira_service_desk'),
+      'category' => 'integration',
+    ];
+
     // Integrations: Lightweight Webform Mailchimp.
     $projects['ldbase_handlers'] = [
       'title' => $this->t('LDbase Webform Handlers'),
@@ -1022,6 +1116,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
+    // Integrations: Webform Octoa.
+    $projects['webform_octoa'] = [
+      'title' => $this->t('OS Tickets Webform Handler'),
+      'description' => $this->t('Sends webform submissions into the Octoa Lead API'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_octoa'),
+      'category' => 'integration',
+    ];
+
     // Integrations: OS Tickets Webform Handler.
     $projects['ostickets'] = [
       'title' => $this->t('OS Tickets Webform Handler'),
@@ -1033,7 +1135,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: Webform Pardot.
     $projects['webform_pardot'] = [
       'title' => $this->t('Webform Pardot'),
-      'description' => $this->t('Links commerce products to webform elements.'),
+      'description' => $this->t('Provides a webform handler for posting submissions to Pardot.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_pardot'),
       'category' => 'integration',
     ];
@@ -1041,7 +1143,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: Webform Product.
     $projects['webform_product'] = [
       'title' => $this->t('Webform Product'),
-      'description' => $this->t('Provides a webform handler for posting submissions to Pardot.'),
+      'description' => $this->t('Links commerce products to webform elements.'),
       'url' => Url::fromUri('https://github.com/chx/webform_product'),
       'category' => 'integration',
     ];
@@ -1095,6 +1197,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
+    // Integrations: Webform Paypal (Smart Buttons).
+    $projects['webform_paypal_smart'] = [
+      'title' => $this->t('Webform Paypal (Smart Buttons)'),
+      'description' => $this->t('Enables Smart Paypal buttons on Webform submissions.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_paypal_smart'),
+      'category' => 'integration',
+    ];
+
     // Integrations: Webform User Registration.
     $projects['webform_user_registration'] = [
       'title' => $this->t('Webform User Registration'),
@@ -1111,7 +1221,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Integrations: Salesforce Web-to-Lead Webform Data Integration.
     $projects['sfweb2lead_webform'] = [
@@ -1132,14 +1242,22 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Integrations: Salesforce: Webform to Salesforce Leads.
     $projects['webform_to_leads'] = [
       'title' => $this->t('Salesforce: Webform to Salesforce Leads'),
-      'description' => $this->t('Extends the Webform module to allow the creation of a webform that feeds to your Salesforce.com Account'),
+      'description' => $this->t('Extends the Webform module to allow the creation of a webform that feeds to your Salesforce.com Account.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_to_leads'),
       'category' => 'integration',
     ];
 
-    /**************************************************************************/
+    // Integrations: Salesforce: Webform to Salesforce DEManager.
+    $projects['webform_sf_demanager'] = [
+      'title' => $this->t('Salesforce: Webform to Salesforce DEManager'),
+      'description' => $this->t('Allows a webform to send information to Salesforce Marketing Cloud trough DEManager.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_sf_demanager'),
+      'category' => 'integration',
+    ];
+
+    /* ********************************************************************** */
     // Mail.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Mail: Mail System.
     $projects['mailsystem'] = [
@@ -1182,7 +1300,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     ];
 
     // Mail: Webform Send Draft Link.
-    $projects['smtp'] = [
+    $projects['webform_send_draft_link'] = [
       'title' => $this->t('Webform Send Draft Link'),
       'description' => $this->t('Enables to send a link to a webform draft via email.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_send_draft_link'),
@@ -1216,7 +1334,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Mail: Webform Entity Email.
     $projects['webform_entity_email'] = [
       'title' => $this->t('Webform Entity Email'),
-      'description' => $this->t('ovides a webform handler that sends an email rendering a specific entity.'),
+      'description' => $this->t('Provides a webform handler that sends an email rendering a specific entity.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_entity_email'),
       'category' => 'mail',
     ];
@@ -1245,9 +1363,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'mail',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Multilingual.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Multilingual: Lingotek Translation.
     $projects['lingotek'] = [
@@ -1265,9 +1383,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'multilingual',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Migrate.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Migrate: Webform Migrate.
     $projects['webform_migrate'] = [
@@ -1278,9 +1396,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Spam.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Spam: Antibot.
     $projects['antibot'] = [
@@ -1297,6 +1415,15 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('CAPTCHA'),
       'description' => $this->t('Provides CAPTCHA for adding challenges to arbitrary forms.'),
       'url' => Url::fromUri('https://www.drupal.org/project/captcha'),
+      'category' => 'spam',
+      'recommended' => TRUE,
+    ];
+
+    // Spam: reCAPTCHA.
+    $projects['recaptcha'] = [
+      'title' => $this->t('reCAPTCHA'),
+      'description' => $this->t('Uses the Google <a href=":href">reCAPTCHA</a> web service to improve the CAPTCHA system.', [':href' => 'https://www.google.com/recaptcha/about/']),
+      'url' => Url::fromUri('https://www.drupal.org/project/recaptcha'),
       'category' => 'spam',
       'recommended' => TRUE,
     ];
@@ -1319,7 +1446,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'spam',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Spam: CleanTalk.
     $projects['cleantalk'] = [
@@ -1369,9 +1496,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'spam',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Submissions.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Submissions: Webform Analysis.
     $projects['webform_analysis'] = [
@@ -1394,7 +1521,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     // Submissions: Webform Views Integration.
     $projects['webform_views'] = [
       'title' => $this->t('Webform Views'),
-      'description' => $this->t('Integrates Webform 8.x-5.x and Views modules.'),
+      'description' => $this->t('Integrates Webform and Views modules.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_views'),
       'category' => 'submission',
       'recommended' => TRUE,
@@ -1409,16 +1536,8 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
-    /**************************************************************************/
-
-    // Submissions: Protected Submissions.
-    $projects['protected_submissions'] = [
-      'title' => $this->t('Protected Submissions'),
-      'description' => $this->t('Prevents submissions that contain undesired patterns.'),
-      'url' => Url::fromUri('https://www.drupal.org/project/protected_submissions'),
-      'category' => 'submission',
-    ];
-
+    /* ********************************************************************** */
+    
     // Submissions: Webform Auto Exports.
     $projects['coc_forms_auto_export'] = [
       'title' => $this->t('Webform Auto Exports'),
@@ -1507,6 +1626,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'submission',
     ];
 
+    // Submissions: Timely Webform Reporting.
+    $projects['timely_webform_reporting'] = [
+      'title' => $this->t('Timely Webform Reporting'),
+      'description' => $this->t('Create reports from Webform Submissions on a timely basis.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/timely_webform_reporting'),
+      'category' => 'submission',
+    ];
+
     // Submissions: Webform Submissions Notification.
     $projects['webform_digests'] = [
       'title' => $this->t('Webform Submissions Notification'),
@@ -1520,6 +1647,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform Submission Files Download'),
       'description' => $this->t('Allows you to download files attached to a single submission'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_submission_files_download'),
+      'category' => 'submission',
+    ];
+
+    // Submissions: Webform Submission Splitter.
+    $projects['webform_submission_splitter'] = [
+      'title' => $this->t('Webform Submission Splitter'),
+      'description' => $this->t("Adds a webform handler that allows you to select a multiple value element and then 'split' the submission by that element's values."),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_submission_splitter'),
       'category' => 'submission',
     ];
 
@@ -1547,9 +1682,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'submission',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Utility.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Utility: IMCE.
     $projects['imce'] = [
@@ -1580,7 +1715,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'recommended' => TRUE,
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Utility: Calendar Links Token.
     $projects['calendar_links_token'] = [
@@ -1647,9 +1782,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'utility',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Validation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Validation: Clientside Validation.
     $projects['clientside_validation'] = [
@@ -1658,6 +1793,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'url' => Url::fromUri('https://www.drupal.org/project/clientside_validation'),
       'category' => 'validation',
       'recommended' => TRUE,
+    ];
+
+    // Validation: Advanced Email Validation.
+    $projects['advanced_email_validation'] = [
+      'title' => $this->t('Advanced Email Validation'),
+      'description' => $this->t('Supplies a Webform validation handler that can be added to apply the available rules to chosen email fields on any webform, with the option to override configuration.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/advanced_email_validation'),
+      'category' => 'validation',
     ];
 
     // Validation: Telephone Validation.
@@ -1684,9 +1827,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'validation',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Web services.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Web services: Decoupled Kit.
     $projects['decoupled_kit'] = [
@@ -1728,9 +1871,9 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'web_services',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Workflow.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Workflow: Config Entity Revisions.
     $projects['config_entity_revisions'] = [
@@ -1738,7 +1881,6 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'description' => $this->t('Provide revisions and moderation for Webforms.'),
       'url' => Url::fromUri('https://www.drupal.org/project/config_entity_revisions'),
       'category' => 'workflow',
-      'recommended' => TRUE,
     ];
 
     // Workflow: Maestro.
@@ -1747,7 +1889,6 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'description' => $this->t('A business process workflow solution that allows you to create and automate a sequence of tasks representing any business, document approval or collaboration process.'),
       'url' => Url::fromUri('https://www.drupal.org/project/maestro'),
       'category' => 'workflow',
-      'recommended' => TRUE,
     ];
 
     // Workflow: Workflows Field.
@@ -1756,12 +1897,27 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'description' => $this->t('A business process workflow solution that allows you to create and automate a sequence of tasks representing any business, document approval or collaboration process.'),
       'url' => Url::fromUri('https://www.drupal.org/project/workflows_field'),
       'category' => 'workflow',
-      'recommended' => TRUE,
     ];
 
-    /**************************************************************************/
+    // Workflow: Webform Workflows Element.
+    $projects['webform_workflows_element'] = [
+      'title' => $this->t('Webform Workflows Element'),
+      'description' => $this->t('Provides a new element type for Webforms (D8+) that uses the core Workflows functionality to move submissions through a webform.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_workflows_element'),
+      'category' => 'workflow',
+    ];
+
+    // Workflow: Webform Revision UI.
+    $projects['webform_revision_ui'] = [
+      'title' => $this->t('Webform Revision UI'),
+      'description' => $this->t('Adds Webform Revision UI.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_revision_ui'),
+      'category' => 'workflow',
+    ];
+
+    /* ********************************************************************** */
     // Development.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Devel: Maillog / Mail Developer.
     $projects['maillog'] = [
@@ -1773,7 +1929,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
     ];
 
     // Devel: Webform Submissions List Decorator.
-    $projects['maillog'] = [
+    $projects['webform_list_decorator'] = [
       'title' => $this->t('Webform Submissions List Decorator'),
       'description' => $this->t('Override submissions list and allows user hide columns of webform submissions in submissions list.'),
       'url' => Url::fromUri('https://www.drupal.org/sandbox/antonkerbel/3098999'),
@@ -1782,7 +1938,7 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
 
     // Add logos.
     global $base_url;
-    $addon_paths = drupal_get_path('module', 'webform') . '/images/addons';
+    $addon_paths = \Drupal::service('extension.list.module')->getPath('webform') . '/images/addons';
     $addon_extensions = ['png', 'svg'];
     foreach ($projects as $project_name => $project) {
       foreach ($addon_extensions as $addon_extension) {

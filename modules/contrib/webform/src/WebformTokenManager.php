@@ -64,7 +64,10 @@ class WebformTokenManager implements WebformTokenManagerInterface {
    *
    * @see webform_token_info_alter()
    */
-  static protected $suffixes = [
+  protected static $suffixes = [
+    // Base64 encode the token's value.
+    // @see https://www.php.net/manual/en/function.base64-encode.php
+    'base64encode',
     // Removes the token when not replaced.
     'clear',
     // Decodes HTML entities.
@@ -210,9 +213,9 @@ class WebformTokenManager implements WebformTokenManagerInterface {
     $options += $token_options;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Token elements.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -283,9 +286,9 @@ class WebformTokenManager implements WebformTokenManagerInterface {
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Token validation.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -337,7 +340,7 @@ class WebformTokenManager implements WebformTokenManagerInterface {
    * Element is not being based by reference since the #value is being altered.
    */
   public static function validateElement($element, FormStateInterface $form_state, &$complete_form) {
-    $value = isset($element['#value']) ? $element['#value'] : $element['#default_value'];
+    $value = $element['#value'] ?? $element['#default_value'];
 
     if (!mb_strlen($value)) {
       return $element;
@@ -349,6 +352,11 @@ class WebformTokenManager implements WebformTokenManagerInterface {
       $value = preg_replace($pattern, '[\1]', $value);
     }
 
+    // Remove input names which may contain invalid tokens.
+    // For example, a checkboxes options can include colons.
+    // @see https://www.drupal.org/project/webform/issues/3263195
+    $value = preg_replace('/:input\[name="[^"]+"\]/', '', $value);
+
     // Convert all token field deltas to 0 to prevent unexpected
     // token validation errors.
     $value = preg_replace('/:\d+:/', ':0:', $value);
@@ -358,9 +366,9 @@ class WebformTokenManager implements WebformTokenManagerInterface {
     token_element_validate($element, $form_state);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Suffix handling.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get an array of supported token suffixes.
@@ -456,6 +464,9 @@ class WebformTokenManager implements WebformTokenManagerInterface {
           // Encode xml.
           if (isset($suffixes['xmlencode'])) {
             $replace = htmlspecialchars($replace, ENT_XML1);
+          }
+          if (isset($suffixes['base64encode'])) {
+            $replace = base64_encode($replace);
           }
         }
 
