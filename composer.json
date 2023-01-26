@@ -8,13 +8,20 @@
         "docs": "https://www.drupal.org/docs/user_guide/en/index.html",
         "chat": "https://www.drupal.org/node/314178"
     },
-    "repositories": [
+    "repositories": {
+        "asset-packagist": {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        },
+        "drupal":
         {
             "type": "composer",
             "url": "https://packages.drupal.org/8"
         }
-    ],
+    },
     "require": {
+        "bower-asset/cropper": "^2.3",
+        "bower-asset/slick-carousel": "^1.8",
         "composer/installers": "^1.2",
         "drupal/admin_toolbar": "^3.1.0",
         "drupal/block_class": "^2.0",
@@ -38,13 +45,17 @@
         "drupal/panels": "^4.7",
         "drupal/pathauto": "^1.9",
         "drupal/simple_sitemap": "^4.1.1",
+        "drupal/slick": "^2.7",
         "drupal/upgrade_status": "^3.",
         "drupal/views_bootstrap": "^5.4.0",
         "drupal/views_infinite_scroll": "^2.0.0",
         "drupal/webform": "^6.1",
         "drupal/widget": "^1.",
         "drush/drush": "^11.0",
-        "kint-php/kint": "^4.1"
+        "kint-php/kint": "^4.1",
+        "npm-asset/blazy": "^1.8",
+        "npm-asset/dropzone": "^5.7.4",
+        "oomphinc/composer-installers-extender": "^1.1 || ^2"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -57,7 +68,8 @@
             "composer/installers": true,
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
-            "drupal/core-vendor-hardening": true
+            "drupal/core-vendor-hardening": true,
+            "oomphinc/composer-installers-extender": true
         }
     },
     "extra": {
@@ -66,12 +78,15 @@
                 "web-root": "./"
             }
         },
+        "installer-types": ["npm-asset", "bower-asset"],
         "installer-paths": {
             "core": [
                 "type:drupal-core"
             ],
             "libraries/{$name}": [
-                "type:drupal-library"
+                "type:drupal-library",
+                "type:bower-asset",
+                "type:npm-asset"
             ],
             "modules/contrib/{$name}": [
                 "type:drupal-module"

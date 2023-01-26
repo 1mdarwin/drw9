@@ -113,6 +113,10 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
             'PhpParser\\' => 10,
             'PHPStan\\' => 8,
         ),
+        'O' => 
+        array (
+            'OomphInc\\ComposerInstallersExtender\\' => 36,
+        ),
         'M' => 
         array (
             'MathieuViossat\\Util\\' => 20,
@@ -367,6 +371,10 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         'PHPStan\\' => 
         array (
             0 => __DIR__ . '/..' . '/phpstan/phpstan-deprecation-rules/src',
+        ),
+        'OomphInc\\ComposerInstallersExtender\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/oomphinc/composer-installers-extender/src',
         ),
         'MathieuViossat\\Util\\' => 
         array (
