@@ -7,6 +7,7 @@ module:
   admin_toolbar_tools: 0
   automated_cron: 0
   big_pipe: 0
+  blazy: 0
   block: 0
   block_class: 0
   block_content: 0
@@ -70,6 +71,8 @@ module:
   share_everywhere: 0
   shortcut: 0
   simple_sitemap: 0
+  slick: 0
+  slick_ui: 0
   statistics: 0
   system: 0
   taxonomy: 0
