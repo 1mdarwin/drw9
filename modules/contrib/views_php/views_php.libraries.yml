@@ -1,7 +1,0 @@
-drupal.views_php:
-  version: VERSION
-  js:
-    js/views_php.js: {}
-  dependencies:
-    - core/jquery
-    - core/drupal
