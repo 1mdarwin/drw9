@@ -27,6 +27,7 @@
         "drupal/block_class": "^2.0",
         "drupal/bootstrap": "^3.24",
         "drupal/bootstrap_barrio": "^5.5",
+        "drupal/bootstrap_layouts": "^5.3",
         "drupal/bootstrap_library": "^2.0.1",
         "drupal/config_split": "^1.8",
         "drupal/core-composer-scaffold": "^9.4.8",
