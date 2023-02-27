@@ -1,5 +1,0 @@
-facebook_mcc.settings:
-  title: 'Facebook MCC Settings'
-  base_route_name: facebook_mcc.config_form
-  names:
-    - facebook_mcc.settings
