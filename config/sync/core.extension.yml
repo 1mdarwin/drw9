@@ -17,7 +17,6 @@ module:
   ckeditor5: 0
   comment: 0
   config: 0
-  config_devel: 0
   config_filter: 0
   config_split: 0
   config_translation: 0
@@ -68,7 +67,6 @@ module:
   path_alias: 0
   responsive_image: 0
   search: 0
-  share_everywhere: 0
   shortcut: 0
   simple_sitemap: 0
   slick: 0
@@ -83,7 +81,6 @@ module:
   update: 0
   upgrade_status: 0
   user: 0
-  vardumper: 0
   views_bootstrap: 0
   views_infinite_scroll: 0
   views_ui: 0
