@@ -21,7 +21,7 @@ class ProfileTest extends EntityKernelTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'entity',
     'profile',
     'views',
@@ -51,7 +51,7 @@ class ProfileTest extends EntityKernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->installEntitySchema('profile');
@@ -194,7 +194,9 @@ class ProfileTest extends EntityKernelTestBase {
     ]);
 
     $this->assertTrue($first_profile->equalToProfile($third_profile));
-    $this->assertFalse($first_profile->equalToProfile($third_profile, ['type', 'field_fullname']));
+    $this->assertFalse($first_profile->equalToProfile($third_profile, [
+      'type', 'field_fullname',
+    ]));
     $this->assertFalse($first_profile->equalToProfile($second_profile));
     $this->assertTrue($first_profile->equalToProfile($second_profile, ['type']));
   }
@@ -301,6 +303,18 @@ class ProfileTest extends EntityKernelTestBase {
     // Confirm that re-saving the other published profile sets it as default.
     $profile1->save();
     $this->assertTrue($profile1->isDefault());
+
+    // Confirm that profile may be still saved, even if it references
+    // non-existing user.
+    /** @var \Drupal\profile\Entity\ProfileInterface $profile1 */
+    $profile3 = Profile::create([
+      'type' => $profile_type->id(),
+      'uid' => $this->user2->id() + 100,
+    ]);
+    $profile3->save();
+    // Confirm that the profile was not set as default.
+    $this->assertFalse($profile3->isDefault());
+
   }
 
   /**

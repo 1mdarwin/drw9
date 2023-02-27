@@ -23,7 +23,7 @@ interface ProfileStorageInterface extends EntityStorageInterface {
    * @return \Drupal\profile\Entity\ProfileInterface[]
    *   The profiles, ordered by publishing status and ID, descending.
    */
-  public function loadMultipleByUser(AccountInterface $account, $profile_type_id, $published = TRUE);
+  public function loadMultipleByUser(AccountInterface $account, string $profile_type_id, bool $published = TRUE);
 
   /**
    * Loads the given user's profile.
@@ -39,10 +39,10 @@ interface ProfileStorageInterface extends EntityStorageInterface {
    * @param string $profile_type_id
    *   The profile type ID.
    *
-   * @return \Drupal\profile\Entity\ProfileInterface
+   * @return \Drupal\profile\Entity\ProfileInterface|null
    *   The profile. NULL if no matching entity was found.
    */
-  public function loadByUser(AccountInterface $account, $profile_type_id);
+  public function loadByUser(AccountInterface $account, string $profile_type_id);
 
   /**
    * Loads the given user's default profile.
@@ -52,11 +52,13 @@ interface ProfileStorageInterface extends EntityStorageInterface {
    * @param string $profile_type_id
    *   The profile type ID.
    *
-   * @return \Drupal\profile\Entity\ProfileInterface
+   * @return \Drupal\profile\Entity\ProfileInterface|null
    *   The profile. NULL if no matching entity was found.
    *
-   * @deprecated in Profile 1.0. Use loadByUser() instead.
+   * @deprecated in profile:8.x-1.0 and is removed from
+   *   profile:2.0.0. Use loadByUser() instead.
+   * @see https://www.drupal.org/node/3074343
    */
-  public function loadDefaultByUser(AccountInterface $account, $profile_type_id);
+  public function loadDefaultByUser(AccountInterface $account, string $profile_type_id);
 
 }
