@@ -39,10 +39,10 @@ function drw2020_preprocess_page(&$variables) {
 
   $variables['site_slogan'] = $site_config->get('slogan');
 
-  $variables['site_logo'] = file_url_transform_relative(file_create_url(theme_get_setting('logo.url')));
+  // $variables['site_logo'] = file_url_transform_relative(file_create_url(theme_get_setting('logo.url')));
 
 //si quieren tener la url del logo pueden accerlo de esta manera.
-  $variables['url_logo'] = file_create_url(theme_get_setting('logo.url'));
+  // $variables['url_logo'] = file_create_url(theme_get_setting('logo.url'));
 }
 
 
