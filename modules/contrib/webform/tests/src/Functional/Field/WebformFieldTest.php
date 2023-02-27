@@ -17,7 +17,7 @@ class WebformFieldTest extends WebformBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['node', 'field_ui'];
+  protected static $modules = ['node', 'field_ui'];
 
   /**
    * Tests the webform (entity reference) field.

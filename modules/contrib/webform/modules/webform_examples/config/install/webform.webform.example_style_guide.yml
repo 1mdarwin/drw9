@@ -113,11 +113,6 @@ elements: |
     datelist:
       '#type': datelist
       '#title': 'Date list'
-    date_datepicker:
-      '#type': date
-      '#title': 'Date picker'
-      '#datepicker': true
-      '#date_date_format': 'D, m/d/Y'
     webform_time:
       '#type': webform_time
       '#title': Time
@@ -651,7 +646,7 @@ elements: |
       '#type': address
       '#title': Address
       '#description': '@see <a href="https://www.drupal.org/project/address">https://www.drupal.org/project/address</a>'
-  
+
 css: ''
 javascript: ''
 settings:

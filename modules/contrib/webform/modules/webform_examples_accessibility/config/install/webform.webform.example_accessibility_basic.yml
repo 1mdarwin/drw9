@@ -87,11 +87,6 @@ elements: |
     datelist:
       '#type': datelist
       '#title': 'Date list'
-    date_datepicker:
-      '#type': date
-      '#title': 'Date picker'
-      '#datepicker': true
-      '#date_date_format': 'D, m/d/Y'
     webform_time:
       '#type': webform_time
       '#title': Time
@@ -126,7 +121,7 @@ elements: |
       '#output': right
       '#output__field_prefix': $
       '#output__field_suffix': '.00'
-  
+
 css: ''
 javascript: ''
 settings:

@@ -324,6 +324,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'element',
     ];
 
+    // Element: Webform Quiz Elements.
+    $projects['webform_quiz_elements'] = [
+      'title' => $this->t('Webform Quiz Elements'),
+      'description' => $this->t('Create a simple quiz out of a webform with webform quiz elements module.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/webform_quiz_elements'),
+      'category' => 'element',
+    ];
+
     // Element: Webform Private Elements.
     $projects['webform_private_elements'] = [
       'title' => $this->t('Webform Private Elements'),
@@ -809,6 +817,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'category' => 'integration',
     ];
 
+    // Integrations: Live Search - Person.
+    $projects['livesearch_person'] = [
+      'title' => $this->t('Live Search - Person'),
+      'description' => $this->t('Integrates Webform with Livesearch service API from data factory to get the contact info & address for people based on a phone number.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/livesearch_person'),
+      'category' => 'integration',
+    ];
+
     // Integrations: Mailchimp Webform Handler.
     $projects['mailchimp_webform_handler'] = [
       'title' => $this->t('Mailchimp Webform Handler'),
@@ -1210,6 +1226,14 @@ class WebformAddonsManager implements WebformAddonsManagerInterface {
       'title' => $this->t('Webform User Registration'),
       'description' => $this->t('Create a new user upon form submission.'),
       'url' => Url::fromUri('https://www.drupal.org/project/webform_user_registration'),
+      'category' => 'integration',
+    ];
+
+    // Integrations: Zammad Webform Handler.
+    $projects['zammad_webform_handler'] = [
+      'title' => $this->t('Zammad Webform Handler'),
+      'description' => $this->t('Provides a Zammad Webform Handler, for sending Webform submissions to a Zammad instance.'),
+      'url' => Url::fromUri('https://www.drupal.org/project/zammad_webform_handler'),
       'category' => 'integration',
     ];
 

@@ -1217,7 +1217,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   public function getSubmissionForm(array $values = [], $operation = 'add') {
     // Test a single webform variant which is set via
     // ?_webform_handler[ELEMENT_KEY]={variant_id}.
-    $webform_variant = \Drupal::request()->query->get('_webform_variant') ?: [];
+    $query = \Drupal::request()->query->all();
+    $webform_variant = $query['_webform_variant'] ?? [];
     if ($webform_variant) {
       $is_add_operation = ($operation === 'add' && $this->access('update'));
       $is_test_operation = ($operation === 'test' && $this->access('test'));
@@ -3048,36 +3049,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * Overriding so that URLs pointing to webform default to 'canonical'
    * submission webform and not the back-end 'edit-form'.
    */
-  public function url($rel = 'canonical', $options = []) {
-    @trigger_error('Webform::url() function is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\webform\Entity\Webform::toUrl() instead. See https://www.drupal.org/project/webform/issues/3251189', E_USER_DEPRECATED);
-    // Do not remove this override: the default value of $rel is different.
-    if ($this->id() === NULL || !$this->hasLinkTemplate($rel)) {
-      return '';
-    }
-    $uri = $this->toUrl($rel);
-    $options += $uri->getOptions();
-    $uri->setOptions($options);
-    return $uri->toString();
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * Overriding so that URLs pointing to webform default to 'canonical'
-   * submission webform and not the back-end 'edit-form'.
-   */
   public function toUrl($rel = 'canonical', array $options = []) {
-    return parent::toUrl($rel, $options);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * Overriding so that URLs pointing to webform default to 'canonical'
-   * submission webform and not the back-end 'edit-form'.
-   */
-  public function urlInfo($rel = 'canonical', array $options = []) {
-    @trigger_error('Webform::urlInfo() function is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\webform\Entity\Webform::toUrl() instead. See https://www.drupal.org/project/webform/issues/3251189', E_USER_DEPRECATED);
     return parent::toUrl($rel, $options);
   }
 
@@ -3089,17 +3061,6 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    */
   public function toLink($text = NULL, $rel = 'canonical', array $options = []) {
     return parent::toLink($text, $rel, $options);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * Overriding so that links to webform default to 'canonical' submission
-   * webform and not the back-end 'edit-form'.
-   */
-  public function link($text = NULL, $rel = 'canonical', array $options = []) {
-    @trigger_error('Webform::link() function is deprecated in drupal:8.0.0 and is removed from drupal:9.0.0. Use \Drupal\webform\Entity\Webform::toLink() instead. See https://www.drupal.org/project/webform/issues/3251189', E_USER_DEPRECATED);
-    return parent::toLink($text, $rel, $options)->toString();
   }
 
   /* ************************************************************************ */

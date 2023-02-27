@@ -16,7 +16,7 @@ class WebformShareTest extends WebformBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'webform',
     'webform_share',
   ];

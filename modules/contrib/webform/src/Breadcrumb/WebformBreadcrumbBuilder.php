@@ -75,7 +75,7 @@ class WebformBreadcrumbBuilder implements BreadcrumbBuilderInterface {
   public function applies(RouteMatchInterface $route_match) {
     $route_name = $route_match->getRouteName();
     // All routes must begin or contain 'webform.
-    if (strpos($route_name, 'webform') === FALSE) {
+    if (!$route_name || strpos($route_name, 'webform') === FALSE) {
       return FALSE;
     }
 

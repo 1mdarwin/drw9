@@ -186,10 +186,6 @@ elements: |
     '#type': webform_link
     '#title': Link
     '#disabled': true
-  webform_location_places:
-    '#type': webform_location_places
-    '#title': 'Location (Algolia Places)'
-    '#disabled': true
   machine_name:
     '#type': machine_name
     '#title': 'Machine name'

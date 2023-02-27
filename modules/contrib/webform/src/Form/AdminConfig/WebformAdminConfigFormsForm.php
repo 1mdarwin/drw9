@@ -634,29 +634,28 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     ];
     // Display warning when text formats do not support adding the class
     // attribute to links.
-    if ($this->moduleHandler->moduleExists('filter')) {
-      /** @var \Drupal\filter\FilterFormatInterface[] $filter_formats */
-      $filter_formats = FilterFormat::loadMultiple();
-      $dialog_not_allowed = [];
-      foreach ($filter_formats as $filter_format) {
-        $html_restrictions = $filter_format->getHtmlRestrictions();
-        if ($html_restrictions && isset($html_restrictions['allowed']) && isset($html_restrictions['allowed']['a']) && !isset($html_restrictions['allowed']['a']['class'])) {
-          $dialog_not_allowed[] = $filter_format->label();
-        }
-      }
-      if ($dialog_not_allowed) {
-        $t_args = [
-          '@labels' => WebformArrayHelper::toString($dialog_not_allowed),
-          '@tag' => '<a href hreflang class>',
-          ':href' => Url::fromRoute('filter.admin_overview')->toString(),
-        ];
-        $form['dialog_settings']['dialog_messages']['filter_formats_message'] = [
-          '#type' => 'webform_message',
-          '#message_message' => $this->t('<strong>IMPORTANT:</strong> To insert dialog links using the @labels <a href=":href">text formats</a> the @tag must be added to the allowed HTML tags.', $t_args),
-          '#message_type' => 'warning',
-        ];
+    /** @var \Drupal\filter\FilterFormatInterface[] $filter_formats */
+    $filter_formats = FilterFormat::loadMultiple();
+    $dialog_not_allowed = [];
+    foreach ($filter_formats as $filter_format) {
+      $html_restrictions = $filter_format->getHtmlRestrictions();
+      if ($html_restrictions && isset($html_restrictions['allowed']) && isset($html_restrictions['allowed']['a']) && !isset($html_restrictions['allowed']['a']['class'])) {
+        $dialog_not_allowed[] = $filter_format->label();
       }
     }
+    if ($dialog_not_allowed) {
+      $t_args = [
+        '@labels' => WebformArrayHelper::toString($dialog_not_allowed),
+        '@tag' => '<a href hreflang class>',
+        ':href' => Url::fromRoute('filter.admin_overview')->toString(),
+      ];
+      $form['dialog_settings']['dialog_messages']['filter_formats_message'] = [
+        '#type' => 'webform_message',
+        '#message_message' => $this->t('<strong>IMPORTANT:</strong> To insert dialog links using the @labels <a href=":href">text formats</a> the @tag must be added to the allowed HTML tags.', $t_args),
+        '#message_type' => 'warning',
+      ];
+    }
+
     // Display install link module message.
     if (!$this->moduleHandler->moduleExists('editor_advanced_link') && !$this->moduleHandler->moduleExists('menu_link_attributes')) {
       $t_args = [

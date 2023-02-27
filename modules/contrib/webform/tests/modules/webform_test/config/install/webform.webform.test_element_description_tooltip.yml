@@ -197,11 +197,6 @@ elements: |
       '#title': Link
       '#description': 'This is a description for the ''webform_link'' element.'
       '#description_display': tooltip
-    webform_location_places:
-      '#type': webform_location_places
-      '#title': 'Location (Algolia Places)'
-      '#description': 'This is a description for the ''webform_location_places'' element.'
-      '#description_display': tooltip
     webform_name:
       '#type': webform_name
       '#title': Name

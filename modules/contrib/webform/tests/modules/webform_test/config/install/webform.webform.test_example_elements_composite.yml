@@ -111,17 +111,6 @@ elements: |
       '#title': 'Link multiple'
       '#multiple': true
       '#multiple__header': true
-  webform_location_places_example:
-    '#type': details
-    '#title': 'Location (Algolia Places)'
-    '#open': true
-    webform_location_places:
-      '#type': webform_location_places
-      '#title': 'Location (Algolia Places)'
-    webform_location_places_multiple:
-      '#type': webform_location_places
-      '#title': 'Location (Algolia Places) multiple'
-      '#multiple': true
   webform_mapping_example:
     '#type': details
     '#title': Mapping

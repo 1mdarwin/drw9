@@ -76,9 +76,6 @@ elements: |
         kitten_3:
           text: 'Cute Kitten 3'
           src: 'http://placekitten.com/130/200'
-    location:
-      '#type': webform_location_places
-      '#title': Location
     rating:
       '#type': webform_rating
       '#title': Rating

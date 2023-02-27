@@ -17,18 +17,20 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'address',
     'captcha',
     'image',
-    'jquery_ui_datepicker',
     'taxonomy',
     'webform',
     'webform_attachment',
     'webform_cards',
     'webform_entity_print_attachment',
+    'webform_jqueryui_datepicker',
+    'webform_entity_print_attachment',
     'webform_image_select',
     'webform_location_geocomplete',
+    'webform_location_places',
     'webform_options_custom',
     'webform_toggles',
   ];

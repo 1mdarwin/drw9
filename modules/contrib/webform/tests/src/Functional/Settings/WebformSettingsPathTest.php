@@ -19,7 +19,7 @@ class WebformSettingsPathTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['path', 'webform', 'node'];
+  protected static $modules = ['path', 'webform', 'node'];
 
   /**
    * Tests YAML page and title.

@@ -28,6 +28,7 @@ use Drupal\webform\WebformSubmissionForm;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\Plugin\WebformElementEntityReferenceInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\HeaderUtils;
 
 /**
  * Provides a base class webform 'managed_file' elements.
@@ -256,7 +257,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     // file upload help only.
     $upload_validators = $element['#upload_validators'];
     if ($file_limit) {
-      $upload_validators['webform_file_limit'] = [Bytes::toInt($file_limit)];
+      $upload_validators['webform_file_limit'] = [Bytes::toNumber($file_limit)];
     }
     $file_upload_help = [
       '#theme' => 'file_upload_help',
@@ -604,9 +605,9 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
    */
   protected function getMaxFileSize(array $element) {
     $max_filesize = $this->configFactory->get('webform.settings')->get('file.default_max_filesize') ?: Environment::getUploadMaxSize();
-    $max_filesize = Bytes::toInt($max_filesize);
+    $max_filesize = Bytes::toNumber($max_filesize);
     if (!empty($element['#max_filesize'])) {
-      $max_filesize = min($max_filesize, Bytes::toInt($element['#max_filesize'] . 'MB'));
+      $max_filesize = min($max_filesize, Bytes::toNumber($element['#max_filesize'] . 'MB'));
     }
     return $max_filesize;
   }
@@ -926,7 +927,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     $file_limit = $webform_submission->getWebform()->getSetting('form_file_limit')
       ?: \Drupal::config('webform.settings')->get('settings.default_form_file_limit')
       ?: '';
-    $file_limit = Bytes::toInt($file_limit);
+    $file_limit = Bytes::toNumber($file_limit);
 
     // Track file size across all file upload elements.
     static $total_file_size = 0;
@@ -1008,7 +1009,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     }
 
     $max_filesize = \Drupal::config('webform.settings')->get('file.default_max_filesize') ?: Environment::getUploadMaxSize();
-    $max_filesize = Bytes::toInt($max_filesize);
+    $max_filesize = Bytes::toNumber($max_filesize);
     $max_filesize = ($max_filesize / 1024 / 1024);
     $form['file']['file_help'] = [
       '#type' => 'select',
@@ -1377,10 +1378,10 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       $filename = $file_system->basename($uri);
       // Force blacklisted files to be downloaded instead of opening in the browser.
       if (in_array($headers['Content-Type'], static::$blacklistedMimeTypes)) {
-        $headers['Content-Disposition'] = 'attachment; filename="' . Unicode::mimeHeaderEncode($filename) . '"';
+        $headers['Content-Disposition'] = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, (string) $filename);
       }
       else {
-        $headers['Content-Disposition'] = 'inline; filename="' . Unicode::mimeHeaderEncode($filename) . '"';
+        $headers['Content-Disposition'] = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, (string) $filename);
       }
       return $headers;
     }

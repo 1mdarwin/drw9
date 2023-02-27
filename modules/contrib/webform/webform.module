@@ -98,6 +98,13 @@ function webform_modules_installed($modules) {
   /** @var \Drupal\webform\WebformEmailProviderInterface $email_provider */
   $email_provider = \Drupal::service('webform.email_provider');
   $email_provider->check();
+
+  // Update Webform HTML editor.
+  if (in_array('ckeditor', $modules)
+    || in_array('ckeditor5', $modules)) {
+    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install').
+    _webform_update_html_editor();
+  }
 }
 
 /**
@@ -124,6 +131,13 @@ function webform_modules_uninstalled($modules) {
   /** @var \Drupal\webform\WebformEmailProviderInterface $email_provider */
   $email_provider = \Drupal::service('webform.email_provider');
   $email_provider->check();
+
+  // Update Webform HTML editor.
+  if (in_array('ckeditor', $modules)
+    || in_array('ckeditor5', $modules)) {
+    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install').
+    _webform_update_html_editor();
+  }
 }
 
 /**
@@ -944,6 +958,23 @@ function webform_element_info_alter(array &$info) {
   $info['radios']['#process'][] = 'webform_process_options';
   $info['webform_entity_checkboxes']['#process'][] = 'webform_process_options';
   $info['webform_entity_radios']['#process'][] = 'webform_process_options';
+
+  if (isset($info['text_format'])) {
+    $info['text_format']['#process'] = array_merge(
+      [['\Drupal\webform\Element\WebformHtmlEditor', 'processTextFormat']],
+      $info['text_format']['#process'] ?? []
+    );
+    $info['text_format']['#pre_render'] = array_merge(
+      [['\Drupal\webform\Element\WebformHtmlEditor', 'preRenderTextFormat']],
+      $info['text_format']['#pre_render'] ?? []
+    );
+  }
+  if (isset($info['processed_text'])) {
+    $info['processed_text']['#pre_render'][] = [
+      '\Drupal\webform\Element\WebformHtmlEditor',
+      'preRenderProcessedText'
+    ];
+  }
 }
 
 /**
