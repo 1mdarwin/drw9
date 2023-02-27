@@ -49,6 +49,7 @@
         "drupal/profile": "^1.7",
         "drupal/simple_sitemap": "^4.1.1",
         "drupal/slick": "^2.7",
+        "drupal/twig_tweak": "^3.2.1",
         "drupal/upgrade_status": "^3.",
         "drupal/views_bootstrap": "^5.4.0",
         "drupal/views_infinite_scroll": "^2.0.0",

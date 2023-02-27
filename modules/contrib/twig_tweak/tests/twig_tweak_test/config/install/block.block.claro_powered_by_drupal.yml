@@ -4,11 +4,11 @@ dependencies:
   module:
     - system
   theme:
-    - classy
-id: classy_powered_by_drupal
-theme: classy
-region: sidebar_first
-weight: 20
+    - claro
+id: claro_powered_by_drupal
+theme: claro
+region: highlighted
+weight: 0
 provider: null
 plugin: system_powered_by_block
 settings:
