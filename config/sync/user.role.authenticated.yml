@@ -3,10 +3,13 @@ langcode: es
 status: true
 dependencies:
   config:
+    - filter.format.basic_html
+    - filter.format.plain_text
     - node.type.forum
   module:
     - comment
     - contact
+    - filter
     - google_analytics
     - node
     - path
@@ -31,5 +34,7 @@ permissions:
   - 'search content'
   - 'use text format 1'
   - 'use text format 2'
+  - 'use text format basic_html'
+  - 'use text format plain_text'
   - 'view own unpublished content'
   - 'view post access counter'

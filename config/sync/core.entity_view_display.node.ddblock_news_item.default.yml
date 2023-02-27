@@ -52,10 +52,10 @@ content:
     weight: -1
     region: content
   field_pager_item_text:
-    type: text_trimmed
+    type: string
     label: above
     settings:
-      trim_length: 600
+      link_to_entity: false
     third_party_settings: {  }
     weight: -4
     region: content
@@ -73,9 +73,9 @@ content:
     weight: 100
     region: content
   share_everywhere:
-    weight: 10
     settings: {  }
     third_party_settings: {  }
+    weight: 10
     region: content
   upload:
     type: file_table

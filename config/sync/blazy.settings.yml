@@ -3,20 +3,20 @@ _core:
 admin_css: true
 nojs:
   lazy: '0'
-  classlist: '0'
   polyfill: '0'
+  classlist: '0'
   promise: '0'
   raf: '0'
+  webp: '0'
 fx: ''
 blur_client: false
 blur_storage: false
 blur_minwidth: 0
 noscript: false
-responsive_image: false
 one_pixel: true
 placeholder: ''
 unstyled_extensions: ''
-extras: {  }
+responsive_image: false
 blazy:
   loadInvisible: false
   offset: 100
@@ -28,3 +28,4 @@ io:
   rootMargin: 0px
   threshold: '0'
   disconnect: false
+extras: {  }
