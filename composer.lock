@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "04c54e9425628208286bde0f2c2d6760",
+    "content-hash": "23948ca1c0fdd14cf32b9508ae47ff87",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -3987,6 +3987,58 @@
             "homepage": "https://www.drupal.org/project/slick_extras",
             "support": {
                 "source": "https://git.drupalcode.org/project/slick_extras"
+            }
+        },
+        {
+            "name": "drupal/slick_views",
+            "version": "2.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://git.drupalcode.org/project/slick_views.git",
+                "reference": "8.x-2.6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://ftp.drupal.org/files/projects/slick_views-8.x-2.6.zip",
+                "reference": "8.x-2.6",
+                "shasum": "522780d13d6452cdce73e8bca85b088df548dc05"
+            },
+            "require": {
+                "drupal/core": "^8 || ^9 || ^10",
+                "drupal/slick": "~2.0"
+            },
+            "type": "drupal-module",
+            "extra": {
+                "drupal": {
+                    "version": "8.x-2.6",
+                    "datestamp": "1640350107",
+                    "security-coverage": {
+                        "status": "covered",
+                        "message": "Covered by Drupal's security advisory policy"
+                    }
+                }
+            },
+            "notification-url": "https://packages.drupal.org/8/downloads",
+            "license": [
+                "GPL-2.0+"
+            ],
+            "authors": [
+                {
+                    "name": "gausarts",
+                    "homepage": "https://www.drupal.org/user/159062"
+                }
+            ],
+            "description": "Provides Slick carousel integration with Views. Slick carousel, the last carousel you'll ever need.",
+            "homepage": "https://drupal.org/project/slick_views",
+            "keywords": [
+                "Drupal",
+                "carousel",
+                "slideshow",
+                "views"
+            ],
+            "support": {
+                "source": "http://cgit.drupalcode.org/slick_views",
+                "issues": "https://drupal.org/project/issues/slick_views"
             }
         },
         {
