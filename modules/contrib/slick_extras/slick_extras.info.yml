@@ -1,0 +1,15 @@
+name: Slick Extras
+type: module
+description: 'Provides Slick carousel extras.'
+core_version_requirement: ^8 || ^9 || ^10
+package: Slick
+dependencies:
+  - slick:slick
+
+# Add a fake version so local drush and Git checkouts do not fail dependencies.
+# version: 8.x-1.x
+
+# Information added by Drupal.org packaging script on 2021-12-29
+version: '8.x-1.0-rc7'
+project: 'slick_extras'
+datestamp: 1640744513
