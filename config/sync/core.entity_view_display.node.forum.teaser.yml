@@ -6,16 +6,12 @@ dependencies:
     - core.entity_view_mode.node.teaser
     - field.field.node.forum.body
     - field.field.node.forum.comment_forum
+    - field.field.node.forum.field_metatag
     - field.field.node.forum.taxonomy_forums
     - node.type.forum
   module:
-    - field_layout
     - text
     - user
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings: {  }
 _core:
   default_config_hash: MK_j248n6esK84n87ulM_yPeqdkndKn94h4vTJC4wjw
 id: node.forum.teaser

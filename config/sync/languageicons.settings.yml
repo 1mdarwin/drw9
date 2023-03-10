@@ -6,8 +6,3 @@ show_block: true
 placement: replace
 size: 16x12
 path: 'modules/contrib/languageicons/flags/*.png'
-show: null
-actions: null
-form_build_id: form-Gdr5ijmYpPGQaJEIRs4_-EoEWtEHHlXlDdk1p822Pdc
-form_token: bWKxDgmh6MJ1SG8ciNiQLroTjnjaSIjW4HGBnKl3Z9s
-form_id: languageicons_settings

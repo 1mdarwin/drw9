@@ -6,20 +6,16 @@ dependencies:
     - core.entity_view_display.comment.comment_node_page.default
     - field.field.node.page.body
     - field.field.node.page.comment_node_page
+    - field.field.node.page.field_metatag
     - field.field.node.page.taxonomy_vocabulary_5
     - field.field.node.page.taxonomyextra
     - field.field.node.page.upload
     - node.type.page
   module:
     - comment
-    - field_layout
     - file
     - text
     - user
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings: {  }
 _core:
   default_config_hash: g1S3_GLaxq4l3I9RIca5Mlz02MxI2KmOquZpHw59akM
 id: node.page.default

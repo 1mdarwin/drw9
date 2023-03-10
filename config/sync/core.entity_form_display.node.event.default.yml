@@ -11,16 +11,9 @@ dependencies:
   module:
     - comment
     - datetime
-    - field_layout
-    - layout_discovery
     - metatag
     - path
     - text
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
 id: node.event.default
 targetEntityType: node
 bundle: event
@@ -79,6 +72,11 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox

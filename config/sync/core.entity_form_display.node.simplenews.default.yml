@@ -11,16 +11,9 @@ dependencies:
     - node.type.simplenews
   module:
     - comment
-    - field_layout
-    - layout_discovery
     - metatag
     - path
     - text
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
 id: node.simplenews.default
 targetEntityType: node
 bundle: simplenews
@@ -89,6 +82,11 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox

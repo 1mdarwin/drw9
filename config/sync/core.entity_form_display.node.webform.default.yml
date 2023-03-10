@@ -8,15 +8,8 @@ dependencies:
     - node.type.webform
   module:
     - comment
-    - field_layout
-    - layout_discovery
     - metatag
     - path
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
 id: node.webform.default
 targetEntityType: node
 bundle: webform
@@ -59,6 +52,11 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox

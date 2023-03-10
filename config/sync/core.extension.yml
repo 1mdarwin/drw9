@@ -28,23 +28,21 @@ module:
   ctools_views: 0
   datetime: 0
   dblog: 0
-  drw7to9: 0
   dynamic_page_cache: 0
   editor: 0
   entityqueue: 0
   field: 0
-  field_layout: 0
   field_ui: 0
   file: 0
   filter: 0
-  flexslider: 0
-  flexslider_fields: 0
-  flexslider_views: 0
   google_analytics: 0
   google_tag: 0
   help: 0
   history: 0
   image: 0
+  jquery_ui: 0
+  jquery_ui_autocomplete: 0
+  jquery_ui_menu: 0
   language: 0
   languageicons: 0
   layout_discovery: 0
@@ -69,7 +67,10 @@ module:
   shortcut: 0
   simple_sitemap: 0
   slick: 0
+  slick_devel: 0
+  slick_extras: 0
   slick_ui: 0
+  slick_views: 0
   statistics: 0
   system: 0
   taxonomy: 0
@@ -78,7 +79,6 @@ module:
   toolbar: 0
   tour: 0
   update: 0
-  upgrade_status: 0
   user: 0
   views_bootstrap: 0
   views_infinite_scroll: 0

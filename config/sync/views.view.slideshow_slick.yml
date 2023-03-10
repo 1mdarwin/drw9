@@ -1,4 +1,4 @@
-uuid: 503b4e9d-177b-4b82-9dd1-eb0365b5f21b
+uuid: 9f9f0657-ca05-4633-9fbf-33a73337717b
 langcode: es
 status: true
 dependencies:
@@ -6,14 +6,13 @@ dependencies:
     - field.storage.node.field_image
     - field.storage.node.field_url
     - node.type.ddblock_news_item
-    - responsive_image.styles.portafolio
   module:
-    - flexslider_views
+    - image
     - node
-    - responsive_image
+    - slick_views
     - user
-id: front_flexslider_es_
-label: 'Front Flexslider EN'
+id: slideshow_slick
+label: 'Slideshow Slick'
 module: views
 description: 'Sliders with frlexslider for frontpage in english'
 tag: ''
@@ -26,7 +25,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: 'Front Flexslider ES '
+      title: 'Front Slick'
       fields:
         field_url:
           id: field_url
@@ -204,10 +203,12 @@ display:
           empty_zero: false
           hide_alter_empty: true
           click_sort_column: target_id
-          type: responsive_image
+          type: image
           settings:
-            responsive_image_style: portafolio
             image_link: ''
+            image_style: ''
+            image_loading:
+              attribute: lazy
           group_column: ''
           group_columns: {  }
           group_rows: true
@@ -230,7 +231,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<div id=\"transparency\"></div>\r\n<div id=\"transpager\"></div>\r\n<div id=\"bodyslide\"><h2 class=\"titleh2\">{{title}}</h2></div>"
+            text: '{{title}}'
             make_link: false
             path: ''
             absolute: false
@@ -377,13 +378,46 @@ display:
             default_group_multiple: {  }
             group_items: {  }
       style:
-        type: flexslider
+        type: slick
         options:
-          grouping: {  }
-          flexslider: null
+          caption:
+            nothing: nothing
+            field_url: '0'
+            title: '0'
+            field_image: '0'
           optionset: default
-          captionfield: ''
+          class: ''
           id: ''
+          image: field_image
+          link: ''
+          overlay: ''
+          title: ''
+          vanilla: false
+          layout: ''
+          cache: 0
+          skin: grid
+          style: ''
+          grid: '1'
+          grid_medium: '1'
+          grid_small: '1'
+          overridables:
+            arrows: arrows
+            autoplay: autoplay
+            dots: dots
+            draggable: '0'
+            infinite: '0'
+            mouseWheel: '0'
+            randomize: '0'
+            variableWidth: '0'
+          thumbnail: ''
+          optionset_thumbnail: ''
+          skin_thumbnail: ''
+          thumbnail_caption: ''
+          thumbnail_effect: ''
+          thumbnail_position: ''
+          override: true
+          preserve_keys: false
+          visible_items: 1
       row:
         type: fields
       query:
@@ -416,7 +450,7 @@ display:
     display_options:
       rendering_language: '***LANGUAGE_language_interface***'
       display_extenders: {  }
-      block_description: 'Slider English'
+      block_description: 'Slider Slick'
     cache_metadata:
       max-age: -1
       contexts:
