@@ -53,7 +53,7 @@
         "drupal/slick_extras": "^1.0@RC",
         "drupal/slick_views": "^2.6",
         "drupal/twig_tweak": "^3.2.1",
-        "drupal/upgrade_status": "^3.",
+        "drupal/upgrade_status": "4.0.0",
         "drupal/views_bootstrap": "^5.4.0",
         "drupal/views_infinite_scroll": "^2.0.0",
         "drupal/webform": "^6.2",
