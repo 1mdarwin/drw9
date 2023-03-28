@@ -7,7 +7,7 @@
   content: '';
   vertical-align: super;
   display: inline-block;
-  background-image: url(../images/required.svg);
+  background-image: url(#{$barrio_path_images}required.svg);
   background-repeat: no-repeat;
   background-size: calc($input-height * 0.5) calc($input-height * 0.5);
   width: calc($input-height * 0.5);

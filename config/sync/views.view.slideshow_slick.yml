@@ -385,7 +385,7 @@ display:
             field_url: '0'
             title: '0'
             field_image: '0'
-          optionset: default
+          optionset: drw
           class: ''
           id: ''
           image: field_image
