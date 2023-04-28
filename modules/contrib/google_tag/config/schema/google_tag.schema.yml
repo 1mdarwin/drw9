@@ -1,10 +1,10 @@
 google_tag.settings:
   type: config_object
-  label: 'Module settings and default container settings'
+  label: 'Module settings and default tag container settings'
   mapping:
     use_collection:
       type: boolean
-      label: 'Allow multiple Tag Configsets'
+      label: 'Allow multiple tag containers'
     default_google_tag_entity:
       type: string
       label: 'Default Google Tag Entity'

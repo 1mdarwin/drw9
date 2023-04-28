@@ -313,6 +313,13 @@ class TagContainerForm extends EntityForm {
       $form['advanced_settings']['gtm'] = $this->gtmAdvancedFieldset($form_state);
     }
 
+    $form['status'] = [
+      '#type' => 'checkbox',
+      '#title' => 'Enabled',
+      '#default_value' => $this->entity->status(),
+      '#description' => 'Check this checkbox to enable Tag Container.',
+    ];
+
     return $form;
   }
 
@@ -518,14 +525,17 @@ class TagContainerForm extends EntityForm {
     parent::submitForm($form, $form_state);
 
     $default_id = '';
-    $tag_container_ids = $this->entity->get('tag_container_ids') ?? [];
+    // No need to fetch again from entity,
+    // ids should already be available in form state values now.
+    $tag_container_ids = [];
     foreach ($form_state->getValue('accounts') as $account) {
       if (!$default_id) {
         $default_id = $account['value'];
       }
       $tag_container_ids[$account['weight']] = $account['value'];
     }
-    $this->entity->set('tag_container_ids', $tag_container_ids);
+    // Need to save tags without weights otherwise it doesn't show up on UI.
+    $this->entity->set('tag_container_ids', array_values($tag_container_ids));
 
     if ($this->entity->id() === NULL) {
       // Set the ID and Label based on the first Google Tag.
@@ -536,6 +546,12 @@ class TagContainerForm extends EntityForm {
     }
 
     $this->submitConditionsForm($form, $form_state);
+
+    // Save config entity a first time so that the conditions form can be
+    // properly filtered.
+    // @see https://www.drupal.org/project/google_tag/issues/3345719#comment-15009415
+    // @see BlockForm::submitForm()
+    $this->entity->save();
 
     $this->submitEventsForm($form, $form_state);
 

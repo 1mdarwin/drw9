@@ -3,7 +3,7 @@ description: Sets up Google Tag
 type: module
 core_version_requirement: ^9.5 || ^10
 configure: google_tag.settings_form
-# Information added by Drupal.org packaging script on 2023-04-11
-version: '2.0.0'
+# Information added by Drupal.org packaging script on 2023-04-25
+version: '2.0.1'
 project: 'google_tag'
-datestamp: 1681230620
+datestamp: 1682446187
