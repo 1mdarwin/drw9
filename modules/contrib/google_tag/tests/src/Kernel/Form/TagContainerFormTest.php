@@ -33,6 +33,7 @@ final class TagContainerFormTest extends GoogleTagTestCase {
         ['value' => 'GT-XXXXXX', 'weight' => 0],
         ['value' => 'UA-XXXXXX', 'weight' => 1],
       ],
+      'status' => TRUE,
       'form_build_id' => (string) $this->cssSelect('input[name="form_build_id"]')[0]->attributes()->value[0],
       'form_token' => (string) $this->cssSelect('input[name="form_token"]')[0]->attributes()->value[0],
       'form_id' => (string) $this->cssSelect('input[name="form_id"]')[0]->attributes()->value[0],
@@ -51,6 +52,11 @@ final class TagContainerFormTest extends GoogleTagTestCase {
 
     $config = $this->config('google_tag.settings');
     self::assertNotEmpty($config->get('default_google_tag_entity'));
+    $google_tag_id = $config->get('default_google_tag_entity');
+    /** @var \Drupal\google_tag\Entity\TagContainer $google_tag */
+    $google_tag = $this->container->get('entity_type.manager')->getStorage('google_tag_container')->load($google_tag_id);
+    self::assertEmpty($google_tag->get('conditions'));
+    self::assertTrue($google_tag->status());
   }
 
 }

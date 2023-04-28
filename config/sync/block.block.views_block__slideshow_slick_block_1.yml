@@ -5,6 +5,7 @@ dependencies:
   config:
     - views.view.slideshow_slick
   module:
+    - system
     - views
   theme:
     - drw2020
@@ -22,4 +23,8 @@ settings:
   views_label: ''
   items_per_page: none
   exposed: {  }
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'

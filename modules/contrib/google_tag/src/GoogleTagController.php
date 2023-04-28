@@ -55,10 +55,10 @@ class GoogleTagController extends HtmlEntityFormController implements ContainerI
   }
 
   /**
-   * Enables a Container object.
+   * Enables a tag container object.
    *
    * @param \Drupal\google_tag\Entity\TagContainer $google_tag_container
-   *   The Container object to enable.
+   *   The tag container object to enable.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   A redirect response to the google_tag_container listing page.
@@ -69,10 +69,10 @@ class GoogleTagController extends HtmlEntityFormController implements ContainerI
   }
 
   /**
-   * Disables a Container object.
+   * Disables a tag container object.
    *
    * @param \Drupal\google_tag\Entity\TagContainer $google_tag_container
-   *   The Container object to disable.
+   *   The tag container object to disable.
    *
    * @return \Symfony\Component\HttpFoundation\RedirectResponse
    *   A redirect response to the google_tag_container listing page.
@@ -127,7 +127,7 @@ class GoogleTagController extends HtmlEntityFormController implements ContainerI
   }
 
   /**
-   * Used for Accessing the Container Listing page.
+   * Used for Accessing the tag container Listing page.
    *
    * @param \Drupal\Core\Session\AccountInterface $account
    *   Run access checks for this account.

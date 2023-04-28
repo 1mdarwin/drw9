@@ -33,6 +33,7 @@ use Drupal\Core\StringTranslation\StringTranslationTrait;
  *   config_export = {
  *     "id",
  *     "label",
+ *     "status",
  *     "weight",
  *     "tag_container_ids",
  *     "advanced_settings",

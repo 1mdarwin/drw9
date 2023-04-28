@@ -2,6 +2,9 @@
     "name": "drupal/google_tag",
     "type": "drupal-module",
     "license": "GPL-2.0-or-later",
+    "require": {
+        "php": "^7.4 || ^8"
+    },
     "require-dev": {
         "drupal/csp": "^1.0",
         "drupal/commerce": "^2.0",

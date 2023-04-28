@@ -7,9 +7,9 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\google_tag\Entity\TagContainer;
 
 /**
- * Defines a listing of container configuration entities.
+ * Defines a listing of tag container configuration entities.
  *
- * @see \Drupal\google_tag\Entity\Container
+ * @see \Drupal\google_tag\Entity\TagContainer
  */
 class TagContainerListBuilder extends ConfigEntityListBuilder {
 

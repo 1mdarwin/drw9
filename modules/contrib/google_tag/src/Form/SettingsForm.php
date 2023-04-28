@@ -88,13 +88,6 @@ class SettingsForm extends ConfigFormBase {
   public function buildForm(array $form, FormStateInterface $form_state) {
     $form['module'] = $this->moduleFieldset($form_state);
 
-    $form['settings'] = [
-      '#type' => 'vertical_tabs',
-      '#title' => $this->t('Default configset settings'),
-      '#description' => $this->t('The default container settings that apply to a new container.'),
-      '#attributes' => ['class' => ['google-tag']],
-    ];
-
     return parent::buildForm($form, $form_state);
   }
 
@@ -116,20 +109,13 @@ class SettingsForm extends ConfigFormBase {
 
     $fieldset['use_collection'] = [
       '#type' => 'checkbox',
-      '#title' => $this->t('Allow multiple Tag Configsets'),
-      '#description' => $this->t('For <strong>most</strong> users, only one Drupal tag configset is required. Each config represents a set of visibility conditions and events, and represents 1+ tags, or GTM containers. You only need multiple configsets if your config is different per tag.'),
+      '#title' => $this->t('Allow multiple Tag Containers'),
+      '#description' => $this->t('For <strong>most</strong> users, only one tag container is required. Each tag container represents a set of visibility conditions and events, and represents one or more measurement IDs. You only need multiple tag containers if your config is different per set of measurement IDs.'),
       '#default_value' => $config->get('use_collection'),
       '#disabled' => !empty($google_tags) && count($google_tags) > 1,
     ];
 
     return $fieldset;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    parent::validateForm($form, $form_state);
   }
 
   /**

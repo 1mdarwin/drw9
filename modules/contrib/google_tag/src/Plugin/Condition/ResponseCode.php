@@ -112,11 +112,11 @@ final class ResponseCode extends ConditionPluginBase implements ContainerFactory
     $config_response_codes = explode("\n", $response_code_list);
     // If there's no exception, check whether 200 response code is configured.
     if (!$this->requestStack->getCurrentRequest()->attributes->has('exception')) {
-      return in_array(Response::HTTP_OK, $config_response_codes, TRUE);
+      return in_array(Response::HTTP_OK, $config_response_codes);
     }
 
     $exception = $this->requestStack->getCurrentRequest()->attributes->get('exception');
-    return ($exception instanceof HttpExceptionInterface && in_array($exception->getStatusCode(), $config_response_codes, TRUE));
+    return ($exception instanceof HttpExceptionInterface && in_array($exception->getStatusCode(), $config_response_codes));
   }
 
   /**
