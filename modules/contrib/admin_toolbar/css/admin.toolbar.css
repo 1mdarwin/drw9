@@ -1,11 +1,8 @@
-/* All levels */
-
-.toolbar-tray-horizontal .menu-item--expanded {
-  background-color: #f5f5f2;
+#toolbar-bar {
+  z-index: 100000;
 }
 
-.toolbar-tray-horizontal .menu-item:hover,
-.toolbar-tray-horizontal .menu-item.hover-intent {
+.toolbar-tray-horizontal .menu-item:hover {
   background: #fff;
 }
 

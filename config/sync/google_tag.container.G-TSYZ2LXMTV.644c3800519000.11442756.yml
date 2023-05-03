@@ -3,11 +3,7 @@ langcode: en
 status: true
 dependencies:
   module:
-    - language
-    - node
     - system
-    - taxonomy
-    - user
 id: G-TSYZ2LXMTV.644c3800519000.11442756
 label: G-TSYZ2LXMTV
 weight: 0
@@ -27,46 +23,11 @@ dimensions_metrics:
     type: metric
     name: ''
     value: ''
-    remove: Remove
 conditions:
   request_path:
     id: request_path
     negate: true
     pages: "/admin\r\n/admin/*\r\n/batch\r\n/node/add*\r\n/node/*/*\r\n/user/*/*"
-  response_code:
-    id: response_code
-    negate: false
-    response_codes: ''
-  language:
-    id: language
-    negate: false
-    context_mapping:
-      language: '@language.current_language_context:language_interface'
-    langcodes: {  }
-  node_type:
-    id: node_type
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'
-    bundles: {  }
-  user_role:
-    id: user_role
-    negate: false
-    context_mapping:
-      user: '@user.current_user_context:current_user'
-    roles: {  }
-  'entity_bundle:node':
-    id: 'entity_bundle:node'
-    negate: false
-    context_mapping:
-      node: '@node.node_route_context:node'
-    bundles: {  }
-  'entity_bundle:taxonomy_term':
-    id: 'entity_bundle:taxonomy_term'
-    negate: false
-    context_mapping:
-      taxonomy_term: '@taxonomy_term.taxonomy_term_route_context:taxonomy_term'
-    bundles: {  }
 events:
   sign_up:
     method: CMS

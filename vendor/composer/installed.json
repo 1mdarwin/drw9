@@ -1539,18 +1539,18 @@
         },
         {
             "name": "drupal/admin_toolbar",
-            "version": "3.3.1",
-            "version_normalized": "3.3.1.0",
+            "version": "3.3.2",
+            "version_normalized": "3.3.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/admin_toolbar.git",
-                "reference": "3.3.1"
+                "reference": "3.3.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/admin_toolbar-3.3.1.zip",
-                "reference": "3.3.1",
-                "shasum": "e1fabe5d1521b73bc07aa3dd37b770c7e895780c"
+                "url": "https://ftp.drupal.org/files/projects/admin_toolbar-3.3.2.zip",
+                "reference": "3.3.2",
+                "shasum": "edb5d281e4940a655e706cfb9a0b367e8d37cbdb"
             },
             "require": {
                 "drupal/core": "^9.2 || ^10"
@@ -1561,8 +1561,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.3.1",
-                    "datestamp": "1682689348",
+                    "version": "3.3.2",
+                    "datestamp": "1683055364",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -9966,17 +9966,17 @@
         },
         {
             "name": "twig/twig",
-            "version": "v2.15.4",
-            "version_normalized": "2.15.4.0",
+            "version": "v2.15.5",
+            "version_normalized": "2.15.5.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twigphp/Twig.git",
-                "reference": "3e059001d6d597dd50ea7c74dd2464b4adea48d3"
+                "reference": "fc02a6af3eeb97c4bf5650debc76c2eda85ac22e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twigphp/Twig/zipball/3e059001d6d597dd50ea7c74dd2464b4adea48d3",
-                "reference": "3e059001d6d597dd50ea7c74dd2464b4adea48d3",
+                "url": "https://api.github.com/repos/twigphp/Twig/zipball/fc02a6af3eeb97c4bf5650debc76c2eda85ac22e",
+                "reference": "fc02a6af3eeb97c4bf5650debc76c2eda85ac22e",
                 "shasum": ""
             },
             "require": {
@@ -9989,7 +9989,7 @@
                 "psr/container": "^1.0",
                 "symfony/phpunit-bridge": "^4.4.9|^5.0.9|^6.0"
             },
-            "time": "2022-12-27T12:26:20+00:00",
+            "time": "2023-05-03T17:49:41+00:00",
             "type": "library",
             "extra": {
                 "branch-alias": {
@@ -10033,7 +10033,7 @@
             ],
             "support": {
                 "issues": "https://github.com/twigphp/Twig/issues",
-                "source": "https://github.com/twigphp/Twig/tree/v2.15.4"
+                "source": "https://github.com/twigphp/Twig/tree/v2.15.5"
             },
             "funding": [
                 {
