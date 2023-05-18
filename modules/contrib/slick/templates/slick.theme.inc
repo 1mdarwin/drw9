@@ -194,7 +194,7 @@ function template_preprocess_slick_slide(&$variables) {
 /**
  * Prepares variables for slick-grid.html.twig templates.
  *
- * Slick now uses core theme_item_list via BlazyGrid instead. This function is
+ * Slick now uses core theme_item_list via Blazy::grid instead. This function is
  * no longer functional, nor called. Should you need to modify its output, use
  * hook_slick_grid_item_alter instead, see SlickManager::buildGridItem().
  * This is still kept to avoid WSOD during careless update.

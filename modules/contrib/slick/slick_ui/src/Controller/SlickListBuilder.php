@@ -105,7 +105,7 @@ class SlickListBuilder extends SlickListBuilderBase {
     $build['skins_header']['#markup'] = $header;
     $build['skins_header']['#weight'] = 20;
 
-    $build['skins'] = $manager->grid($availaible_skins, $settings);
+    $build['skins'] = $manager->toGrid($availaible_skins, $settings);
     $build['skins']['#weight'] = 21;
     $build['skins']['#attached'] = $manager->attach($settings);
     $build['skins']['#attached']['library'][] = 'blazy/admin';

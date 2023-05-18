@@ -4,12 +4,12 @@ description: "Slick carousel, the last carousel you'll ever need."
 core_version_requirement: ^8.8 || ^9 || ^10
 package: Slick
 dependencies:
-  - blazy:blazy (>= 2.x)
+  - blazy:blazy (>= 2.14)
 
 # Add a fake version so local drush and Git checkouts do not fail dependencies.
 # version: 8.x-2.x
 
-# Information added by Drupal.org packaging script on 2022-12-15
-version: '8.x-2.7'
+# Information added by Drupal.org packaging script on 2023-05-16
+version: '8.x-2.8'
 project: 'slick'
-datestamp: 1671083550
+datestamp: 1684219582
