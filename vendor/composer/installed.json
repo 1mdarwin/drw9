@@ -1863,18 +1863,18 @@
         },
         {
             "name": "drupal/bootstrap_barrio",
-            "version": "5.5.10",
-            "version_normalized": "5.5.10.0",
+            "version": "5.5.12",
+            "version_normalized": "5.5.12.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/bootstrap_barrio.git",
-                "reference": "5.5.10"
+                "reference": "5.5.12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/bootstrap_barrio-5.5.10.zip",
-                "reference": "5.5.10",
-                "shasum": "4015cae184be99d08329878e609b814700a73e60"
+                "url": "https://ftp.drupal.org/files/projects/bootstrap_barrio-5.5.12.zip",
+                "reference": "5.5.12",
+                "shasum": "a78d13f0ca6e64d304eca007beb2a568bc1f7d6d"
             },
             "require": {
                 "drupal/core": "^9.4 || ^10",
@@ -1883,8 +1883,8 @@
             "type": "drupal-theme",
             "extra": {
                 "drupal": {
-                    "version": "5.5.10",
-                    "datestamp": "1679769012",
+                    "version": "5.5.12",
+                    "datestamp": "1683640215",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
