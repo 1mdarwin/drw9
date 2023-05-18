@@ -1,4 +1,20 @@
 
+Blazy 8.x-2.0-dev, 2023-05-15
+------------------------------
+- Fixed for non-refreshable cached options, e.g: missing Media switcher option.
+- Issue #3349558 by Carlitus: Trying to access array offset on value of type
+  null in Drupal\blazy\Field\BlazyEntityVanillaBase->getAvailableBundles().
+- Added supports for Views `group_rows` when Blazy is embedded by sub-modules.
+- Fixed for `use_theme_field` alter.
+- Fixed for few strict contracts.
+- Moved Drupal\blazy\Dejavu views-related classes into Drupal\blazy\Views.
+- Moved deprecated methods to bottom for easy removal at 3.x.
+- Added property $admin for sub-module filter integration.
+
+Blazy 8.x-2.0-dev, 2023-03-22
+------------------------------
+- Issue #3332385 by vacho: Missing schemas for _item and _uri.
+
 Blazy 8.x-2.0-dev, 2022-12-15
 ------------------------------
 - Issue #3317773 by Elvin - Albania Drupal Developer: Missing ALT attribute when

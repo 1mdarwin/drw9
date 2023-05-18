@@ -230,7 +230,7 @@ class Blazy {
   }
 
   /**
-   * Initialize BlazySettings object for convenient, and easy organization.
+   * Initialize BlazySettings object for convenience, and easy organization.
    */
   public static function settings(array $data = []): BlazySettings {
     return new BlazySettings($data);

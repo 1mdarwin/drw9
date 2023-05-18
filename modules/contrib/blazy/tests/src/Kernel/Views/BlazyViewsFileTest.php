@@ -9,7 +9,7 @@ use Drupal\blazy\Theme\BlazyViews;
 /**
  * Test Blazy Views integration.
  *
- * @coversDefaultClass \Drupal\blazy\Dejavu\BlazyStylePluginBase
+ * @coversDefaultClass \Drupal\blazy\Views\BlazyStylePluginBase
  *
  * @group blazy
  */

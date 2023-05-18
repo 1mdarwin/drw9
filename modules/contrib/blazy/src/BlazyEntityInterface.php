@@ -14,6 +14,22 @@ namespace Drupal\blazy;
 interface BlazyEntityInterface {
 
   /**
+   * Returns the blazy oembed service.
+   *
+   * @return \Drupal\blazy\Media\BlazyOEmbedInterface
+   *   The blazy oembed.
+   */
+  public function oembed();
+
+  /**
+   * Returns the blazy manager service.
+   *
+   * @return \Drupal\blazy\BlazyManagerInterface
+   *   The blazy manager.
+   */
+  public function blazyManager();
+
+  /**
    * Build image/video preview either using theme_blazy(), or view builder.
    *
    * @param array $data

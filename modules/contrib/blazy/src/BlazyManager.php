@@ -167,7 +167,7 @@ class BlazyManager extends BlazyManagerBase implements TrustedCallbackInterface 
 
     if ($attributes) {
       // Signals other modules if they want to use it.
-      // Cannot merge it into BlazyGrid (wrapper_)attributes, done as grid.
+      // Cannot merge it into Grid (wrapper_)attributes, done as grid.
       // Use case: Product variations, best served by ElevateZoom Plus.
       if (isset($element['#ajax_replace_class'])) {
         $element['#container_attributes'] = $attributes;

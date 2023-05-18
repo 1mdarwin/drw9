@@ -45,7 +45,7 @@ trait BlazyFormatterViewBaseTrait {
     $output = $this->manager->build($build);
 
     // Return without field markup, if not so configured, else field.html.twig.
-    return empty($settings['use_theme_field']) ? $output : [$output];
+    return empty($build['settings']['use_theme_field']) ? $output : [$output];
   }
 
   /**

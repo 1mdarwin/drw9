@@ -15,14 +15,14 @@ class BlazyEntity implements BlazyEntityInterface {
   /**
    * The blazy oembed service.
    *
-   * @var object
+   * @var \Drupal\blazy\Media\BlazyOEmbedInterface
    */
   protected $oembed;
 
   /**
    * The blazy manager service.
    *
-   * @var object
+   * @var \Drupal\blazy\BlazyManagerInterface
    */
   protected $blazyManager;
 
@@ -44,14 +44,14 @@ class BlazyEntity implements BlazyEntityInterface {
   }
 
   /**
-   * Returns the blazy oembed service.
+   * {@inheritdoc}
    */
   public function oembed() {
     return $this->oembed;
   }
 
   /**
-   * Returns the blazy manager service.
+   * {@inheritdoc}
    */
   public function blazyManager() {
     return $this->blazyManager;

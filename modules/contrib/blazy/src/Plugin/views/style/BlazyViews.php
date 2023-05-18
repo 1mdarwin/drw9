@@ -6,7 +6,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
 use Drupal\blazy\BlazyManagerInterface;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\Dejavu\BlazyStyleBaseTrait;
+use Drupal\blazy\Views\BlazyStyleBaseTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

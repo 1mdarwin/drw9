@@ -259,8 +259,8 @@ class Lightbox {
    */
   private static function buildCaptions($item, array $settings = []): array {
     $blazies = $settings['blazies'];
-    $title   = $item->title ?? '';
-    $alt     = $item->alt ?? '';
+    $title   = $blazies->get('image.title', $item->title ?? '');
+    $alt     = $blazies->get('image.alt', $item->alt ?? '');
     $delta   = $blazies->get('delta');
     $object  = NULL;
 
@@ -270,7 +270,7 @@ class Lightbox {
         ? $item->getEntity() : $item->entity;
     }
 
-    $entity  = $blazies->get('entity.instance') ?: $object;
+    $entity  = $blazies->get('entity.instance', $object);
     $caption = '';
 
     switch ($settings['box_caption']) {
