@@ -1,18 +1,16 @@
-uuid: a52e9363-3aa4-416b-9733-68ddb87ff3e4
-langcode: es
+uuid: e967d7d9-2601-4733-934a-8ac4112baabc
+langcode: en
 status: true
 dependencies:
-  module:
-    - menu_ui
-third_party_settings:
-  menu_ui:
-    available_menus:
-      - main-menu
-    parent: 'main-menu:0:'
+  enforced:
+    module:
+      - webform_node
+_core:
+  default_config_hash: BuY_3PjmYtRTSuvyFORJZUe0-TQiNXEE6yYQ_dkjxW8
 name: Webform
 type: webform
-description: 'Create a new form or questionnaire accessible to users. Submission results and statistics are recorded and accessible to privileged users.'
+description: 'A basic page with a webform attached.'
 help: ''
 new_revision: false
 preview_mode: 1
-display_submitted: false
+display_submitted: true

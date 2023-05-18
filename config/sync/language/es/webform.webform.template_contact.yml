@@ -1,0 +1,7 @@
+settings:
+  confirmation_message: "Se ha enviado su mensaje.\r\nLo contactaremos tan pronto como podamos hacerlo."
+handlers:
+  email_confirmation:
+    label: 'Confirmación por correo electrónico'
+  email_notification:
+    label: 'Aviso por correo electrónico'
