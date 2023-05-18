@@ -17,7 +17,7 @@ trait BlazyFormatterTrait {
   /**
    * The blazy manager service.
    *
-   * @var \Drupal\blazy\BlazyFormatterManager
+   * @var \Drupal\blazy\BlazyFormatterInterface
    */
   protected $formatter;
 
@@ -158,7 +158,7 @@ trait BlazyFormatterTrait {
       'view_mode'     => $this->viewMode,
     ];
 
-    foreach (['plugin_id', 'target_type'] as $key) {
+    foreach (array_keys($settings) as $key) {
       $data[$key] = $settings[$key];
     }
 

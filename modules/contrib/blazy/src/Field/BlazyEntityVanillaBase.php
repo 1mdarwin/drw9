@@ -95,8 +95,9 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
   protected function getAvailableBundles(): array {
     $target_type = $this->getFieldSetting('target_type');
     $views_ui    = $this->getFieldSetting('handler') == 'default';
-    $bundles     = $views_ui
-      ? [] : $this->getFieldSetting('handler_settings')['target_bundles'];
+    $handlers    = $this->getFieldSetting('handler_settings');
+    $targets     = $handlers ? $handlers['target_bundles'] : [];
+    $bundles     = $views_ui ? [] : $targets;
 
     // Fix for Views UI not recognizing Media bundles, unlike Formatters.
     if (empty($bundles)

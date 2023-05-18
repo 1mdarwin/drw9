@@ -5,7 +5,6 @@ namespace Drupal\slick;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\slick\Entity\Slick;
 use Drupal\blazy\Blazy;
-use Drupal\blazy\BlazyGrid;
 use Drupal\blazy\BlazyManagerBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -104,6 +103,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $settings += SlickDefault::htmlSettings();
     $defaults  = Slick::defaultSettings();
     $optionset = $build['optionset'];
+    $slicks    = $settings['slicks'] ?? NULL;
 
     // Adds helper class if thumbnail on dots hover provided.
     if (!empty($settings['thumbnail_effect']) && (!empty($settings['thumbnail_style']) || !empty($settings['thumbnail']))) {
@@ -135,7 +135,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
 
     // Checks for breaking changes: Slick 1.8.1 - 1.9.0 / Accessible Slick.
     // @todo Remove this once the library has permanent solutions.
-    if (!empty($settings['breaking'])) {
+    if ($slicks && $slicks->is('breaking')) {
       if ($optionset->getSetting('rows') == 1) {
         $js['rows'] = 0;
       }
@@ -249,7 +249,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       unset($slide);
     }
 
-    $result = $this->grid($output, $settings);
+    $result = $this->toGrid($output, $settings);
 
     $result['#attributes']['class'][] = empty($settings['unslick']) ? 'slide__content' : 'slick__grid';
 
@@ -265,12 +265,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
    * @todo remove and call self::toGrid() directly post Blazy:2.10.
    */
   public function grid(array $output, array $settings): array {
-    // @todo remove check post Blazy 2.10.
-    if (method_exists($this, 'toGrid')) {
-      return $this->toGrid($output, $settings);
-    }
-
-    return BlazyGrid::build($output, $settings);
+    return $this->toGrid($output, $settings);
   }
 
   /**
@@ -341,10 +336,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
     $settings += SlickDefault::htmlSettings();
     $options   = &$build['options'];
 
-    // @todo remove check post Blazy:2.10.
-    if (method_exists(Blazy::class, 'verify')) {
-      Blazy::verify($settings);
-    }
+    Blazy::verify($settings);
 
     $optionset = Slick::verifyOptionset($build, $settings['optionset']);
     $blazies   = $settings['blazies'] ?? NULL;
@@ -423,7 +415,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $optionset->whichLazy($settings);
     }
 
-    // @tdo remove settings after migration.
+    // @todo remove settings after migration.
     $settings['mousewheel'] = $wheel;
     $settings['down_arrow'] = $down_arrow = $optionset->getSetting('downArrow');
 

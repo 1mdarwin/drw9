@@ -48,6 +48,13 @@ abstract class BlazyBase implements BlazyInterface {
   protected $entityTypeManager;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManager
+   */
+  protected $languageManager;
+
+  /**
    * The module handler service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -74,13 +81,6 @@ abstract class BlazyBase implements BlazyInterface {
    * @var \Drupal\Core\Cache\CacheBackendInterface
    */
   protected $cache;
-
-  /**
-   * The language manager.
-   *
-   * @var \Drupal\Core\Language\LanguageManager
-   */
-  protected $languageManager;
 
   /**
    * The cached data.
@@ -120,106 +120,104 @@ abstract class BlazyBase implements BlazyInterface {
   }
 
   /**
-   * Returns the app root.
+   * {@inheritdoc}
    */
   public function root() {
     return $this->root;
   }
 
   /**
-   * Returns the language manager service.
+   * {@inheritdoc}
    */
   public function languageManager() {
     return $this->languageManager;
   }
 
   /**
-   * Returns the entity repository service.
+   * {@inheritdoc}
    */
   public function entityRepository() {
     return $this->entityRepository;
   }
 
   /**
-   * Returns the entity type manager service.
+   * {@inheritdoc}
    */
   public function entityTypeManager() {
     return $this->entityTypeManager;
   }
 
   /**
-   * Returns the module handler service.
+   * {@inheritdoc}
    */
   public function moduleHandler() {
     return $this->moduleHandler;
   }
 
   /**
-   * Returns the renderer service.
+   * {@inheritdoc}
    */
   public function renderer() {
     return $this->renderer;
   }
 
   /**
-   * Returns the config factory service.
+   * {@inheritdoc}
    */
   public function configFactory() {
     return $this->configFactory;
   }
 
   /**
-   * Returns the cache service.
+   * {@inheritdoc}
    */
   public function cache() {
     return $this->cache;
   }
 
   /**
-   * Returns any config, or keyed by the $setting_name.
+   * {@inheritdoc}
    */
-  public function config($setting_name = '', $settings = 'blazy.settings') {
-    $config  = $this->configFactory->get($settings);
+  public function config($key = NULL, $group = 'blazy.settings') {
+    $config  = $this->configFactory->get($group);
     $configs = $config->get();
     unset($configs['_core']);
-    return empty($setting_name) ? $configs : $config->get($setting_name);
+    return empty($key) ? $configs : $config->get($key);
   }
 
   /**
-   * Returns a shortcut for entity type storage.
+   * {@inheritdoc}
    */
   public function getStorage($type = 'media') {
     return $this->entityTypeManager->getStorage($type);
   }
 
   /**
-   * Returns the entity query object for this entity type.
+   * {@inheritdoc}
    */
   public function entityQuery($type, $conjunction = 'AND') {
     return $this->getStorage($type)->getQuery($conjunction);
   }
 
   /**
-   * Returns a shortcut for loading an entity: image_style, slick, etc.
+   * {@inheritdoc}
    */
   public function load($id, $type = 'image_style') {
+    if (strpos($type, '.settings') !== FALSE) {
+      return $this->config($id, $type);
+    }
     return $this->getStorage($type)->load($id);
   }
 
   /**
-   * Returns a shortcut for loading multiple entities.
+   * {@inheritdoc}
    */
   public function loadMultiple($type = 'image_style', $ids = NULL) {
     return $this->getStorage($type)->loadMultiple($ids);
   }
 
   /**
-   * Returns a shortcut for loading entity by its properties.
-   *
-   * The only difference from EntityStorageBase::loadByProperties() is the
-   * explicit access TRUE specific for content entities, FALSE config ones.
-   *
-   * @see https://www.drupal.org/node/3201242
+   * {@inheritdoc}
    */
   public function loadByProperties(
     array $values,
@@ -239,7 +237,7 @@ abstract class BlazyBase implements BlazyInterface {
   }
 
   /**
-   * Returns a shortcut for loading entity by its UUID.
+   * {@inheritdoc}
    */
   public function loadByUuid($uuid, $type = 'file') {
     return $this->entityRepository->loadEntityByUuid($type, $uuid);

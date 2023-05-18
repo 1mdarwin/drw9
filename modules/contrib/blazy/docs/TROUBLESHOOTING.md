@@ -212,7 +212,7 @@ A: It does. Your eyes are likely being tricked. **Solutions**:
    * Add enough min-height per breakpoint to the grid root container. See
      and override `blazy.nativegrid.css` to better suit your site needs.
    * If you don't want all these headaches, consider a more robust GridStack. It
-     may take care these type of issues for you.
+     may take care these types of issues for you.
 
 ### 13. BLAZY IMAGES DO NOT LOAD
 Images does not load within hidden tabs, or other hidden containers:  

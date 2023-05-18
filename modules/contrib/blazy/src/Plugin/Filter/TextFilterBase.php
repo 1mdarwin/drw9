@@ -44,6 +44,13 @@ abstract class TextFilterBase extends FilterBase implements ContainerFactoryPlug
   protected $blazyManager;
 
   /**
+   * The sub-modules admin service.
+   *
+   * @var \Drupal\blazy\Form\BlazyAdminInterface
+   */
+  protected $admin;
+
+  /**
    * The filter HTML plugin.
    *
    * @var \Drupal\filter\Plugin\Filter\FilterHtml

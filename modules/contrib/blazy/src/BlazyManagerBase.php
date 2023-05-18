@@ -125,20 +125,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
   }
 
   /**
-   * Returns the app root.
-   */
-  public function root() {
-    return $this->root;
-  }
-
-  /**
-   * Returns the language manager service.
-   */
-  public function languageManager() {
-    return $this->languageManager;
-  }
-
-  /**
    * Sets the language manager service.
    *
    * @todo remove and use DI at 3.x+ post sub-classes updates.
@@ -150,6 +136,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns the entity repository service.
+   *
+   * @todo deprecated for BlazyInterface::entityRepository once extended.
    */
   public function getEntityRepository() {
     return $this->entityRepository;
@@ -157,6 +145,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns the entity type manager.
+   *
+   * @todo deprecated for BlazyInterface::entityTypeManager once extended.
    */
   public function getEntityTypeManager() {
     return $this->entityTypeManager;
@@ -164,6 +154,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns the module handler.
+   *
+   * @todo deprecated for BlazyInterface::moduleHandler once extended.
    */
   public function getModuleHandler() {
     return $this->moduleHandler;
@@ -171,6 +163,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns the renderer.
+   *
+   * @todo deprecated for BlazyInterface::renderer once extended.
    */
   public function getRenderer() {
     return $this->renderer;
@@ -178,6 +172,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns the config factory.
+   *
+   * @todo deprecated for BlazyInterface::configFactory once extended.
    */
   public function getConfigFactory() {
     return $this->configFactory;
@@ -185,6 +181,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns the cache.
+   *
+   * @todo deprecated for BlazyInterface::cache once extended.
    */
   public function getCache() {
     return $this->cache;
@@ -192,6 +190,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns any config, or keyed by the $setting_name.
+   *
+   * @todo deprecated for BlazyInterface::config once extended.
    */
   public function configLoad($setting_name = '', $settings = 'blazy.settings') {
     $config  = $this->configFactory->get($settings);
@@ -201,53 +201,9 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
   }
 
   /**
-   * Returns a shortcut for entity type storage.
-   */
-  public function getStorage($type = 'media') {
-    return $this->entityTypeManager->getStorage($type);
-  }
-
-  /**
-   * Returns the entity query object for this entity type.
-   */
-  public function entityQuery($type, $conjunction = 'AND') {
-    return $this->getStorage($type)->getQuery($conjunction);
-  }
-
-  /**
-   * Returns a shortcut for loading entity by its properties.
-   *
-   * The only difference from EntityStorageBase::loadByProperties() is the
-   * explicit access TRUE specific for content entities, FALSE config ones.
-   *
-   * @see https://www.drupal.org/node/3201242
-   */
-  public function loadByProperties(
-    array $values,
-    $type = 'file',
-    $access = TRUE,
-    $conjunction = 'AND',
-    $condition = 'IN'
-  ): array {
-    $storage = $this->getStorage($type);
-    $query = $storage->getQuery($conjunction);
-
-    $query->accessCheck($access);
-    $this->buildPropertyQuery($query, $values, $condition);
-
-    $result = $query->execute();
-    return $result ? $storage->loadMultiple($result) : [];
-  }
-
-  /**
-   * Returns a shortcut for loading entity by its UUID.
-   */
-  public function loadByUuid($uuid, $type = 'file') {
-    return $this->entityRepository->loadEntityByUuid($type, $uuid);
-  }
-
-  /**
    * Returns a shortcut for loading a config entity: image_style, slick, etc.
+   *
+   * @todo deprecated for BlazyInterface::load once extended.
    */
   public function entityLoad($id, $type = 'image_style') {
     return $this->getStorage($type)->load($id);
@@ -255,6 +211,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
   /**
    * Returns a shortcut for loading multiple configuration entities.
+   *
+   * @todo deprecated for BlazyInterface::loadMultiple once extended.
    */
   public function entityLoadMultiple($type = 'image_style', $ids = NULL) {
     return $this->getStorage($type)->loadMultiple($ids);
@@ -269,53 +227,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
 
     $this->moduleHandler->alter('blazy_attach', $load, $attach);
     return $load;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCachedData(
-    $cid,
-    array $data = [],
-    $reset = FALSE,
-    $alter = NULL,
-    array $context = []
-  ): array {
-    if (!isset($this->cachedData[$cid]) || $reset) {
-      $cache = $this->cache->get($cid);
-      if ($cache && $result = $cache->data) {
-        $this->cachedData[$cid] = $result;
-      }
-      else {
-        // Allows empty array to trigger hook_alter.
-        if (is_array($data)) {
-          $this->moduleHandler->alter($alter ?: $cid, $data, $context);
-        }
-
-        // Only if we have data, cache them.
-        if ($data && is_array($data)) {
-          if (isset($data[1])) {
-            $data = array_unique($data);
-          }
-
-          ksort($data);
-
-          $count = count($data);
-          $tags = Cache::buildTags($cid, ['count:' . $count]);
-          $this->cache->set($cid, $data, Cache::PERMANENT, $tags);
-        }
-
-        $this->cachedData[$cid] = $data;
-      }
-    }
-    return $this->cachedData[$cid] ? array_filter($this->cachedData[$cid]) : [];
-  }
-
-  /**
-   * Alias for BlazyCache::metadata() to forget looking up unknown classes.
-   */
-  public function getCacheMetadata(array $build = []) {
-    return BlazyCache::metadata($build);
   }
 
   /**
@@ -353,19 +264,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
    */
   public function getImageEffects(): array {
     $cid = 'blazy_image_effects';
-    if ($data = $this->getCachedData($cid)) {
-      return $data;
-    }
-
     $effects[] = 'blur';
-    return $this->getCachedData($cid, $effects, TRUE);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLibrariesPath($name, $base_path = FALSE): ?string {
-    return Blazy::getLibrariesPath($name, $base_path);
+    return $this->getCachedData($cid, $effects);
   }
 
   /**
@@ -373,18 +273,8 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
    */
   public function getLightboxes(): array {
     $cid = 'blazy_lightboxes';
-    if ($data = $this->getCachedData($cid)) {
-      return $data;
-    }
     $data = BlazyCache::lightboxes($this->root);
-    return $this->getCachedData($cid, $data, TRUE);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getPath($type, $name, $absolute = FALSE): ?string {
-    return Blazy::getPath($type, $name, $absolute);
+    return $this->getCachedData($cid, $data);
   }
 
   /**
@@ -402,11 +292,9 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
   }
 
   /**
-   * Alias for BlazyImage::thumbnail() to forget looking up unknown classes.
-   *
-   * @todo make it into interface after sub-modules removal.
+   * {@inheritdoc}
    */
-  public function getThumbnail(array $settings = [], $item = NULL) {
+  public function getThumbnail(array $settings, $item = NULL) {
     return BlazyImage::thumbnail($settings, $item);
   }
 
@@ -415,13 +303,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
    */
   public function isBlazy(array &$settings, array $data = []): void {
     Check::blazyOrNot($settings, $data);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function moduleExists($name): bool {
-    return $this->moduleHandler->moduleExists($name);
   }
 
   /**
@@ -489,13 +370,6 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
   }
 
   /**
-   * {@inheritdoc}
-   */
-  public function toGrid(array $items, array $settings): array {
-    return Blazy::grid($items, $settings);
-  }
-
-  /**
    * Overrides data massaged by [blazy|slick|splide, etc.]_settings_alter().
    */
   public function postSettingsAlter(array &$settings, $entity = NULL): void {
@@ -541,6 +415,160 @@ abstract class BlazyManagerBase implements BlazyManagerInterface {
       // Cast scalars to array so we can consistently use an IN condition.
       $query->condition($name, (array) $value, $condition);
     }
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function root() {
+    return $this->root;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function languageManager() {
+    return $this->languageManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function getStorage($type = 'media') {
+    return $this->entityTypeManager->getStorage($type);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function entityQuery($type, $conjunction = 'AND') {
+    return $this->getStorage($type)->getQuery($conjunction);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function loadByProperties(
+    array $values,
+    $type = 'file',
+    $access = TRUE,
+    $conjunction = 'AND',
+    $condition = 'IN'
+  ): array {
+    $storage = $this->getStorage($type);
+    $query = $storage->getQuery($conjunction);
+
+    $query->accessCheck($access);
+    $this->buildPropertyQuery($query, $values, $condition);
+
+    $result = $query->execute();
+    return $result ? $storage->loadMultiple($result) : [];
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function loadByUuid($uuid, $type = 'file') {
+    return $this->entityRepository->loadEntityByUuid($type, $uuid);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function getCachedData(
+    $cid,
+    array $data = [],
+    $reset = FALSE,
+    $alter = NULL,
+    array $context = []
+  ): array {
+    if (!isset($this->cachedData[$cid]) || $reset) {
+      $cache = $this->cache->get($cid);
+      if (!$reset && $cache && $result = $cache->data) {
+        $this->cachedData[$cid] = $result;
+      }
+      else {
+        // Allows empty array to trigger hook_alter.
+        if (is_array($data)) {
+          $this->moduleHandler->alter($alter ?: $cid, $data, $context);
+        }
+
+        // Only if we have data, cache them.
+        if ($data && is_array($data)) {
+          if (isset($data[1])) {
+            $data = array_unique($data);
+          }
+
+          ksort($data);
+
+          $count = count($data);
+          $tags = Cache::buildTags($cid, ['count:' . $count]);
+          $this->cache->set($cid, $data, Cache::PERMANENT, $tags);
+        }
+
+        $this->cachedData[$cid] = $data;
+      }
+    }
+    return $this->cachedData[$cid] ? array_filter($this->cachedData[$cid]) : [];
+  }
+
+  /**
+   * Alias for BlazyCache::metadata() to forget looking up unknown classes.
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function getCacheMetadata(array $build = []) {
+    return BlazyCache::metadata($build);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function getLibrariesPath($name, $base_path = FALSE): ?string {
+    return Blazy::getLibrariesPath($name, $base_path);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function getPath($type, $name, $absolute = FALSE): ?string {
+    return Blazy::getPath($type, $name, $absolute);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function moduleExists($name): bool {
+    return $this->moduleHandler->moduleExists($name);
+  }
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove for BlazyInterface once extended.
+   */
+  public function toGrid(array $items, array $settings): array {
+    return Blazy::grid($items, $settings);
   }
 
   /**

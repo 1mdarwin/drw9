@@ -39,9 +39,19 @@ class CheckItem {
       ->set('image.uri', $uri);
 
     // File cache tags.
-    if ($item && ($file = ($item->entity ?? NULL))) {
-      $tags = $file->getCacheTags();
-      $blazies->set('cache.file.tags', $tags);
+    if ($item) {
+      if ($file = ($item->entity ?? NULL)) {
+        $tags = $file->getCacheTags();
+        $blazies->set('cache.file.tags', $tags);
+      }
+
+      $alt = empty($item->alt) ? "" : trim($item->alt);
+      $blazies->set('image.alt', $alt);
+
+      // Do not output an empty 'title' attribute.
+      if (isset($item->title) && (mb_strlen($item->title) != 0)) {
+        $blazies->set('image.title', trim($item->title));
+      }
     }
 
     // @todo remove after sub-modules.

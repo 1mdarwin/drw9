@@ -1,0 +1,18 @@
+uuid: c4ac3dfa-7276-4f72-9f1a-7377c458bd1b
+langcode: es
+status: true
+dependencies:
+  config:
+    - entityqueue.entity_queue.servicios
+id: entity_subqueue.servicios.created
+field_name: created
+entity_type: entity_subqueue
+bundle: servicios
+label: 'Fecha de autoría'
+description: 'The time that the subqueue was created.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: created

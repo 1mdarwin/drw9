@@ -72,6 +72,7 @@ officially supported now, Jan 2020.
    This is CSS easing fallback for non-supporting browsers.
 
 3. [Blazy](https://drupal.org/project/blazy) 2.10+ since Slick:2.7  
+
    To reduce DRY stuffs, and as a bonus, advanced lazyloading such as delay lazyloading for below-fold sliders, iframe, (fullscreen) CSS background lazyloading, breakpoint dependent multi-serving images, lazyload ahead for smoother UX. Check out Blazy installation guides!
 
 

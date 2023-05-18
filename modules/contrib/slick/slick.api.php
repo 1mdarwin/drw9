@@ -569,7 +569,7 @@ function hook_slick_options_alter(array &$options, array $settings, Slick $slick
  * @param object $items
  *   The \Drupal\Core\Field\FieldItemListInterface items.
  *
- * @see \Drupal\blazy\BlazyFormatterManager::buildSettings()
+ * @see \Drupal\blazy\BlazyFormatter::buildSettings()
  * @see \Drupal\slick\SlickFormatter::buildSettings()
  *
  * @ingroup slick_api

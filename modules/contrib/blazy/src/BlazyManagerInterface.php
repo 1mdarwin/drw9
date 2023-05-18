@@ -21,39 +21,6 @@ interface BlazyManagerInterface {
   public function attach(array $attach = []);
 
   /**
-   * Returns cached data identified by its cache ID, normally alterable data.
-   *
-   * @param string $cid
-   *   The cache ID, als used for the hook_alter.
-   * @param array $data
-   *   The given data to cache.
-   * @param bool $reset
-   *   Whether to re-fetch in case not cached yet.
-   * @param string $alter
-   *   The specific alter for the hook_alter, otherwise $cid.
-   * @param array $context
-   *   The optional context or info for the hook_alter.
-   *
-   * @return array
-   *   The cache data.
-   */
-  public function getCachedData(
-    $cid,
-    array $data = [],
-    $reset = FALSE,
-    $alter = NULL,
-    array $context = []
-  ): array;
-
-  /**
-   * Returns the supported image effects.
-   *
-   * @return array
-   *   The supported image effects.
-   */
-  public function getImageEffects(): array;
-
-  /**
    * Returns drupalSettings for IO.
    *
    * @param array $attach
@@ -65,17 +32,12 @@ interface BlazyManagerInterface {
   public function getIoSettings(array $attach = []): object;
 
   /**
-   * Alias for Blazy::getLibrariesPath() to get libraries path.
+   * Returns the supported image effects.
    *
-   * @param string $name
-   *   The library name.
-   * @param bool $base_path
-   *   Whether to prefix it with an a base path, deprecated.
-   *
-   * @return string
-   *   The path to library or NULL if not found.
+   * @return array
+   *   The supported image effects.
    */
-  public function getLibrariesPath($name, $base_path = FALSE): ?string;
+  public function getImageEffects(): array;
 
   /**
    * Gets the supported lightboxes.
@@ -86,27 +48,25 @@ interface BlazyManagerInterface {
   public function getLightboxes(): array;
 
   /**
-   * Alias for Blazy::getPath() to get module or theme path.
-   *
-   * @param string $type
-   *   The object type, can be module or theme.
-   * @param string $name
-   *   The object name.
-   * @param bool $absolute
-   *   Whether to return an absolute path.
-   *
-   * @return string
-   *   The path to object or NULL if not found.
-   */
-  public function getPath($type, $name, $absolute = FALSE): ?string;
-
-  /**
    * Provides alterable display styles.
    *
    * @return array
    *   The supported display styles.
    */
   public function getStyles(): array;
+
+  /**
+   * Alias for BlazyImage::thumbnail() to forget looking up unknown classes.
+   *
+   * @param array $settings
+   *   The given settings.
+   * @param object $item
+   *   The optional image item.
+   *
+   * @return array
+   *   The thumbnail image style, or empty.
+   */
+  public function getThumbnail(array $settings, $item = NULL);
 
   /**
    * Checks for Blazy formatter such as from within a Views style plugin.
@@ -174,6 +134,65 @@ interface BlazyManagerInterface {
   public function postSettings(array &$settings): void;
 
   /**
+   * Returns cached data identified by its cache ID, normally alterable data.
+   *
+   * @param string $cid
+   *   The cache ID, als used for the hook_alter.
+   * @param array $data
+   *   The given data to cache.
+   * @param bool $reset
+   *   Whether to re-fetch in case not cached yet.
+   * @param string $alter
+   *   The specific alter for the hook_alter, otherwise $cid.
+   * @param array $context
+   *   The optional context or info for the hook_alter.
+   *
+   * @return array
+   *   The cache data.
+   *
+   * @todo remove after BlazyInterface at/ before 3.x.
+   */
+  public function getCachedData(
+    $cid,
+    array $data = [],
+    $reset = FALSE,
+    $alter = NULL,
+    array $context = []
+  ): array;
+
+  /**
+   * Alias for Blazy::getLibrariesPath() to get libraries path.
+   *
+   * @param string $name
+   *   The library name.
+   * @param bool $base_path
+   *   Whether to prefix it with an a base path, deprecated.
+   *
+   * @return string
+   *   The path to library or NULL if not found.
+   *
+   * @todo remove after BlazyInterface at/ before 3.x.
+   */
+  public function getLibrariesPath($name, $base_path = FALSE): ?string;
+
+  /**
+   * Alias for Blazy::getPath() to get module or theme path.
+   *
+   * @param string $type
+   *   The object type, can be module or theme.
+   * @param string $name
+   *   The object name.
+   * @param bool $absolute
+   *   Whether to return an absolute path.
+   *
+   * @return string
+   *   The path to object or NULL if not found.
+   *
+   * @todo remove after BlazyInterface at/ before 3.x.
+   */
+  public function getPath($type, $name, $absolute = FALSE): ?string;
+
+  /**
    * Returns items wrapped by theme_item_list(), can be a grid, or plain list.
    *
    * Alias for Blazy::grid() for sub-modules and easy organization later.
@@ -185,6 +204,8 @@ interface BlazyManagerInterface {
    *
    * @return array
    *   The modified array of grid items.
+   *
+   * @todo remove after BlazyInterface at/ before 3.x.
    */
   public function toGrid(array $items, array $settings): array;
 

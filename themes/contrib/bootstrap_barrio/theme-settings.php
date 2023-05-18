@@ -101,7 +101,24 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#collapsible' => TRUE,
     '#collapsed' => TRUE,
   ];
-  $form['layout']['container']['bootstrap_barrio_fluid_container'] = [
+  $form['layout']['container']['bootstrap_barrio_container'] = [
+    '#type' => 'select',
+    '#title' => t('Container'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_container') ??
+      (theme_get_setting('bootstrap_barrio_fluid_container') ? 'container-fluid' : 'container'),
+    '#options' => [
+      'container' => t('Container'),
+      'container-md' => t('Container Medium'),
+      'container-lg' => t('Container Large'),
+      'container-xl' => t('Container Extra Large'),
+      'container-xxl' => t('Container Extra Extra Large'),
+      'container-fluid' => t('Container Fluid'),
+    ],
+    '#description' => t('Use <code>.container-XX</code> class. See @bootstrap_fluid_containers_link.', [
+      '@bootstrap_fluid_containers_link' => Link::fromTextAndUrl('Containers in the Bootstrap 5 documentation', Url::fromUri('https://getbootstrap.com/docs/5.2/layout/overview/', ['absolute' => TRUE, 'fragment' => 'containers']))->toString(),
+    ]),
+  ];
+/*  $form['layout']['container']['bootstrap_barrio_fluid_container'] = [
     '#type' => 'checkbox',
     '#title' => t('Fluid container'),
     '#default_value' => theme_get_setting('bootstrap_barrio_fluid_container'),
@@ -109,7 +126,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
       '@bootstrap_fluid_containers_link' => Link::fromTextAndUrl('Containers in the Bootstrap 5 documentation', Url::fromUri('https://getbootstrap.com/docs/5.2/layout/overview/', ['absolute' => TRUE, 'fragment' => 'containers']))->toString(),
     ]),
   ];
-
+*/
   // List of regions.
   $theme = \Drupal::theme()->getActiveTheme()->getName();
   $region_list = system_region_list($theme);
@@ -262,7 +279,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#group' => 'bootstrap',
   ];
 
-  // Buttons.
+  // Node.
   $form['components']['node'] = [
     '#type' => 'details',
     '#title' => t('Node'),
@@ -274,6 +291,24 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#title' => t('Hide node label'),
     '#default_value' => theme_get_setting('bootstrap_barrio_hide_node_label'),
     '#description' => t('Hide node label for all display. Usefull when using f.e. Layout Builder and you want full control of your output'),
+  ];
+
+  // Breadcrumbs.
+  $form['components']['breadcrumb'] = [
+    '#type' => 'details',
+    '#title' => t('Breadcrumb'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  ];
+  $form['components']['breadcrumb']['bootstrap_barrio_breadcrumb_divider'] = [
+    '#type' => 'textfield',
+    '#title' => t('Breadcrumb Divider'),
+    '#size' => 60,
+    '#maxlength' => 256,
+    '#default_value' => theme_get_setting('bootstrap_barrio_breadcrumb_divider'),
+    '#description' => t('Change the default breadcrumb divider. See @bootstrap_breadcrumb_link.', [
+      '@bootstrap_breadcrumb_link' => Link::fromTextAndUrl('breadcrumb in the Bootstrap 5.x documentation', Url::fromUri('https://getbootstrap.com/docs/5.2/components/breadcrumb/', ['absolute' => TRUE, 'fragment' => 'outline-buttons']))->toString(),
+    ]),
   ];
 
   // Buttons.
@@ -525,6 +560,16 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#type' => 'checkbox',
     '#title' => t('Float Labels'),
     '#default_value' => theme_get_setting('bootstrap_barrio_float_label'),
+  ];
+  $form['components']['form']['bootstrap_barrio_checkbox'] = [
+    '#type' => 'select',
+    '#title' => t('Checkbox & Radio Style'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_checkbox'),
+    '#empty_option' => t('Default'),
+    '#options' => [
+      'switch' => t('Switch'),
+      'button' => t('Button'),
+    ],
   ];
 
   // Affix.
@@ -816,6 +861,7 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
     '#options' => [
       'table-striped' => t('Striped'),
       'table-bordered' => t('Bordered'),
+      'table-striped-columns' => t('Striped Columns'),
     ],
   ];
   $form['colors']['tables']['bootstrap_barrio_table_hover'] = [

@@ -326,8 +326,8 @@ function bootstrap_barrio_preprocess_page(&$variables) {
 
   // Declare container layout.
   $variables['container_navbar'] = theme_get_setting('bootstrap_barrio_navbar_container');
-  $variables['container'] = theme_get_setting('bootstrap_barrio_fluid_container') ? 'container-fluid' : 'container';
-
+  $variables['container'] = theme_get_setting('bootstrap_barrio_container') ??
+    (theme_get_setting('bootstrap_barrio_fluid_container') ? 'container-fluid' : 'container');
 }
 
 /**
@@ -440,6 +440,7 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
         $variables['element']['#type'] != 'date' &&
         $variables['element']['#type'] != 'time' &&
         $variables['element']['#type'] != 'search' &&
+        $variables['element']['#type'] != 'select' &&
         $variables['element']['#type'] != 'textarea' &&
         $variables['element']['#type'] != 'managed_file') {
     $variables['float_label'] = theme_get_setting('bootstrap_barrio_float_label');
@@ -448,6 +449,17 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
 
   if (isset($variables['element']['#attributes'])) {
     $variables['input_attributes'] = new Attribute($variables['element']['#attributes']);
+  }
+
+  if ($variables['element']['#type'] == 'radio' || $variables['element']['#type'] == 'checkbox') {
+    switch (theme_get_setting('bootstrap_barrio_checkbox')) {
+      case 'switch':
+        $variables['checkbox_style'] = 'form-switch';
+        break;
+      case 'button':
+        $variables['checkbox_style'] = 'form-button';
+        break;
+    }
   }
 }
 
@@ -619,10 +631,18 @@ function bootstrap_barrio_theme_suggestions_status_messages_alter(array &$sugges
     case 'toasts':
       $suggestions[] = 'status_messages__toasts';
       break;
-
     case 'alerts':
       $suggestions[] = 'status_messages__alerts';
       break;
+  }
+}
+
+/**
+ * Implements hook_preprocess_HOOK() for breadcrumb.
+ */
+function bootstrap_barrio_preprocess_breadcrumb(&$variables) {
+  if (theme_get_setting('bootstrap_barrio_breadcrumb_divider') && theme_get_setting('bootstrap_barrio_breadcrumb_divider') != '') {
+    $variables['breadcrumb_divider'] = sprintf("--bs-breadcrumb-divider: '%s';", theme_get_setting('bootstrap_barrio_breadcrumb_divider'));
   }
 }
 
@@ -761,6 +781,7 @@ function bootstrap_barrio_preprocess_input(&$variables) {
     $variables['element']['#type'] != 'date' &&
     $variables['element']['#type'] != 'time' &&
     $variables['element']['#type'] != 'managed_file' &&
+    $variables['element']['#type'] != 'select' &&
     $variables['element']['#type'] != 'search' &&
     $variables['element']['#type'] != 'textarea' &&
     theme_get_setting('bootstrap_barrio_float_label') && 

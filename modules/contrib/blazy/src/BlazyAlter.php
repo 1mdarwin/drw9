@@ -239,6 +239,18 @@ class BlazyAlter {
 
       // @todo add `formatter` key if the above is proven right.
       $blazies->set('view', $current, TRUE);
+
+      // @todo remove when Blazy has use_theme_field option. This is so to avoid
+      // emptiness when enabling Views `Display all values in the same row`, and
+      // Blazy is embedded inside sub-modules.
+      if ($name = $blazies->get('field.name')) {
+        if ($field = ($view->field[$name] ?? NULL)) {
+          $options = $field->options ?? [];
+          if (!empty($options['group_rows'])) {
+            $settings['use_theme_field'] = TRUE;
+          }
+        }
+      }
     }
   }
 
