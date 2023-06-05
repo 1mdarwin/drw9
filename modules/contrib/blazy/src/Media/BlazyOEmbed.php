@@ -11,7 +11,7 @@ use Drupal\media\IFrameUrlHelper;
 use Drupal\media\MediaInterface;
 use Drupal\media\OEmbed\ResourceFetcherInterface;
 use Drupal\media\OEmbed\UrlResolverInterface;
-use Drupal\blazy\BlazyManagerInterface;
+use Drupal\blazy\BlazyManager;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -51,7 +51,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   /**
    * The Media oEmbed Resource.
    *
-   * @var \Drupal\media\OEmbed\Resource[]
+   * @var \Drupal\media\OEmbed\Resource
    */
   protected $resource;
 
@@ -74,7 +74,14 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
    *
    * @todo remove ::imageFactory (was for UGC), not used anywhere since 2.6.
    */
-  public function __construct(RequestStack $request, ResourceFetcherInterface $resource_fetcher, UrlResolverInterface $url_resolver, IFrameUrlHelper $iframe_url_helper, ImageFactory $image_factory, BlazyManagerInterface $blazy_manager) {
+  public function __construct(
+    RequestStack $request,
+    ResourceFetcherInterface $resource_fetcher,
+    UrlResolverInterface $url_resolver,
+    IFrameUrlHelper $iframe_url_helper,
+    ImageFactory $image_factory,
+    BlazyManager $blazy_manager
+  ) {
     $this->request = $request;
     $this->resourceFetcher = $resource_fetcher;
     $this->urlResolver = $url_resolver;
@@ -99,37 +106,28 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   }
 
   /**
-   * Returns the Media oEmbed resource fecther.
+   * {@inheritdoc}
    */
   public function getResourceFetcher() {
     return $this->resourceFetcher;
   }
 
   /**
-   * Returns the Media oEmbed url resolver fecthers.
+   * {@inheritdoc}
    */
   public function getUrlResolver() {
     return $this->urlResolver;
   }
 
   /**
-   * Returns the Media oEmbed url resolver fecthers.
+   * {@inheritdoc}
    */
   public function getIframeUrlHelper() {
     return $this->iframeUrlHelper;
   }
 
   /**
-   * Returns the image factory.
-   *
-   * @todo remove ::imageFactory (was for UGC), not used anywhere since 2.6.
-   */
-  public function imageFactory() {
-    return $this->imageFactory;
-  }
-
-  /**
-   * Returns the blazy manager.
+   * {@inheritdoc}
    */
   public function blazyManager() {
     return $this->blazyManager;
@@ -139,12 +137,8 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
    * {@inheritdoc}
    */
   public function getResource($input_url) {
-    if (!isset($this->resource[hash('md2', $input_url)])) {
-      $resource_url = $this->urlResolver->getResourceUrl($input_url, 0, 0);
-      $this->resource[hash('md2', $input_url)] = $this->resourceFetcher->fetchResource($resource_url);
-    }
-
-    return $this->resource[hash('md2', $input_url)];
+    $resource_url = $this->urlResolver->getResourceUrl($input_url, 0, 0);
+    return $this->resourceFetcher->fetchResource($resource_url);
   }
 
   /**
@@ -164,7 +158,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
   }
 
   /**
-   * Checks the given input URL.
+   * {@inheritdoc}
    */
   public function checkInputUrl(array &$settings): void {
     $blazies = $settings['blazies'];
@@ -200,21 +194,24 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
 
     // Iframe URL may be valid, but not stored as a Media entity.
     if ($input && $resource = $this->getResource($input)) {
-      $title = $resource->getTitle() ?: $title;
-      $type = $resource->getType();
+      // PHP-stan always assumes it an array.
+      if (is_object($resource)) {
+        $title = $resource->getTitle() ?: $title;
+        $type = $resource->getType();
 
-      // VEF has valid local URI, other hard-coded unmanaged files might not.
-      if (!BlazyFile::isValidUri($uri)) {
-        // All we have here is external images. URI validity is not crucial.
-        if (!empty($resource->getThumbnailUrl())) {
-          $uri = $resource->getThumbnailUrl()->getUri();
+        // VEF has valid local URI, other hard-coded unmanaged files might not.
+        if (!BlazyFile::isValidUri($uri)) {
+          // All we have here is external images. URI validity is not crucial.
+          if (!empty($resource->getThumbnailUrl())) {
+            $uri = $resource->getThumbnailUrl()->getUri();
+          }
         }
-      }
 
-      // Respect hard-coded width and height since no UI for all these here.
-      if (!$height) {
-        $width = $resource->getThumbnailWidth() ?: $resource->getWidth();
-        $height = $resource->getThumbnailHeight() ?: $resource->getHeight();
+        // Respect hard-coded width and height since no UI for all these here.
+        if (!$height) {
+          $width = $resource->getThumbnailWidth() ?: $resource->getWidth();
+          $height = $resource->getThumbnailHeight() ?: $resource->getHeight();
+        }
       }
     }
 
@@ -272,7 +269,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
       $this->fromMedia($build, $entity);
     }
 
-    /** @var Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $entity */
+    /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $entity */
     if (!BlazyImage::isValidItem($build)) {
       if ($item = BlazyImage::fromAny($entity, $build['settings'])) {
         // @todo revert if issues $build = NestedArray::mergeDeep($build, $item);
@@ -438,6 +435,15 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
     // To preserve old behaviors till sub-modules updated to ::build() at 2.9.
     // The arguments are made similar to ::build() with the new arguments.
     $this->fromMediaOrAny($build, $media);
+  }
+
+  /**
+   * Returns the image factory.
+   *
+   * @todo remove ::imageFactory (was for UGC), not used anywhere since 2.6.
+   */
+  public function imageFactory() {
+    return $this->imageFactory;
   }
 
 }

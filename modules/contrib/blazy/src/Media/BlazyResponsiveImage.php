@@ -165,27 +165,30 @@ class BlazyResponsiveImage {
    * @param object $resimage
    *   The responsive image style entity.
    *
-   * @return array|mixed
+   * @return array
    *   The responsive image styles and cache tags.
    */
   public static function styles($resimage): array {
     $id = $resimage->id();
 
-    if (!isset(static::$styles[$id])) {
+    if (!isset(self::$styles[$id])) {
       $cache_tags = $resimage->getCacheTags();
-      $image_styles = \blazy()->entityLoadMultiple('image_style', $resimage->getImageStyleIds());
+      $image_styles = [];
+      if ($manager = Blazy::service('blazy.manager')) {
+        $image_styles = $manager->loadMultiple('image_style', $resimage->getImageStyleIds());
+      }
 
       foreach ($image_styles as $image_style) {
         $cache_tags = Cache::mergeTags($cache_tags, $image_style->getCacheTags());
       }
 
-      static::$styles[$id] = [
+      self::$styles[$id] = [
         'caches' => $cache_tags,
         'names' => array_keys($image_styles),
         'styles' => $image_styles,
       ];
     }
-    return static::$styles[$id];
+    return self::$styles[$id];
   }
 
   /**
@@ -226,7 +229,7 @@ class BlazyResponsiveImage {
           $uri = $blazies->get('image.uri');
 
           // @todo use dimensions based on the chosen fallback.
-          if ($uri && $style = $blazy->entityLoad($id, 'image_style')) {
+          if ($uri && $style = $blazy->load($id, 'image_style')) {
             $data_src = BlazyFile::transformRelative($uri, $style);
             $tn_uri = $style->buildUri($uri);
 
@@ -284,7 +287,7 @@ class BlazyResponsiveImage {
     // While fields can only have one image style per field.
     if ($applicable && $blazy = Blazy::service('blazy.manager')) {
       if (!$unstyled && (!$style || $multiple)) {
-        $style = $blazy->entityLoad($_style, 'responsive_image_style');
+        $style = $blazy->load($_style, 'responsive_image_style');
       }
     }
 

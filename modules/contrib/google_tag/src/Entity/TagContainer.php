@@ -154,15 +154,25 @@ class TagContainer extends ConfigEntityBase implements EntityWithPluginCollectio
    *   Gtm Id.
    */
   public function getGtmId(): string {
+    return current($this->getGtmIds(1)) ?: '';
+  }
+
+  /**
+   * Return the Gtm id.
+   *
+   * @return array
+   *   Gtm Id.
+   */
+  public function getGtmIds($length = NULL): array {
     $default_tag = array_slice(
       array_filter(
         $this->tag_container_ids,
         static fn ($id) => preg_match(self::GOOGLE_TAG_MANAGER_MATCH, $id)
       ),
       0,
-      1
+      $length
     );
-    return current($default_tag) ?: '';
+    return $default_tag ?: [];
   }
 
   /**

@@ -26,9 +26,7 @@ class BlazyAdminUnitTest extends UnitTestCase {
     $this->entityDisplayRepository = $this->createMock('\Drupal\Core\Entity\EntityDisplayRepositoryInterface');
     $this->typedConfig = $this->createMock('\Drupal\Core\Config\TypedConfigManagerInterface');
     $this->blazyManager = $this->createMock('\Drupal\blazy\BlazyManagerInterface');
-    $this->dateFormatter = $this->getMockBuilder('Drupal\Core\Datetime\DateFormatter')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->dateFormatter = $this->createMock('\Drupal\Core\Datetime\DateFormatter');
   }
 
   /**

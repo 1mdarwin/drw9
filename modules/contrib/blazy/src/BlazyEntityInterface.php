@@ -54,8 +54,8 @@ interface BlazyEntityInterface {
    * @param string $fallback
    *   The fallback content when all fails, probably just entity label.
    *
-   * @return array|bool
-   *   The renderable array of the view builder, or false if not applicable.
+   * @return array
+   *   The renderable array of the view builder, or empty if not applicable.
    */
   public function view($entity, array $settings = [], $fallback = ''): array;
 

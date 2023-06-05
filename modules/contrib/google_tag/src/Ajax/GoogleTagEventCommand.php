@@ -12,6 +12,20 @@ use Drupal\Core\Ajax\CommandInterface;
 final class GoogleTagEventCommand implements CommandInterface {
 
   /**
+   * The Event Name.
+   *
+   * @var string
+   */
+  private string $event_name;
+
+  /**
+   * Event Data.
+   *
+   * @var array
+   */
+  private array $data;
+
+  /**
    * GoogleTagEventCommand constructor.
    *
    * @param string $event_name
@@ -20,9 +34,11 @@ final class GoogleTagEventCommand implements CommandInterface {
    *   Event data.
    */
   public function __construct(
-    private string $event_name,
-    private array $data
+    string $event_name,
+    array $data
   ) {
+    $this->event_name = $event_name;
+    $this->data = $data;
   }
 
   /**

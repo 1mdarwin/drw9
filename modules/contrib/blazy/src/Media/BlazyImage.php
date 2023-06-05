@@ -60,7 +60,7 @@ class BlazyImage {
   public static function getCrop($style): ?object {
     $id = $style->id();
 
-    if (!isset(static::$crop[$id])) {
+    if (!isset(self::$crop[$id])) {
       $output = NULL;
 
       foreach ($style->getEffects() as $effect) {
@@ -69,9 +69,9 @@ class BlazyImage {
           break;
         }
       }
-      static::$crop[$id] = $output;
+      self::$crop[$id] = $output;
     }
-    return static::$crop[$id];
+    return self::$crop[$id];
   }
 
   /**
@@ -85,7 +85,7 @@ class BlazyImage {
   public static function cropDimensions(array &$settings, $style): void {
     $id = $style->id();
 
-    if (!isset(static::$isCropSet[$id])) {
+    if (!isset(self::$isCropSet[$id])) {
       // If image style contains crop, sets dimension once, and let all inherit.
       if ($crop = self::getCrop($style)) {
         $blazies = $settings['blazies'];
@@ -100,7 +100,7 @@ class BlazyImage {
           ->set('is.dimensions', TRUE);
       }
 
-      static::$isCropSet[$id] = TRUE;
+      self::$isCropSet[$id] = TRUE;
     }
   }
 
@@ -183,7 +183,7 @@ class BlazyImage {
    * @param array $settings
    *   The optional settings.
    *
-   * @return mixed
+   * @return object|null
    *   The object of image item, or NULL.
    *
    * @todo simplify this, like everything else. An obvious confusion here.
@@ -227,7 +227,7 @@ class BlazyImage {
       $output = self::fromContent($options);
     }
 
-    // @todo remove after sub-modules, require by thumbnails till updated.
+    // @todo remove after sub-modules, required by thumbnails till updated.
     $uri = $settings['uri'] = $uri ?: BlazyFile::uri($output, $settings);
     $blazies->set('image.uri', $uri);
 
@@ -317,7 +317,9 @@ class BlazyImage {
     $extensions = ['svg'];
 
     // If we have added extensions.
-    if ($unstyles = $blazies->get('ui.unstyled_extensions', [])) {
+    if ($unstyles = $blazies->get('ui.unstyled_extensions')) {
+      // @todo remove after another check.
+      $unstyles = strip_tags($unstyles);
       $extensions = array_merge($extensions,
       array_map('trim', explode(' ', mb_strtolower($unstyles))));
       $extensions = array_unique($extensions);
@@ -423,7 +425,7 @@ class BlazyImage {
       foreach (['box', 'box_media', 'image', 'thumbnail'] as $key) {
         if (!$blazies->get($key . '.style') || $multiple) {
           if ($_style = ($settings[$key . '_style'] ?? '')) {
-            if ($entity = $blazy->entityLoad($_style, 'image_style')) {
+            if ($entity = $blazy->load($_style, 'image_style')) {
               $blazies->set($key . '.style', $entity)
                 ->set($key . '.id', $entity->id());
             }
@@ -468,7 +470,7 @@ class BlazyImage {
     $uri  = $data[$_uri] ?? '';
     $key  = hash('md2', ($style->id() . $uri . $initial));
 
-    if (!isset(static::$styleId[$key])) {
+    if (!isset(self::$styleId[$key])) {
       $_width  = $initial ? '_width' : 'width';
       $_height = $initial ? '_height' : 'height';
       $width   = $data[$_width] ?? NULL;
@@ -486,12 +488,12 @@ class BlazyImage {
       // image properties, not related to the final output printed here.
       // See self::dimensions().
       // @todo re-check if the container needs image style dimensions.
-      static::$styleId[$key] = [
+      self::$styleId[$key] = [
         'width' => $dim['width'],
         'height' => $dim['height'],
       ];
     }
-    return static::$styleId[$key];
+    return self::$styleId[$key];
   }
 
   /**
@@ -502,7 +504,7 @@ class BlazyImage {
    * - UGC image URL, with likely invalid URI due to hard-coded markdown, etc.
    * - Responsive image vs. regular image style.
    *
-   * @requires \Drupal\blazy\Blazy::prepare()
+   * @requires \Drupal\blazy\BlazyInternal::prepare()
    *
    * @see self::prepare()
    * @see self::background()
@@ -602,11 +604,11 @@ class BlazyImage {
       $valid = $values[0]['target_id'] ?? FALSE;
 
       // Do not proceed if it is a Media entity video. This means File here.
-      if ($valid && $exist = method_exists($field, 'referencedEntities')) {
+      if ($valid && method_exists($field, 'referencedEntities')) {
         // The reference can be File or Media.
         // If image, even if multi-value, we can only have one stage per slide.
         /** @var \Drupal\file\Entity\File $reference */
-        /** @var Drupal\media\MediaInterface $reference */
+        /** @var \Drupal\media\MediaInterface $reference */
         $reference = $field->referencedEntities()[0] ?? NULL;
         $ok = FALSE;
         $object = $field;

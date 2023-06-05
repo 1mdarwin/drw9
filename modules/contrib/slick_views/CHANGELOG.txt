@@ -1,4 +1,8 @@
 
+Slick Views 8.x-2.0-dev, 2022-05-28
+-----------------------------------
+- Updated to Slick:2.7 and Blazy:2.10+.
+
 Slick Views 8.x-2.0-dev, 2021-12-17
 -----------------------------------
 - Added Drupal ^10.

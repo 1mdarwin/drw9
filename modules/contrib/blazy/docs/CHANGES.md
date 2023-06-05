@@ -1,6 +1,8 @@
 
 ***
 ## <a name="changes"></a>NOTABLE CHANGES
+* _Blazy 2.16_, 2023/06/02:
+   Hotdamn fix for D10 breaking changes with formatter lightboxes.
 * _Blazy 2.13_, 2022/05/31:
    [#3282785](https://drupal.org/node/3282785), hotdamn fix.
 * _Blazy 2.12_, 2022/05/28:

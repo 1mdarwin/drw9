@@ -49,7 +49,7 @@ class BlazyVideoFormatter extends BlazyVideoBase {
   /**
    * Build the blazy elements.
    */
-  public function buildElements(array &$build, $items) {
+  public function buildElements(array &$build, $items, $langcode) {
     $settings = &$build['settings'];
     $blazies  = $settings['blazies'];
     $entity   = $items->getEntity();

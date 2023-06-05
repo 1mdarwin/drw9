@@ -10,6 +10,7 @@ use Drupal\editor\Entity\Editor;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyAlter;
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\BlazyManager;
 use Drupal\blazy\Theme\BlazyTheme;
 use Drupal\blazy\Theme\BlazyViews;
 use Drupal\blazy\Utility\BlazyMarkdown;
@@ -17,10 +18,10 @@ use Drupal\blazy\Utility\BlazyMarkdown;
 /**
  * Provides a convenient shortcut for procedural hooks, or static methods.
  *
- * @return class
+ * @return \Drupal\blazy\BlazyManager
  *   The Blazy manager class instance.
  */
-function blazy() {
+function blazy(): BlazyManager {
   static $manager;
 
   if (!isset($manager)) {
@@ -85,8 +86,11 @@ function blazy_preprocess_media_oembed_iframe(array &$variables) {
  * Implements hook_preprocess_field().
  */
 function blazy_preprocess_field(array &$variables) {
-  if (isset($variables['element']['#blazy'])
-    || !empty($variables['element']['#third_party_settings']['blazy']['blazy'])) {
+  $element = $variables['element'];
+  $formatter = $element['#formatter'] ?? 'null';
+  $blazy = strpos($formatter, 'blazy') !== FALSE;
+  if ($blazy || isset($element['#blazy'])
+    || !empty($element['#third_party_settings']['blazy']['blazy'])) {
     BlazyTheme::field($variables);
   }
 }
@@ -124,8 +128,7 @@ function blazy_config_schema_info_alter(array &$definitions) {
  */
 function blazy_library_info_alter(&$libraries, $extension) {
   $core = $extension === 'core'
-    && (isset($libraries['once'])
-    || isset($libraries['drupal.debounce']));
+    && (isset($libraries['once']) || isset($libraries['drupal.debounce']));
   if ($extension === 'blazy' || $extension === 'media' || $core) {
     BlazyAlter::libraryInfoAlter($libraries, $extension);
   }
@@ -202,7 +205,7 @@ function blazy_filter_cleanup($module = 'blazy') {
   foreach ($config_storage->listAll('filter.format') as $config_name) {
     $config = $config_factory->getEditable($config_name);
 
-    if ($plugin = $config->get($filter)) {
+    if ($config->get($filter)) {
       $dependencies = $config->get('dependencies');
       $modules = array_diff($dependencies['module'], [$module]);
 
@@ -232,7 +235,7 @@ function blazy_filter_cleanup($module = 'blazy') {
  * @todo remove VEF/VEM from blazy:8.x-3.0 for core Media integration.
  */
 function blazy_field_formatter_info_alter(array &$info) {
-  if (blazy()->getModuleHandler()->moduleExists('video_embed_field')) {
+  if (blazy()->moduleHandler()->moduleExists('video_embed_field')) {
     Blazy::fieldFormatterInfoAlter($info);
   }
 }

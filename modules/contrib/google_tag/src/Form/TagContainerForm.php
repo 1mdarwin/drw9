@@ -6,6 +6,7 @@ use Drupal\Component\Utility\Html;
 use Drupal\Core\Condition\ConditionManager;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\SubformState;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\Context\ContextRepositoryInterface;
 use Drupal\Core\Plugin\PluginFormInterface;
@@ -21,7 +22,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class TagContainerForm extends EntityForm {
 
-  use FormWithPluginConfigurationFormsTrait;
   // @todo move this into something pluggable.
   use GoogleTagManagerSettingsTrait;
   /**
@@ -94,7 +94,9 @@ class TagContainerForm extends EntityForm {
   public function form(array $form, FormStateInterface $form_state) {
     $form = parent::form($form, $form_state);
 
-    self::setGatheredContexts($this->contextRepository, $form_state);
+    // Store the gathered contexts in the form state for other objects to use
+    // during form building.
+    $form_state->setTemporaryValue('gathered_contexts', $this->contextRepository->getAvailableContexts());
 
     // The main premise of entity forms is that we get to work with an entity
     // object at all times instead of checking submitted values from the form
@@ -417,7 +419,11 @@ class TagContainerForm extends EntityForm {
       /** @var \Drupal\Core\Condition\ConditionInterface $condition */
       $condition = $this->conditionManager->createInstance($condition_id, $conditions[$condition_id] ?? []);
       $form_state->set(['conditions', $condition_id], $condition);
-      $form[$condition_id] = self::buildPluginConfigurationForm('condition_tabs', $condition, $form_state);
+      $condition_form = $condition->buildConfigurationForm([], $form_state);
+      $condition_form['#type'] = 'details';
+      $condition_form['#title'] = $condition->getPluginDefinition()['label'];
+      $condition_form['#group'] = 'condition_tabs';
+      $form[$condition_id] = $condition_form;
     }
 
     return $form;
@@ -461,7 +467,7 @@ class TagContainerForm extends EntityForm {
     foreach (array_keys($events) as $event_id) {
       /** @var \Drupal\Core\Plugin\PluginFormInterface $configurable_event */
       if ($configurable_event = $form_state->get(['events', $event_id])) {
-        self::validatePluginConfigurationForm($configurable_event, $form['events_settings'][$event_id]['event_form'], $form, $form_state);
+        $configurable_event->validateConfigurationForm($form['events_settings'][$event_id]['event_form'], SubformState::createForSubform($form['events_settings'][$event_id]['event_form'], $form, $form_state));
       }
     }
   }
@@ -484,7 +490,7 @@ class TagContainerForm extends EntityForm {
     $event_data = [];
     foreach (array_keys($events) as $event_id) {
       if ($event_plugin = $form_state->get(['events', $event_id])) {
-        self::submitPluginConfigurationForm($event_plugin, $form['events_settings'][$event_id]['event_form'], $form, $form_state);
+        $event_plugin->submitConfigurationForm($form['events_settings'][$event_id]['event_form'], SubformState::createForSubform($form['events_settings'][$event_id]['event_form'], $form, $form_state));
       }
       else {
         /** @var \Drupal\google_tag\Plugin\GoogleTag\Event\GoogleTagEventInterface $event_plugin */
@@ -510,11 +516,11 @@ class TagContainerForm extends EntityForm {
       // However, certain form elements may return it as 0/1. Cast here to
       // ensure the data is in the expected type.
       if (array_key_exists('negate', $values)) {
-        $form_state->setValue([$condition_id, 'negate'], (bool) $values['negate']);
+        $form_state->setValue(['conditions', $condition_id, 'negate'], (bool) $values['negate']);
       }
       /** @var \Drupal\Core\Condition\ConditionInterface $condition */
       $condition = $form_state->get(['conditions', $condition_id]);
-      self::validatePluginConfigurationForm($condition, $form['conditions'][$condition_id], $form, $form_state);
+      $condition->validateConfigurationForm($form['conditions'][$condition_id], SubformState::createForSubform($form['conditions'][$condition_id], $form, $form_state));
     }
   }
 
@@ -546,14 +552,16 @@ class TagContainerForm extends EntityForm {
     }
 
     $this->submitConditionsForm($form, $form_state);
+    $this->submitEventsForm($form, $form_state);
 
     // Save config entity a first time so that the conditions form can be
     // properly filtered.
     // @see https://www.drupal.org/project/google_tag/issues/3345719#comment-15009415
     // @see BlockForm::submitForm()
+    // @TODO: I believe that with the fix on https://www.drupal.org/project/google_tag/issues/3357105
+    // this is no longer necessary, but as BlockForm::submitForm() is still
+    // doing we are leaving it for now.
     $this->entity->save();
-
-    $this->submitEventsForm($form, $form_state);
 
     $this->messenger()->addStatus($this->t('The configuration options have been saved.'));
 
@@ -584,8 +592,10 @@ class TagContainerForm extends EntityForm {
     foreach ($form_state->getValue('conditions') as $condition_id => $values) {
       /** @var \Drupal\Core\Condition\ConditionInterface $condition */
       $condition = $form_state->get(['conditions', $condition_id]);
-      self::submitPluginConfigurationForm($condition, $form['conditions'][$condition_id], $form, $form_state);
+      $condition->submitConfigurationForm($form['conditions'][$condition_id], SubformState::createForSubform($form['conditions'][$condition_id], $form, $form_state));
       $configuration = $condition->getConfiguration();
+      // Due to strict type checking, cast negation to a boolean.
+      $configuration['negate'] = (bool) $configuration['negate'];
       // Update the insertion conditions on the container.
       $this->entity->getInsertionConditions()->addInstanceId($condition_id, $configuration);
     }

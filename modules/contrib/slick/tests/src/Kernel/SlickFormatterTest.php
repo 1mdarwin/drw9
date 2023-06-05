@@ -4,6 +4,7 @@ namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
+use Drupal\Tests\slick\Traits\SlickKernelTrait;
 use Drupal\Slick\SlickDefault;
 
 /**
@@ -15,6 +16,7 @@ use Drupal\Slick\SlickDefault;
 class SlickFormatterTest extends BlazyKernelTestBase {
 
   use SlickUnitTestTrait;
+  use SlickKernelTrait;
 
   /**
    * Modules to enable.

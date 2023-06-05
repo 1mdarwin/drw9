@@ -42,7 +42,7 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
       // Add the entity to cache dependencies so to clear when it is updated.
       if (!empty($build['items'][$delta])) {
         $this->formatter
-          ->getRenderer()
+          ->renderer()
           ->addCacheableDependency($build['items'][$delta], $entity);
       }
 
@@ -60,7 +60,7 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
     // Sub-modules always flag `vanilla` as required, -- configurable, or not.
     // The "paragraphs_type" entity type did not specify a view_builder handler.
     if (!empty($settings['vanilla'])) {
-      $manager = $this->formatter->getEntityTypeManager();
+      $manager = $this->formatter->entityTypeManager();
       $type = $entity->getEntityTypeId();
 
       if ($manager->hasHandler($type, 'view_builder')) {

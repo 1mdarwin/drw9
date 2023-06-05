@@ -5,6 +5,8 @@ namespace Drupal\google_tag;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\google_tag\Entity\TagContainer;
+use Drupal\Core\Entity\EntityTypeInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines a listing of tag container configuration entities.
@@ -14,6 +16,22 @@ use Drupal\google_tag\Entity\TagContainer;
 class TagContainerListBuilder extends ConfigEntityListBuilder {
 
   /**
+   * The config factory that knows what is overwritten.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+   /**
+   * {@inheritdoc}
+   */
+  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+    $instance = parent::createInstance($container, $entity_type);
+    $instance->configFactory = $container->get('config.factory');
+    return $instance;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function buildHeader() {
@@ -21,6 +39,7 @@ class TagContainerListBuilder extends ConfigEntityListBuilder {
     $header['id'] = t('Machine name');
     $header['container_ids'] = t('Container ID(s)');
     $header['weight'] = t('Weight');
+    $header['status'] = $this->t('Status');
     return $header + parent::buildHeader();
   }
 
@@ -34,6 +53,11 @@ class TagContainerListBuilder extends ConfigEntityListBuilder {
     $row['id'] = $entity->id();
     $row['container_ids'] = implode(', ', $entity->get('tag_container_ids'));
     $row['weight'] = $entity->get('weight');
+    $config = $this->configFactory->get('google_tag.container.' . $entity->id());
+    $row['status'] = $config->get('status') ? 'active' : 'inactive';
+    if ($config->get('status') != $entity->status()) {
+      $row['status'] .= ' (overwritten)';
+    }
     return $row + parent::buildRow($entity);
   }
 

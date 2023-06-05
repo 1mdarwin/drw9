@@ -21,28 +21,30 @@ class BlazyField {
   public static function getOrViewMedia($file, array $settings, $rendered = TRUE) {
     // Might be accessed by tests, or anywhere outside the workflow.
     Blazy::verify($settings);
-
-    $manager = Blazy::service('blazy.manager');
     $blazies = $settings['blazies'];
-    [$type] = explode('/', $file->getMimeType(), 2);
 
-    if ($type == 'video') {
-      // As long as you are not being too creative by renaming or changing
-      // fields provided by core, this should be your good friend.
-      $blazies->set('media.source', 'video_file');
-      $blazies->set('media.source_field', 'field_media_video_file');
-    }
+    if ($manager = Blazy::service('blazy.manager')) {
+      [$type] = explode('/', $file->getMimeType(), 2);
 
-    $source_field = $blazies->get('media.source_field');
-    if ($blazies->get('media.source') && $source_field) {
-      $media = $manager->loadByProperties([
-        $source_field => ['fid' => $file->id()],
-      ], 'media', TRUE);
+      if ($type == 'video') {
+        // As long as you are not being too creative by renaming or changing
+        // fields provided by core, this should be your good friend.
+        $blazies->set('media.source', 'video_file');
+        $blazies->set('media.source_field', 'field_media_video_file');
+      }
 
-      if ($media = reset($media)) {
-        return $rendered ? BlazyMedia::build($media, $settings) : $media;
+      $source_field = $blazies->get('media.source_field');
+      if ($blazies->get('media.source') && $source_field) {
+        $media = $manager->loadByProperties([
+          $source_field => ['fid' => $file->id()],
+        ], 'media', TRUE);
+
+        if ($media = reset($media)) {
+          return $rendered ? BlazyMedia::build($media, $settings) : $media;
+        }
       }
     }
+
     return [];
   }
 

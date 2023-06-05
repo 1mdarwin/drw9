@@ -3,8 +3,8 @@
 namespace Drupal\blazy\Theme;
 
 use Drupal\Component\Serialization\Json;
-use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\Media\BlazyImage;
 use Drupal\blazy\Media\BlazyResponsiveImage;
@@ -236,6 +236,7 @@ class BlazyAttribute {
       $attributes['src'] = $embed_url;
     }
     // Non-native lazyload for oldies to avoid loading src, the most efficient.
+    // No cookies are loaded from external sites till the play button clicked.
     else {
       $attributes['data-src'] = $embed_url;
       $attributes['src'] = 'about:blank';
@@ -253,7 +254,7 @@ class BlazyAttribute {
   }
 
   /**
-   * Defines attributes, builtin, or supported lazyload such as Slick.
+   * Defines attributes, builtin, or supported lazyload such as Slick/ Splide.
    *
    * These attributes can be applied to either IMG or DIV as CSS background.
    * The [data-(src|lazy)] attributes are applicable for (Responsive) image.
@@ -281,43 +282,6 @@ class BlazyAttribute {
   }
 
   /**
-   * Returns the sanitized attributes for user-defined (UGC Blazy Filter).
-   *
-   * When IMG and IFRAME are allowed for untrusted users, trojan horses are
-   * welcome. Hence sanitize attributes relevant for BlazyFilter. The rest
-   * should be taken care of by HTML filters after Blazy.
-   *
-   * @param array $attributes
-   *   The given attributes to sanitize.
-   * @param bool $escaped
-   *   Sets to FALSE to avoid double escapes, for further processing.
-   *
-   * @return array
-   *   The sanitized $attributes suitable for UGC, such as Blazy filter.
-   */
-  public static function sanitize(array $attributes, $escaped = TRUE): array {
-    $output = [];
-    $tags = ['href', 'poster', 'src', 'about', 'data', 'action', 'formaction'];
-
-    foreach ($attributes as $key => $value) {
-      if (is_array($value)) {
-        // Respects array item containing space delimited classes: aaa bbb ccc.
-        $value = implode(' ', $value);
-        $output[$key] = array_map('\Drupal\Component\Utility\Html::cleanCssIdentifier', explode(' ', $value));
-      }
-      else {
-        // Since Blazy is lazyloading known URLs, sanitize attributes which
-        // make no sense to stick around within IMG or IFRAME tags.
-        $kid = mb_substr($key, 0, 2) === 'on' || in_array($key, $tags);
-        $key = $kid ? 'data-' . $key : $key;
-        $escaped_value = $escaped ? Html::escape($value) : $value;
-        $output[$key] = $kid ? Html::cleanCssIdentifier($value) : $escaped_value;
-      }
-    }
-    return $output;
-  }
-
-  /**
    * Provide common attributes for IMG, IFRAME, VIDEO, DIV, etc. elements.
    */
   private static function common(array &$attributes, array $settings, $width = NULL): void {
@@ -341,15 +305,21 @@ class BlazyAttribute {
     $blazies    = $settings['blazies'];
     $embed_url  = $blazies->get('media.embed_url');
     $width      = $blazies->get('image.width');
-    $title      = $blazies->get('media.label');
+    $title      = $blazies->get('media.label') ?: $blazies->get('image.title');
 
-    // Respects hand-coded image attributes.
+    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
     if ($item) {
+      // Respects hand-coded image attributes.
       if (!isset($attributes['alt'])) {
         $attributes['alt'] = empty($item->alt) ? "" : trim($item->alt);
       }
 
+      if (!$blazies->get('image.alt')) {
+        $blazies->set('image.alt', $attributes['alt']);
+      }
+
       // Do not output an empty 'title' attribute.
+      // Prioritize editable user inputs rather than external sites'.
       if (isset($item->title) && (mb_strlen($item->title) != 0)) {
         $attributes['title'] = $title = trim($item->title);
         $blazies->set('image.title', $title);
@@ -359,20 +329,21 @@ class BlazyAttribute {
     // Only output dimensions for non-svg. Respects hand-coded image attributes.
     // Do not pass it to $attributes to also respect both (Responsive) image.
     if (!isset($attributes['width']) && !$blazies->is('unstyled')) {
-      // @todo remove settings.
       $image['#height'] = $blazies->get('image.height');
       $image['#width'] = $width;
     }
 
     // Overrides title if to be used as a placeholder for lazyloaded video.
     if ($embed_url && $title) {
+      // Prioritize editable user inputs rather than external sites'.
       $blazies->set('media.label', $title);
-      $translation_replacements = ['@label' => $title];
-      $attributes['title'] = t('Preview image for the video "@label".', $translation_replacements);
 
-      if (!empty($attributes['alt'])) {
-        $translation_replacements['@alt'] = $attributes['alt'];
-        $attributes['alt'] = t('Preview image for the video "@label" - @alt.', $translation_replacements);
+      $translation_replacements = ['@label' => $title];
+      $attributes['title'] = new TranslatableMarkup('Preview image for the video "@label".', $translation_replacements);
+
+      if ($alt = $blazies->get('image.alt')) {
+        $translation_replacements['@alt'] = $alt;
+        $attributes['alt'] = new TranslatableMarkup('Preview image for the video "@label" - @alt.', $translation_replacements);
       }
       else {
         $attributes['alt'] = $attributes['title'];

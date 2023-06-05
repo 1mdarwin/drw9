@@ -15,6 +15,20 @@ use Drupal\google_tag\Entity\TagContainer;
 final class DimensionsMetricsProcessor {
 
   /**
+   * The Token.
+   *
+   * @var \Drupal\Core\Utility\Token
+   */
+  private Token $token;
+
+  /**
+   * Route Match Service.
+   *
+   * @var \Drupal\Core\Routing\RouteMatchInterface
+   */
+  private RouteMatchInterface $routeMatch;
+
+  /**
    * DimensionsMetricsProcessor constructor.
    *
    * @param \Drupal\Core\Utility\Token $token
@@ -23,9 +37,11 @@ final class DimensionsMetricsProcessor {
    *   Route matcher.
    */
   public function __construct(
-    private Token $token,
-    private RouteMatchInterface $routeMatch
+    Token $token,
+    RouteMatchInterface $routeMatch
   ) {
+    $this->token = $token;
+    $this->routeMatch = $routeMatch;
   }
 
   /**

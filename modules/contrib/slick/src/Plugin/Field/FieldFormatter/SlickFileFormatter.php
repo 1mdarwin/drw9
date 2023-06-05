@@ -32,27 +32,7 @@ class SlickFileFormatter extends SlickFileFormatterBase {
    * {@inheritdoc}
    */
   public function buildElement(array &$build, $entity) {
-    $settings = $build['settings'];
-    $data = [];
-    /** @var Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $item */
-    // EntityReferenceItem provides $item->entity Drupal\file\Entity\File.
-    if (empty($build['item'])) {
-      // @todo remove condition post blazy:2.x.
-      if (method_exists($this->blazyOembed, 'getImageItem')) {
-        $data = $this->blazyOembed->getImageItem($entity);
-      }
-      // @todo remove post blazy:2.x.
-      elseif (method_exists($this, 'getImageItem')) {
-        $data = $this->getImageItem($entity);
-      }
-
-      if ($data) {
-        $build['item'] = $data['item'];
-        $build['settings'] = array_merge($settings, $data['settings']);
-      }
-    }
-
-    $this->blazyOembed->getMediaItem($build, $entity);
+    $this->blazyOembed->build($build, $entity);
   }
 
   /**

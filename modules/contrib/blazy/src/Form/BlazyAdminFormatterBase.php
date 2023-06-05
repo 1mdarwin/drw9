@@ -14,7 +14,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
   /**
    * Defines re-usable basic form elements.
    */
-  public function basicImageForm(array &$form, $definition = []) {
+  public function basicImageForm(array &$form, array $definition): void {
     $this->imageStyleForm($form, $definition);
 
     if (!empty($definition['media_switch_form']) && !isset($form['media_switch'])) {
@@ -29,7 +29,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
     if (isset($form['responsive_image_style'])) {
       $form['responsive_image_style']['#description'] = $this->t('Be sure to enable <strong>Responsive image</strong> option via Blazy UI. Leave empty to disable.');
 
-      if ($this->blazyManager()->getModuleHandler()->moduleExists('blazy_ui')) {
+      if ($this->blazyManager()->moduleHandler()->moduleExists('blazy_ui')) {
         $form['responsive_image_style']['#description'] .= ' ' . $this->t('<a href=":url" target="_blank">Enable lazyloading Responsive image</a>.', [':url' => Url::fromRoute('blazy.settings')->toString()]);
       }
     }
@@ -38,7 +38,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
   /**
    * Returns re-usable image formatter form elements.
    */
-  public function imageStyleForm(array &$form, $definition = []) {
+  public function imageStyleForm(array &$form, array $definition): void {
     $is_responsive = function_exists('responsive_image_get_image_dimensions');
     $field_type = $definition['field_type'] ?? '';
     $plugin_id = $definition['plugin_id'] ?? '';
@@ -89,7 +89,7 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
   /**
    * Return the field formatter settings summary.
    */
-  public function getSettingsSummary($definition = []): array {
+  public function getSettingsSummary(array $definition): array {
     if (empty($definition['settings'])) {
       return [];
     }
@@ -157,9 +157,74 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
   }
 
   /**
+   * Returns available fields for select options.
+   */
+  public function getFieldOptions(
+    array $target_bundles = [],
+    array $allowed_field_types = [],
+    $entity_type = 'media',
+    $target_type = ''
+  ): array {
+    $options = [];
+
+    // Fix for Views UI not recognizing Media bundles, unlike Formatters.
+    if (empty($target_bundles)) {
+      $bundle_service = Blazy::service('entity_type.bundle.info');
+      $target_bundles = $bundle_service->getBundleInfo($entity_type);
+    }
+
+    // Declutters options from less relevant options.
+    $excludes = $this->getExcludedFieldOptions();
+
+    foreach ($target_bundles as $bundle => $label) {
+      if ($fields = $this->blazyManager()->loadByProperties([
+        'entity_type' => $entity_type,
+        'bundle' => $bundle,
+      ], 'field_config', FALSE)) {
+        foreach ((array) $fields as $field) {
+          if (in_array($field->getName(), $excludes)) {
+            continue;
+          }
+          if (empty($allowed_field_types)) {
+            $options[$field->getName()] = $field->getLabel();
+          }
+          elseif (in_array($field->getType(), $allowed_field_types)) {
+            $options[$field->getName()] = $field->getLabel();
+          }
+
+          if (!empty($target_type)
+            && ($field->getSetting('target_type') == $target_type)) {
+            $options[$field->getName()] = $field->getLabel();
+          }
+        }
+      }
+    }
+
+    return $options;
+  }
+
+  /**
+   * Declutters options from less relevant options, specific to captions.
+   */
+  protected function getExcludedFieldOptions(): array {
+    // @todo figure out a more efficient way than blacklisting.
+    // Do not exclude field_media_image  as needed for Main stage.
+    $fields = 'document_size media_file id media_in_library mime_type source tweet_author tweet_id tweet_url media_video_embed_field instagram_shortcode instagram_url media_soundcloud media_oembed_video media_audio_file media_video_file media_facebook media_flickr file_url external_thumbnail local_thumbnail local_thumbnail_uri media_unsplash';
+    $fields = explode(' ', $fields);
+
+    $excludes = [];
+    foreach ($fields as $exclude) {
+      $excludes['field_' . $exclude] = 'field_' . $exclude;
+    }
+
+    $this->blazyManager->moduleHandler()->alter('blazy_excluded_field_options', $excludes);
+    return $excludes;
+  }
+
+  /**
    * Exclude the field formatter settings summary as required.
    */
-  public function getExcludedSettingsSummary(array &$definition = []) {
+  protected function getExcludedSettingsSummary(array &$definition): void {
     $settings     = &$definition['settings'];
     $excludes     = empty($definition['excludes']) ? [] : $definition['excludes'];
     $plugin_id    = $definition['plugin_id'] ?? '';
@@ -204,66 +269,6 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
         $settings[$key] = $image_styles[$settings[$key]];
       }
     }
-  }
-
-  /**
-   * Returns available fields for select options.
-   */
-  public function getFieldOptions($target_bundles = [], $allowed_field_types = [], $entity_type = 'media', $target_type = '') {
-    $options = [];
-
-    // Fix for Views UI not recognizing Media bundles, unlike Formatters.
-    if (empty($target_bundles)) {
-      $bundle_service = Blazy::service('entity_type.bundle.info');
-      $target_bundles = $bundle_service->getBundleInfo($entity_type);
-    }
-
-    // Declutters options from less relevant options.
-    $excludes = $this->getExcludedFieldOptions();
-
-    foreach ($target_bundles as $bundle => $label) {
-      if ($fields = $this->blazyManager()->loadByProperties([
-        'entity_type' => $entity_type,
-        'bundle' => $bundle,
-      ], 'field_config', FALSE)) {
-        foreach ((array) $fields as $field) {
-          if (in_array($field->getName(), $excludes)) {
-            continue;
-          }
-          if (empty($allowed_field_types)) {
-            $options[$field->getName()] = $field->getLabel();
-          }
-          elseif (in_array($field->getType(), $allowed_field_types)) {
-            $options[$field->getName()] = $field->getLabel();
-          }
-
-          if (!empty($target_type)
-            && ($field->getSetting('target_type') == $target_type)) {
-            $options[$field->getName()] = $field->getLabel();
-          }
-        }
-      }
-    }
-
-    return $options;
-  }
-
-  /**
-   * Declutters options from less relevant options, specific to captions.
-   */
-  public function getExcludedFieldOptions() {
-    // @todo figure out a more efficient way than blacklisting.
-    // Do not exclude field_media_image  as needed for Main stage.
-    $fields = 'document_size media_file id media_in_library mime_type source tweet_author tweet_id tweet_url media_video_embed_field instagram_shortcode instagram_url media_soundcloud media_oembed_video media_audio_file media_video_file media_facebook media_flickr file_url external_thumbnail local_thumbnail local_thumbnail_uri media_unsplash';
-    $fields = explode(' ', $fields);
-
-    $excludes = [];
-    foreach ($fields as $exclude) {
-      $excludes['field_' . $exclude] = 'field_' . $exclude;
-    }
-
-    $this->blazyManager->getModuleHandler()->alter('blazy_excluded_field_options', $excludes);
-    return $excludes;
   }
 
 }

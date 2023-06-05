@@ -21,13 +21,6 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
   use BlazyManagerUnitTestTrait;
 
   /**
-   * The mocked translator.
-   *
-   * @var \Drupal\Core\StringTranslation\TranslationInterface|\PHPUnit_Framework_MockObject_MockObject
-   */
-  protected $stringTranslation;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -36,12 +29,10 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
     $this->setUpUnitServices();
     $this->setUpUnitContainer();
 
-    $this->stringTranslation = $this->createMock('Drupal\Core\StringTranslation\TranslationInterface');
-    $this->entityDisplayRepository = $this->createMock('Drupal\Core\Entity\EntityDisplayRepositoryInterface');
-    $this->typedConfig = $this->createMock('Drupal\Core\Config\TypedConfigManagerInterface');
-    $this->dateFormatter = $this->getMockBuilder('Drupal\Core\Datetime\DateFormatter')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $this->stringTranslation = $this->createMock('\Drupal\Core\StringTranslation\TranslationInterface');
+    $this->entityDisplayRepository = $this->createMock('\Drupal\Core\Entity\EntityDisplayRepositoryInterface');
+    $this->typedConfig = $this->createMock('\Drupal\Core\Config\TypedConfigManagerInterface');
+    $this->dateFormatter = $this->createMock('\Drupal\Core\Datetime\DateFormatter');
 
     $container = new ContainerBuilder();
     $container->set('entity_display.repository', $this->entityDisplayRepository);

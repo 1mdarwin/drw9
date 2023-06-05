@@ -2051,10 +2051,16 @@
     if (add && !contains(result, add)) {
       result.push(add);
     }
+
     var value = result.join(' ');
-    _op(el, value === '' ? _remove : _set, _dataOnce, value);
+    _op(el, value === '' ? _remove : _set, _dataOnce, value.trim());
   }
 
+  // @todo BigPipe compat to avoid legacy approach with `processed` classes.
+  // See:
+  // - https://www.drupal.org/project/drupal/issues/1461322.
+  // - https://www.drupal.org/project/slick/issues/3340509.
+  // - https://www.drupal.org/project/slick/issues/3211873.
   function initOnce(id, selector, ctx) {
     return _filter(':not(' + selOnce(id) + ')', elsOnce(selector, ctx), function (el) {
       updateOnce(el, {
@@ -2072,7 +2078,9 @@
     db.once.filter = function (id, selector, ctx) {
       return _filter(selOnce(id), elsOnce(selector, ctx));
     };
-    db.once.remove = function (id, selector, ctx) {
+
+    // @todo implement clear.
+    db.once.remove = function (id, selector, ctx, clear) {
       return _filter(
         selOnce(id),
         elsOnce(selector, ctx),
@@ -2083,12 +2091,12 @@
         }
       );
     };
-    db.once.removeSafely = function (id, selector, ctx) {
+    db.once.removeSafely = function (id, selector, ctx, clear) {
       var me = this;
       var jq = _win.jQuery;
 
       if (me.find(id, ctx).length) {
-        me.remove(id, selector, ctx);
+        me.remove(id, selector, ctx, clear);
       }
 
       // @todo remove BC for pre core/once when min D9.2:

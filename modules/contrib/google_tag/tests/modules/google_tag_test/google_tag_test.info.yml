@@ -4,7 +4,7 @@ core_version_requirement: ^9.5 || ^10
 dependencies:
   - google_tag:google_tag
 
-# Information added by Drupal.org packaging script on 2023-04-25
-version: '2.0.1'
+# Information added by Drupal.org packaging script on 2023-05-23
+version: '2.0.2'
 project: 'google_tag'
-datestamp: 1682446187
+datestamp: 1684879599

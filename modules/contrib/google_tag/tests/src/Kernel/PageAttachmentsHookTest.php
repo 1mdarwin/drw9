@@ -92,6 +92,7 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
       'id' => 'foo',
       'tag_container_ids' => [
         'GTM-XXXXXX',
+        'GTM-YYYYYY',
         'GT-XXXXXX',
         'G-XXXXXX',
         'AW-XXXXXX',
@@ -105,12 +106,18 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
       ->get('main_content_renderer.html')->buildPageTopAndBottom($page);
     self::assertEquals([
       'google_tag_gtm_iframe' => [
-        '#theme' => 'google_tag_gtm_iframe',
-        '#url' => Url::fromUri('https://www.googletagmanager.com/ns.html', ['query' => ['id' => 'GTM-XXXXXX']]),
         '#cache' => [
           'contexts' => [],
           'tags' => $this->container->get('entity_type.manager')->getDefinition('google_tag_container')->getListCacheTags(),
           'max-age' => -1,
+        ],
+        '0' => [
+          '#theme' => 'google_tag_gtm_iframe',
+          '#url' => Url::fromUri('https://www.googletagmanager.com/ns.html', ['query' => ['id' => 'GTM-XXXXXX']]),
+        ],
+        '1' => [
+          '#theme' => 'google_tag_gtm_iframe',
+          '#url' => Url::fromUri('https://www.googletagmanager.com/ns.html', ['query' => ['id' => 'GTM-YYYYYY']]),
         ],
       ],
     ], $page['page_top']
@@ -127,6 +134,7 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
       'id' => 'foo',
       'tag_container_ids' => [
         'GTM-XXXXXX',
+        'GTM-YYYYYY',
         'GT-XXXXXX',
         'G-XXXXXX',
         'AW-XXXXXX',
@@ -147,14 +155,14 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
       ->invokePageAttachmentHooks($page);
     self::assertContains('google_tag/gtm', $page['#attached']['library']);
     self::assertEquals([
-      'tagId' => 'GTM-XXXXXX',
+      'tagIds' => ['GTM-XXXXXX', 'GTM-YYYYYY'],
       'settings' => [
         'include_classes' => TRUE,
         'allowlist_classes' => explode(PHP_EOL, $allowlist_classes),
         'blocklist_classes' => explode(PHP_EOL, $blocklist_classes),
       ],
     ],
-     $page['#attached']['drupalSettings']['gtm']);
+    $page['#attached']['drupalSettings']['gtm']);
   }
 
 }

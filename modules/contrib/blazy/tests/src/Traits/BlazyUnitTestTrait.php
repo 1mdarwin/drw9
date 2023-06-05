@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\blazy\Traits;
 
+use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\BlazyEntity;
 use Drupal\blazy\Traits\PluginScopesTrait;
 
 /**
@@ -13,6 +13,34 @@ trait BlazyUnitTestTrait {
 
   use BlazyPropertiesTestTrait;
   use PluginScopesTrait;
+
+  /**
+   * The mocked translator.
+   *
+   * @var \Drupal\Core\StringTranslation\TranslationInterface
+   */
+  protected $stringTranslation;
+
+  /**
+   * The entity display repository.
+   *
+   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
+   */
+  protected $entityDisplayRepository;
+
+  /**
+   * The type config manager.
+   *
+   * @var \Drupal\Core\Config\TypedConfigManagerInterface
+   */
+  protected $typedConfig;
+
+  /**
+   * The date formatter.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatter
+   */
+  protected $dateFormatter;
 
   /**
    * The formatter settings.
@@ -42,7 +70,7 @@ trait BlazyUnitTestTrait {
       + BlazyDefault::itemSettings()
       + $this->getDefaultFieldDefinition();
 
-    BlazyEntity::settings($defaults, $this->entity);
+    Blazy::entitySettings($defaults, $this->entity);
 
     return empty($this->formatterSettings) ? $defaults : array_merge($defaults, $this->formatterSettings);
   }

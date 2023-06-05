@@ -13,6 +13,34 @@ use Drupal\google_tag\GoogleTagEventManager;
 class GoogleTagMigrateBase {
 
   /**
+   * Google Tag Event Manager.
+   *
+   * @var \Drupal\google_tag\GoogleTagEventManager
+   */
+  protected GoogleTagEventManager $eventManager;
+
+  /**
+   * Condition Manager.
+   *
+   * @var \Drupal\Core\Condition\ConditionManager
+   */
+  protected ConditionManager $conditionManager;
+
+  /**
+   * Config Factory Service.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected ConfigFactoryInterface $configFactory;
+
+  /**
+   * Entity Type Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
+
+  /**
    * GoogleTagMigrateBase constructor.
    *
    * @param \Drupal\google_tag\GoogleTagEventManager $eventManager
@@ -25,11 +53,15 @@ class GoogleTagMigrateBase {
    *   Entity type manager.
    */
   public function __construct(
-    protected GoogleTagEventManager $eventManager,
-    protected ConditionManager $conditionManager,
-    protected ConfigFactoryInterface $configFactory,
-    protected EntityTypeManagerInterface $entityTypeManager,
+    GoogleTagEventManager $eventManager,
+    ConditionManager $conditionManager,
+    ConfigFactoryInterface $configFactory,
+    EntityTypeManagerInterface $entityTypeManager
   ) {
+    $this->eventManager = $eventManager;
+    $this->conditionManager = $conditionManager;
+    $this->configFactory = $configFactory;
+    $this->entityTypeManager = $entityTypeManager;
   }
 
   /**

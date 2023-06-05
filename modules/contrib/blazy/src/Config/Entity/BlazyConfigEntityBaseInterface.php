@@ -31,7 +31,7 @@ interface BlazyConfigEntityBaseInterface extends ConfigEntityInterface {
   /**
    * Returns the array of settings.
    *
-   * @param string $ansich
+   * @param bool $ansich
    *   Whether to return the settings as is.
    *
    * @return array

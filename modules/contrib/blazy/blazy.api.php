@@ -135,8 +135,8 @@ function hook_blazy_attach_alter(array &$load, array $settings = []) {
 
     $template = ['#theme' => 'photoswipe_container'];
     $load['drupalSettings']['photoswipe'] = [
-      'options' => blazy()->configLoad('options', 'photoswipe.settings'),
-      'container' => blazy()->getRenderer()->renderPlain($template),
+      'options' => blazy()->config('options', 'photoswipe.settings'),
+      'container' => blazy()->renderer()->renderPlain($template),
     ];
   }
 }
@@ -316,7 +316,7 @@ function hook_blazy_settings_alter(array &$build, $items) {
  *
  * @ingroup blazy_api
  */
-function hook_blazy_form_element_alter(array &$form, array $definition = []) {
+function hook_blazy_form_element_alter(array &$form, array $definition) {
   // Scope to splide formatters, blazy, gridstack, slick, etc. Or swap em all.
   if (($definition['namespace'] ?? FALSE) == 'splide') {
     // Extend the formatter form elements as needed.
@@ -338,7 +338,7 @@ function hook_blazy_form_element_alter(array &$form, array $definition = []) {
  *
  * @ingroup blazy_api
  */
-function hook_blazy_complete_form_element_alter(array &$form, array $definition = []) {
+function hook_blazy_complete_form_element_alter(array &$form, array $definition) {
   // Scope to splide formatters, blazy, gridstack, slick, etc. Or swap em all.
   if (($definition['namespace'] ?? FALSE) == 'splide') {
     // Extend the formatter form elements as needed.

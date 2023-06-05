@@ -41,7 +41,14 @@ class BlazyMarkdown {
     }
     elseif (class_exists('League\CommonMark\CommonMarkConverter')) {
       $converter = new CommonMarkConverter();
-      $text = $converter->convertToHtml($text);
+      if (method_exists($converter, 'convert')) {
+        $text = $converter->convert($text);
+      }
+      else {
+        if (is_callable([$converter, 'convertToHtml'])) {
+          $text = $converter->convertToHtml($text);
+        }
+      }
     }
 
     // We do not pass it to FilterProcessResult, as this is meant simple.

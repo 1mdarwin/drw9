@@ -47,7 +47,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   /**
    * Build the slick carousel elements.
    */
-  public function buildElements(array &$build, $files) {
+  public function buildElements(array &$build, $files, $langcode) {
     $settings   = &$build['settings'];
     $item_id    = $settings['item_id'];
     $tn_caption = empty($settings['thumbnail_caption']) ? NULL : $settings['thumbnail_caption'];

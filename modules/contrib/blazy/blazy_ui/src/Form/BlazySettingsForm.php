@@ -3,41 +3,27 @@
 namespace Drupal\blazy_ui\Form;
 
 use Drupal\Core\Url;
-use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\blazy\Form\BlazyConfigFormBase;
 
 /**
  * Defines blazy admin settings form.
  */
-class BlazySettingsForm extends ConfigFormBase {
-
-  /**
-   * The library discovery service.
-   *
-   * @var \Drupal\Core\Asset\LibraryDiscoveryInterface
-   */
-  protected $libraryDiscovery;
-
-  /**
-   * The blazy manager service.
-   *
-   * @var \Drupal\blazy\BlazyManagerInterface
-   */
-  protected $manager;
+class BlazySettingsForm extends BlazyConfigFormBase {
 
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container) {
-    /**
-     * @var \Drupal\blazy_ui\Form\BlazySettingsForm
-     */
-    $instance = parent::create($container);
-    $instance->libraryDiscovery = $container->get('library.discovery');
-    $instance->manager = $container->get('blazy.manager');
-    return $instance;
-  }
+  protected $validatedOptions = [
+    'placeholder',
+    'unstyled_extensions',
+    ['blazy', 'container'],
+    ['blazy', 'offset'],
+    ['blazy', 'saveViewportOffsetDelay'],
+    ['blazy', 'validateDelay'],
+    ['io', 'rootMargin'],
+    ['io', 'threshold'],
+  ];
 
   /**
    * {@inheritdoc}

@@ -30,41 +30,42 @@ class BlazyManagerUnitTest extends UnitTestCase {
   /**
    * Tests cases for various methods.
    *
-   * @covers ::getEntityTypeManager
-   * @covers ::getModuleHandler
-   * @covers ::getRenderer
-   * @covers ::getCache
-   * @covers ::getConfigFactory
+   * @covers ::entityTypeManager
+   * @covers ::moduleHandler
+   * @covers ::renderer
+   * @covers ::cache
+   * @covers ::configFactory
    */
   public function testBlazyManagerServiceInstances() {
-    $this->assertInstanceOf('\Drupal\Core\Entity\EntityTypeManagerInterface', $this->blazyManager->getEntityTypeManager());
-    $this->assertInstanceOf('\Drupal\Core\Extension\ModuleHandlerInterface', $this->blazyManager->getModuleHandler());
-    $this->assertInstanceOf('\Drupal\Core\Render\RendererInterface', $this->blazyManager->getRenderer());
-    $this->assertInstanceOf('\Drupal\Core\Config\ConfigFactoryInterface', $this->blazyManager->getConfigFactory());
-    $this->assertInstanceOf('\Drupal\Core\Cache\CacheBackendInterface', $this->blazyManager->getCache());
+    $this->assertInstanceOf('\Drupal\Core\Entity\EntityTypeManagerInterface', $this->blazyManager->entityTypeManager());
+    $this->assertInstanceOf('\Drupal\Core\Extension\ModuleHandlerInterface', $this->blazyManager->moduleHandler());
+    $this->assertInstanceOf('\Drupal\Core\Render\RendererInterface', $this->blazyManager->renderer());
+    $this->assertInstanceOf('\Drupal\Core\Config\ConfigFactoryInterface', $this->blazyManager->configFactory());
+    $this->assertInstanceOf('\Drupal\Core\Cache\CacheBackendInterface', $this->blazyManager->cache());
+    $this->assertInstanceOf('\Drupal\Core\Language\LanguageManager', $this->blazyManager->languageManager());
   }
 
   /**
    * Tests cases for config.
    *
-   * @covers ::configLoad
+   * @covers ::config
    */
   public function testConfigLoad() {
     $this->blazyManager->expects($this->any())
-      ->method('configLoad')
+      ->method('config')
       ->with('blazy')
       ->willReturn(['loadInvisible' => FALSE]);
 
-    $blazy = $this->blazyManager->configLoad('blazy');
+    $blazy = $this->blazyManager->config('blazy');
     $this->assertArrayHasKey('loadInvisible', $blazy);
 
     $this->blazyManager->expects($this->any())
-      ->method('configLoad')
+      ->method('config')
       ->with('admin_css')
       ->willReturn(TRUE);
 
     $this->blazyManager->expects($this->any())
-      ->method('configLoad')
+      ->method('config')
       ->with('responsive_image')
       ->willReturn(TRUE);
   }
@@ -72,27 +73,27 @@ class BlazyManagerUnitTest extends UnitTestCase {
   /**
    * Tests cases for config.
    *
-   * @covers ::entityLoad
-   * @covers ::entityLoadMultiple
+   * @covers ::load
+   * @covers ::loadMultiple
    */
   public function testEntityLoadImageStyle() {
     $styles = $this->setUpImageStyle();
     $ids = array_keys($styles);
 
     $this->blazyManager->expects($this->any())
-      ->method('entityLoadMultiple')
+      ->method('loadMultiple')
       ->with('image_style')
       ->willReturn($styles);
 
-    $multiple = $this->blazyManager->entityLoadMultiple('image_style', $ids);
+    $multiple = $this->blazyManager->loadMultiple('image_style', $ids);
     $this->assertArrayHasKey('large', $multiple);
 
     $this->blazyManager->expects($this->any())
-      ->method('entityLoad')
+      ->method('load')
       ->with('large')
       ->willReturn($multiple['large']);
 
-    $expected = $this->blazyManager->entityLoad('large', 'image_style');
+    $expected = $this->blazyManager->load('large', 'image_style');
     $this->assertEquals($expected, $multiple['large']);
   }
 

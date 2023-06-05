@@ -20,6 +20,27 @@ final class EventCollector implements EventCollectorInterface {
   private array $events = [];
 
   /**
+   * Google Tag Event Service.
+   *
+   * @var \Drupal\google_tag\GoogleTagEventManager
+   */
+  private GoogleTagEventManager $googleTagEventManager;
+
+  /**
+   * The Tag Container Resolver.
+   *
+   * @var \Drupal\google_tag\TagContainerResolver
+   */
+  private TagContainerResolver $tagResolver;
+
+  /**
+   * Session service.
+   *
+   * @var \Symfony\Component\HttpFoundation\Session\SessionInterface
+   */
+  private SessionInterface $session;
+
+  /**
    * Collector constructor.
    *
    * @param \Drupal\google_tag\GoogleTagEventManager $googleTagEventManager
@@ -30,10 +51,13 @@ final class EventCollector implements EventCollectorInterface {
    *   Session service.
    */
   public function __construct(
-    private GoogleTagEventManager $googleTagEventManager,
-    private TagContainerResolver $tagResolver,
-    private SessionInterface $session,
+    GoogleTagEventManager $googleTagEventManager,
+    TagContainerResolver $tagResolver,
+    SessionInterface $session
   ) {
+    $this->googleTagEventManager = $googleTagEventManager;
+    $this->tagResolver = $tagResolver;
+    $this->session = $session;
   }
 
   /**
@@ -75,7 +99,9 @@ final class EventCollector implements EventCollectorInterface {
     $events = $this->events;
     $this->events = [];
     $delayed_events = $this->session->get('google_tag_events', []);
-    $this->session->set('google_tag_events', []);
+    if ($delayed_events !== []) {
+        $this->session->set('google_tag_events', []);
+    }
     return $delayed_events + $events;
   }
 

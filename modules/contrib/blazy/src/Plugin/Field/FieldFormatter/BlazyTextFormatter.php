@@ -53,7 +53,7 @@ class BlazyTextFormatter extends FormatterBase {
   /**
    * Build the grid text elements.
    */
-  public function buildElements(array &$build, $items) {
+  public function buildElements(array &$build, $items, $langcode) {
     $settings = &$build['settings'];
     $blazies  = $settings['blazies'];
 

@@ -2,6 +2,8 @@
 
 namespace Drupal\blazy\Media;
 
+use Drupal\blazy\Blazy;
+
 /**
  * Provides placeholder thumbnail image.
  *
@@ -164,7 +166,10 @@ class Placeholder {
     }
 
     // Provides default path, in case required by global, but not provided.
-    $style = $style ?: \blazy()->entityLoad('thumbnail', 'image_style');
+    if ($manager = Blazy::service('blazy.manager')) {
+      $style = $style ?: $manager->load('thumbnail', 'image_style');
+    }
+
     if (empty($tn_uri) && $style && BlazyFile::isValidUri($uri)) {
       $tn_uri = $style->buildUri($uri);
       $tn_url = BlazyFile::transformRelative($uri, $style);

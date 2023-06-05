@@ -21,7 +21,7 @@ trait CommerceEventTrait {
    *   Formatted price.
    */
   protected function formatPriceNumber(Price $price): string {
-    return number_format((float) $price->getNumber(), 2);
+    return number_format((float) $price->getNumber(), 2, '.', '');
   }
 
 }

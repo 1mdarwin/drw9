@@ -7,7 +7,7 @@ use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\BlazyManagerInterface;
+use Drupal\blazy\BlazyManager;
 use Drupal\blazy\BlazyEntityInterface;
 use Drupal\blazy\Traits\PluginScopesTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -27,6 +27,13 @@ abstract class BlazyViewsFieldPluginBase extends FieldPluginBase {
   protected $blazyManager;
 
   /**
+   * The blazy entity service.
+   *
+   * @var \Drupal\blazy\BlazyEntityInterface
+   */
+  protected $blazyEntity;
+
+  /**
    * The blazy merged settings.
    *
    * @var array
@@ -36,7 +43,7 @@ abstract class BlazyViewsFieldPluginBase extends FieldPluginBase {
   /**
    * Constructs a BlazyViewsFieldPluginBase object.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, BlazyManagerInterface $blazy_manager, BlazyEntityInterface $blazy_entity) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, BlazyManager $blazy_manager, BlazyEntityInterface $blazy_entity) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->blazyManager = $blazy_manager;
     $this->blazyEntity = $blazy_entity;
@@ -162,14 +169,14 @@ abstract class BlazyViewsFieldPluginBase extends FieldPluginBase {
       'name'           => $view_name,
       'plugin_id'      => $plugin_id,
       'view_mode'      => $view_mode,
-      'is_view'        => TRUE,
-      'is_views_field' => TRUE,
     ];
 
     $blazies->set('count', $count)
       ->set('css.id', $id)
       ->set('namespace', 'blazy')
-      ->set('view', $view_info, TRUE);
+      ->set('view', $view_info, TRUE)
+      ->set('is.view', TRUE)
+      ->set('is.views_field', TRUE);
 
     return $settings;
   }
@@ -180,8 +187,8 @@ abstract class BlazyViewsFieldPluginBase extends FieldPluginBase {
   protected function getPluginScopes(): array {
     return [
       'target_type' => !$this->view->getBaseEntityType()
-      ? ''
-      : $this->view->getBaseEntityType()->id(),
+        ? ''
+        : $this->view->getBaseEntityType()->id(),
       'thumbnail_style' => TRUE,
     ];
   }

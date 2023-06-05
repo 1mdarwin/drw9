@@ -8,12 +8,32 @@ namespace Drupal\blazy\Media;
 interface BlazyOEmbedInterface {
 
   /**
+   * Returns the Media oEmbed resource fecther.
+   */
+  public function getResourceFetcher();
+
+  /**
+   * Returns the Media oEmbed url resolver fecthers.
+   */
+  public function getUrlResolver();
+
+  /**
+   * Returns the Media oEmbed url resolver fecthers.
+   */
+  public function getIframeUrlHelper();
+
+  /**
+   * Returns the blazy manager.
+   */
+  public function blazyManager();
+
+  /**
    * Returns the oEmbed Resource based on the given media input url.
    *
    * @param string $input_url
    *   The video url.
    *
-   * @return Drupal\media\OEmbed\Resource[]
+   * @return \Drupal\media\OEmbed\Resource[]
    *   The oEmbed resource.
    */
   public function getResource($input_url);
@@ -33,5 +53,13 @@ interface BlazyOEmbedInterface {
    *   to accomodate old approach (pre 2.10) and UGC.
    */
   public function build(array &$build, $entity = NULL): void;
+
+  /**
+   * Checks the given input URL.
+   *
+   * @param array $settings
+   *   The settings to modify.
+   */
+  public function checkInputUrl(array &$settings): void;
 
 }

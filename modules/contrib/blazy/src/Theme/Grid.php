@@ -88,7 +88,7 @@ class Grid {
     // Supports field label via Field UI, unless use.theme_field takes place.
     $title = '';
     $label = $blazies->get('field.label');
-    if (!$blazies->get('use.theme_field')
+    if (!$blazies->use('theme_field')
       && $blazies->get('field.label_display') != 'hidden'
       && $label) {
       $title = $label;

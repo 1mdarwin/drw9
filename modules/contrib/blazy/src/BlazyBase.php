@@ -48,13 +48,6 @@ abstract class BlazyBase implements BlazyInterface {
   protected $entityTypeManager;
 
   /**
-   * The language manager.
-   *
-   * @var \Drupal\Core\Language\LanguageManager
-   */
-  protected $languageManager;
-
-  /**
    * The module handler service.
    *
    * @var \Drupal\Core\Extension\ModuleHandlerInterface
@@ -83,6 +76,13 @@ abstract class BlazyBase implements BlazyInterface {
   protected $cache;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManager
+   */
+  protected $languageManager;
+
+  /**
    * The cached data.
    *
    * @var array
@@ -92,7 +92,15 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * Constructs a BlazyBase object.
    */
-  public function __construct($root, EntityRepositoryInterface $entity_repository, EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, RendererInterface $renderer, ConfigFactoryInterface $config_factory, CacheBackendInterface $cache, LanguageManager $language_manager) {
+  public function __construct(
+    $root,
+    EntityRepositoryInterface $entity_repository,
+    EntityTypeManagerInterface $entity_type_manager,
+    ModuleHandlerInterface $module_handler,
+    RendererInterface $renderer,
+    ConfigFactoryInterface $config_factory,
+    CacheBackendInterface $cache,
+    LanguageManager $language_manager) {
     $this->root              = $root;
     $this->entityRepository  = $entity_repository;
     $this->entityTypeManager = $entity_type_manager;
@@ -124,13 +132,6 @@ abstract class BlazyBase implements BlazyInterface {
    */
   public function root() {
     return $this->root;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function languageManager() {
-    return $this->languageManager;
   }
 
   /**
@@ -178,6 +179,13 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * {@inheritdoc}
    */
+  public function languageManager() {
+    return $this->languageManager;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function config($key = NULL, $group = 'blazy.settings') {
     $config  = $this->configFactory->get($group);
     $configs = $config->get();
@@ -188,15 +196,15 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * {@inheritdoc}
    */
-  public function getStorage($type = 'media') {
-    return $this->entityTypeManager->getStorage($type);
+  public function entityQuery($type, $conjunction = 'AND') {
+    return $this->getStorage($type)->getQuery($conjunction);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function entityQuery($type, $conjunction = 'AND') {
-    return $this->getStorage($type)->getQuery($conjunction);
+  public function getStorage($type = 'media') {
+    return $this->entityTypeManager->getStorage($type);
   }
 
   /**

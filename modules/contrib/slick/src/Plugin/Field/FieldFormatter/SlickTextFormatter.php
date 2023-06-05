@@ -45,7 +45,7 @@ class SlickTextFormatter extends BlazyTextFormatter {
   /**
    * Build the slick carousel elements.
    */
-  public function buildElements(array &$build, $items) {
+  public function buildElements(array &$build, $items, $langcode) {
     foreach ($this->getElements($items) as $element) {
       $build['items'][] = $element;
     }

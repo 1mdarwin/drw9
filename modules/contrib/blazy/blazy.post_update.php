@@ -145,3 +145,10 @@ function blazy_post_update_move_media_services_classes() {
 function blazy_post_update_added_blazy_base_service() {
   // Empty hook to clear caches.
 }
+
+/**
+ * Clear cache to enable \Drupal\blazy\BlazyBase service.
+ */
+function blazy_post_update_implemented_blazy_base_service() {
+  // Empty hook to clear caches.
+}

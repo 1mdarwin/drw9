@@ -15,14 +15,22 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class CommerceWishlistSubscriber implements EventSubscriberInterface {
 
   /**
+   * The Event Collector.
+   *
+   * @var \Drupal\google_tag\EventCollectorInterface
+   */
+  private EventCollectorInterface $eventCollector;
+
+  /**
    * CommerceWishlistSubscriber constructor.
    *
    * @param \Drupal\google_tag\EventCollectorInterface $eventCollector
    *   Collector.
    */
   public function __construct(
-    private EventCollectorInterface $eventCollector
+    EventCollectorInterface $eventCollector
   ) {
+    $this->eventCollector = $eventCollector;
   }
 
   /**

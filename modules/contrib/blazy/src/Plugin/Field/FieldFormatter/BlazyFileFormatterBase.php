@@ -73,7 +73,7 @@ abstract class BlazyFileFormatterBase extends FileFormatterBase {
   protected function getElements(array &$build, $files, $caption_id = 'captions'): array {
     $elements = [];
     foreach ($files as $delta => $file) {
-      /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
+      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
       $item  = $file->_referringItem;
       $sets  = $build['settings'];
       $blazy = $sets['blazies']->reset($sets);

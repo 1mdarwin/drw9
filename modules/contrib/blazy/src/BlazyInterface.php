@@ -39,14 +39,6 @@ interface BlazyInterface {
   public function entityTypeManager();
 
   /**
-   * Returns the language manager service.
-   *
-   * @return \Drupal\Core\Language\LanguageManager
-   *   The language manager.
-   */
-  public function languageManager();
-
-  /**
    * Returns the module handler service.
    *
    * @return \Drupal\Core\Extension\ModuleHandlerInterface
@@ -79,6 +71,14 @@ interface BlazyInterface {
   public function cache();
 
   /**
+   * Returns the language manager service.
+   *
+   * @return \Drupal\Core\Language\LanguageManager
+   *   The language manager.
+   */
+  public function languageManager();
+
+  /**
    * Returns any config, or keyed by the $setting_name.
    *
    * @param string $key
@@ -92,17 +92,6 @@ interface BlazyInterface {
   public function config($key = NULL, $group = 'blazy.settings');
 
   /**
-   * Returns a shortcut for entity type storage.
-   *
-   * @param string $type
-   *   The entity type.
-   *
-   * @return object
-   *   The entity type storage object.
-   */
-  public function getStorage($type = 'media');
-
-  /**
    * Returns the entity query object for this entity type.
    *
    * @param string $type
@@ -114,6 +103,17 @@ interface BlazyInterface {
    *   The entity query object.
    */
   public function entityQuery($type, $conjunction = 'AND');
+
+  /**
+   * Returns a shortcut for entity type storage.
+   *
+   * @param string $type
+   *   The entity type.
+   *
+   * @return object
+   *   The entity type storage object.
+   */
+  public function getStorage($type = 'media');
 
   /**
    * Returns a shortcut for loading an entity: image_style, slick, etc.

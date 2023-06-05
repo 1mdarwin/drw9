@@ -43,6 +43,7 @@ class BlazyManagerBaseUnitTest extends UnitTestCase {
       ['renderer', $exception, $this->renderer],
       ['config.factory', $exception, $this->configFactory],
       ['cache.default', $exception, $this->cache],
+      ['language_manager', $exception, $this->languageManager],
     ];
 
     $container->expects($this->any())

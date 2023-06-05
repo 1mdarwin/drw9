@@ -4,19 +4,10 @@ services:
     class: Drupal\blazy\BlazyBase
     arguments: ['%app.root%', '@entity.repository', '@entity_type.manager', '@module_handler', '@renderer', '@config.factory', '@cache.default', '@language_manager']
 
-  # @todo extends blazy.base at 3.x, or before.
-  # Still intact to minimize mis-matched version issues for non-composer users.
   blazy.manager.base:
     abstract: true
     class: Drupal\blazy\BlazyManagerBase
-    # @todo enable at 3.x, or before:
-    # parent: blazy.base
-    # @todo remove the following at 3.x, or before:
-    arguments: ['%app.root%', '@entity.repository', '@entity_type.manager', '@module_handler', '@renderer', '@config.factory', '@cache.default']
-    calls:
-      # @todo remove and use DI instead after sub-module updates, and put as the
-      # last argument only if to support careless users ignoring hook_update().
-      - [setLanguageManager, ['@language_manager']]
+    parent: blazy.base
 
   blazy.manager:
     abstract: false
@@ -58,17 +49,3 @@ services:
       - '@library.dependency_resolver'
     tags:
       - { name: event_subscriber }
-
-  # @todo deprecate this if you can't make it non-static at blazy: 4.x.
-  blazy.media:
-    class: Drupal\blazy\Media\BlazyMedia
-    # @todo arguments: ['@blazy.entity', '@blazy.oembed']
-
-  # @todo deprecated and is removed for blazy.formatter at blazy: 3.x.
-  blazy.formatter.manager:
-    class: Drupal\blazy\BlazyFormatterManager
-    parent: blazy.formatter
-
-  # @todo deprecated and is removed from blazy: 8.2.1+.
-  blazy:
-    class: Drupal\blazy\Blazy

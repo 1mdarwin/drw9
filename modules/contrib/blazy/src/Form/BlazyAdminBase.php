@@ -95,10 +95,15 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    *   The typed config service.
    * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
-   * @param \Drupal\slick\BlazyManagerInterface $blazy_manager
+   * @param \Drupal\blazy\BlazyManagerInterface $blazy_manager
    *   The blazy manager service.
    */
-  public function __construct(EntityDisplayRepositoryInterface $entity_display_repository, TypedConfigManagerInterface $typed_config, DateFormatterInterface $date_formatter, BlazyManagerInterface $blazy_manager) {
+  public function __construct(
+    EntityDisplayRepositoryInterface $entity_display_repository,
+    TypedConfigManagerInterface $typed_config,
+    DateFormatterInterface $date_formatter,
+    BlazyManagerInterface $blazy_manager
+  ) {
     $this->entityDisplayRepository = $entity_display_repository;
     $this->typedConfig             = $typed_config;
     $this->dateFormatter           = $date_formatter;
@@ -113,32 +118,32 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * Returns the entity display repository.
+   * {@inheritdoc}
    */
   public function getEntityDisplayRepository() {
     return $this->entityDisplayRepository;
   }
 
   /**
-   * Returns the typed config.
+   * {@inheritdoc}
    */
   public function getTypedConfig() {
     return $this->typedConfig;
   }
 
   /**
-   * Returns the blazy manager.
+   * {@inheritdoc}
    */
   public function blazyManager() {
     return $this->blazyManager;
   }
 
   /**
-   * Returns shared form elements across field formatter and Views.
+   * {@inheritdoc}
    */
-  public function openingForm(array &$form, &$definition = []) {
+  public function openingForm(array &$form, array &$definition): void {
     $this->blazyManager
-      ->getModuleHandler()
+      ->moduleHandler()
       ->alter('blazy_form_element_definition', $definition);
 
     // Display style: column, plain static grid, slick grid, slick carousel.
@@ -216,9 +221,9 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * Returns re-usable grid elements across field formatter and Views.
+   * {@inheritdoc}
    */
-  public function gridForm(array &$form, $definition = []) {
+  public function gridForm(array &$form, array $definition): void {
     $required = !empty($definition['grid_required']);
 
     $header = $this->t('Group individual items as block grid<small>Depends on the <strong>Display style</strong>.</small>');
@@ -294,23 +299,23 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * Returns shared ending form elements across field formatter and Views.
+   * {@inheritdoc}
    */
-  public function closingForm(array &$form, $definition = []) {
+  public function closingForm(array &$form, array $definition): void {
     $this->finalizeForm($form, $definition);
   }
 
   /**
-   * Returns simple form elements common for Views field, EB widget, formatters.
+   * {@inheritdoc}
    */
-  public function baseForm($definition = []) {
+  public function baseForm(array $definition = []): array {
     $settings   = $definition['settings'] ?? [];
     $lightboxes = $this->blazyManager->getLightboxes();
     $namespace  = $definition['namespace'] ?? '';
     $form       = [];
     $ui_url     = '/admin/config/media/blazy';
 
-    if ($this->blazyManager->getModuleHandler()->moduleExists('blazy_ui')) {
+    if ($this->blazyManager->moduleHandler()->moduleExists('blazy_ui')) {
       $ui_url = Url::fromRoute('blazy.settings')->toString();
     }
 
@@ -407,9 +412,10 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
             '#type'        => 'select',
             '#title'       => $this->t('Lightbox video style'),
             '#options'     => $this->getEntityAsOptions('image_style'),
-            '#description' => $this->t('Allows different lightbox video dimensions. Or can be used to have a swipable video if <a href=":url1">Blazy PhotoSwipe</a> or <a href=":url2">Slick Lightbox</a> installed.', [
+            '#description' => $this->t('Allows different lightbox video dimensions. Or can be used to have a swipable video if <a href=":url1">Blazy PhotoSwipe</a>, or <a href=":url2">Slick Lightbox</a>, or <a href=":url3">Splidebox</a> installed.', [
               ':url1' => 'https:drupal.org/project/blazy_photoswipe',
               ':url2' => 'https:drupal.org/project/slick_lightbox',
+              ':url3' => 'https:drupal.org/project/splidebox',
             ]),
             '#weight'      => -96,
           ];
@@ -457,7 +463,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
         '#enforced'    => TRUE,
       ];
 
-      if ($this->blazyManager->getModuleHandler()->moduleExists('field_ui')) {
+      if ($this->blazyManager->moduleHandler()->moduleExists('field_ui')) {
         $form['view_mode']['#description'] .= ' ' . $this->t('Manage view modes on the <a href=":view_modes">View modes page</a>.', [':view_modes' => Url::fromRoute('entity.entity_view_mode.collection')->toString()]);
       }
     }
@@ -483,18 +489,18 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       ];
     }
 
-    $this->blazyManager->getModuleHandler()->alter('blazy_base_form_element', $form, $definition);
+    $this->blazyManager->moduleHandler()->alter('blazy_base_form_element', $form, $definition);
 
     return $form;
   }
 
   /**
-   * Returns re-usable media switch form elements.
+   * {@inheritdoc}
    */
-  public function mediaSwitchForm(array &$form, $definition = []) {
+  public function mediaSwitchForm(array &$form, array $definition): void {
     $settings   = $definition['settings'] ?? [];
     $lightboxes = $this->blazyManager->getLightboxes();
-    $is_token   = $this->blazyManager->getModuleHandler()->moduleExists('token');
+    $is_token   = $this->blazyManager->moduleHandler()->moduleExists('token');
 
     if (isset($settings['media_switch'])) {
       $form['media_switch'] = $this->baseForm($definition)['media_switch'];
@@ -549,13 +555,13 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       }
     }
 
-    $this->blazyManager->getModuleHandler()->alter('blazy_media_switch_form_element', $form, $definition);
+    $this->blazyManager->moduleHandler()->alter('blazy_media_switch_form_element', $form, $definition);
   }
 
   /**
-   * Returns re-usable logic, styling and assets across fields and Views.
+   * {@inheritdoc}
    */
-  public function finalizeForm(array &$form, $definition = []) {
+  public function finalizeForm(array &$form, array $definition): void {
     $namespace = $definition['namespace'] ?? 'slick';
     $settings = $definition['settings'] ?? [];
     $vanilla = !empty($definition['vanilla']) ? ' form--vanilla' : '';
@@ -590,7 +596,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
 
     // @todo Check if needed: 'button', 'container', 'submit'.
     $admin_css = $definition['admin_css'] ?? FALSE;
-    $admin_css = $admin_css ?: $this->blazyManager->configLoad('admin_css', 'blazy.settings');
+    $admin_css = $admin_css ?: $this->blazyManager->config('admin_css', 'blazy.settings');
     $excludes = ['details', 'fieldset', 'hidden', 'markup', 'item', 'table'];
     $selects = ['cache', 'optionset', 'view_mode'];
 
@@ -604,7 +610,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       }
     }
 
-    $this->blazyManager->getModuleHandler()->alter('blazy_form_element', $form, $definition);
+    $this->blazyManager->moduleHandler()->alter('blazy_form_element', $form, $definition);
 
     foreach (Element::children($form) as $key) {
       if (isset($form[$key]['#type']) && !in_array($form[$key]['#type'], $excludes)) {
@@ -673,13 +679,42 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       $form['closing']['#attached']['library'][] = 'blazy/admin';
     }
 
-    $this->blazyManager->getModuleHandler()->alter('blazy_complete_form_element', $form, $definition);
+    $this->blazyManager->moduleHandler()->alter('blazy_complete_form_element', $form, $definition);
   }
 
   /**
-   * Returns time in interval for select options.
+   * {@inheritdoc}
    */
-  public function getCacheOptions() {
+  public function fieldableForm(array &$form, array $definition): void {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function imageStyleForm(array &$form, array $definition): void {}
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSettingsSummary(array $definition): array {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getFieldOptions(
+    array $target_bundles = [],
+    array $allowed_field_types = [],
+    $entity_type = 'media',
+    $target_type = ''
+  ): array {
+    return [];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getCacheOptions(): array {
     $period = [
       0,
       60,
@@ -704,9 +739,9 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * Returns available lightbox captions for select options.
+   * {@inheritdoc}
    */
-  public function getLightboxCaptionOptions() {
+  public function getLightboxCaptionOptions(): array {
     return [
       'auto'         => $this->t('Automatic'),
       'alt'          => $this->t('Alt text'),
@@ -719,11 +754,11 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * Returns available entities for select options.
+   * {@inheritdoc}
    */
-  public function getEntityAsOptions($entity_type = '') {
+  public function getEntityAsOptions($entity_type = ''): array {
     $options = [];
-    if ($entities = $this->blazyManager->entityLoadMultiple($entity_type)) {
+    if ($entities = $this->blazyManager->loadMultiple($entity_type)) {
       foreach ($entities as $entity) {
         $options[$entity->id()] = Html::escape($entity->label());
       }
@@ -733,26 +768,26 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   }
 
   /**
-   * Returns available optionsets for select options.
+   * {@inheritdoc}
    */
-  public function getOptionsetOptions($entity_type = '') {
+  public function getOptionsetOptions($entity_type = ''): array {
     return $this->getEntityAsOptions($entity_type);
   }
 
   /**
-   * Returns available view modes for select options.
+   * {@inheritdoc}
    */
-  public function getViewModeOptions($target_type) {
-    return $this->entityDisplayRepository->getViewModeOptions($target_type);
+  public function getViewModeOptions($target_type): array {
+    return $this->entityDisplayRepository->getViewModeOptions($target_type) ?: [];
   }
 
   /**
-   * Returns Responsive image for select options.
+   * {@inheritdoc}
    */
-  public function getResponsiveImageOptions() {
+  public function getResponsiveImageOptions(): array {
     $options = [];
-    if ($this->blazyManager()->getModuleHandler()->moduleExists('responsive_image')) {
-      $image_styles = $this->blazyManager()->entityLoadMultiple('responsive_image_style');
+    if ($this->blazyManager()->moduleHandler()->moduleExists('responsive_image')) {
+      $image_styles = $this->blazyManager()->loadMultiple('responsive_image_style');
       if (!empty($image_styles)) {
         foreach ($image_styles as $name => $image_style) {
           if ($image_style->hasImageStyleMappings()) {
@@ -784,7 +819,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * @return array
    *   A corresponding form API state.
    */
-  protected function getState($state, array $definition = []) {
+  protected function getState($state, array $definition): array {
     $lightboxes = [];
 
     // @fixme this appears to be broken at some point of Drupal.
@@ -827,13 +862,5 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     ];
     return $states[$state];
   }
-
-  /**
-   * Deprecated method to remove.
-   *
-   * @todo remove once sub-modules remove this method.
-   * @see https://www.drupal.org/node/3105243
-   */
-  public function breakpointsForm(array &$form, $definition = []) {}
 
 }

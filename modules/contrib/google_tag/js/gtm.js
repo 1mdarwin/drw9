@@ -12,10 +12,12 @@ window[dl] = window[dl] || [];
         'gtm.blocklist': gtmSettings.blocklist_classes ?? [],
       });
     }
-    const script = document.createElement('script')
-    script.async = true;
-    const dLink = dl!='dataLayer'?'&l='+dl:'';
-    script.src = 'https://www.googletagmanager.com/gtm.js?id=' + config.tagId + dLink;
-    script.type = 'text/javascript'
-    document.getElementsByTagName('head')[0].appendChild(script);
+    config.tagIds.forEach(function(tagId) {
+        const script = document.createElement('script')
+        script.async = true;
+        const dLink = dl!='dataLayer'?'&l='+dl:'';
+        script.src = 'https://www.googletagmanager.com/gtm.js?id=' + tagId + dLink;
+        script.type = 'text/javascript'
+        document.getElementsByTagName('head')[0].appendChild(script);
+    });
 })(drupalSettings);

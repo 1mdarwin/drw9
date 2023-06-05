@@ -80,7 +80,8 @@ class BlazyAlter {
    * Implements hook_library_info_build().
    */
   public static function libraryInfoBuild() {
-    if (!isset(static::$libraryInfoBuild)) {
+    if (!isset(self::$libraryInfoBuild)) {
+      $libraries = [];
       // Optional polyfills for IEs, and oldies.
       $polyfills = array_merge(BlazyDefault::polyfills(), BlazyDefault::ondemandPolyfills());
       foreach ($polyfills as $id) {
@@ -122,9 +123,9 @@ class BlazyAlter {
         ];
       }
 
-      static::$libraryInfoBuild = $libraries;
+      self::$libraryInfoBuild = $libraries;
     }
-    return static::$libraryInfoBuild;
+    return self::$libraryInfoBuild;
   }
 
   /**
@@ -174,7 +175,9 @@ class BlazyAlter {
    */
   public static function thirdPartyFormatters(): array {
     $formatters = ['file_video'];
-    \blazy()->getModuleHandler()->alter('blazy_third_party_formatters', $formatters);
+    if ($manager = Blazy::service('blazy.manager')) {
+      $manager->moduleHandler()->alter('blazy_third_party_formatters', $formatters);
+    }
     return array_unique($formatters);
   }
 
@@ -198,9 +201,11 @@ class BlazyAlter {
    * Implements hook_field_formatter_settings_summary_alter().
    */
   public static function fieldFormatterSettingsSummaryAlter(&$summary, $context): void {
-    $on = $context['formatter']->getThirdPartySetting('blazy', 'blazy', FALSE);
-    if ($on && in_array($context['formatter']->getPluginId(), self::thirdPartyFormatters())) {
-      $summary[] = 'Blazy';
+    if ($formatter = $context['formatter']) {
+      $on = $formatter->getThirdPartySetting('blazy', 'blazy', FALSE);
+      if ($on && in_array($formatter->getPluginId(), self::thirdPartyFormatters())) {
+        $summary[] = 'Blazy';
+      }
     }
   }
 
@@ -220,7 +225,6 @@ class BlazyAlter {
     // Sniffs for Views to allow block__no_wrapper, views_no_wrapper, etc.
     $function = 'views_get_current_view';
     if (is_callable($function) && $view = $function()) {
-
       $style = $view->style_plugin;
       $display = is_null($style) ? '' : $style->displayHandler->getPluginId();
 
@@ -234,11 +238,11 @@ class BlazyAlter {
         'name'        => $name,
         'plugin_id'   => $plugin_id,
         'view_mode'   => $view_mode,
-        'is_view'     => FALSE,
       ];
 
       // @todo add `formatter` key if the above is proven right.
       $blazies->set('view', $current, TRUE);
+      $blazies->set('is.view', FALSE);
 
       // @todo remove when Blazy has use_theme_field option. This is so to avoid
       // emptiness when enabling Views `Display all values in the same row`, and

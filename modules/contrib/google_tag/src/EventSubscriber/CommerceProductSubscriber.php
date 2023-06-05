@@ -15,14 +15,22 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class CommerceProductSubscriber implements EventSubscriberInterface {
 
   /**
+   * The Event Collector.
+   *
+   * @var \Drupal\google_tag\EventCollectorInterface
+   */
+  private EventCollectorInterface $eventCollector;
+
+  /**
    * CommerceProductSubscriber constructor.
    *
-   * @param \Drupal\google_tag\EventCollectorInterface $collector
+   * @param \Drupal\google_tag\EventCollectorInterface $eventCollector
    *   Collector.
    */
   public function __construct(
-    private EventCollectorInterface $collector
+    EventCollectorInterface $eventCollector
   ) {
+    $this->eventCollector = $eventCollector;
   }
 
   /**
@@ -41,7 +49,7 @@ final class CommerceProductSubscriber implements EventSubscriberInterface {
    *   Event object.
    */
   public function onVariationChange(ProductVariationAjaxChangeEvent $event): void {
-    $this->collector->addEvent('commerce_view_item', [
+    $this->eventCollector->addEvent('commerce_view_item', [
       'item' => $event->getProductVariation(),
     ]);
   }

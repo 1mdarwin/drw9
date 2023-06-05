@@ -1,0 +1,21 @@
+uuid: b58f8ee6-11ac-40e5-9adb-9ad62596ffe4
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.field_metatag
+    - node.type.forum
+  module:
+    - metatag
+id: node.forum.field_metatag
+field_name: field_metatag
+entity_type: node
+bundle: forum
+label: Metatags
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: metatag

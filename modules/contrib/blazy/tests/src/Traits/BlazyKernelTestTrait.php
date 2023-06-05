@@ -18,6 +18,20 @@ trait BlazyKernelTestTrait {
   protected $defaultTheme = 'stark';
 
   /**
+   * The formatter display without data.
+   *
+   * @var object
+   */
+  protected $displayEmpty;
+
+  /**
+   * The messenger service.
+   *
+   * @var \Drupal\Core\Messenger\Messenger
+   */
+  protected $messenger;
+
+  /**
    * Setup common Kernel classes.
    */
   protected function setUpKernelInstall() {
@@ -57,9 +71,10 @@ trait BlazyKernelTestTrait {
     $this->blazyAdminFormatter    = $this->container->get('blazy.admin.formatter');
     $this->blazyAdmin             = $this->container->get('blazy.admin');
     $this->blazyAdminExtended     = $this->container->get('blazy.admin.extended');
+    $this->languageManager        = $this->container->get('language_manager');
 
     // @todo remove at 3.x.
-    $this->blazyManager->getConfigFactory()->getEditable('blazy.settings')->set('responsive_image', TRUE)->save();
+    $this->blazyManager->configFactory()->getEditable('blazy.settings')->set('responsive_image', TRUE)->save();
   }
 
 }
