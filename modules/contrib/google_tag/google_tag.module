@@ -63,26 +63,30 @@ function google_tag_page_top(array &$page) {
   if ($config === NULL || $config->getGtmId() === '') {
     return;
   }
-  $gtm_id = $config->getGtmId();
+  $gtm_ids = $config->getGtmIds();
 
-  if ($gtm_id !== '') {
-    $query_params = [
-      'id' => $gtm_id,
-    ];
-    if ($config->get('include_environment')) {
-      // Gather data.
-      $query_params['gtm_auth'] = $config->get('environment_id');
-      $query_params['gtm_preview'] = $config->get('environment_token');
-      $query_params['gtm_cookies_win'] = 'x';
+  $cacheable_metadata = new CacheableMetadata();
+  $cacheable_metadata->addCacheTags($config->getEntityType()->getListCacheTags());
+
+  foreach($gtm_ids as $gtm_id) {
+    if ($gtm_id !== '') {
+      $query_params = [
+        'id' => $gtm_id,
+      ];
+      if ($config->get('include_environment')) {
+        // Gather data.
+        $query_params['gtm_auth'] = $config->get('environment_id');
+        $query_params['gtm_preview'] = $config->get('environment_token');
+        $query_params['gtm_cookies_win'] = 'x';
+      }
+
+      $page['google_tag_gtm_iframe'][] = [
+        '#theme' => 'google_tag_gtm_iframe',
+        '#url' => Url::fromUri('https://www.googletagmanager.com/ns.html', ['query' => $query_params]),
+      ];
     }
-
-    $cacheable_metadata = new CacheableMetadata();
-    $cacheable_metadata->addCacheTags($config->getEntityType()->getListCacheTags());
-
-    $page['google_tag_gtm_iframe'] = [
-      '#theme' => 'google_tag_gtm_iframe',
-      '#url' => Url::fromUri('https://www.googletagmanager.com/ns.html', ['query' => $query_params]),
-    ];
+  }
+  if (isset($page['google_tag_gtm_iframe'])) {
     $cacheable_metadata->applyTo($page['google_tag_gtm_iframe']);
   }
 }
@@ -101,10 +105,10 @@ function google_tag_page_attachments(array &$attachments) {
   $cacheable_metadata->addCacheTags($config->getEntityType()->getListCacheTags());
   // @todo Put this data into their own respective methods?
   // GTM JS embed.
-  if ($config->getGtmId() !== '') {
+  if ($config->getGtmIds() !== []) {
     $attachments['#attached']['library'][] = 'google_tag/gtm';
     $gtm = [
-      'tagId' => $config->getGtmId(),
+      'tagIds' => $config->getGtmIds(),
     ];
     $settings = $config->getGtmSettings();
     $gtm['settings'] = $settings;

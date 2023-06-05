@@ -16,14 +16,22 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class SearchApiSubscriber implements EventSubscriberInterface {
 
   /**
+   * Event Collector Service.
+   *
+   * @var \Drupal\google_tag\EventCollectorInterface
+   */
+  private EventCollectorInterface $collector;
+
+  /**
    * SearchApiSubscriber constructor.
    *
    * @param \Drupal\google_tag\EventCollectorInterface $collector
    *   Collector service.
    */
   public function __construct(
-    private EventCollectorInterface $collector
+    EventCollectorInterface $collector
   ) {
+    $this->collector = $collector;
   }
 
   /**

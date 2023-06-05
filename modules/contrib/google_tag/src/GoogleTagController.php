@@ -26,14 +26,23 @@ class GoogleTagController extends HtmlEntityFormController implements ContainerI
   private EntityInterface $googleTagEntity;
 
   /**
+   * The configuration factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new self(
+    $instance = new self(
       $container->get('http_kernel.controller.argument_resolver'),
       $container->get('form_builder'),
       $container->get('entity_type.manager'),
     );
+    $instance->configFactory = $container->get('config.factory');
+    return $instance;
   }
 
   /**
@@ -44,8 +53,8 @@ class GoogleTagController extends HtmlEntityFormController implements ContainerI
     // @todo Contemplate if dependency injection is needed here.
     $entity_type_id = 'google_tag_container';
     // @phpstan-ignore-next-line
-    $tag_entity = \Drupal::config('google_tag.settings')->get('default_google_tag_entity');
-    $tag_entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultiple();
+    $tag_entity = $this->configFactory->get('google_tag.settings')->get('default_google_tag_entity');
+    $tag_entities = $this->entityTypeManager->getStorage($entity_type_id)->loadMultipleOverrideFree();
     // Only one Google Tag exists, load it.
     // @todo There might be a better logic path here.
     if ($tag_entity && isset($tag_entities[$tag_entity])) {

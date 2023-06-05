@@ -18,6 +18,20 @@ use Symfony\Component\HttpKernel\KernelEvents;
 final class ResponseSubscriber implements EventSubscriberInterface {
 
   /**
+   * Tag Container Resolver Service.
+   *
+   * @var \Drupal\google_tag\TagContainerResolver
+   */
+  private TagContainerResolver $tagResolver;
+
+  /**
+   * Event Collector Service.
+   *
+   * @var \Drupal\google_tag\EventCollectorInterface
+   */
+  private EventCollectorInterface $collector;
+
+  /**
    * ResponseSubscriber constructor.
    *
    * @param \Drupal\google_tag\TagContainerResolver $tagResolver
@@ -26,9 +40,11 @@ final class ResponseSubscriber implements EventSubscriberInterface {
    *   Collector.
    */
   public function __construct(
-    private TagContainerResolver $tagResolver,
-    private EventCollectorInterface $collector,
+    TagContainerResolver $tagResolver,
+    EventCollectorInterface $collector
   ) {
+    $this->tagResolver = $tagResolver;
+    $this->collector = $collector;
   }
 
   /**

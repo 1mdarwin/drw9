@@ -15,14 +15,22 @@ use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 final class CommerceOrderSubscriber implements EventSubscriberInterface {
 
   /**
+   * The Event Collector.
+   *
+   * @var \Drupal\google_tag\EventCollectorInterface
+   */
+  private EventCollectorInterface $eventCollector;
+
+  /**
    * CommerceOrderSubscriber constructor.
    *
    * @param \Drupal\google_tag\EventCollectorInterface $eventCollector
    *   Collector service.
    */
   public function __construct(
-    private EventCollectorInterface $eventCollector
+    EventCollectorInterface $eventCollector
   ) {
+    $this->eventCollector = $eventCollector;
   }
 
   /**

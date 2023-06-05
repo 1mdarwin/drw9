@@ -6,6 +6,7 @@ namespace Drupal\google_tag\Plugin\GoogleTag\Event\Commerce;
 
 use Drupal\commerce_product\Entity\ProductVariationInterface;
 use Drupal\commerce_store\CurrentStoreInterface;
+use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\google_tag\Plugin\GoogleTag\Event\EventBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -26,7 +27,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @todo allow support of generic purchasable entity types.
  */
-final class ViewItemEvent extends EventBase implements ContainerFactoryPluginInterface {
+final class ViewItemEvent extends EventBase implements ContainerFactoryPluginInterface, CacheableDependencyInterface {
 
   use CommerceEventTrait;
 

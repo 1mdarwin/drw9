@@ -31,6 +31,34 @@ final class TagContainerResolver {
   private \SplObjectStorage $resolved;
 
   /**
+   * The Request Stack Service.
+   *
+   * @var \Symfony\Component\HttpFoundation\RequestStack
+   */
+  private RequestStack $requestStack;
+
+  /**
+   * The Entity Type Manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  private EntityTypeManagerInterface $entityTypeManager;
+
+  /**
+   * The Context Repository Service.
+   *
+   * @var \Drupal\Core\Plugin\Context\ContextRepositoryInterface
+   */
+  private ContextRepositoryInterface $contextRepository;
+
+  /**
+   * The Context Handler.
+   *
+   * @var \Drupal\Core\Plugin\Context\ContextHandlerInterface
+   */
+  private ContextHandlerInterface $contextHandler;
+
+  /**
    * GoogleTagResolver constructor.
    *
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
@@ -43,11 +71,15 @@ final class TagContainerResolver {
    *   Context handler.
    */
   public function __construct(
-    private RequestStack $requestStack,
-    private EntityTypeManagerInterface $entityTypeManager,
-    private ContextRepositoryInterface $contextRepository,
-    private ContextHandlerInterface $contextHandler
+    RequestStack $requestStack,
+    EntityTypeManagerInterface $entityTypeManager,
+    ContextRepositoryInterface $contextRepository,
+    ContextHandlerInterface $contextHandler
   ) {
+    $this->requestStack = $requestStack;
+    $this->entityTypeManager = $entityTypeManager;
+    $this->contextRepository = $contextRepository;
+    $this->contextHandler = $contextHandler;
     $this->resolved = new \SplObjectStorage();
   }
 
@@ -105,10 +137,10 @@ final class TagContainerResolver {
           $contexts = $this->contextRepository->getRuntimeContexts(array_values($condition->getContextMapping()));
           $this->contextHandler->applyContextMapping($condition, $contexts);
         }
-        catch (MissingValueContextException) {
+        catch (MissingValueContextException $missingValueContextException) {
           $missing_value = TRUE;
         }
-        catch (ContextException) {
+        catch (ContextException $contextException) {
           $missing_context = TRUE;
         }
       }
