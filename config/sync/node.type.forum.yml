@@ -1,0 +1,16 @@
+uuid: 3e830c89-6967-48f7-bc63-f139144a50bc
+langcode: es
+status: true
+dependencies:
+  enforced:
+    module:
+      - forum
+_core:
+  default_config_hash: ERCHDVB33lub-cz7DSYR7HuBlYJjmVUdPw0IIYa3ZXc
+name: 'Tema del foro'
+type: forum
+description: 'Una <em>conversación de foro</em> comienza una nueva línea de discusión dentro de un foro.'
+help: ''
+new_revision: false
+preview_mode: 1
+display_submitted: true

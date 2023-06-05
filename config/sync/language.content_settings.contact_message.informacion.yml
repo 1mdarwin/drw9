@@ -1,0 +1,11 @@
+uuid: 9a1b1bb0-8402-41fd-8a3e-380b8c3814ac
+langcode: es
+status: true
+dependencies:
+  config:
+    - contact.form.informacion
+id: contact_message.informacion
+target_entity_type_id: contact_message
+target_bundle: informacion
+default_langcode: site_default
+language_alterable: false

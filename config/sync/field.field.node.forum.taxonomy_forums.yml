@@ -1,0 +1,28 @@
+uuid: 66dd1891-2855-4053-99c7-ef5cc9b976f7
+langcode: es
+status: true
+dependencies:
+  config:
+    - field.storage.node.taxonomy_forums
+    - node.type.forum
+    - taxonomy.vocabulary.forums
+_core:
+  default_config_hash: n0THs2iyQuOn2Iz8VTb6TgdPrniPS352uPVlCADxnn4
+id: node.forum.taxonomy_forums
+field_name: taxonomy_forums
+entity_type: node
+bundle: forum
+label: Foros
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings:
+  handler: 'default:taxonomy_term'
+  handler_settings:
+    target_bundles:
+      forums: forums
+    sort:
+      field: _none
+field_type: entity_reference

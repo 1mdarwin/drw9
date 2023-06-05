@@ -20,7 +20,7 @@ provider: null
 plugin: 'block_content:5ce9a3af-e17b-4e0a-ab92-fb8850341e85'
 settings:
   id: 'block_content:5ce9a3af-e17b-4e0a-ab92-fb8850341e85'
-  label: 'Contact us'
+  label: Contáctenos
   label_display: visible
   provider: block_content
   status: true

@@ -1,8 +1,0 @@
-title: Reacción
-settings:
-  confirmation_message: 'Gracias por su retroalimentación'
-handlers:
-  email_confirmation:
-    label: 'Confirmación por correo electrónico'
-  email_notification:
-    label: 'Aviso por correo electrónico'

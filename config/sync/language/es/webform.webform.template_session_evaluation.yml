@@ -1,5 +1,0 @@
-settings:
-  confirmation_message: 'Gracias por su retroalimentación'
-handlers:
-  email_notification:
-    label: 'Notificación por correo electrónico'

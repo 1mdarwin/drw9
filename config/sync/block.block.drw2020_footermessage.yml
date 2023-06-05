@@ -20,7 +20,7 @@ provider: null
 plugin: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
 settings:
   id: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
-  label: 'We are'
+  label: 'Quienes Somos'
   label_display: visible
   provider: block_content
   status: true
