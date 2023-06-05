@@ -2,7 +2,7 @@
 
 namespace Drupal\slick_views\Plugin\views\style;
 
-use Drupal\blazy\Dejavu\BlazyStylePluginBase;
+use Drupal\blazy\Views\BlazyStylePluginBase;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -24,7 +24,7 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
     $instance->manager = $container->get('slick.manager');
-    $instance->blazyManager = isset($instance->blazyManager) ? $instance->blazyManager : $container->get('blazy.manager');
+    $instance->blazyManager = $instance->blazyManager ?? $container->get('blazy.manager');
 
     return $instance;
   }
@@ -144,15 +144,24 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
     $this->options['item_id'] = 'slide';
     $this->options['namespace'] = 'slick';
     $settings = parent::buildSettings();
+    $blazies = $settings['blazies'] ?? NULL;
 
     // Prepare needed settings to work with.
     $settings['caption'] = array_filter($settings['caption']);
-    $settings['nav'] = !$settings['vanilla'] && $settings['optionset_thumbnail'] && isset($this->view->result[1]);
+    $nav = !$settings['vanilla'] && $settings['optionset_thumbnail'] && isset($this->view->result[1]);
     $settings['overridables'] = empty($settings['override']) ? array_filter($settings['overridables']) : $settings['overridables'];
 
     // BC for non-required Display style. Blazy 2.5+ requires explicit style.
-    if (!empty($settings['grid']) && !empty($settings['visible_items']) && empty($settings['style'])) {
+    if (!empty($settings['grid'])
+      && !empty($settings['visible_items'])
+      && empty($settings['style'])) {
       $settings['style'] = 'grid';
+    }
+
+    // @todo remove settings post Blazy 2.10.
+    $settings['nav'] = $nav;
+    if ($blazies) {
+      $blazies->set('is.nav', $nav);
     }
 
     return $settings;
@@ -164,28 +173,55 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
   public function buildElements(array $settings, $rows) {
     $build   = [];
     $view    = $this->view;
-    $item_id = $settings['item_id'];
+    $blazies = $settings['blazies'] ?? NULL;
+    $item_id = 'slide';
+    $nav     = !empty($sets['nav']);
 
     foreach ($rows as $index => $row) {
       $view->row_index = $index;
 
       $slide = [];
       $thumb = $slide[$item_id] = [];
+      $sets  = $settings;
+
+      // @todo remove all checks post Blazy 2.10.
+      if (method_exists($this, 'reset')) {
+        $this->reset($sets);
+      }
+
+      if (isset($sets['blazies'])) {
+        $blazies = $sets['blazies'];
+        $blazies->set('is.reset', TRUE);
+      }
 
       // Provides a potential unique thumbnail different from the main image.
-      if (!empty($settings['thumbnail'])) {
-        $thumbnail = $this->getFieldRenderable($row, 0, $settings['thumbnail']);
-        if (isset($thumbnail['rendered']['#image_style'], $thumbnail['rendered']['#item']) && $item = $thumbnail['rendered']['#item']) {
-          $uri = (($entity = $item->entity) && empty($item->uri)) ? $entity->getFileUri() : $item->uri;
-          $settings['thumbnail_style'] = $thumbnail['rendered']['#image_style'];
-          $settings['thumbnail_uri'] = empty($settings['thumbnail_style']) ? $uri : $this->manager->entityLoad($settings['thumbnail_style'], 'image_style')->buildUri($uri);
+      if (!empty($sets['thumbnail'])) {
+        $tn = $this->getFieldRenderable($row, 0, $sets['thumbnail']);
+        if (isset($tn['rendered']['#image_style'])) {
+          if ($item = $tn['rendered']['#item'] ?? NULL) {
+            $uri = (($entity = $item->entity) && empty($item->uri)) ? $entity->getFileUri() : $item->uri;
+            $sets['thumbnail_style'] = $tn_style = $tn['rendered']['#image_style'];
+            $tn_uri = empty($tn_style)
+              ? $uri
+              : $this->manager
+                ->entityLoad($tn_style, 'image_style')
+                ->buildUri($uri);
+
+            if ($tn_uri) {
+              $sets['thumbnail_uri'] = $tn_uri;
+
+              if ($blazies) {
+                $blazies->set('thumbnail.uri', $tn_uri);
+              }
+            }
+          }
         }
       }
 
-      $slide['settings'] = $settings;
+      $slide['settings'] = $sets;
 
       // Use Vanilla slick if so configured, ignoring Slick markups.
-      if (!empty($settings['vanilla'])) {
+      if (!empty($sets['vanilla'])) {
         $slide[$item_id] = $view->rowPlugin->render($row);
       }
       else {
@@ -193,21 +229,24 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
         $this->buildElement($slide, $row, $index);
 
         // Build thumbnail navs if so configured.
-        if (!empty($settings['nav'])) {
-          $thumb[$item_id] = empty($settings['thumbnail']) ? [] : $this->getFieldRendered($index, $settings['thumbnail']);
-          $thumb['caption'] = empty($settings['thumbnail_caption']) ? [] : $this->getFieldRendered($index, $settings['thumbnail_caption']);
+        if ($nav) {
+          $thumb[$item_id] = empty($sets['thumbnail']) ? []
+            : $this->getFieldRendered($index, $sets['thumbnail']);
+
+          $thumb['caption'] = empty($sets['thumbnail_caption']) ? []
+            : $this->getFieldRendered($index, $sets['thumbnail_caption']);
 
           $build['thumb']['items'][$index] = $thumb;
         }
       }
 
-      if (!empty($settings['class'])) {
-        $classes = $this->getFieldString($row, $settings['class'], $index);
+      if (!empty($sets['class'])) {
+        $classes = $this->getFieldString($row, $sets['class'], $index);
         $slide['settings']['class'] = empty($classes[$index]) ? [] : $classes[$index];
       }
 
-      if (empty($slide[$item_id]) && !empty($settings['image'])) {
-        $slide[$item_id] = $this->getFieldRendered($index, $settings['image']);
+      if (empty($slide[$item_id]) && !empty($sets['image'])) {
+        $slide[$item_id] = $this->getFieldRendered($index, $sets['image']);
       }
 
       $build['items'][$index] = $slide;
@@ -216,6 +255,28 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
 
     unset($view->row_index);
     return $build;
+  }
+
+  /**
+   * Check Blazy formatter to build lightbox galleries.
+   */
+  protected function checkBlazy(array &$settings, array $build, array $rows = []) {
+    // Extracts Blazy formatter settings if available.
+    // @todo re-check and remove, first.data already takes care of this.
+    if (empty($settings['vanilla']) && isset($build['items'][0])) {
+      $this->blazyManager()->isBlazy($settings, $build['items'][0]);
+    }
+    // @todo remove check Blazy 2.10.
+    $blazies = $settings['blazies'] ?? NULL;
+    if ($data = $this->getFirstImage($rows[0] ?? NULL)) {
+      if ($blazies) {
+        $blazies->set('first.data', $data);
+      }
+      // @todo remove post Blazy 2.10.
+      else {
+        $settings['first_image'] = $data;
+      }
+    }
   }
 
 }

@@ -126,7 +126,6 @@ class SlickGrouping extends SlickViewsBase {
 
         $build['items'][] = $slide;
         $build['thumb']['items'][] = $thumb;
-        unset($slide, $thumb);
       }
 
       $build['settings'] = $options;
@@ -158,11 +157,7 @@ class SlickGrouping extends SlickViewsBase {
 
     $build = $this->buildElements($settings, $rows);
     // Extracts Blazy formatter settings if available.
-    if (empty($settings['vanilla']) && isset($build['items'][0])) {
-      $this->blazyManager()->isBlazy($settings, $build['items'][0]);
-    }
-    // Supports Blazy multi-breakpoint images if using Blazy formatter.
-    $settings['first_image'] = isset($rows[0]) ? $this->getFirstImage($rows[0]) : [];
+    $this->checkBlazy($settings, $build, $rows);
 
     $build['settings'] = $settings;
 
@@ -179,7 +174,7 @@ class SlickGrouping extends SlickViewsBase {
     $grouping = empty($this->options['grouping']) ? [] : array_filter($this->options['grouping']);
 
     foreach ($sets as $set) {
-      $level = isset($set['level']) ? $set['level'] : 0;
+      $level = $set['level'] ?? 0;
       $row   = reset($set['rows']);
 
       // Render as a grouping set.
