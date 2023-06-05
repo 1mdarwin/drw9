@@ -10,7 +10,7 @@ class BlazyAdminFormatter extends BlazyAdminFormatterBase {
   /**
    * Defines re-usable form elements.
    */
-  public function buildSettingsForm(array &$form, $definition = []) {
+  public function buildSettingsForm(array &$form, array $definition): void {
     $definition['namespace'] = 'blazy';
     $definition['responsive_image'] = $definition['responsive_image'] ?? TRUE;
 

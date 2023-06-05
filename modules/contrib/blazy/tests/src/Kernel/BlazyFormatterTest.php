@@ -17,13 +17,6 @@ use GuzzleHttp\Exception\GuzzleException;
 class BlazyFormatterTest extends BlazyKernelTestBase {
 
   /**
-   * The formatter instance.
-   *
-   * @var \Drupal\blazy\Plugin\Field\FieldFormatter\BlazyImageFormatter
-   */
-  protected $formatterInstance;
-
-  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {
@@ -71,7 +64,10 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $field = $build[$this->testFieldName];
 
     // Verify it is a theme_field().
+    /*
+    // No longer relevant for D10.
     $this->assertArrayHasKey('#blazy', $field);
+     */
     $this->assertArrayHasKey('#build', $field[0]);
 
     // Verify it is not a theme_item_list() grid.
@@ -91,7 +87,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $this->assertEquals($file0->getCacheTags(), $tag0, 'First image cache tags is as expected');
     $this->assertEquals($file1->getCacheTags(), $tag1, 'Second image cache tags is as expected');
 
-    $render = $this->blazyManager->getRenderer()->renderRoot($build);
+    $render = $this->blazyManager->renderer()->renderRoot($build);
     $this->assertNotEmpty($render);
     $this->assertStringContainsString('data-blazy', $render);
   }
@@ -167,8 +163,9 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
 
     // Blazy uses theme_field() output.
     $this->assertEquals($this->testFieldName, $blazies->get('field.name'));
-    $this->assertArrayHasKey('#blazy', $build[$this->testFieldName]);
 
+    // No longer relevant for D10.
+    /* $this->assertArrayHasKey('#blazy', $build[$this->testFieldName]); */
     $options = $this->blazyAdminFormatter->getOptionsetOptions('image_style');
     $this->assertArrayHasKey('large', $options);
 
@@ -245,10 +242,10 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
 
         $field[0] = $render;
         $field['#settings'] = $settings;
-        $wrap = BlazyMedia::unfield($field, $settings);
+        $wrap = BlazyMedia::unfield($field);
         $this->assertNotEmpty($wrap);
 
-        $render = $this->blazyManager->getRenderer()->renderRoot($build[$this->testFieldName]);
+        $render = $this->blazyManager->renderer()->renderRoot($build[$this->testFieldName]);
         $this->assertStringContainsString('data-blazy', $render);
       }
       else {

@@ -15,6 +15,27 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class SlickAdminUnitTest extends UnitTestCase {
 
   /**
+   * The blazy admin service.
+   *
+   * @var \Drupal\blazy\Form\BlazyAdminInterface
+   */
+  protected $blazyAdminExtended;
+
+  /**
+   * The slick admin service.
+   *
+   * @var \Drupal\slick\Form\SlickAdminInterface
+   */
+  protected $slickAdmin;
+
+  /**
+   * The slick manager service.
+   *
+   * @var \Drupal\slick\SlickManagerInterface
+   */
+  protected $slickManager;
+
+  /**
    * {@inheritdoc}
    */
   protected function setUp(): void {

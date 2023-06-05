@@ -4,7 +4,7 @@ namespace Drupal\blazy\Plugin\views\style;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\style\StylePluginBase;
-use Drupal\blazy\BlazyManagerInterface;
+use Drupal\blazy\BlazyManager;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\Views\BlazyStyleBaseTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * Blazy style plugin.
  */
-class BlazyViews extends StylePluginBase {
+class BlazyViews extends StylePluginBase implements BlazyViewsInterface {
 
   use BlazyStyleBaseTrait;
 
@@ -29,7 +29,7 @@ class BlazyViews extends StylePluginBase {
   /**
    * Constructs a BlazyManager object.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, BlazyManagerInterface $blazy_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, BlazyManager $blazy_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->blazyManager = $blazy_manager;
   }
@@ -42,21 +42,10 @@ class BlazyViews extends StylePluginBase {
   }
 
   /**
-   * Returns the blazy admin.
+   * {@inheritdoc}
    */
   public function admin() {
     return \Drupal::service('blazy.admin');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function defineOptions() {
-    $options = [];
-    foreach (BlazyDefault::gridSettings() as $key => $value) {
-      $options[$key] = ['default' => $value];
-    }
-    return $options + parent::defineOptions();
   }
 
   /**
@@ -114,6 +103,17 @@ class BlazyViews extends StylePluginBase {
     }
 
     return $elements;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function defineOptions() {
+    $options = [];
+    foreach (BlazyDefault::gridSettings() as $key => $value) {
+      $options[$key] = ['default' => $value];
+    }
+    return $options + parent::defineOptions();
   }
 
 }

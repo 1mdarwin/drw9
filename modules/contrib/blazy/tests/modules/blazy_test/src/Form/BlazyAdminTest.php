@@ -24,7 +24,7 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
   /**
    * The blazy_test manager service.
    *
-   * @var \Drupal\blazy_test\BlazyManagerInterface
+   * @var \Drupal\blazy\BlazyManagerInterface
    */
   protected $manager;
 
@@ -60,7 +60,7 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
   /**
    * Returns all settings form elements.
    */
-  public function buildSettingsForm(array &$form, $definition = []) {
+  public function buildSettingsForm(array &$form, array $definition): void {
     $definition += [
       'namespace'  => 'blazy',
       'optionsets' => [],
@@ -84,14 +84,14 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
   /**
    * Returns the opening form elements.
    */
-  public function openingForm(array &$form, &$definition = []) {
+  public function openingForm(array &$form, array &$definition): void {
     $this->blazyAdmin->openingForm($form, $definition);
   }
 
   /**
    * Returns the main form elements.
    */
-  public function mainForm(array &$form, $definition = []) {
+  public function mainForm(array &$form, array $definition): void {
     if (!empty($definition['image_style_form'])) {
       $this->blazyAdmin->imageStyleForm($form, $definition);
     }
@@ -112,14 +112,14 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
   /**
    * Returns the closing form elements.
    */
-  public function closingForm(array &$form, $definition = []) {
+  public function closingForm(array &$form, array $definition): void {
     $this->blazyAdmin->closingForm($form, $definition);
   }
 
   /**
    * Returns default layout options for the core Image, or Views.
    */
-  public function getLayoutOptions() {
+  public function getLayoutOptions(): array {
     return [
       'bottom' => $this->t('Caption bottom'),
       'center' => $this->t('Caption center'),
@@ -130,21 +130,26 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
   /**
    * Return the field formatter settings summary.
    */
-  public function getSettingsSummary(array $definition = []) {
+  public function getSettingsSummary(array $definition): array {
     return $this->blazyAdmin->getSettingsSummary($definition);
   }
 
   /**
    * Returns available fields for select options.
    */
-  public function getFieldOptions($target_bundles = [], $allowed_field_types = [], $entity_type_id = 'media', $target_type = '') {
+  public function getFieldOptions(
+    array $target_bundles = [],
+    array $allowed_field_types = [],
+    $entity_type_id = 'media',
+    $target_type = ''
+  ): array {
     return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type_id, $target_type);
   }
 
   /**
    * Returns re-usable logic, styling and assets across fields and Views.
    */
-  public function finalizeForm(array &$form, $definition = []) {
+  public function finalizeForm(array &$form, array $definition): void {
     $this->blazyAdmin->finalizeForm($form, $definition);
   }
 

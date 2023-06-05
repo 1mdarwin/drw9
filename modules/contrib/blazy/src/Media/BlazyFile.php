@@ -206,6 +206,7 @@ class BlazyFile {
    */
   public static function item($object = NULL, array $settings = []): ?object {
     $file = $object;
+    Blazy::verify($settings);
 
     // Bail out early if we are given what we want.
     /** @var \Drupal\file\Entity\File $file */
@@ -218,8 +219,8 @@ class BlazyFile {
       /** @var \Drupal\file\Entity\File $file */
       $file = $object->entity;
     }
+    /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $object */
     elseif ($object instanceof EntityReferenceFieldItemListInterface) {
-      /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $object */
       /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
       if ($image = $object->first()) {
         /** @var \Drupal\file\Entity\File $file */
@@ -258,7 +259,7 @@ class BlazyFile {
    * @see BlazyImage::fromField()
    *  The deprecated/ previous approach on this.
    */
-  public static function fromField($entity, $name, array $settings): ?object {
+  private static function fromField($entity, $name, array $settings): ?object {
     $file = NULL;
     /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $field */
     if (isset($entity->{$name}) && $field = $entity->get($name)) {
@@ -288,7 +289,7 @@ class BlazyFile {
   /**
    * Returns the File entity from settings, if applicable, relevant for Filter.
    */
-  public static function fromSettings(array $settings): ?object {
+  private static function fromSettings(array $settings): ?object {
     $file = NULL;
     $blazies = $settings['blazies'] ?? NULL;
 

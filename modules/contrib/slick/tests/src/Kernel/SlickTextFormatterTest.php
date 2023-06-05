@@ -5,6 +5,7 @@ namespace Drupal\Tests\slick\Kernel;
 use Drupal\Core\Form\FormState;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
+use Drupal\Tests\slick\Traits\SlickKernelTrait;
 
 /**
  * Tests the Slick field rendering using the text field type.
@@ -15,6 +16,7 @@ use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 class SlickTextFormatterTest extends BlazyKernelTestBase {
 
   use SlickUnitTestTrait;
+  use SlickKernelTrait;
 
   /**
    * {@inheritdoc}

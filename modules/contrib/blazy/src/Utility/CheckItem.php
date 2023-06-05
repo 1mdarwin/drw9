@@ -9,7 +9,11 @@ use Drupal\blazy\Media\BlazyImage;
 use Drupal\blazy\Media\BlazyResponsiveImage;
 
 /**
- * Provides feature check methods at item level, or individually.
+ * Provides feature check methods at item level.
+ *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module.
  *
  * @todo remove most $settings once migrated and after sub-modules and tests.
  */
@@ -175,7 +179,7 @@ class CheckItem {
     $ratio      = $settings['ratio'] ?? '';
     $unlazy     = $blazies->is('slider') && $blazies->is('initial');
     $unlazy     = $unlazy ? TRUE : $blazies->is('unlazy');
-    $use_loader = $settings['use_loading'] ?? $blazies->get('use.loader');
+    $use_loader = $settings['use_loading'] ?? $blazies->use('loader');
     $use_loader = $unlazy ? FALSE : $use_loader;
     $is_unblur  = $blazies->is('sandboxed')
       || $blazies->is('unstyled') || $blazies->is('iframe');
@@ -207,6 +211,63 @@ class CheckItem {
         ->set('lazy.id', 'blazy')
         ->set('is.blazy', TRUE);
     }
+  }
+
+  /**
+   * Determines which lazyload to use for Slick and Splide.
+   *
+   * Moved it here to avoid similar issues like `is_preview` complication,
+   * and other improvements: `Loading` priority, `No JavaScript: lazy`, etc.
+   *
+   * @todo refine this based on the new options.
+   * @todo remove non configurable settings after sub-modules.
+   */
+  public static function which(array &$settings, $lazy, $class, $attribute): void {
+    // Don't bother if empty.
+    if (empty($lazy)) {
+      return;
+    }
+
+    Blazy::verify($settings);
+    $blazies = $settings['blazies'];
+
+    // Bail out if lazy load is disabled, or in sandbox mode.
+    if ($blazies->is('nojs') || $blazies->is('sandboxed')) {
+      return;
+    }
+
+    // Slick only knows plain old image.
+    // Splide does know plain (Responsive) image, but not Picture.
+    // Blazy knows more: BG, local video, remote video or iframe, (Responsive
+    // |Picture) image.
+    // Must be re-defined at item level to respect mixed media.
+    // @todo local video, iframe, etc. are not covered at container level.
+    $use_blazy = $lazy == 'blazy'
+      || !empty($settings['blazy'])
+      || !empty($settings['background'])
+      || !empty($settings['responsive_image_style'])
+      || $blazies->is('blazy')
+      || $blazies->is('blur');
+
+    // Allows Blazy to take over for advanced features above.
+    $lazy = $use_blazy ? 'blazy' : $lazy;
+
+    // Still a check in case the above does not cover, like video, iframe, etc.
+    if ($use_blazy) {
+      $blazies->set('is.blazy', TRUE);
+    }
+    else {
+      $settings['lazy_class'] = $class;
+      $settings['lazy_attribute'] = $attribute;
+
+      $blazies->set('lazy.attribute', $attribute)
+        ->set('lazy.class', $class);
+    }
+
+    $settings['blazy'] = $use_blazy;
+    $settings['lazy'] = $lazy;
+
+    $blazies->set('lazy.id', $lazy);
   }
 
 }

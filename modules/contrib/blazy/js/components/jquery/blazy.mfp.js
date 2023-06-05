@@ -15,6 +15,7 @@
   var _dataId = 'data-' + _id;
   var _element = '[' + _dataId + '-gallery]';
   var _trigger = '[' + _dataId + '-trigger]';
+  var _mounted = 'is-' + _id + '-mounted';
   var _blazy = Drupal.blazy || {};
   var _canZoom = true;
   var _elClicked;
@@ -106,6 +107,8 @@
         }
       });
     }, false);
+
+    $.addClass(box, _mounted);
   }
 
   function build(elms) {
@@ -254,7 +257,7 @@
         };
       }
 
-      $.once(process, _idOnce, _element, _context);
+      $.once(process, _idOnce, _element + ':not(.' + _mounted + ')', _context);
 
     },
     detach: function (context, setting, trigger) {

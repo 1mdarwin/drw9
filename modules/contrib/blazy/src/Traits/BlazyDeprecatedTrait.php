@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\blazy;
+namespace Drupal\blazy\Traits;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 

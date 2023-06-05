@@ -2,10 +2,8 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\blazy\Dejavu\BlazyEntityReferenceBase;
-// @todo enable post Blazy:2.10:
-// use Drupal\blazy\Field\BlazyEntityReferenceBase;
-// use Drupal\blazy\Field\BlazyField;
+use Drupal\blazy\Field\BlazyEntityReferenceBase;
+use Drupal\blazy\Field\BlazyField;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -50,9 +48,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
         ? [] : $this->formatter->getThumbnail($settings, $element['item']);
 
       $element['caption'] = $caption
-        // @todo enable post Blazy:2.10:
-        // BlazyField::view($entity, $caption, $view_mode)
-        ? $this->blazyEntity->getFieldRenderable($entity, $caption, $view_mode)
+        ? BlazyField::view($entity, $caption, $view_mode)
         : [];
 
       $build['thumb']['items'][$delta] = $element;

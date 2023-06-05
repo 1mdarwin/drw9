@@ -91,7 +91,7 @@ class BlazyFormatter extends BlazyManager implements BlazyFormatterInterface {
     $this->buildSettings($build, $items);
 
     // Allows altering the settings.
-    $this->getModuleHandler()->alter('blazy_settings', $build, $items);
+    $this->moduleHandler()->alter('blazy_settings', $build, $items);
 
     // Combines settings with the provided hook_alter().
     $this->postSettingsAlter($settings, $items->getEntity());

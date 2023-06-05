@@ -43,7 +43,7 @@ class BlazyDefault {
   /**
    * Returns alterable plugin settings to pass the tests.
    */
-  public function alterableSettings(array &$settings = []) {
+  public function alterableSettings(array &$settings) {
     $context = ['class' => get_called_class()];
     \Drupal::moduleHandler()->alter('blazy_base_settings', $settings, $context);
 
@@ -101,27 +101,6 @@ class BlazyDefault {
       'responsive_image_style' => '',
       'use_theme_field'        => FALSE,
     ] + self::cherrySettings();
-  }
-
-  /**
-   * Returns deprecated, or previously wrong room settings.
-   *
-   * @todo remove custom breakpoints anytime before 3.x.
-   */
-  public static function deprecatedSettings() {
-    return [
-      'breakpoints' => [],
-      'current_view_mode' => '',
-      'fx' => '',
-      'icon' => '',
-      'id' => '',
-      'sizes' => '',
-      'grid_header' => '',
-      'loading' => 'lazy',
-      'preload' => FALSE,
-      '_item' => '',
-      '_uri' => '',
-    ];
   }
 
   /**
@@ -413,6 +392,27 @@ class BlazyDefault {
   public static function ondemandPolyfills(): array {
     return [
       'fullscreen',
+    ];
+  }
+
+  /**
+   * Returns deprecated, or previously wrong room settings.
+   *
+   * @todo remove custom breakpoints anytime before 3.x.
+   */
+  public static function deprecatedSettings() {
+    return [
+      'breakpoints' => [],
+      'current_view_mode' => '',
+      'fx' => '',
+      'icon' => '',
+      'id' => '',
+      'sizes' => '',
+      'grid_header' => '',
+      'loading' => 'lazy',
+      'preload' => FALSE,
+      '_item' => '',
+      '_uri' => '',
     ];
   }
 

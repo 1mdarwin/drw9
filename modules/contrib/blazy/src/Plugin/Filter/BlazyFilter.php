@@ -170,7 +170,7 @@ class BlazyFilter extends BlazyFilterBase {
 
     // Provides alter like formatters to modify at one go, even clumsy here.
     $build = ['settings' => $settings];
-    $this->blazyManager->getModuleHandler()->alter('blazy_settings', $build, $this->settings);
+    $this->blazyManager->moduleHandler()->alter('blazy_settings', $build, $this->settings);
 
     $settings = array_merge($settings, $build['settings']);
     $this->blazyManager->postSettingsAlter($settings);
@@ -282,7 +282,7 @@ class BlazyFilter extends BlazyFilterBase {
       // @todo move it out of here due to requiring URI to determine style.
       if ($blazies->is('resimage')) {
         try {
-          if ($resimage = $this->blazyManager->entityLoad($style, 'responsive_image_style')) {
+          if ($resimage = $this->blazyManager->load($style, 'responsive_image_style')) {
             $settings['responsive_image_style'] = $style;
             $blazies->set('resimage.style', $resimage);
           }
@@ -334,7 +334,7 @@ class BlazyFilter extends BlazyFilterBase {
       return [];
     }
 
-    $entity = $this->blazyManager->entityLoad($id, $entity_type);
+    $entity = $this->blazyManager->load($id, $entity_type);
     $blazies = $settings['blazies'];
     $blazies->set('entity.id', $id)
       ->set('entity.type_id', $entity_type)
@@ -546,7 +546,7 @@ class BlazyFilter extends BlazyFilterBase {
       ];
 
       $output = $this->blazyManager->build($build);
-      $altered_html = $this->blazyManager->getRenderer()->render($output);
+      $altered_html = $this->blazyManager->renderer()->render($output);
 
       // Checks if the IMG is managed by caption filter identified by figure.
       if ($first->parentNode && $first->parentNode->tagName == 'figure') {

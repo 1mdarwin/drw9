@@ -10,10 +10,12 @@ test_dependencies:
   - drupal:responsive_image
   - drupal:views
 
+# Do not remove until below issues are resolved!
 # Add a fake version so local drush and Git checkouts do not fail dependencies.
-# version: 8.x-2.x
+# Also accounts for the failing PHP8.1+ with git clone or --prefer-source.
+# version: 8.x-2.16
 
-# Information added by Drupal.org packaging script on 2023-05-16
-version: '8.x-2.15'
+# Information added by Drupal.org packaging script on 2023-06-03
+version: '8.x-2.16'
 project: 'blazy'
-datestamp: 1684213157
+datestamp: 1685788560

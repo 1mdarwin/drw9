@@ -5,7 +5,7 @@ namespace Drupal\blazy\Utility;
 use Drupal\blazy\Blazy;
 
 /**
- * Provides urtl, route, request, stream, or any path-related methods.
+ * Provides url, route, request, stream, or any path-related methods.
  */
 class Path {
 
@@ -129,28 +129,28 @@ class Path {
    * Checks if Blazy is in CKEditor preview mode where no JS assets are loaded.
    */
   public static function isPreview(): bool {
-    if (!isset(static::$isPreview)) {
-      static::$isPreview = self::isAmp() || self::isSandboxed();
+    if (!isset(self::$isPreview)) {
+      self::$isPreview = self::isAmp() || self::isSandboxed();
     }
-    return static::$isPreview;
+    return self::$isPreview;
   }
 
   /**
    * Checks if Blazy is in AMP pages.
    */
   public static function isAmp(): bool {
-    if (!isset(static::$isAmp)) {
+    if (!isset(self::$isAmp)) {
       $request = self::request();
-      static::$isAmp = $request && $request->query->get('amp');
+      self::$isAmp = $request && $request->query->get('amp');
     }
-    return static::$isAmp;
+    return self::$isAmp;
   }
 
   /**
    * In CKEditor without JS assets, interactive elements must be sandboxed.
    */
   public static function isSandboxed(): bool {
-    if (!isset(static::$isSandboxed)) {
+    if (!isset(self::$isSandboxed)) {
       $check = FALSE;
       if ($router = self::routeMatch()) {
         if ($route = $router->getRouteName()) {
@@ -164,9 +164,9 @@ class Path {
         }
       }
 
-      static::$isSandboxed = $check;
+      self::$isSandboxed = $check;
     }
-    return static::$isSandboxed;
+    return self::$isSandboxed;
   }
 
 }

@@ -3,7 +3,8 @@
 namespace Drupal\blazy\Views;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\blazy\Blazy;
+use Drupal\image\Plugin\Field\FieldType\ImageItem;
+use Drupal\blazy\BlazyInternal;
 
 /**
  * A Trait common for optional views style plugins.
@@ -11,11 +12,11 @@ use Drupal\blazy\Blazy;
 trait BlazyStylePluginTrait {
 
   /**
-   * Returns the modified renderable image_formatter to support lazyload.
+   * {@inheritdoc}
    */
-  public function getImageRenderable(array &$settings, $row, $index) {
+  public function getImageRenderable(array &$settings, $row, $index): array {
     $blazies = $settings['blazies'];
-    $image = $this->isImageRenderable($row, $index, $settings['image']);
+    $image = $this->getImageArray($row, $index, $settings['image']);
     $rendered = $image['rendered'] ?? [];
 
     // Supports 'group_rows' option.
@@ -27,7 +28,7 @@ trait BlazyStylePluginTrait {
     // If the image has #item property, lazyload may work, otherwise skip.
     // This hustle is to lazyload tons of images -- grids, large galleries,
     // gridstack, mason, with multimedia/ lightboxes for free.
-    /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
+    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $item */
     if ($item = $this->getImageItem($image)) {
       // Supports multiple image styles within a single view such as GridStack,
       // else fallbacks to the defined image style if available.
@@ -51,7 +52,7 @@ trait BlazyStylePluginTrait {
           $settings = array_merge($blazy_settings, array_filter($settings));
 
           // Reserves crucial blazy specific settings.
-          Blazy::preserve($settings, $blazy_settings);
+          BlazyInternal::preserve($settings, $blazy_settings);
 
           $settings['blazies'] = $blazy_settings['blazies'];
         }
@@ -80,9 +81,9 @@ trait BlazyStylePluginTrait {
   }
 
   /**
-   * Checks if we can work with this formatter, otherwise no go if flattened.
+   * {@inheritdoc}
    */
-  public function isImageRenderable($row, $index, $field_image = '') {
+  public function getImageArray($row, $index, $field_image = ''): array {
     if (!empty($field_image)
       && $image = $this->getFieldRenderable($row, $index, $field_image)) {
 
@@ -96,12 +97,10 @@ trait BlazyStylePluginTrait {
   }
 
   /**
-   * Get the image item to work with out of this formatter.
-   *
-   * All this mess is because Views may render/flatten images earlier.
+   * {@inheritdoc}
    */
-  public function getImageItem($image) {
-    $item = [];
+  public function getImageItem($image): ?ImageItem {
+    $item = NULL;
 
     if ($rendered = ($image['rendered'] ?? [])) {
       // Image formatter.
@@ -114,13 +113,13 @@ trait BlazyStylePluginTrait {
     }
 
     // Don't know other reasonable formatters to work with.
-    return is_object($item) ? $item : [];
+    return is_object($item) ? $item : NULL;
   }
 
   /**
-   * Returns the rendered caption fields.
+   * {@inheritdoc}
    */
-  public function getCaption($index, $settings = []) {
+  public function getCaption($index, array $settings = []): array {
     $items = [];
     $keys = array_keys($this->view->field);
 
@@ -149,9 +148,9 @@ trait BlazyStylePluginTrait {
   }
 
   /**
-   * Returns the rendered layout fields.
+   * {@inheritdoc}
    */
-  public function getLayout(array &$settings, $index) {
+  public function getLayout(array &$settings, $index): void {
     $layout = $settings['layout'] ?? '';
     if (strpos($layout, 'field_') !== FALSE) {
       $settings['layout'] = strip_tags($this->getField($index, $layout));
@@ -159,9 +158,9 @@ trait BlazyStylePluginTrait {
   }
 
   /**
-   * Returns the rendered field, either string or array.
+   * {@inheritdoc}
    */
-  public function getFieldRendered($index, $field_name = '', $restricted = FALSE) {
+  public function getFieldRendered($index, $field_name = '', $restricted = FALSE): array {
     if (!empty($field_name) && $output = $this->getField($index, $field_name)) {
       return is_array($output) ? $output : [
         '#markup' => ($restricted ? Xss::filterAdmin($output) : $output),

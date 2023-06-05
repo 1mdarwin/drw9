@@ -145,8 +145,8 @@ trait BlazyCreationTestTrait {
    */
   protected function setUpContentTypeTest($bundle = '', array $settings = []) {
     $node_type = NodeType::load($bundle);
-    $full_html = $this->blazyManager->entityLoad('full_html', 'filter_format');
-    $restricted_html = $this->blazyManager->entityLoad('restricted_html', 'filter_format');
+    $full_html = $this->blazyManager->load('full_html', 'filter_format');
+    $restricted_html = $this->blazyManager->load('restricted_html', 'filter_format');
 
     if (empty($node_type)) {
       $node_type = NodeType::create([
@@ -222,7 +222,7 @@ trait BlazyCreationTestTrait {
       'status' => TRUE,
     ];
 
-    $node = $this->blazyManager->getEntityTypeManager()
+    $node = $this->blazyManager->entityTypeManager()
       ->getStorage($this->entityType)
       ->create($values);
 

@@ -180,7 +180,7 @@ abstract class TextFilterBase extends FilterBase implements ContainerFactoryPlug
    */
   protected function render(\DOMElement $node, array $output) {
     $dom = $node->ownerDocument;
-    $altered_html = $this->blazyManager->getRenderer()->render($output);
+    $altered_html = $this->blazyManager->renderer()->render($output);
 
     // Load the altered HTML into a new DOMDocument, retrieve element.
     $updated_nodes = Html::load($altered_html)->getElementsByTagName('body')

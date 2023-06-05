@@ -1,4 +1,25 @@
 
+Blazy 8.x-2.0-dev, 2023-06-02
+------------------------------
+- Fixed for D10 breaking changes with Blazy lightboxes within Views.
+
+Blazy 8.x-2.0-dev, 2023-06-02
+------------------------------
+- Fixed for LB off-canvas modal.
+- Removed 1.x unused services: blazy.media, blazy, blazy.formatter.manager.
+- Removed unused classes: BlazyUtil.
+- Issue #3253012 by Rajab Natshah, gausarts, Anybody: Drupal 10.
+- Added few more strict contracts.
+- Implemented BlazyBase service to separate Media from basic reusable methods.
+
+Blazy 8.x-2.0-dev, 2023-05-28
+------------------------------
+- Fixed for D10 breaking-changes Blazy formatter with lightboxes.
+
+Blazy 8.x-2.0-dev, 2023-05-28
+------------------------------
+- Updated to account for PHP8.1+.
+
 Blazy 8.x-2.0-dev, 2023-05-15
 ------------------------------
 - Fixed for non-refreshable cached options, e.g: missing Media switcher option.

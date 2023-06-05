@@ -183,7 +183,7 @@ class Preloader {
     // These also provide data for the Preload option.
     if (!$blazies->was('dimensions')) {
       $unstyled = $blazies->get('first.unstyled');
-      if (!$unstyled && $uri = $blazies->get('first.uri')) {
+      if (!$unstyled && $blazies->get('first.uri')) {
         $resimage = BlazyResponsiveImage::toStyle($settings, $unstyled);
         if ($resimage) {
           BlazyResponsiveImage::dimensions($settings, $resimage, TRUE);
