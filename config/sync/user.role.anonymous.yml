@@ -4,7 +4,6 @@ status: true
 dependencies:
   module:
     - comment
-    - contact
     - search
     - statistics
     - system
@@ -17,7 +16,6 @@ is_admin: false
 permissions:
   - 'access comments'
   - 'access content'
-  - 'access site-wide contact form'
   - 'post comments'
   - 'search content'
   - 'view post access counter'

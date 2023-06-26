@@ -213,7 +213,7 @@ display:
         row: false
       use_more: true
       use_more_always: true
-      use_more_text: más
+      use_more_text: more
       rendering_language: '***LANGUAGE_language_interface***'
       display_extenders: {  }
       block_description: 'Random FAQs'

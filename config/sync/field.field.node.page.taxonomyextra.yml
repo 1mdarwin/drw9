@@ -5,7 +5,6 @@ dependencies:
   config:
     - field.storage.node.taxonomyextra
     - node.type.page
-    - taxonomy.vocabulary.forums
     - taxonomy.vocabulary.vocabulary_2
     - taxonomy.vocabulary.vocabulary_3
     - taxonomy.vocabulary.vocabulary_4
@@ -24,7 +23,6 @@ settings:
   handler: 'default:taxonomy_term'
   handler_settings:
     target_bundles:
-      forums: forums
       vocabulary_2: vocabulary_2
       vocabulary_3: vocabulary_3
       vocabulary_4: vocabulary_4

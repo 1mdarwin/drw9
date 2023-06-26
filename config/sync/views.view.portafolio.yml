@@ -214,7 +214,7 @@ display:
       relationships: {  }
       use_more: true
       use_more_always: true
-      use_more_text: más
+      use_more_text: more
       header: {  }
       footer: {  }
       display_extenders: {  }

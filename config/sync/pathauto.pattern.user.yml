@@ -3,12 +3,23 @@ langcode: es
 status: true
 dependencies:
   module:
+    - language
     - user
 id: user
 label: 'User - default'
 type: 'canonical_entities:user'
 pattern: 'usuario/[user:name]'
-selection_criteria: {  }
+selection_criteria:
+  33ed3578-7ea9-4e7c-bf7f-328abeedc7e7:
+    id: language
+    negate: false
+    uuid: 33ed3578-7ea9-4e7c-bf7f-328abeedc7e7
+    context_mapping:
+      language: 'user:langcode:language'
+    langcodes:
+      es: es
 selection_logic: and
 weight: 0
-relationships: {  }
+relationships:
+  'user:langcode:language':
+    label: Language

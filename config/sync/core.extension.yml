@@ -20,7 +20,6 @@ module:
   config_filter: 0
   config_split: 0
   config_translation: 0
-  contact: 0
   contextual: 0
   ctools: 0
   ctools_block: 0
@@ -83,11 +82,17 @@ module:
   views_bootstrap: 0
   views_infinite_scroll: 0
   views_ui: 0
+  webform: 0
+  webform_access: 0
+  webform_examples: 0
+  webform_node: 0
+  webform_templates: 0
+  webform_ui: 0
   widget: 0
   ds: 1
-  forum: 1
   menu_link_content: 1
   pathauto: 1
+  webform_bootstrap: 1
   ds_extras: 2
   content_translation: 10
   views: 10
