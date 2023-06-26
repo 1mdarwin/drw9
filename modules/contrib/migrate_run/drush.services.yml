@@ -1,9 +1,0 @@
-services:
-  migrate_run.commands:
-    class: \Drupal\migrate_run\Commands\MigrateRunCommands
-    arguments:
-      - '@plugin.manager.migration'
-      - '@date.formatter'
-      - '@keyvalue'
-    tags:
-      - { name: drush.command }

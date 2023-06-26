@@ -16,7 +16,7 @@ class WebformNodeVariantTest extends WebformNodeBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['webform', 'webform_node'];
+  protected static $modules = ['webform', 'webform_node'];
 
   /**
    * Webforms to load.
@@ -29,20 +29,22 @@ class WebformNodeVariantTest extends WebformNodeBrowserTestBase {
    * Tests webform node variant.
    */
   public function testNodeVariant() {
+    $assert_session = $this->assertSession();
+
     // Create a webform node with a variant.
     $node = $this->createWebformNode('test_variant_multiple');
     $node->webform->default_data = "letter: a
 number: '1'";
     $node->save();
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $this->drupalLogin($this->rootUser);
 
     // Check node variants render.
     $this->drupalGet('/node/' . $node->id());
-    $this->assertRaw('[A]');
-    $this->assertRaw('[1]');
+    $assert_session->responseContains('[A]');
+    $assert_session->responseContains('[1]');
 
     // Check node variants processed.
     $sid = $this->postNodeSubmission($node);

@@ -3,7 +3,7 @@
  * Attaches behaviors for the Clientside Validation jQuery module.
  */
 
-(function ($, drupalSettings) {
+(function ($, drupalSettings, once) {
 
   'use strict';
 
@@ -19,8 +19,7 @@
    */
   Drupal.behaviors.webformClientSideValidationAjax = {
     attach: function (context) {
-      $('form.webform-submission-form .form-actions :submit:not([formnovalidate])')
-        .once('webform-clientside-validation-ajax')
+      $(once('webform-clientside-validation-ajax', 'form.webform-submission-form .form-actions input[type="submit"]:not([formnovalidate])'))
         .addClass('cv-validate-before-ajax');
     }
   };
@@ -37,11 +36,11 @@
       $(context).find(':input[type="date"], :input[type="time"], :input[type="datetime"]')
         .removeAttr('step')
         .removeAttr('min')
-        .removeAttr('min');
+        .removeAttr('max');
     }
   };
 
-  $(document).once('webform_cvjquery').on('cv-jquery-validate-options-update', function (event, options) {
+  $(once('webform_cvjquery', document)).on('cv-jquery-validate-options-update', function (event, options) {
     options.errorElement = 'strong';
     options.showErrors = function (errorMap, errorList) {
       // Show errors using defaultShowErrors().
@@ -58,6 +57,21 @@
         $errorMessages.insertAfter($container);
       });
 
+      // Move all select2 and chosen errors to appear after the parent container.
+      $(this.currentForm).find('.webform-select2 ~ .select2, .webform-chosen ~ .chosen-container').each(function () {
+        var $widget = $(this);
+        var $select = $widget.parent().find('select');
+        var $errorMessages = $widget.parent().find('strong.error.form-item--error-message');
+        if ($select.hasClass('error')) {
+          $errorMessages.insertAfter($widget);
+          $widget.addClass('error');
+        }
+        else {
+          $errorMessages.hide();
+          $widget.removeClass('error');
+        }
+      });
+
       // Move checkbox errors to appear as the last item in the
       // parent container.
       $(this.currentForm).find('.form-type-checkbox').each(function () {
@@ -65,7 +79,7 @@
         var $errorMessages = $container.find('strong.error.form-item--error-message');
         $container.append($errorMessages);
       });
-      
+
       // Move all likert errors to question <label>.
       $(this.currentForm).find('.webform-likert-table tbody tr').each(function () {
         var $row = $(this);
@@ -82,7 +96,7 @@
 
       // Add custom clear error handling to checkboxes to remove the
       // error message, when any checkbox is checked.
-      $(this.currentForm).find('.form-checkboxes').once('webform-clientside-validation-form-checkboxes').each(function () {
+      $(once('webform-clientside-validation-form-checkboxes', '.form-checkboxes', this.currentForm)).each(function () {
         var $container = $(this);
         $container.find('input:checkbox').click( function () {
           var state = $container.find('input:checkbox:checked').length ? 'hide' : 'show';
@@ -98,4 +112,4 @@
     };
   });
 
-})(jQuery, drupalSettings);
+})(jQuery, drupalSettings, once);

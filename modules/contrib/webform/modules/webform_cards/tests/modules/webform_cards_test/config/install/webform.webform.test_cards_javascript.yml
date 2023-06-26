@@ -32,20 +32,20 @@ elements: |
       '#title': 'Element 2'
       '#default_value': '{element_2}'
       '#required': true
-  
+
 css: ''
 javascript: |
-  (function ($, Drupal) {
-  
+  (function ($, Drupal, once) {
+
     'use strict';
-  
+
     Drupal.behaviors.webformCardsTestJavaScript = {
       attach: function (context) {
         var $forms = $(context).is('form.webform-submission-form')
           ? $(context)
           : $('form.webform-submission-form', context);
-  
-        $forms.once('webform-cards-test-javascript')
+
+        $(once('webform-cards-test-javascript', $forms))
           .on('webform_cards:change', function (event, $activeCard) {
             console.log('webform_cards:change');
             console.log(event);
@@ -53,9 +53,9 @@ javascript: |
           });
       }
     };
-  
-  })(jQuery, Drupal);
-  
+
+  })(jQuery, Drupal, once);
+
 settings:
   ajax: false
   ajax_scroll_top: form
@@ -74,7 +74,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -95,6 +95,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

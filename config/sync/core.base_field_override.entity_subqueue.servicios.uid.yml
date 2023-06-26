@@ -1,0 +1,20 @@
+uuid: 37537971-1dc8-4048-8e86-29542aa60b2c
+langcode: es
+status: true
+dependencies:
+  config:
+    - entityqueue.entity_queue.servicios
+id: entity_subqueue.servicios.uid
+field_name: uid
+entity_type: entity_subqueue
+bundle: servicios
+label: 'ID de Usuario'
+description: ''
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: 'Drupal\entityqueue\Entity\EntitySubqueue::getDefaultEntityOwner'
+settings:
+  handler: default
+  handler_settings: {  }
+field_type: entity_reference

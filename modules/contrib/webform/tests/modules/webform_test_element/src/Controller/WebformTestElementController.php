@@ -29,7 +29,7 @@ class WebformTestElementController extends ControllerBase {
     ];
 
     // Populate webform properties using query string parameters.
-    $properties = ['sid', 'default_data', 'information', 'action'];
+    $properties = ['sid', 'default_data', 'information', 'action', 'lazy'];
     foreach ($properties as $property) {
       if ($value = $request->query->get($property)) {
         switch ($value) {
@@ -40,6 +40,9 @@ class WebformTestElementController extends ControllerBase {
         $build['webform']["#$property"] = $value;
       }
     }
+
+    // Add query args to cache context.
+    $build['#cache']['contexts'][] = 'url.query_args';
 
     return $build;
   }

@@ -14,7 +14,7 @@ class WebformMailTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['webform'];
+  protected static $modules = ['webform'];
 
   /**
    * Checks the From: and Reply-to: headers.
@@ -35,7 +35,7 @@ class WebformMailTest extends WebformBrowserTestBase {
 
     $captured_emails = \Drupal::state()->get('system.test_mail_collector');
     $sent_message = end($captured_emails);
-    $this->assertEquals($sent_message['headers']['From'], '=?UTF-8?B?RHLDg8KpcGFs?= <simpletest@example.com>', 'From header is correctly encoded.');
+    $this->assertEquals($sent_message['headers']['From'], '=?utf-8?Q?Dr=C3=83=C2=A9pal?= <simpletest@example.com>', 'From header is correctly encoded.');
   }
 
 }

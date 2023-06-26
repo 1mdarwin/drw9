@@ -18,7 +18,7 @@ class WebformAccessSubmissionViewsTest extends WebformAccessBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['views', 'webform_test_views'];
+  protected static $modules = ['views', 'webform_test_views'];
 
   /**
    * Tests webform access submission views.
@@ -92,7 +92,7 @@ class WebformAccessSubmissionViewsTest extends WebformAccessBrowserTestBase {
       sort($expected_sids);
 
       // Check that the views sids is equal to the expected sids.
-      $this->assertEqual($expected_sids, $views_sids, "User '" . $account_type . "' access has correct access through view on webform submission entity type.");
+      $this->assertEquals($expected_sids, $views_sids, "User '" . $account_type . "' access has correct access through view on webform submission entity type.");
     }
   }
 

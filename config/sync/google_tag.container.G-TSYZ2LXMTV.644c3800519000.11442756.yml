@@ -1,0 +1,40 @@
+uuid: 31c6c3eb-e2f0-4faa-83e8-1d42a91fe7c2
+langcode: en
+status: true
+dependencies:
+  module:
+    - system
+id: G-TSYZ2LXMTV.644c3800519000.11442756
+label: G-TSYZ2LXMTV
+weight: 0
+tag_container_ids:
+  - GTM-MMX9TM8
+advanced_settings:
+  gtm:
+    data_layer: dataLayer
+    include_classes: false
+    allowlist_classes: ''
+    blocklist_classes: ''
+    include_environment: false
+    environment_id: ''
+    environment_token: ''
+dimensions_metrics:
+  -
+    type: metric
+    name: ''
+    value: ''
+conditions:
+  request_path:
+    id: request_path
+    negate: true
+    pages: "/admin\r\n/admin/*\r\n/batch\r\n/node/add*\r\n/node/*/*\r\n/user/*/*"
+events:
+  sign_up:
+    method: CMS
+  search: {  }
+  generate_lead:
+    value: ''
+    currency: ''
+  custom: {  }
+  login:
+    method: CMS

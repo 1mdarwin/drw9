@@ -51,16 +51,6 @@ abstract class WebformComputedBase extends FormElement implements WebformCompute
 
   /**
    * Processes a Webform computed token element.
-   *
-   * @param array $element
-   *   The element.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array
-   *   The processed element.
    */
   public static function processWebformComputed(&$element, FormStateInterface $form_state, &$complete_form) {
     $webform_submission = static::getWebformSubmission($element, $form_state, $complete_form);
@@ -91,9 +81,9 @@ abstract class WebformComputedBase extends FormElement implements WebformCompute
     $element += ['#element_validate' => []];
     array_unshift($element['#element_validate'], [get_called_class(), 'validateWebformComputed']);
 
-    /**************************************************************************/
-    // Ajax support
-    /**************************************************************************/
+    /* ********************************************************************** */
+    // Ajax support.
+    /* ********************************************************************** */
 
     // Enabled Ajax support only for computed elements associated with a
     // webform submission form.
@@ -172,9 +162,9 @@ abstract class WebformComputedBase extends FormElement implements WebformCompute
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Form/Ajax callbacks.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Set computed element's value.
@@ -207,6 +197,7 @@ abstract class WebformComputedBase extends FormElement implements WebformCompute
     $element['hidden']['#type'] = 'hidden';
     $element['hidden']['#value'] = ['#markup' => $value];
     $element['hidden']['#parents'] = $element['#parents'];
+    $element['hidden']['#attributes'] = $element['#attributes'];
   }
 
   /**
@@ -295,9 +286,9 @@ abstract class WebformComputedBase extends FormElement implements WebformCompute
     return $element;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Form/Ajax helpers and callbacks.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get an element's value mode/type.

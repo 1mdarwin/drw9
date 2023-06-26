@@ -7,15 +7,8 @@ dependencies:
     - field.field.taxonomy_term.vocabulary_5.name_field
     - taxonomy.vocabulary.vocabulary_5
   module:
-    - field_layout
-    - layout_discovery
     - path
     - text
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
 id: taxonomy_term.vocabulary_5.default
 targetEntityType: taxonomy_term
 bundle: vocabulary_5
@@ -49,6 +42,11 @@ content:
   path:
     type: path
     weight: 4
+    region: content
+    settings: {  }
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
     region: content
     settings: {  }
     third_party_settings: {  }

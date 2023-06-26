@@ -43,13 +43,6 @@ elements: |
       '#type': select
       '#title': Country
       '#options': country_names
-    location:
-      '#type': webform_location_places
-      '#title': Location
-      '#title_display': invisible
-      '#description': 'Your location will be saved and may be shared.'
-      '#geolocation': true
-      '#address__title': Locations
     languages:
       '#type': select
       '#title': 'Languages Spoken'
@@ -57,10 +50,10 @@ elements: |
       '#multiple': true
       '#select2': true
       '#options': languages
-    gender:
+    sex:
       '#type': webform_radios_other
-      '#title': Gender
-      '#options': gender
+      '#title': Sex
+      '#options': sex
     biography:
       '#type': text_format
       '#title': Biography
@@ -147,7 +140,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -168,6 +161,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

@@ -12,7 +12,7 @@ abstract class WebformEntityPrintFunctionalTestBase extends WebformBrowserTestBa
   /**
    * {@inheritdoc}
    */
-  public static $modules = [
+  protected static $modules = [
     'entity_print_test',
     'webform',
     'webform_entity_print',
@@ -21,11 +21,7 @@ abstract class WebformEntityPrintFunctionalTestBase extends WebformBrowserTestBa
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
-    if (floatval(\Drupal::VERSION) >= 9) {
-      $this->markTestSkipped('Issue #3110478: [Webform 8.x-6.x] Track the D9 readiness state of the Webform module\'s (optional) dependencies');
-    }
-
+  protected function setUp(): void {
     parent::setUp();
 
     // Use test print engine.

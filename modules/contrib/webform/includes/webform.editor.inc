@@ -13,15 +13,53 @@
  * Below functions are copied from editor.module.
  */
 
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Config\Config;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Serialization\Yaml;
+use Drupal\file\FileInterface;
 use Drupal\webform\WebformInterface;
-use Drupal\Component\Utility\Html;
+use Drupal\webform\Element\WebformHtmlEditor;
+use Drupal\filter\FilterFormatInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
 
-/******************************************************************************/
+/**
+ * Implements hook_ENTITY_TYPE_access().
+ */
+function webform_filter_format_access(FilterFormatInterface $filter_format, $operation, AccountInterface $account) {
+  if ($filter_format->id() ===  WebformHtmlEditor::DEFAULT_FILTER_FORMAT
+    && $operation !== 'use') {
+    return AccessResult::forbidden('This text format can only be managed by the Webform module.');
+  }
+
+  return AccessResult::neutral();
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_load().
+ */
+function webform_filter_format_load($entities) {
+  foreach ($entities as $entity) {
+    // Hide the default webform filter format on the filter admin overview page.
+    if ($entity->id() === WebformHtmlEditor::DEFAULT_FILTER_FORMAT
+      && \Drupal::routeMatch()->getRouteName() === 'filter.admin_overview') {
+      // Set status to FALSE which hides the default webform filter format.
+      $entity->set('status',  FALSE);
+    }
+  }
+}
+
+/**
+ * Implements hook_editor_js_settings_alter().
+ */
+function webform_editor_js_settings_alter(array &$settings) {
+  $settings['editor']['formats'][WebformHtmlEditor::DEFAULT_FILTER_FORMAT]['editorSettings']['autoGrow_minHeight'] = '80';
+}
+
+/* ************************************************************************** */
 // Webform entity hooks.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Implements hook_webform_insert().
@@ -61,11 +99,11 @@ function webform_webform_delete(WebformInterface $webform) {
   _webform_delete_file_usage($uuids, $webform->getEntityTypeId(), $webform->id(), 0);
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Webform config (settings) hooks.
 // @see \Drupal\webform\Form\AdminConfig\WebformAdminConfigBaseForm::loadConfig
 // @see \Drupal\webform\Form\AdminConfig\WebformAdminConfigBaseForm::saveConfig
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Update config editor file references.
@@ -99,9 +137,9 @@ function _webform_config_delete(Config $config) {
   _webform_delete_file_usage($uuids, 'config', $config->getName(), 0);
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Config entity functions.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Finds all files referenced (data-entity-uuid) by config entity.
@@ -118,9 +156,9 @@ function _webform_get_config_entity_file_uuids(ConfigEntityInterface $entity) {
   return _webform_get_array_file_uuids($entity->toArray());
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Config settings functions.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Finds all files referenced (data-entity-uuid) in an associative array.
@@ -138,9 +176,9 @@ function _webform_get_array_file_uuids(array $data) {
   return _webform_parse_file_uuids($text);
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // File usage functions.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Records file usage of files referenced by formatted text fields.
@@ -172,8 +210,8 @@ function _webform_record_file_usage(array $uuids, $type, $id) {
 
   foreach ($uuids as $uuid) {
     if ($file = $entity_repository->loadEntityByUuid('file', $uuid)) {
-      if ($file->status !== FILE_STATUS_PERMANENT) {
-        $file->status = FILE_STATUS_PERMANENT;
+      if ($file->status !== FileInterface::STATUS_PERMANENT) {
+        $file->status = FileInterface::STATUS_PERMANENT;
         $file->save();
       }
       $file_usage->add($file, 'editor', $type, $id);
@@ -223,9 +261,9 @@ function _webform_delete_file_usage(array $uuids, $type, $id, $count) {
   }
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // File parsing functions.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Parse text for any linked files with data-entity-uuid attributes.

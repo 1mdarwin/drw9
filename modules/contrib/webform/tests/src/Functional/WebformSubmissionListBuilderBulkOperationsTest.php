@@ -16,7 +16,7 @@ class WebformSubmissionListBuilderBulkOperationsTest extends WebformBrowserTestB
    *
    * @var array
    */
-  public static $modules = ['node', 'webform', 'webform_test_submissions'];
+  protected static $modules = ['node', 'webform', 'webform_test_submissions'];
 
   /**
    * Webforms to load.
@@ -29,6 +29,8 @@ class WebformSubmissionListBuilderBulkOperationsTest extends WebformBrowserTestB
    * Tests results.
    */
   public function testResults() {
+    $assert_session = $this->assertSession();
+
     $admin_submission_user = $this->drupalCreateUser([
       'administer webform submission',
     ]);
@@ -46,7 +48,7 @@ class WebformSubmissionListBuilderBulkOperationsTest extends WebformBrowserTestB
 
     $path = '/admin/structure/webform/manage/' . $webform->id() . '/results/submissions';
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Login the admin submission user.
     $this->drupalLogin($admin_submission_user);
@@ -66,9 +68,9 @@ class WebformSubmissionListBuilderBulkOperationsTest extends WebformBrowserTestB
     $this->assertCssSelect('option[value="webform_submission_make_unlock_action"]');
     $this->assertCssSelect('option[value="webform_submission_delete_action"]');
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Access.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Login the update submission user.
     $this->drupalLogin($update_submission_user);
@@ -83,9 +85,9 @@ class WebformSubmissionListBuilderBulkOperationsTest extends WebformBrowserTestB
     // Login the admin submission user.
     $this->drupalLogin($admin_submission_user);
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Disable/Enable.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check bulk operation disable.
     \Drupal::configFactory()->getEditable('webform.settings')
@@ -99,83 +101,88 @@ class WebformSubmissionListBuilderBulkOperationsTest extends WebformBrowserTestB
       ->set('settings.webform_submission_bulk_form', TRUE)
       ->save();
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Sticky/Unsticky.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check first submission is NOT sticky.
     $this->assertFalse($submissions[0]->isSticky());
 
     // Check submission sticky action.
+    $this->drupalGet($path);
     $edit = [
       'action' => 'webform_submission_make_sticky_action',
       'items[' . $submissions[0]->id() . ']' => TRUE,
     ];
-    $this->drupalPostForm($path, $edit, 'Apply to selected items', [], 'webform-submission-bulk-form');
-    $this->assertRaw('<em class="placeholder">Star/flag submission</em> was applied to 1 item.');
+    $this->submitForm($edit, 'Apply to selected items', 'webform-submission-bulk-form');
+    $assert_session->responseContains('<em class="placeholder">Star/flag submission</em> was applied to 1 item.');
 
     // Check first submission is sticky.
     $submissions[0] = $this->reloadSubmission($submissions[0]->id());
     $this->assertTrue($submissions[0]->isSticky());
 
     // Check submission unsticky action.
+    $this->drupalGet($path);
     $edit = [
       'action' => 'webform_submission_make_unsticky_action',
       'items[' . $submissions[0]->id() . ']' => TRUE,
     ];
-    $this->drupalPostForm($path, $edit, 'Apply to selected items', [], 'webform-submission-bulk-form');
-    $this->assertRaw('<em class="placeholder">Unstar/unflag submission</em> was applied to 1 item.');
+    $this->submitForm($edit, 'Apply to selected items', 'webform-submission-bulk-form');
+    $assert_session->responseContains('<em class="placeholder">Unstar/unflag submission</em> was applied to 1 item.');
 
     // Check first submission is NOT sticky.
     $submissions[0] = $this->reloadSubmission($submissions[0]->id());
     $this->assertFalse($submissions[0]->isSticky());
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Lock/Unlock.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check first submission is NOT lock.
     $this->assertFalse($submissions[0]->isLocked());
 
     // Check submission lock action.
+    $this->drupalGet($path);
     $edit = [
       'action' => 'webform_submission_make_lock_action',
       'items[' . $submissions[0]->id() . ']' => TRUE,
     ];
-    $this->drupalPostForm($path, $edit, 'Apply to selected items', [], 'webform-submission-bulk-form');
-    $this->assertRaw('<em class="placeholder">Lock submission</em> was applied to 1 item.');
+    $this->submitForm($edit, 'Apply to selected items', 'webform-submission-bulk-form');
+    $assert_session->responseContains('<em class="placeholder">Lock submission</em> was applied to 1 item.');
 
     // Check first submission is lock.
     $submissions[0] = $this->reloadSubmission($submissions[0]->id());
     $this->assertTrue($submissions[0]->isLocked());
 
     // Check submission unlock action.
+    $this->drupalGet($path);
     $edit = [
       'action' => 'webform_submission_make_unlock_action',
       'items[' . $submissions[0]->id() . ']' => TRUE,
     ];
-    $this->drupalPostForm($path, $edit, 'Apply to selected items', [], 'webform-submission-bulk-form');
-    $this->assertRaw('<em class="placeholder">Unlock submission</em> was applied to 1 item.');
+    $this->submitForm($edit, 'Apply to selected items', 'webform-submission-bulk-form');
+    $assert_session->responseContains('<em class="placeholder">Unlock submission</em> was applied to 1 item.');
 
     // Check first submission is NOT lock.
     $submissions[0] = $this->reloadSubmission($submissions[0]->id());
     $this->assertFalse($submissions[0]->isLocked());
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // Delete.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check submission delete action.
+    $this->drupalGet($path);
     $edit = [
       'action' => 'webform_submission_delete_action',
       'items[' . $submissions[0]->id() . ']' => TRUE,
     ];
-    $this->drupalPostForm($path, $edit, 'Apply to selected items', [], 'webform-submission-bulk-form');
+    $this->submitForm($edit, 'Apply to selected items', 'webform-submission-bulk-form');
     $edit = [
       'confirm_input' => TRUE,
     ];
-    $this->drupalPostForm(NULL, $edit, 'Delete');
-    $this->assertRaw('Deleted 1 item.');
+    $this->submitForm($edit, 'Delete');
+    $assert_session->responseContains('Deleted 1 item.');
 
     // Check submission is now deleted.
     $submissions[0] = $this->reloadSubmission($submissions[0]->id());

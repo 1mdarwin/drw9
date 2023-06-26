@@ -15,7 +15,7 @@ class WebformEntityPrintAttachmentFunctionalTest extends WebformEntityPrintFunct
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['webform_entity_print_attachment_test'];
+  protected static $modules = ['webform_entity_print_attachment_test'];
 
   /**
    * Test entity print attachment.
@@ -25,7 +25,7 @@ class WebformEntityPrintAttachmentFunctionalTest extends WebformEntityPrintFunct
 
     $this->drupalLogin($this->rootUser);
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check that the PDF attachment is added to the sent email.
     $this->postSubmission($webform);

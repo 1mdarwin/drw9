@@ -16,7 +16,7 @@ class WebformEntityTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['node', 'webform', 'webform_test_submissions'];
+  protected static $modules = ['node', 'webform', 'webform_test_submissions'];
 
   /**
    * Webforms to load.
@@ -35,7 +35,7 @@ class WebformEntityTest extends WebformBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Storage.
@@ -48,7 +48,7 @@ class WebformEntityTest extends WebformBrowserTestBase {
   public function testWebform() {
     /** @var \Drupal\webform\WebformInterface $webform_contact */
     $webform_contact = Webform::load('contact');
-    $this->assertEqual($webform_contact->getElementsDefaultData(), [
+    $this->assertEquals($webform_contact->getElementsDefaultData(), [
       'name' => '[current-user:display-name]',
       'email' => '[current-user:mail]',
     ]);
@@ -58,32 +58,32 @@ class WebformEntityTest extends WebformBrowserTestBase {
 
     // Check get elements.
     $elements = $webform_test_submissions->getElementsInitialized();
-    $this->assert(is_array($elements));
+    $this->assertIsArray($elements);
 
     // Check getElements.
     $columns = $webform_test_submissions->getElementsInitializedFlattenedAndHasValue();
-    $this->assertEqual(array_keys($columns), ['first_name', 'last_name', 'sex', 'dob', 'node', 'colors', 'likert', 'address']);
+    $this->assertEquals(array_keys($columns), ['first_name', 'last_name', 'sex', 'dob', 'node', 'colors', 'likert', 'address']);
 
     // Set invalid elements.
     $webform_test_submissions->set('elements', "not\nvalid\nyaml")->save();
 
     // Check invalid elements.
-    $this->assertEqual($webform_test_submissions->getElementsInitialized(), []);
+    $this->assertEquals($webform_test_submissions->getElementsInitialized(), []);
 
     // Check invalid element columns.
-    $this->assertEqual($webform_test_submissions->getElementsInitializedFlattenedAndHasValue(), []);
+    $this->assertEquals($webform_test_submissions->getElementsInitializedFlattenedAndHasValue(), []);
 
     // Check for 3 submissions.
-    $this->assertEqual($this->submissionStorage->getTotal($webform_test_submissions), 4);
+    $this->assertEquals($this->submissionStorage->getTotal($webform_test_submissions), 4);
 
     // Check delete.
     $webform_test_submissions->delete();
 
     // Check all 3 submissions deleted.
-    $this->assertEqual($this->submissionStorage->getTotal($webform_test_submissions), 0);
+    $this->assertEquals($this->submissionStorage->getTotal($webform_test_submissions), 0);
 
     // Check that 'test' state was deleted with the webform.
-    $this->assertEqual(\Drupal::state()->get('webform.webform.' . $webform_test_submissions->id()), NULL);
+    $this->assertEquals(\Drupal::state()->get('webform.webform.' . $webform_test_submissions->id()), NULL);
   }
 
 }

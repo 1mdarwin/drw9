@@ -3,7 +3,7 @@
  * JavaScript behaviors for signature pad integration.
  */
 
-(function ($, Drupal, debounce) {
+(function ($, Drupal, debounce, once) {
 
   'use strict';
 
@@ -23,7 +23,7 @@
         return;
       }
 
-      $(context).find('input.js-webform-signature').once('webform-signature').each(function () {
+      $(once('webform-signature', 'input.js-webform-signature', context)).each(function () {
         var $input = $(this);
         var value = $input.val();
         var $wrapper = $input.parent();
@@ -32,6 +32,10 @@
         var canvas = $canvas[0];
 
         var refresh = function () {
+          // Open all closed details, so that signatures work as expected.
+          var $details = $canvas.parents('details:not([open])');
+          $details.attr('open', 'open');
+
           // Set dimensions.
           $canvas.attr('width', $wrapper.width());
           $canvas.attr('height', $wrapper.width() / 3);
@@ -41,6 +45,9 @@
           if (value) {
             signaturePad.fromDataURL(value);
           }
+
+          // Now, close details.
+          $details.removeAttr('open');
         };
 
         // Initialize signature canvas.
@@ -97,4 +104,4 @@
     }
   };
 
-})(jQuery, Drupal, Drupal.debounce);
+})(jQuery, Drupal, Drupal.debounce, once);

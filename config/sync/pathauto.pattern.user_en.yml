@@ -1,0 +1,25 @@
+uuid: 59897df3-2e1e-4d48-92ce-fe219651b546
+langcode: es
+status: true
+dependencies:
+  module:
+    - language
+    - user
+id: user_en
+label: 'User - default'
+type: 'canonical_entities:user'
+pattern: 'usuario/[user:name]'
+selection_criteria:
+  289368fc-5f44-40fa-b7de-2c0925817f8d:
+    id: language
+    negate: false
+    uuid: 289368fc-5f44-40fa-b7de-2c0925817f8d
+    context_mapping:
+      language: 'user:langcode:language'
+    langcodes:
+      es: es
+selection_logic: and
+weight: -5
+relationships:
+  'user:langcode:language':
+    label: Language

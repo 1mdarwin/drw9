@@ -16,7 +16,7 @@ class WebformCardsToggleJavaScriptTest extends WebformWebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = ['webform', 'webform_cards', 'webform_cards_test'];
+  protected static $modules = ['webform', 'webform_cards', 'webform_cards_test'];
 
   /**
    * Test webform cards toggle show/hide all.
@@ -26,7 +26,7 @@ class WebformCardsToggleJavaScriptTest extends WebformWebDriverTestBase {
     $page = $session->getPage();
     $assert_session = $this->assertSession();
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $this->drupalGet('/webform/test_cards_toggle');
     $assert_session->waitForElement('css', 'button.webform-cards-toggle');

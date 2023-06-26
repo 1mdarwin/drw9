@@ -1,4 +1,5 @@
 <?php
+// phpcs:ignoreFile
 
 namespace Drupal\Tests\webform\FunctionalJavascript\States;
 
@@ -16,7 +17,7 @@ class WebformStatesRequiredJavaScriptTest extends WebformWebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = ['webform', 'webform_clientside_validation', 'file'];
+  protected static $modules = ['webform', 'webform_clientside_validation', 'file'];
 
   /**
    * Webforms to load.
@@ -38,7 +39,7 @@ class WebformStatesRequiredJavaScriptTest extends WebformWebDriverTestBase {
     $session = $this->getSession();
     $page = $session->getPage();
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $this->drupalGet('/webform/test_states_client_required');
 

@@ -51,13 +51,13 @@ function webform_test_test_element_format(WebformInterface $webform, $composite 
     'advanced_elements' => [],
   ];
   foreach ($definitions as $element_type => $definition) {
-    if (in_array($element_type, $skipped_element_types)) {
+    if (in_array($element_type, $skipped_element_types) || !isset($elements[$element_type])) {
       continue;
     }
 
     $webform_element = $elements[$element_type];
     $element = _webform_test_get_element_preview($element_type, ['issues' => FALSE]);
-    if (!$element || !$webform_element->isInput($element)) {
+    if (!$element || !$webform_element || !$webform_element->isInput($element)) {
       continue;
     }
 
@@ -90,6 +90,13 @@ function webform_test_test_element_format(WebformInterface $webform, $composite 
       $items_formats = [''];
     }
 
+    if (in_array($element_type, ['radios', 'checkboxes'])) {
+      $element['#options'] = [
+        'one' => 'One -- This is a description',
+        'two' => 'Two -- This is a description',
+        'three' => 'Three -- This is a description',
+      ];
+    }
     // Set default (test) value.
     if (strpos($element_type, 'date') === 0) {
       $element['#default_value'] = ($multiple) ? ['1942-06-18', '1940-07-07', '1943-02-25'] : '1942-06-18';
@@ -129,7 +136,6 @@ function webform_test_test_element_format(WebformInterface $webform, $composite 
         $format_element_type = implode('_', array_filter([$element_key, $item_format_name, $items_format_name]));
         $format_element_type = str_replace(':', '_', $format_element_type);
         $format_element_title = $element['#title'] . ' (' . implode(' - ', array_filter([$item_format_title, $items_format_title])) . ')';
-
         $format_element = $element;
         $format_element['#title'] = $format_element_title;
         if ($item_format_name) {

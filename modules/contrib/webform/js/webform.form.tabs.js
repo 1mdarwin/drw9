@@ -1,19 +1,16 @@
 /**
  * @file
- * JavaScript behaviors for form tabs using jQuery UI.
+ * JavaScript behaviors for form tabs using Tabby.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
-  // @see http://api.jqueryui.com/tabs/
+  // @see https://github.com/cferdinandi/tabby
   Drupal.webform = Drupal.webform || {};
   Drupal.webform.formTabs = Drupal.webform.formTabs || {};
-  Drupal.webform.formTabs.options = Drupal.webform.formTabs.options || {
-    hide: true,
-    show: true
-  };
+  Drupal.webform.formTabs.options = Drupal.webform.formTabs.options || {};
 
   /**
    * Initialize webform tabs.
@@ -27,22 +24,27 @@
    */
   Drupal.behaviors.webformFormTabs = {
     attach: function (context) {
-      $(context).find('div.webform-tabs').once('webform-tabs').each(function () {
-        var $tabs = $(this);
-        var options = jQuery.extend({}, Drupal.webform.formTabs.options);
+      if (!window.Tabby) {
+        return;
+      }
 
+      $(once('webform-tabs', 'div.webform-tabs', context)).each(function () {
         // Set active tab and clear the location hash once it is set.
+        var tabIndex = 0;
         if (location.hash) {
-          var active = $('a[href="' + Drupal.checkPlain(location.hash) + '"]').data('tab-index');
-          if (typeof active !== 'undefined') {
-            options.active = active;
+          tabIndex = $('a[href="' + Drupal.checkPlain(location.hash) + '"]').data('tab-index');
+          if (typeof tabIndex !== 'undefined') {
             location.hash = '';
           }
         }
 
-        $tabs.tabs(options);
+        var options = jQuery.extend({
+          'default': '[data-tab-index="' + tabIndex + '"]',
+        }, Drupal.webform.formTabs.options);
+
+        new Tabby('div.webform-tabs .webform-tabs-item-list', options);
       });
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

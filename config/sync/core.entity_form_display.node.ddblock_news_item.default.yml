@@ -15,18 +15,11 @@ dependencies:
     - node.type.ddblock_news_item
   module:
     - comment
-    - field_layout
     - file
     - image
-    - layout_discovery
     - metatag
     - path
     - text
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
 id: node.ddblock_news_item.default
 targetEntityType: node
 bundle: ddblock_news_item
@@ -111,6 +104,11 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox

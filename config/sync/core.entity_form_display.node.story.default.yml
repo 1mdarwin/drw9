@@ -10,17 +10,10 @@ dependencies:
     - node.type.story
   module:
     - comment
-    - field_layout
     - file
-    - layout_discovery
     - metatag
     - path
     - text
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings:
-      label: ''
 id: node.story.default
 targetEntityType: node
 bundle: story
@@ -73,6 +66,11 @@ content:
     region: content
     settings:
       display_label: true
+    third_party_settings: {  }
+  simple_sitemap:
+    weight: 10
+    region: content
+    settings: {  }
     third_party_settings: {  }
   status:
     type: boolean_checkbox

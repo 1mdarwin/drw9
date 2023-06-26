@@ -1,0 +1,18 @@
+uuid: d3e98b14-939c-48ed-b34e-66550696c914
+langcode: es
+status: true
+dependencies:
+  config:
+    - entityqueue.entity_queue.servicios
+id: entity_subqueue.servicios.changed
+field_name: changed
+entity_type: entity_subqueue
+bundle: servicios
+label: Modificado
+description: 'The time that the subqueue was last edited.'
+required: false
+translatable: false
+default_value: {  }
+default_value_callback: ''
+settings: {  }
+field_type: changed

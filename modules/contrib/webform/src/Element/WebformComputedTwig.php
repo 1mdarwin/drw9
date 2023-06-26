@@ -39,6 +39,9 @@ class WebformComputedTwig extends WebformComputedBase {
    * {@inheritdoc}
    */
   public static function computeValue(array $element, WebformSubmissionInterface $webform_submission) {
+    if (empty($element['#template'])) {
+      return '';
+    }
     /** @var \Drupal\webform\WebformThemeManagerInterface $theme_manager */
     $theme_manager = \Drupal::service('webform.theme_manager');
     // Do not compute value via Twig if there is no active theme,
@@ -51,7 +54,7 @@ class WebformComputedTwig extends WebformComputedBase {
 
     $whitespace = (!empty($element['#whitespace'])) ? $element['#whitespace'] : '';
 
-    $template = ($whitespace === static::WHITESPACE_SPACELESS) ? '{% spaceless %}' . $element['#template'] . '{% endspaceless %}' : $element['#template'];
+    $template = ($whitespace === static::WHITESPACE_SPACELESS) ? '{% apply spaceless %}' . $element['#template'] . '{% endapply %}' : $element['#template'];
 
     $options = ['html' => (static::getMode($element) === WebformComputedInterface::MODE_HTML)];
 

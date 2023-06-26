@@ -11,12 +11,19 @@ use Drupal\webform\Utility\WebformLogicHelper;
 use Drupal\webform\Utility\WebformXss;
 use Drupal\webform\Utility\WebformYaml;
 use Drupal\webform\WebformSubmissionInterface;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
 /**
  * Twig extension with some useful functions and filters.
  */
-class WebformTwigExtension extends \Twig_Extension {
+class WebformTwigExtension extends AbstractExtension {
 
+  /**
+   * Twig options.
+   *
+   * @var string[]
+   */
   protected static $options = [
     'html' => 'webform_token_options_html',
     'email' => 'webform_token_options_email',
@@ -27,9 +34,9 @@ class WebformTwigExtension extends \Twig_Extension {
    */
   public function getFunctions() {
     return [
-      new \Twig_SimpleFunction('webform_html_editor_check_markup', [$this, 'webformHtmlEditorCheckMarkup']),
-      new \Twig_SimpleFunction('webform_debug', [$this, 'webformDebug']),
-      new \Twig_SimpleFunction('webform_token', [$this, 'webformToken']),
+      new TwigFunction('webform_html_editor_check_markup', [$this, 'webformHtmlEditorCheckMarkup']),
+      new TwigFunction('webform_debug', [$this, 'webformDebug']),
+      new TwigFunction('webform_token', [$this, 'webformToken']),
     ];
   }
 
@@ -99,7 +106,9 @@ class WebformTwigExtension extends \Twig_Extension {
    *
    * @see \Drupal\Core\Utility\Token::replace
    */
-  public function webformToken($token, EntityInterface $entity = NULL, array $data = [], array $options = []) {
+  public function webformToken($token, EntityInterface $entity = NULL, array $data = [], array $options = NULL) {
+    $options = $options ?: [];
+
     // Allow the webform_token function to be tested during validation without
     // a valid entity.
     if (!$entity) {
@@ -136,12 +145,12 @@ class WebformTwigExtension extends \Twig_Extension {
     return (WebformHtmlHelper::containsHtml($value)) ? ['#markup' => $value, '#allowed_tags' => WebformXss::getAdminTagList()] : $value;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Token methods used by the 'WebformComputedTwig' and 'EmailWebformHandler'.
   //
   // @see \Drupal\webform\Plugin\WebformElement\WebformComputedTwig
   // @see \Drupal\webform\Plugin\WebformHandler\EmailWebformHandler
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Build reusable Twig help.
@@ -182,7 +191,7 @@ class WebformTwigExtension extends \Twig_Extension {
     ]);
 
     $t_args = [
-      ':twig_href' => 'https://twig.sensiolabs.org/',
+      ':twig_href' => 'https://twig.symfony.com/',
       ':drupal_href' => 'https://www.drupal.org/docs/8/theming/twig',
     ];
     $output = [];

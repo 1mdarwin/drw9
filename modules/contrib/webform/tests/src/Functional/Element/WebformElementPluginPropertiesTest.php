@@ -17,7 +17,7 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = [
+  protected static $modules = [
     'address',
     'captcha',
     'image',
@@ -25,12 +25,12 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
     'webform',
     'webform_attachment',
     'webform_cards',
-    // Issue #3110478: [Webform 8.x-6.x] Track the D9 readiness state of the
-    // Webform module's (optional) dependencies.
-    // @see https://www.drupal.org/project/webform/issues/3110478
-    // 'webform_entity_print_attachment',
+    'webform_entity_print_attachment',
+    'webform_jqueryui_datepicker',
+    'webform_entity_print_attachment',
     'webform_image_select',
     'webform_location_geocomplete',
+    'webform_location_places',
     'webform_options_custom',
     'webform_toggles',
   ];
@@ -50,11 +50,6 @@ class WebformElementPluginPropertiesTest extends WebformElementBrowserTestBase {
     // that there are not unexpected changes to any element's
     // default properties.
     $expected_elements = $this->getExpectedElementDefaultProperties();
-
-    // Issue #3110478: [Webform 8.x-6.x] Track the D9 readiness state of the
-    // Webform module's (optional) dependencies.
-    // @see https://www.drupal.org/project/webform/issues/3110478
-    unset($expected_elements['webform_entity_print_attachment:pdf']);
 
     $actual_elements = $this->getActualElementDefaultProperties();
     $this->htmlOutput('<pre>' . htmlentities(Yaml::encode($actual_elements)) . '</pre>');
@@ -913,7 +908,7 @@ label:
   admin_notes: ''
   admin_title: ''
   attributes: {  }
-  description: ''
+  display_on: form
   flex: 1
   private: false
   required: false
@@ -2518,6 +2513,7 @@ webform_computed_token:
   access_view_users: {  }
   admin_notes: ''
   admin_title: ''
+  attributes: {  }
   ajax: false
   description: ''
   description_display: ''
@@ -2559,6 +2555,7 @@ webform_computed_twig:
   admin_notes: ''
   admin_title: ''
   ajax: false
+  attributes: {  }
   description: ''
   description_display: ''
   display_on: both
@@ -3080,6 +3077,39 @@ webform_entity_checkboxes:
   unique_user: false
   wrapper_attributes: {  }
   wrapper_type: fieldset
+'webform_entity_print_attachment:pdf':
+  access: true
+  access_create_permissions: {  }
+  access_create_roles:
+    - anonymous
+    - authenticated
+  access_create_users: {  }
+  access_update_permissions: {  }
+  access_update_roles:
+    - anonymous
+    - authenticated
+  access_update_users: {  }
+  access_view_permissions: {  }
+  access_view_roles:
+    - anonymous
+    - authenticated
+  access_view_users: {  }
+  admin_notes: ''
+  admin_title: ''
+  display_on: none
+  download: false
+  filename: ''
+  flex: 1
+  label_attributes: {  }
+  link_title: ''
+  private: false
+  sanitize: false
+  states: {  }
+  template: ''
+  title: ''
+  title_display: ''
+  view_mode: html
+  wrapper_attributes: {  }
 webform_entity_radios:
   access: true
   access_create_permissions: {  }
@@ -4506,6 +4536,7 @@ webform_signature:
   unique_error: ''
   unique_user: false
   wrapper_attributes: {  }
+  uri_scheme: 'public'
 webform_table:
   access: true
   access_create_permissions: {  }
@@ -4606,10 +4637,10 @@ webform_table_sort:
   field_prefix: ''
   field_suffix: ''
   flex: 1
-  format: ol
+  format: value
   format_attributes: {  }
   format_html: ''
-  format_items: comma
+  format_items: ol
   format_items_html: ''
   format_items_text: ''
   format_text: ''
@@ -4660,10 +4691,10 @@ webform_tableselect_sort:
   field_prefix: ''
   field_suffix: ''
   flex: 1
-  format: ol
+  format: value
   format_attributes: {  }
   format_html: ''
-  format_items: comma
+  format_items: ol
   format_items_html: ''
   format_items_text: ''
   format_text: ''

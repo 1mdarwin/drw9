@@ -12,15 +12,17 @@ class WebformExampleFunctionalTest extends WebformBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  public static $modules = ['webform'];
+  protected static $modules = ['webform'];
 
   /**
    * Test get.
    */
   public function testGet() {
+    $assert_session = $this->assertSession();
+
     $this->drupalGet('/webform/contact');
-    $this->verbose('hi');
-    $this->assertSession()->responseContains('Contact');
+    $this->debug('hi');
+    $assert_session->responseContains('Contact');
   }
 
 }

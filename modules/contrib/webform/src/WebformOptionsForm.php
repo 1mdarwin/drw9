@@ -106,7 +106,7 @@ class WebformOptionsForm extends EntityForm {
     $form['likert'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Use as likert'),
-      '#description' => $this->t("If checked, options will be available as answers to Likert elements. The 'Likert:' prefix will be removed from the option's label when listed as answers for a Likert elment."),
+      '#description' => $this->t("If checked, options will be available as answers to Likert elements. The 'Likert:' prefix will be removed from the option's label when listed as answers for a Likert element."),
       '#default_value' => $webform_options->get('likert'),
       '#return_value' => TRUE,
     ];
@@ -178,13 +178,11 @@ class WebformOptionsForm extends EntityForm {
     }
 
     $hook_name = 'webform_options_' . $webform_options->id() . '_alter';
-    $alter_hooks = $this->moduleHandler->getImplementations($hook_name);
     $module_info = $this->moduleExtensionList->getAllInstalledInfo();
     $module_names = [];
-    foreach ($alter_hooks as $options_alter_hook) {
-      $module_name = str_replace($hook_name, '', $options_alter_hook);
+    $this->moduleHandler->invokeAllWith($hook_name, function (callable $hook, string $module_name) use (&$module_names, $module_info) {
       $module_names[] = $module_info[$module_name]['name'];
-    }
+    });
     return $module_names;
   }
 

@@ -3,7 +3,7 @@
  * JavaScript behaviors for color element integration.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -14,7 +14,7 @@
    */
   Drupal.behaviors.webformColor = {
     attach: function (context) {
-      $(context).find('.form-color:not(.form-color-output)').once('webform-color').each(function () {
+      $(once('webform-color', '.form-color:not(.form-color-output)', context)).each(function () {
         var $element = $(this);
         // Handle browser that don't support the HTML5 color input.
         if (Modernizr.inputtypes.color === false) {
@@ -28,10 +28,8 @@
           // the end user.
           var $output = $('<input class="form-color-output ' + $element.attr('class') + ' js-webform-input-mask" data-inputmask-mask="\\#######" />').uniqueId();
           var $label = $element.parent('.js-form-type-color').find('label').clone();
-          $label.attr({
-            for: $output.attr('id'),
-            class: 'visually-hidden'
-          });
+          var id = $output.attr('id');
+          $label.attr({for: id, class: 'visually-hidden'});
           if ($.fn.inputmask) {
             $output.inputmask();
           }
@@ -53,4 +51,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

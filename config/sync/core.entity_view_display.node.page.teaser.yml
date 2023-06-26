@@ -5,18 +5,15 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.page.body
+    - field.field.node.page.comment_node_page
+    - field.field.node.page.field_metatag
     - field.field.node.page.taxonomy_vocabulary_5
     - field.field.node.page.taxonomyextra
     - field.field.node.page.upload
     - node.type.page
   module:
-    - field_layout
     - text
     - user
-third_party_settings:
-  field_layout:
-    id: layout_onecol
-    settings: {  }
 _core:
   default_config_hash: cSv5lDnbIgDug475Hdz3woED2XMqYv3awI-J9u1JLbY
 id: node.page.teaser

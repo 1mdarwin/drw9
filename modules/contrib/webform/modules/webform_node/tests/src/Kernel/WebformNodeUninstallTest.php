@@ -21,12 +21,12 @@ class WebformNodeUninstallTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['system', 'field', 'filter', 'text', 'user', 'node', 'webform', 'webform_node'];
+  protected static $modules = ['system', 'field', 'text', 'user', 'node', 'webform', 'webform_node'];
 
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->installEntitySchema('user');
     $this->installEntitySchema('node');
@@ -43,7 +43,7 @@ class WebformNodeUninstallTest extends KernelTestBase {
    * Tests the webform_node_uninstall() method.
    */
   public function testWebformNodeUninstall() {
-    module_load_include('install', 'webform_node');
+    \Drupal::moduleHandler()->loadInclude('webform_node', 'install');
 
     // Check that webform node module can not be installed.
     $this->assertNotEmpty(webform_node_requirements('install'), 'Webform node module can not be installed.');

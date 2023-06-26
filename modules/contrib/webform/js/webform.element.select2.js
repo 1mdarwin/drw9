@@ -3,7 +3,7 @@
  * JavaScript behaviors for Select2 integration.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -25,9 +25,7 @@
         return;
       }
 
-      $(context)
-        .find('select.js-webform-select2, .js-webform-select2 select')
-        .once('webform-select2')
+      $(once('webform-select2', 'select.js-webform-select2, .js-webform-select2 select', context))
         .each(function () {
           var $select = $(this);
 
@@ -50,7 +48,7 @@
           // Remove required attribute from IE11 which breaks
           // HTML5 clientside validation.
           // @see https://github.com/select2/select2/issues/5114
-          if (window.navigator.userAgent.indexOf('Trident/') !== false
+          if (window.navigator.userAgent.indexOf('Trident/') !== -1
             && $select.attr('multiple')
             && $select.attr('required')) {
             $select.removeAttr('required');
@@ -98,5 +96,4 @@
     }
   });
 
-
-})(jQuery, Drupal);
+})(jQuery, Drupal,  once);

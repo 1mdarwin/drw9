@@ -2,6 +2,7 @@
 
 namespace Drupal\Tests\webform\Unit\Plugin\WebformSourceEntity;
 
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -64,23 +65,20 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
       'ignored_types' => [],
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $webform = $this->getMockWebform($options);
-    list($source_entity, $source_entity_translation) = $this->getMockSourceEntity($options, $webform);
+    [$source_entity, $source_entity_translation] = $this->getMockSourceEntity($options, $webform);
 
     // Mock source entity storage.
-    $source_entity_storage = $this->getMockBuilder(EntityStorageInterface::class)
-      ->getMock();
+    $source_entity_storage = $this->createMock(EntityStorageInterface::class);
     $source_entity_storage->method('load')
       ->willReturnMap([
         [$options['source_entity_id'], $source_entity],
       ]);
 
     // Move entity type manager which returns the mock source entity storage.
-    $entity_type_manager = $this->getMockBuilder(EntityTypeManagerInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('hasDefinition')
       ->willReturnMap([
         [$options['source_entity_type'], TRUE],
@@ -91,18 +89,14 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
       ]);
 
     // Mock route match.
-    $route_match = $this->getMockBuilder(RouteMatchInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $route_match = $this->createMock(RouteMatchInterface::class);
     $route_match->method('getParameter')
       ->willReturnMap([
         ['webform', $options['route_match_get_parameter_webform'] ? $webform : NULL],
       ]);
 
     // Mock request stack.
-    $request_stack = $this->getMockBuilder(RequestStack::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $request_stack = $this->createMock(RequestStack::class);
     $request_stack->method('getCurrentRequest')
       ->will($this->returnValue(
         new Request([
@@ -112,9 +106,7 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
       ));
 
     // Move entity reference manager.
-    $webform_entity_reference_manager = $this->getMockBuilder(WebformEntityReferenceManagerInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $webform_entity_reference_manager = $this->createMock(WebformEntityReferenceManagerInterface::class);
     $webform_entity_reference_manager->method('getFieldNames')
       ->willReturnMap([
         [$source_entity, ['webform_field_name']],
@@ -122,16 +114,22 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
       ]);
 
     // Mock language manager.
-    $language_manager = $this->getMockBuilder(LanguageManagerInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $language_manager = $this->createMock(LanguageManagerInterface::class);
     $language_manager->method('getCurrentLanguage')
       ->willReturn(new Language(['id' => 'es']));
 
-    /**************************************************************************/
+    // Build container.
+    $container = new ContainerBuilder();
+    $container->set('entity_type.manager', $entity_type_manager);
+    $container->set('current_route_match', $route_match);
+    $container->set('request_stack', $request_stack);
+    $container->set('language_manager', $language_manager);
+    $container->set('webform.entity_reference_manager', $webform_entity_reference_manager);
+
+    /* ********************************************************************** */
 
     // Create QueryStringWebformSourceEntity plugin instance.
-    $plugin = new QueryStringWebformSourceEntity([], 'query_string', [], $entity_type_manager, $route_match, $request_stack, $language_manager, $webform_entity_reference_manager);
+    $plugin = QueryStringWebformSourceEntity::create($container, [], 'query_string', []);
 
     $output = $plugin->getSourceEntity($options['ignored_types']);
     if ($expect_source_entity) {
@@ -152,9 +150,7 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
    *   A mocked webform entity.
    */
   protected function getMockWebform(array $options) {
-    $webform = $this->getMockBuilder(WebformInterface::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $webform = $this->createMock(WebformInterface::class);
     $webform->method('getSetting')
       ->willReturnMap([
         ['form_prepopulate_source_entity', FALSE, $options['webform_settings_prepopulate_source_entity']],
@@ -178,8 +174,7 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
    */
   protected function getMockSourceEntity(array $options, WebformInterface $webform) {
     // Mock source entity.
-    $source_entity = $this->getMockBuilder(ContentEntityInterface::class)
-      ->getMock();
+    $source_entity = $this->createMock(ContentEntityInterface::class);
     $source_entity->method('access')
       ->willReturnMap([
         ['view', NULL, FALSE, $options['source_entity_view_access_result']],
@@ -189,8 +184,7 @@ class QueryStringWebformSourceEntityTest extends UnitTestCase {
     ];
 
     // Mock source entity translation.
-    $source_entity_translation = $this->getMockBuilder(ContentEntityInterface::class)
-      ->getMock();
+    $source_entity_translation = $this->createMock(ContentEntityInterface::class);
     $source_entity_translation->method('access')
       ->willReturnMap([
         ['view', NULL, FALSE, $options['source_entity_view_access_result']],

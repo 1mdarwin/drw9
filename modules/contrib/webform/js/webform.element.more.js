@@ -3,7 +3,7 @@
  * JavaScript behaviors for element (read) more.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, once) {
 
   'use strict';
 
@@ -14,7 +14,7 @@
    */
   Drupal.behaviors.webformElementMore = {
     attach: function (context) {
-      $(context).find('.js-webform-element-more').once('webform-element-more').each(function (event) {
+      $(once('webform-element-more', '.js-webform-element-more', context)).each(function (event) {
         var $more = $(this);
         var $a = $more.find('a').first();
         var $content = $more.find('.webform-element-more--content');
@@ -26,7 +26,7 @@
         });
 
         // Add event handlers.
-        $a.on('click', toggle)
+        $a.parent().on('click', toggle)
           .on('keydown', function (event) {
             // Space or Return.
             if (event.which === 32 || event.which === 13) {
@@ -56,4 +56,4 @@
     }
   };
 
-})(jQuery, Drupal);
+})(jQuery, Drupal, once);

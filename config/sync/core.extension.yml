@@ -7,6 +7,7 @@ module:
   admin_toolbar_tools: 0
   automated_cron: 0
   big_pipe: 0
+  blazy: 0
   block: 0
   block_class: 0
   block_content: 0
@@ -16,11 +17,9 @@ module:
   ckeditor5: 0
   comment: 0
   config: 0
-  config_devel: 0
   config_filter: 0
   config_split: 0
   config_translation: 0
-  contact: 0
   contextual: 0
   ctools: 0
   ctools_block: 0
@@ -28,23 +27,21 @@ module:
   ctools_views: 0
   datetime: 0
   dblog: 0
-  drw7to9: 0
   dynamic_page_cache: 0
   editor: 0
   entityqueue: 0
   field: 0
-  field_layout: 0
   field_ui: 0
   file: 0
   filter: 0
-  flexslider: 0
-  flexslider_fields: 0
-  flexslider_views: 0
   google_analytics: 0
   google_tag: 0
   help: 0
   history: 0
   image: 0
+  jquery_ui: 0
+  jquery_ui_autocomplete: 0
+  jquery_ui_menu: 0
   language: 0
   languageicons: 0
   layout_discovery: 0
@@ -55,7 +52,6 @@ module:
   menu_ui: 0
   metatag: 0
   migrate: 0
-  module_filter: 0
   mysql: 0
   node: 0
   options: 0
@@ -67,9 +63,13 @@ module:
   path_alias: 0
   responsive_image: 0
   search: 0
-  share_everywhere: 0
   shortcut: 0
   simple_sitemap: 0
+  slick: 0
+  slick_devel: 0
+  slick_extras: 0
+  slick_ui: 0
+  slick_views: 0
   statistics: 0
   system: 0
   taxonomy: 0
@@ -78,17 +78,21 @@ module:
   toolbar: 0
   tour: 0
   update: 0
-  upgrade_status: 0
   user: 0
-  vardumper: 0
   views_bootstrap: 0
   views_infinite_scroll: 0
   views_ui: 0
+  webform: 0
+  webform_access: 0
+  webform_examples: 0
+  webform_node: 0
+  webform_templates: 0
+  webform_ui: 0
   widget: 0
   ds: 1
-  forum: 1
   menu_link_content: 1
   pathauto: 1
+  webform_bootstrap: 1
   ds_extras: 2
   content_translation: 10
   views: 10

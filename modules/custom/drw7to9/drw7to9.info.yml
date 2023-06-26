@@ -3,4 +3,4 @@ type: module
 description: 'Migrate fields from drupal 7 to 9'
 core: 8.x
 package: 'DRW'
-core_version_requirement: ^8 | ^9
+core_version_requirement: ">=8"

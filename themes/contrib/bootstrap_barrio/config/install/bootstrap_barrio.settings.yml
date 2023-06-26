@@ -12,12 +12,14 @@ bootstrap_barrio_sidebar_second_offset: 0
 
 # Container.
 # ----------------------------
+bootstrap_barrio_container: 'container'
 bootstrap_barrio_fluid_container: 0
 
 # Buttons.
 # ----------------------------
 bootstrap_barrio_button: 1
 bootstrap_barrio_button_size: ''
+bootstrap_barrio_button_type: 'primary'
 bootstrap_barrio_button_outline: 0
 
 # Navbar.

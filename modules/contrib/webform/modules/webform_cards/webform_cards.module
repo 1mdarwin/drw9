@@ -36,9 +36,9 @@ function webform_cards_entity_base_field_info(EntityTypeInterface $entity_type) 
   }
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Menu hook.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Implements hook_menu_local_actions_alter().
@@ -64,9 +64,9 @@ function webform_cards_preprocess_menu_local_action(&$variables) {
   }
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Entity hook.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Implements hook_ENTITY_TYPE_presave() for webform_submission entities.
@@ -77,9 +77,9 @@ function webform_cards_webform_submission_presave(WebformSubmissionInterface $we
   }
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Form alter hooks.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Implements hook_webform_submission_form_alter().
@@ -252,16 +252,16 @@ function webform_cards_webform_submission_form_alter(array &$form, FormStateInte
   if ($webform->getSetting('form_unsaved', TRUE)) {
     $form['actions']['cards_prev']['#attributes']['data-webform-unsaved-ignore'] = TRUE;
     $form['actions']['cards_next']['#attributes']['data-webform-unsaved-ignore'] = TRUE;
-  };
+  }
 
   // Process the submitted values before they are stored.
-  $form['#entity_builders'][] = 'webform_card_webform_submission_builder';
+  $form['#entity_builders'][] = 'webform_cards_webform_submission_builder';
 }
 
 /**
  * Entity form builder to set the current card for a webform submission.
  */
-function webform_card_webform_submission_builder($entity_type, WebformSubmissionInterface $entity, &$form, FormStateInterface $form_state) {
+function webform_cards_webform_submission_builder($entity_type, WebformSubmissionInterface $entity, &$form, FormStateInterface $form_state) {
   $entity->set('current_card', $form_state->getValue('current_card'));
 }
 
@@ -413,8 +413,8 @@ function webform_cards_form_webform_settings_form_form_alter(array &$form, FormS
       ],
       'wizard_preview_link' => [
         '#title' => t('Link to previous pages/cards in preview'),
-        '#description' => t("If checked, the preview page/card will included 'Edit' buttons for each previous page/card.") . '<br/><br/>' .
-        '<em>' . t("This settings is only available when 'Enable preview page/card' is enabled.") . '</em>',
+        '#description' => t("If checked, the preview page/card will include 'Edit' buttons for each previous page/card.") . '<br/><br/>' .
+        '<em>' . t("This setting is only available when 'Enable preview page/card' is enabled.") . '</em>',
       ],
       'wizard_progress_states' => [
         '#title' => t("Update wizard/cards progress bar's pages based on conditions"),
@@ -554,9 +554,9 @@ function _webform_cards_form_alter_elements(array &$form, array $elements) {
   }
 }
 
-/******************************************************************************/
+/* ************************************************************************** */
 // Theming.
-/******************************************************************************/
+/* ************************************************************************** */
 
 /**
  * Implements hook_theme().
@@ -587,12 +587,12 @@ function template_preprocess_webform_card(array &$variables) {
   $element = $variables['element'];
   Element::setAttributes($element, ['id']);
   RenderElement::setAttributes($element);
-  $variables['attributes'] = isset($element['#attributes']) ? $element['#attributes'] : [];
-  $variables['prefix'] = isset($element['#field_prefix']) ? $element['#field_prefix'] : NULL;
-  $variables['suffix'] = isset($element['#field_suffix']) ? $element['#field_suffix'] : NULL;
-  $variables['title_display'] = isset($element['#title_display']) ? $element['#title_display'] : NULL;
-  $variables['title_tag'] = isset($element['#title_tag']) ? $element['#title_tag'] : 'h2';
-  $variables['title_attributes'] = isset($element['#title_attributes']) ? $element['#title_attributes'] : [];
+  $variables['attributes'] = $element['#attributes'] ?? [];
+  $variables['prefix'] = $element['#field_prefix'] ?? NULL;
+  $variables['suffix'] = $element['#field_suffix'] ?? NULL;
+  $variables['title_display'] = $element['#title_display'] ?? NULL;
+  $variables['title_tag'] = $element['#title_tag'] ?? 'h2';
+  $variables['title_attributes'] = $element['#title_attributes'] ?? [];
   $variables['children'] = $element['#children'];
 
   // Allow markup in title.

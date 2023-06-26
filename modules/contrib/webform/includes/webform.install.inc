@@ -5,11 +5,13 @@
  * Webform install helper functions.
  */
 
+use Drupal\Core\Config\FileStorage;
 use Drupal\Core\Render\Element;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\system\Entity\Action;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\WebformInterface;
+use Drupal\webform\Element\WebformHtmlEditor;
 
 /**
  * Update admin settings to reflect changes in the default settings.
@@ -30,7 +32,7 @@ function _webform_update_admin_settings($reset = FALSE) {
   $admin_config = \Drupal::configFactory()->getEditable('webform.settings');
 
   $current_settings = $admin_config->getRawData();
-  $admin_settings = Yaml::decode(file_get_contents(drupal_get_path('module', 'webform') . '/config/install/webform.settings.yml'));
+  $admin_settings = Yaml::decode(file_get_contents(__DIR__ . '/../config/install/webform.settings.yml'));
   // Note, admin settings are always grouped into associative array,
   // except for the langcode.
   foreach ($admin_settings as $group => $settings) {
@@ -178,6 +180,13 @@ function _webform_update_webform_setting_settings(array $settings) {
     unset($settings['page_admin_theme']);
   }
 
+  // Issue #3088780: Add the ability to disable user IP tracking for all forms.
+  // Convert 'form_remote_addr' to 'form_disable_remote_addr'.
+  if (isset($settings['form_remote_addr'])) {
+    $settings['form_disable_remote_addr'] = $settings['form_remote_addr'] ? FALSE : TRUE;
+    unset($settings['form_remote_addr']);
+  }
+
   // Issue #3151506: Remove .webform-elements wrapper around elements.
   if (isset($settings['form_elements_attributes'])) {
     unset($settings['form_elements_attributes']);
@@ -287,7 +296,7 @@ function _webform_update_options_settings() {
  * Update or install any new system.actions.* config entities.
  */
 function _webform_update_actions() {
-  $files = \Drupal::service('file_system')->scanDirectory(drupal_get_path('module', 'webform') . '/config', '/^system.action..*\.yml$/');
+  $files = \Drupal::service('file_system')->scanDirectory(__DIR__ . '/../config', '/^system.action..*\.yml$/');
   foreach ($files as $path => $file) {
     $action_id = str_replace('system.action.', '', $file->name);
     $action = Action::load($action_id);
@@ -425,6 +434,63 @@ function _webform_update_elements_clear_properties_recursive(array &$element, ar
   foreach (Element::children($element) as $key) {
     if (is_array($element[$key])) {
       _webform_update_elements_clear_properties_recursive($element[$key], $properties);
+    }
+  }
+}
+
+/**
+ * Update the Webform module's default hidden text format and editor.
+ *
+ * Determines if the CKEditor 5 or 4 module installed and imports the
+ * appropriate configuration file.
+ */
+function _webform_update_html_editor() {
+  // Make sure the Webform module is installed, since we do call this function
+  // via webform_requirements().
+  if (!\Drupal::moduleHandler()->moduleExists('webform')) {
+    return;
+  }
+
+  /** @var \Drupal\Core\Config\StorageInterface $config_storage */
+  $config_storage = \Drupal::service('config.storage');
+
+  $module_path = \Drupal::service('extension.list.module')->getPath('webform');
+  $ckeditor_file_name = 'editor.editor.' . WebformHtmlEditor::DEFAULT_FILTER_FORMAT;
+
+  $names = [];
+
+  // Install the webform default filter format.
+  $names['optional'] = 'filter.format.' . WebformHtmlEditor::DEFAULT_FILTER_FORMAT;
+
+  // Get the current CKEditor version.
+  $current_version = \Drupal::config($ckeditor_file_name)->get('editor') ?: NULL;
+  if (\Drupal::moduleHandler()->moduleExists('ckeditor5')) {
+    $ckeditor_version = 'ckeditor5';
+  }
+  elseif (\Drupal::moduleHandler()->moduleExists('ckeditor')) {
+    $ckeditor_version = 'ckeditor';
+  }
+  else {
+    $ckeditor_version = NULL;
+  }
+
+  // If the changing or deleting the CKEditor, we need delete the existing file.
+  if ($current_version !== $ckeditor_version) {
+    \Drupal::configFactory()
+      ->getEditable($ckeditor_file_name)
+      ->delete();
+  }
+
+  // Install new CKEditor version.
+  if ($ckeditor_version) {
+    $names["optional/$ckeditor_version"] = $ckeditor_file_name;
+  }
+
+  // Import config files but never overwrite the existing config file.
+  foreach ($names as $directory => $name) {
+    $source = new FileStorage("$module_path/config/$directory");
+    if (!$config_storage->exists($name)) {
+      $config_storage->write($name, $source->read($name));
     }
   }
 }

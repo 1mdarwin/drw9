@@ -18,6 +18,11 @@ use Drupal\webform\Utility\WebformElementHelper;
  */
 class WebformActions extends Container {
 
+  /**
+   * Buttons.
+   *
+   * @var string[]
+   */
   public static $buttons = [
     'submit',
     'reset',
@@ -45,17 +50,6 @@ class WebformActions extends Container {
 
   /**
    * Processes a form actions container element.
-   *
-   * @param array $element
-   *   An associative array containing the properties and children of the
-   *   form actions container.
-   * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *   The current state of the form.
-   * @param array $complete_form
-   *   The complete form structure.
-   *
-   * @return array
-   *   The processed element.
    */
   public static function processWebformActions(&$element, FormStateInterface $form_state, &$complete_form) {
     /** @var \Drupal\webform\WebformSubmissionForm $form_object */
@@ -152,7 +146,7 @@ class WebformActions extends Container {
           else {
             $element[$button_name]['#attributes'][$attribute_name] = $attribute_value;
           }
-        };
+        }
       }
 
       if (Element::isVisibleElement($element[$button_name])) {

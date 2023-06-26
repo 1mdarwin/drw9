@@ -1,3 +1,4 @@
+uuid: null
 langcode: en
 status: open
 dependencies:
@@ -339,9 +340,9 @@ elements: |
             '#type': textfield
             '#title': Name
             '#title_display': invisible
-          gender:
+          sex:
             '#type': select
-            '#title': Gender
+            '#title': Sex
             '#title_display': invisible
             '#options':
               Male: Male
@@ -349,11 +350,11 @@ elements: |
         '#multiple': true
         '#default_value':
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
         '#format_items': ol
       webform_custom_composite_ul:
         '#type': webform_custom_composite
@@ -363,9 +364,9 @@ elements: |
             '#type': textfield
             '#title': Name
             '#title_display': invisible
-          gender:
+          sex:
             '#type': select
-            '#title': Gender
+            '#title': Sex
             '#title_display': invisible
             '#options':
               Male: Male
@@ -373,11 +374,11 @@ elements: |
         '#multiple': true
         '#default_value':
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
         '#format_items': ul
       webform_custom_composite_hr:
         '#type': webform_custom_composite
@@ -387,9 +388,9 @@ elements: |
             '#type': textfield
             '#title': Name
             '#title_display': invisible
-          gender:
+          sex:
             '#type': select
-            '#title': Gender
+            '#title': Sex
             '#title_display': invisible
             '#options':
               Male: Male
@@ -397,11 +398,11 @@ elements: |
         '#multiple': true
         '#default_value':
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
         '#format_items': hr
       webform_custom_composite_table:
         '#type': webform_custom_composite
@@ -411,9 +412,9 @@ elements: |
             '#type': textfield
             '#title': Name
             '#title_display': invisible
-          gender:
+          sex:
             '#type': select
-            '#title': Gender
+            '#title': Sex
             '#title_display': invisible
             '#options':
               Male: Male
@@ -421,11 +422,11 @@ elements: |
         '#multiple': true
         '#default_value':
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
           - name: Loremipsum
-            gender: Male
+            sex: Male
         '#format_items': table
     webform_link:
       '#type': details
@@ -477,77 +478,6 @@ elements: |
             url: 'http://example.com'
           - title: Loremipsum
             url: 'http://example.com'
-        '#format_items': table
-    webform_location_places:
-      '#type': details
-      '#title': 'Location (Algolia Places)'
-      webform_location_places_ol:
-        '#type': webform_location_places
-        '#title': 'Location (Algolia Places) (Ordered list)'
-        '#multiple': true
-        '#default_value':
-          - value: '1600 Pennsylvania Avenue, Washington, District of Columbia, United States of America'
-            lat: '38.8635'
-            lng: '-76.946'
-            name: '1600 Pennsylvania Avenue'
-            city: Washington
-            country: 'United States of America'
-            country_code: us
-            administrative: 'District of Columbia'
-            county: 'Prince George''s County'
-            suburb: ''
-            postcode: '20020'
-        '#format_items': ol
-      webform_location_places_ul:
-        '#type': webform_location_places
-        '#title': 'Location (Algolia Places) (Unordered list)'
-        '#multiple': true
-        '#default_value':
-          - value: '1600 Pennsylvania Avenue, Washington, District of Columbia, United States of America'
-            lat: '38.8635'
-            lng: '-76.946'
-            name: '1600 Pennsylvania Avenue'
-            city: Washington
-            country: 'United States of America'
-            country_code: us
-            administrative: 'District of Columbia'
-            county: 'Prince George''s County'
-            suburb: ''
-            postcode: '20020'
-        '#format_items': ul
-      webform_location_places_hr:
-        '#type': webform_location_places
-        '#title': 'Location (Algolia Places) (Horizontal rule)'
-        '#multiple': true
-        '#default_value':
-          - value: '1600 Pennsylvania Avenue, Washington, District of Columbia, United States of America'
-            lat: '38.8635'
-            lng: '-76.946'
-            name: '1600 Pennsylvania Avenue'
-            city: Washington
-            country: 'United States of America'
-            country_code: us
-            administrative: 'District of Columbia'
-            county: 'Prince George''s County'
-            suburb: ''
-            postcode: '20020'
-        '#format_items': hr
-      webform_location_places_table:
-        '#type': webform_location_places
-        '#title': 'Location (Algolia Places) (Table)'
-        '#multiple': true
-        '#default_value':
-          - value: '1600 Pennsylvania Avenue, Washington, District of Columbia, United States of America'
-            lat: '38.8635'
-            lng: '-76.946'
-            name: '1600 Pennsylvania Avenue'
-            city: Washington
-            country: 'United States of America'
-            country_code: us
-            administrative: 'District of Columbia'
-            county: 'Prince George''s County'
-            suburb: ''
-            postcode: '20020'
         '#format_items': table
     webform_name:
       '#type': details
@@ -711,6 +641,7 @@ elements: |
             phone: '+1 212-333-4444'
             ext: 0
         '#format_items': table
+  
 css: ''
 javascript: ''
 settings:
@@ -731,7 +662,7 @@ settings:
   form_previous_submissions: true
   form_confidential: false
   form_confidential_message: ''
-  form_remote_addr: true
+  form_disable_remote_addr: false
   form_convert_anonymous: false
   form_prepopulate: false
   form_prepopulate_source_entity: false
@@ -752,6 +683,9 @@ settings:
   form_access_denied_message: ''
   form_access_denied_attributes: {  }
   form_file_limit: ''
+  form_method: ''
+  form_action: ''
+  form_attributes: {  }
   share: false
   share_node: false
   share_theme_name: ''

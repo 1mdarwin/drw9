@@ -44,14 +44,13 @@ webform.admin.dialog:
     js/webform.admin.js: {}
   dependencies:
     - core/drupal.dialog.ajax
-    - webform/jquery.ui.dialog
+    - webform/drupal.dialog
     - webform/webform.ajax
     - webform/webform.form
     - webform/webform.form.tabs
     - webform/webform.admin.dropbutton
     - webform/webform.element.codemirror.yaml
     - webform/webform.element.help
-    - webform/webform.element.html_editor
     - webform/webform.element.other
     - webform/webform.element.message
     - webform/webform.element.select2
@@ -129,8 +128,8 @@ webform.ajax:
     - core/drupalSettings
     - core/drupal.ajax
     - core/drupal.announce
-    - core/jquery.once
-    - core/jquery.form
+    - core/jquery
+    - core/once
     - webform/webform.scroll
 
 # Announce.
@@ -141,7 +140,8 @@ webform.announce:
     js/webform.announce.js: {}
   dependencies:
     - core/jquery
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - core/drupal
     - core/drupal.announce
 
@@ -184,8 +184,8 @@ webform.confirmation.modal:
     - core/drupal
     - core/drupal.dialog
     - core/drupal.dialog.position
-    - core/jquery.once
-    - core/jquery.ui.dialog
+    - core/jquery
+    - core/once
     - webform/webform.confirmation
 
 # Contextual
@@ -195,7 +195,8 @@ webform.contextual:
   js:
     js/webform.contextual.js: {}
   dependencies:
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 # Dialog.
 
@@ -205,7 +206,14 @@ webform.dialog:
     js/webform.dialog.js: {}
   dependencies:
     - core/drupal.dialog.ajax
-    - webform/jquery.ui.dialog
+    - webform/drupal.dialog
+
+drupal.dialog:
+  version: VERSION
+  js:
+    js/webform.drupal.dialog.js: {}
+  dependencies:
+    - core/drupal.dialog
 
 # Help.
 
@@ -234,7 +242,8 @@ webform.element.more:
     js/webform.element.more.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 # Navigation.
 
@@ -320,8 +329,9 @@ webform.tooltip:
     js/webform.tooltip.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
-    - core/jquery.ui.tooltip
+    - core/jquery
+    - core/once
+    - webform/libraries.tippyjs
 
 # Theme
 
@@ -343,6 +353,18 @@ webform.theme.bartik:
     theme:
       css/webform.theme.bartik.css: {}
 
+webform.theme.gin:
+  version: VERSION
+  css:
+    theme:
+      css/webform.theme.gin.css: {}
+
+webform.theme.olivero:
+  version: VERSION
+  css:
+    theme:
+      css/webform.theme.olivero.css: {}
+
 webform.theme.seven:
   version: VERSION
   css:
@@ -361,7 +383,8 @@ webform.form:
   dependencies:
     - core/drupal
     - core/drupal.form
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/webform.states
 
 webform.form.auto_focus:
@@ -394,24 +417,30 @@ webform.form.submit_once:
   dependencies:
     - core/drupal
     - core/drupal.ajax
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - system/base
 
 webform.form.tabs:
   version: VERSION
+  css:
+    component:
+      css/webform.form.tabs.css: {}
   js:
     js/webform.form.tabs.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
-    - core/jquery.ui.tabs
+    - core/jquery
+    - core/once
+    - webform/libraries.tabby
 
 webform.form.unsaved:
   version: VERSION
   js:
     js/webform.form.unsaved.js: {}
   dependencies:
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - core/drupal
 
 webform.wizard.pages:
@@ -422,7 +451,8 @@ webform.wizard.pages:
   js:
     js/webform.wizard.pages.js: {}
   dependencies:
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - core/drupal
 
 webform.wizard.track:
@@ -430,7 +460,8 @@ webform.wizard.track:
   js:
     js/webform.wizard.track.js: {}
   dependencies:
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - core/drupal
 
 # Element.
@@ -441,7 +472,8 @@ webform.element.ajax:
     js/webform.element.ajax.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.checkboxes:
   version: VERSION
@@ -449,7 +481,8 @@ webform.element.checkboxes:
     js/webform.element.checkboxes.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.checkbox_value:
   version: VERSION
@@ -466,7 +499,8 @@ webform.element.choices:
     js/webform.element.choices.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/libraries.choices
 
 webform.element.chosen:
@@ -475,7 +509,8 @@ webform.element.chosen:
     js/webform.element.chosen.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/libraries.jquery.chosen
 
 webform.element.codemirror.text:
@@ -578,7 +613,8 @@ webform.element.composite:
     js/webform.element.composite.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.computed:
   version: VERSION
@@ -588,7 +624,8 @@ webform.element.computed:
   js:
     js/webform.element.computed.js: {}
   dependencies:
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/webform.announce
 
 webform.element.counter:
@@ -600,7 +637,8 @@ webform.element.counter:
     js/webform.element.counter.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/libraries.jquery.textcounter
 
 webform.element.date:
@@ -608,11 +646,6 @@ webform.element.date:
   css:
     component:
       css/webform.element.date.css: {}
-  js:
-    js/webform.element.date.js: {}
-  dependencies:
-    - core/drupal.date
-    - core/drupalSettings
 
 webform.element.datelist:
   version: VERSION
@@ -626,7 +659,8 @@ webform.element.details:
     js/webform.element.details.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.details.save:
   version: VERSION
@@ -634,7 +668,8 @@ webform.element.details.save:
     js/webform.element.details.save.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.details.toggle:
   version: VERSION
@@ -646,7 +681,20 @@ webform.element.details.toggle:
   dependencies:
     - core/drupal
     - core/drupal.announce
-    - core/jquery.once
+    - core/jquery
+    - core/once
+
+webform.element.excluded_elements:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.excluded_elements.css: {}
+  js:
+    js/webform.element.excluded_elements.js: {}
+  dependencies:
+    - core/drupal
+    - core/jquery
+    - core/once
 
 webform.element.file.button:
   version: VERSION
@@ -669,21 +717,15 @@ webform.element.help:
     js/webform.element.help.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
-    - core/jquery.ui.tooltip
+    - core/jquery
+    - core/once
+    - webform/libraries.tippyjs
 
 webform.element.html_editor:
   version: VERSION
   css:
     component:
       css/webform.element.html_editor.css: {}
-  js:
-    js/webform.element.html_editor.js: {}
-  dependencies:
-    - core/ckeditor
-    - core/drupal
-    - core/drupalSettings
-    - core/jquery.once
 
 webform.element.horizontal_rule:
   version: VERSION
@@ -705,8 +747,8 @@ webform.element.image_file.modal:
     - core/drupal
     - core/drupalSettings
     - core/drupal.dialog.ajax
-    - core/jquery.once
-    - core/jquery.ui.dialog
+    - core/jquery
+    - core/once
 
 webform.element.inputmask:
   version: VERSION
@@ -714,7 +756,8 @@ webform.element.inputmask:
     js/webform.element.inputmask.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/libraries.jquery.inputmask
 
 webform.element.inputhide:
@@ -723,7 +766,8 @@ webform.element.inputhide:
     js/webform.element.inputhide.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.likert:
   version: VERSION
@@ -732,18 +776,6 @@ webform.element.likert:
   css:
     component:
       css/webform.element.likert.css: {}
-
-webform.element.location.places:
-  version: VERSION
-  css:
-    component:
-      css/webform.element.location.places.css: {}
-  js:
-    js/webform.element.location.places.js: {}
-  dependencies:
-    - core/drupal
-    - core/jquery.once
-    - webform/libraries.algolia.places
 
 webform.element.managed_file:
   version: VERSION
@@ -754,7 +786,8 @@ webform.element.managed_file:
     js/webform.element.managed_file.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - file/drupal.file
 
 webform.element.mapping:
@@ -772,7 +805,14 @@ webform.element.message:
     js/webform.element.message.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
+
+webform.element.message.info:
+  version: VERSION
+  css:
+    component:
+      css/webform.element.message.info.css: {}
 
 webform.element.multiple:
   version: VERSION
@@ -799,7 +839,8 @@ webform.element.options.admin:
     js/webform.element.options.admin.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.other:
   version: VERSION
@@ -810,7 +851,8 @@ webform.element.other:
     js/webform.element.other.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.range:
   version: VERSION
@@ -838,7 +880,8 @@ webform.element.roles:
     js/webform.element.roles.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.scale:
   version: VERSION
@@ -852,7 +895,8 @@ webform.element.select:
     js/webform.element.select.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
 
 webform.element.select2:
   version: VERSION
@@ -863,7 +907,8 @@ webform.element.select2:
     js/webform.element.select2.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/libraries.jquery.select2
 
 webform.element.signature:
@@ -887,8 +932,9 @@ webform.element.states:
     js/webform.element.states.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
-    - core/jquery.ui.autocomplete
+    - core/drupal.autocomplete
+    - core/jquery
+    - core/once
 
 webform.element.telephone:
   version: VERSION
@@ -896,7 +942,8 @@ webform.element.telephone:
     js/webform.element.telephone.js: {}
   dependencies:
     - core/drupal
-    - core/jquery.once
+    - core/jquery
+    - core/once
     - webform/libraries.jquery.intl-tel-input
 
 webform.element.term_checkboxes:
@@ -915,8 +962,8 @@ webform.element.terms_of_service:
   dependencies:
     - core/drupal
     - core/drupal.dialog.ajax
-    - core/jquery.once
-    - core/jquery.ui.dialog
+    - core/jquery
+    - core/once
 
 webform.element.text_format:
   version: VERSION
@@ -952,6 +999,7 @@ webform.element.time:
     js/webform.element.time.js: {}
   dependencies:
     - core/drupal
+    - core/modernizr
     - webform/libraries.jquery.timepicker
 
 webform.element.video_file:
@@ -976,15 +1024,6 @@ webform.composite.telephone:
   dependencies:
     - webform/webform.composite
 
-# jQuery UI.
-
-jquery.ui.dialog:
-  version: VERSION
-  js:
-    js/webform.jquery.ui.dialog.js: {}
-  dependencies:
-    - core/jquery.ui.dialog
-
 # Contrib Module.
 
 imce.input:
@@ -998,14 +1037,15 @@ imce.input:
 # External libraries.
 
 libraries.choices:
-  remote: https://github.com/jshjohnson/Choices
+  remote: https://github.com/Choices-js/Choices
   version: '9.0.1'
   license:
     name: MIT
-    url: https://github.com/jshjohnson/Choices/blob/master/LICENSE
+    url: https://github.com/Choices-js/Choices/blob/master/LICENSE
     gpl-compatible: true
+  directory: choices
   cdn:
-    /libraries/choices/: https://cdn.jsdelivr.net/gh/jshjohnson/Choices@v9.0.1/
+    /libraries/choices/: https://cdn.jsdelivr.net/gh/Choices-js/Choices@v9.0.1/
   css:
     component:
       css/webform.choices.base.css: {  }
@@ -1016,14 +1056,16 @@ libraries.choices:
 
 libraries.codemirror.text:
   remote: https://github.com/codemirror/codemirror
-  version: &webform_codemirror_version '5.61.1'
+  download: https://github.com/components/codemirror
+  version: &webform_codemirror_version '5.65.3'
   license: &webform_codemirror_license
     name: MIT
     url: http://codemirror.net/LICENSE
     gpl-compatible: true
+  directory: &webform_codemirror_directory codemirror
   cdn: &webform_codemirror_cdn
-    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/
-    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.61.1/
+    /libraries/codemirror/lib/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/
+    /libraries/codemirror/: https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.3/
   css:
     component:
       /libraries/codemirror/lib/codemirror.css: {}
@@ -1035,6 +1077,7 @@ libraries.codemirror.text:
 libraries.codemirror.yaml:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/yaml/yaml.js: {}
@@ -1044,6 +1087,7 @@ libraries.codemirror.yaml:
 libraries.codemirror.html:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/xml/xml.js: {}
@@ -1054,6 +1098,7 @@ libraries.codemirror.html:
 libraries.codemirror.htmlmixed:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/xml/xml.js: {}
@@ -1066,6 +1111,7 @@ libraries.codemirror.htmlmixed:
 libraries.codemirror.css:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/css/css.js: {}
@@ -1075,6 +1121,7 @@ libraries.codemirror.css:
 libraries.codemirror.javascript:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/javascript/javascript.js: {}
@@ -1084,6 +1131,7 @@ libraries.codemirror.javascript:
 libraries.codemirror.php:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/php/php.js: {}
@@ -1094,33 +1142,23 @@ libraries.codemirror.php:
 libraries.codemirror.twig:
   version: *webform_codemirror_version
   license: *webform_codemirror_license
+  directory: *webform_codemirror_directory
   cdn: *webform_codemirror_cdn
   js:
     /libraries/codemirror/mode/twig/twig.js: {}
   dependencies:
     - webform/libraries.codemirror.text
 
-libraries.algolia.places:
-  remote: https://github.com/algolia/places
-  version: '1.19.0'
-  license:
-    name: MIT
-    url: https://github.com/algolia/places/blob/master/LICENSE
-    gpl-compatible: true
-  cdn:
-    /libraries/algolia.places/dist/cdn/: https://cdn.jsdelivr.net/npm/places.js@1.19.0/dist/cdn/
-  js:
-    /libraries/algolia.places/dist/cdn/places.js: {}
-
 libraries.jquery.inputmask:
   remote: https://github.com/RobinHerbots/jquery.inputmask
-  version: '5.0.6'
+  version: '5.0.7'
   license:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
+  directory: jquery.inputmask
   cdn:
-    /libraries/jquery.inputmask/: https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@5.0.6/
+    /libraries/jquery.inputmask/: https://cdn.jsdelivr.net/gh/RobinHerbots/Inputmask@5.0.7/
   js:
     /libraries/jquery.inputmask/dist/jquery.inputmask.min.js: { minified: true }
   dependencies:
@@ -1128,13 +1166,14 @@ libraries.jquery.inputmask:
 
 libraries.jquery.intl-tel-input:
   remote: https://github.com/jackocnr/intl-tel-input
-  version: 'v16.1.0'
+  version: 'v17.0.19'
   license:
     name: MIT
     url: https://github.com/jackocnr/intl-tel-input/blob/master/LICENSE
     gpl-compatible: true
+  directory: jquery.intl-tel-input
   cdn:
-    /libraries/jquery.intl-tel-input/: https://cdn.jsdelivr.net/gh/jackocnr/intl-tel-input@v16.1.0/
+    /libraries/jquery.intl-tel-input/: https://cdn.jsdelivr.net/gh/jackocnr/intl-tel-input@v17.0.19/
   css:
     component:
       /libraries/jquery.intl-tel-input/build/css/intlTelInput.min.css: { minified: true }
@@ -1147,13 +1186,14 @@ libraries.jquery.intl-tel-input:
 
 libraries.jquery.rateit:
   remote: https://github.com/gjunge/rateit.js
-  version: '1.1.3'
+  version: '1.1.5'
   license:
     name: MIT
     url: https://github.com/gjunge/rateit.js/blob/master/LICENSE.md
     gpl-compatible: true
+  directory: jquery.rateit
   cdn:
-    /libraries/jquery.rateit/: https://cdn.jsdelivr.net/gh/gjunge/rateit.js@1.1.3/
+    /libraries/jquery.rateit/: https://cdn.jsdelivr.net/gh/gjunge/rateit.js@1.1.5/
   css:
     component:
       /libraries/jquery.rateit/scripts/rateit.css: {}
@@ -1169,6 +1209,7 @@ libraries.jquery.select2:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
+  directory: jquery.select2
   cdn:
     /libraries/jquery.select2/dist/: https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/
   css:
@@ -1186,6 +1227,7 @@ libraries.jquery.chosen:
     name: MIT
     url: https://github.com/harvesthq/chosen/blob/master/LICENSE.md
     gpl-compatible: true
+  directory: jquery.chosen
   cdn:
     /libraries/jquery.chosen/: https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/
   css:
@@ -1203,6 +1245,7 @@ libraries.jquery.textcounter:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
+  directory: jquery.textcounter
   cdn:
     /libraries/jquery.textcounter/: https://cdn.jsdelivr.net/gh/ractoon/jQuery-Text-Counter@0.9.0/
   js:
@@ -1212,13 +1255,14 @@ libraries.jquery.textcounter:
 
 libraries.jquery.timepicker:
   remote: https://github.com/jonthornton/jquery-timepicker
-  version: '1.13.18'
+  version: '1.14.0'
   license:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
+  directory: jquery.timepicker
   cdn:
-    /libraries/jquery.timepicker/: https://cdn.jsdelivr.net/gh/jonthornton/jquery-timepicker@1.13.18/
+    /libraries/jquery.timepicker/: https://cdn.jsdelivr.net/gh/jonthornton/jquery-timepicker@1.14.0/
   css:
     component:
       /libraries/jquery.timepicker/jquery.timepicker.min.css: { minified: true }
@@ -1229,16 +1273,17 @@ libraries.jquery.timepicker:
 
 libraries.progress-tracker:
   remote: https://github.com/NigelOToole/progress-tracker
-  version: '1.4.0'
+  version: '2.0.7'
   license:
     name: MIT
     url: https://github.com/NigelOToole/progress-tracker/blob/master/LICENSE
     gpl-compatible: true
+  directory: progress-tracker
   cdn:
-    /libraries/progress-tracker/: https://cdn.jsdelivr.net/gh/NigelOToole/progress-tracker@v1.4.0/
+    /libraries/progress-tracker/: https://cdn.jsdelivr.net/gh/NigelOToole/progress-tracker@v2.0.7/
   css:
     component:
-      /libraries/progress-tracker/app/styles/progress-tracker.css: {}
+      /libraries/progress-tracker/src/styles/progress-tracker.css: {}
 
 libraries.signature_pad:
   remote: https://github.com/szimek/signature_pad
@@ -1247,7 +1292,52 @@ libraries.signature_pad:
     name: MIT
     url: http://opensource.org/licenses/mit-license.php
     gpl-compatible: true
+  directory: signature_pad
   cdn:
     /libraries/signature_pad/: https://cdn.jsdelivr.net/gh/szimek/signature_pad@v2.3.0/
   js:
     /libraries/signature_pad/example/js/signature_pad.js: {}
+
+libraries.tabby:
+  remote: https://github.com/cferdinandi/tabby
+  version: '12.0.3'
+  license:
+    name: MIT
+    url: https://github.com/cferdinandi/tabby/blob/master/LICENSE.md
+    gpl-compatible: true
+  directory: tabby
+  cdn:
+    /libraries/tabby/: https://cdn.jsdelivr.net/gh/cferdinandi/tabby@12.0.3/
+  css:
+    component:
+      /libraries/tabby/dist/css/tabby-ui.min.css: {}
+  js:
+    /libraries/tabby/dist/js/tabby.min.js: {}
+
+libraries.popperjs:
+  remote: https://github.com/floating-ui/floating-ui
+  version: '2.11.6'
+  license:
+    name: MIT
+    url: https://github.com/floating-ui/floating-ui/blob/v2.x/LICENSE.md
+    gpl-compatible: true
+  directory: popperjs
+  cdn:
+    /libraries/popperjs/dist/umd/: https://unpkg.com/@popperjs/core@2.11.6/dist/umd/
+  js:
+    /libraries/popperjs/dist/umd/popper.js: {  }
+
+libraries.tippyjs:
+  remote: https://github.com/atomiks/tippyjs
+  version: '6.2.6'
+  license:
+    name: MIT
+    url: https://github.com/atomiks/tippyjs/blob/master/LICENSE
+    gpl-compatible: true
+  directory: tippyjs
+  cdn:
+    /libraries/tippyjs/dist/: https://unpkg.com/tippy.js@6.2.6/dist/
+  js:
+    /libraries/tippyjs/dist/tippy-bundle.umd.js: { }
+  dependencies:
+    - webform/libraries.popperjs

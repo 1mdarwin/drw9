@@ -16,11 +16,28 @@ use Drupal\webform\Utility\WebformArrayHelper;
 use Drupal\webform\Utility\WebformDateHelper;
 use Drupal\webform\WebformSubmissionInterface;
 use Drupal\webform\WebformInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides a base 'date' class.
  */
 abstract class DateBase extends WebformElementBase {
+
+  /**
+   * The date formatter service.
+   *
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
+   */
+  protected $dateFormatter;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    $instance->dateFormatter = $container->get('date.formatter');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -35,9 +52,9 @@ abstract class DateBase extends WebformElementBase {
       + $this->defineDefaultMultipleProperties();
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Element rendering methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -80,12 +97,6 @@ abstract class DateBase extends WebformElementBase {
     // Set date days (of week) attributes.
     if (!empty($element['#date_days'])) {
       $element['#attributes']['data-days'] = implode(',', $element['#date_days']);
-    }
-
-    // Display datepicker button.
-    if (!empty($element['#datepicker_button']) || !empty($element['#date_date_datepicker_button'])) {
-      $element['#attributes']['data-datepicker-button'] = TRUE;
-      $element['#attached']['drupalSettings']['webform']['datePicker']['buttonImage'] = base_path() . drupal_get_path('module', 'webform') . '/images/elements/date-calendar.png';
     }
 
     // Set first day according to admin/config/regional/settings.
@@ -150,9 +161,9 @@ abstract class DateBase extends WebformElementBase {
     return $element;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Display submission value methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -170,7 +181,7 @@ abstract class DateBase extends WebformElementBase {
       return $value;
     }
     elseif (DateFormat::load($format)) {
-      return \Drupal::service('date.formatter')->format($timestamp, $format);
+      return $this->dateFormatter->format($timestamp, $format);
     }
     else {
       return static::formatDate($format, $timestamp);
@@ -202,9 +213,9 @@ abstract class DateBase extends WebformElementBase {
     return $formats;
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Export methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -214,9 +225,9 @@ abstract class DateBase extends WebformElementBase {
     return [$this->formatText($element, $webform_submission, $export_options)];
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Element configuration methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -231,9 +242,17 @@ abstract class DateBase extends WebformElementBase {
     $form['default']['default_value']['#description'] .= '<br /><br />' . $this->t("You may use tokens. Tokens should use the 'html_date' or 'html_datetime' date format. (i.e. @date_format)", ['@date_format' => '[current-user:field_date_of_birth:date:html_date]']);
 
     // Allow custom date formats to be entered.
-    $form['display']['format']['#type'] = 'webform_select_other';
-    $form['display']['format']['#other__option_label'] = $this->t('Custom date format…');
-    $form['display']['format']['#other__description'] = $this->t('A user-defined date format. See the <a href="http://php.net/manual/function.date.php">PHP manual</a> for available options.');
+    $form['display']['item']['format']['#options']['custom'] = $this->t('Custom HTML/text…');
+    $form['display']['item']['format']['#type'] = 'webform_select_other';
+    $form['display']['item']['format']['#other__option_label'] = $this->t('Custom date format…');
+    $form['display']['item']['format']['#other__description'] = $this->t('A user-defined date format. See the <a href="http://php.net/manual/function.date.php">PHP manual</a> for available options.');
+    $format_custom_states = [
+      'visible' => [':input[name="properties[format][select]"]' => ['value' => 'custom']],
+      'required' => [':input[name="properties[format][select]"]' => ['value' => 'custom']],
+    ];
+    $form['display']['item']['format_html']['#states'] = $format_custom_states;
+    $form['display']['item']['format_text']['#states'] = $format_custom_states;
+    $form['display']['item']['twig']['#states'] = $format_custom_states;
 
     $form['date'] = [
       '#type' => 'fieldset',
@@ -267,7 +286,7 @@ abstract class DateBase extends WebformElementBase {
       '#title' => $this->t('Date days of the week'),
       '#options' => DateHelper::weekDaysAbbr(TRUE),
       '#element_validate' => [['\Drupal\webform\Utility\WebformElementHelper', 'filterValues']],
-      '#description' => $this->t('Specifies the day(s) of the week. Please note, the date picker will disable unchecked days of the week.'),
+      '#description' => $this->t('Specifies the day(s) of the week.'),
       '#options_display' => 'side_by_side',
       '#required' => TRUE,
       '#weight' => 20,
@@ -381,18 +400,18 @@ abstract class DateBase extends WebformElementBase {
     elseif (is_array($element[$property])) {
       foreach ($element[$property] as $key => $value) {
         $timestamp = strtotime($value);
-        $element[$property][$key] = ($timestamp) ? \Drupal::service('date.formatter')->format($timestamp, 'html_' . $this->getDateType($element)) : NULL;
+        $element[$property][$key] = ($timestamp) ? $this->dateFormatter->format($timestamp, 'html_' . $this->getDateType($element)) : NULL;
       }
     }
     else {
       $timestamp = strtotime($element[$property]);
-      $element[$property] = ($timestamp) ? \Drupal::service('date.formatter')->format($timestamp, 'html_' . $this->getDateType($element)) : NULL;
+      $element[$property] = ($timestamp) ? $this->dateFormatter->format($timestamp, 'html_' . $this->getDateType($element)) : NULL;
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Validation methods.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Validate GNU date input format.
@@ -524,7 +543,7 @@ abstract class DateBase extends WebformElementBase {
     $time = strtotime($value);
 
     // Ensure that the input is greater than the #date_date_min property, if set.
-    if (isset($element['#date_date_min'])) {
+    if (!empty($element['#date_date_min'])) {
       $min = strtotime(static::formatDate('Y-m-d', strtotime($element['#date_date_min'])));
       if ($time < $min) {
         $form_state->setError($element, t('%name must be on or after %min.', [
@@ -535,7 +554,7 @@ abstract class DateBase extends WebformElementBase {
     }
 
     // Ensure that the input is less than the #date_date_max property, if set.
-    if (isset($element['#date_date_max'])) {
+    if (!empty($element['#date_date_max'])) {
       $max = strtotime(static::formatDate('Y-m-d 23:59:59', strtotime($element['#date_date_max'])));
       if ($time > $max) {
         $form_state->setError($element, t('%name must be on or before %max.', [
@@ -546,7 +565,7 @@ abstract class DateBase extends WebformElementBase {
     }
 
     // Ensure that the input is greater than the #date_min property, if set.
-    if (isset($element['#date_min'])) {
+    if (!empty($element['#date_min'])) {
       $min = strtotime($element['#date_min']);
       if ($time < $min) {
         $form_state->setError($element, t('%name must be on or after %min.', [
@@ -557,7 +576,7 @@ abstract class DateBase extends WebformElementBase {
     }
 
     // Ensure that the input is less than the #date_max property, if set.
-    if (isset($element['#date_max'])) {
+    if (!empty($element['#date_max'])) {
       $max = strtotime($element['#date_max']);
       if ($time > $max) {
         $form_state->setError($element, t('%name must be on or before %max.', [
@@ -587,7 +606,7 @@ abstract class DateBase extends WebformElementBase {
   public function getTestValues(array $element, WebformInterface $webform, array $options = []) {
     $format = DateFormat::load('html_datetime')->getPattern();
     if (!empty($element['#date_year_range'])) {
-      list($min, $max) = static::datetimeRangeYears($element['#date_year_range']);
+      [$min, $max] = static::datetimeRangeYears($element['#date_year_range']);
     }
     else {
       $min = !empty($element['#date_date_min']) ? strtotime($element['#date_date_min']) : strtotime('-10 years');
@@ -615,7 +634,7 @@ abstract class DateBase extends WebformElementBase {
   protected static function datetimeRangeYears($string, $date = NULL) {
     $datetime = new DrupalDateTime();
     $this_year = $datetime->format('Y');
-    list($min_year, $max_year) = explode(':', $string);
+    [$min_year, $max_year] = explode(':', $string);
 
     // Valid patterns would be -5:+5, 0:+1, 2008:2010.
     $plus_pattern = '@[\+|\-][0-9]{1,4}@';

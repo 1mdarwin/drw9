@@ -2,9 +2,9 @@
 
 namespace Drupal\webform_entity_print\EventSubscriber;
 
+use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 
@@ -21,7 +21,7 @@ class WebformEntityPrintRequestSubscriber implements EventSubscriberInterface {
   protected $routeMatch;
 
   /**
-   * Constructs a new WebformEntityPrintRequestSubscriber.
+   * Constructs a WebformEntityPrintRequestSubscriber object.
    *
    * @param \Drupal\Core\Routing\RouteMatchInterface $route_match
    *   The current route match.
@@ -33,7 +33,7 @@ class WebformEntityPrintRequestSubscriber implements EventSubscriberInterface {
   /**
    * Set custom webform entity print submission view mode.
    */
-  public function requestSetViewMode(GetResponseEvent $event) {
+  public function requestSetViewMode(RequestEvent $event) {
     if ($event->getRequestType() !== HttpKernelInterface::MASTER_REQUEST) {
       return;
     }

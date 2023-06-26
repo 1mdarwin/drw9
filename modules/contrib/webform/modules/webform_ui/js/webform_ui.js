@@ -3,10 +3,9 @@
  * JavaScript behaviors for Webform UI.
  */
 
-(function ($, Drupal, drupalSettings) {
+(function ($, Drupal, drupalSettings, once) {
 
   'use strict';
-
 
   /**
    * Move toggle weight element to the first child of the edit form.
@@ -17,7 +16,7 @@
    */
   Drupal.behaviors.webformUiElementsToggleWeight = {
     attach: function (context, settings) {
-      $(context).find('form.webform-edit-form').once('webform-ui-elements-toggle-weight').each(function () {
+      $(once('webform-ui-elements-toggle-weight', 'form.webform-edit-form', context)).each(function () {
         var $form = $(this);
         $form.find('.tabledrag-toggle-weight-wrapper').prependTo($form);
       });
@@ -37,7 +36,7 @@
    */
   Drupal.behaviors.webformUiElementsActionsSecondary = {
     attach: function (context, settings) {
-      $(context).find('.action-links .button--secondary').once('webform-ui-elements-webform-actions-secondary').each(function () {
+      $(once('webform-ui-elements-webform-actions-secondary', '.action-links .button--secondary', context)).each(function () {
         $(this).removeClass('button--primary');
       });
     }
@@ -50,9 +49,7 @@
    */
   Drupal.behaviors.webformUiElementsKeyboard = {
     attach: function (context, settings) {
-      var $table = $(context)
-        .find('.webform-ui-elements-table')
-        .once('webform-ui-elements-keyboard');
+      var $table = $(once('webform-ui-elements-keyboard', '.webform-ui-elements-table', context));
 
       // Disable autosubmit when Enter is pressed on 'Required' checkboxes.
       $table.find('td input:checkbox')
@@ -91,7 +88,6 @@
             var $cell = $(this).closest('td');
             var direction = (event.which === 37) ? 'prev' : 'next';
             var $focus;
-
 
             // Move keyboard focus within operations dropbutton.
             if ($(this).closest('.webform-dropbutton').length) {
@@ -165,4 +161,4 @@
     }
   };
 
-})(jQuery, Drupal, drupalSettings);
+})(jQuery, Drupal, drupalSettings, once);

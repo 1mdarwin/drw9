@@ -16,7 +16,7 @@ class WebformCardsUiJavaScriptTest extends WebformWebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = ['block', 'webform', 'webform_ui', 'webform_cards', 'webform_cards_test'];
+  protected static $modules = ['block', 'webform', 'webform_ui', 'webform_cards', 'webform_cards_test'];
 
   /**
    * Webforms to load.
@@ -33,7 +33,7 @@ class WebformCardsUiJavaScriptTest extends WebformWebDriverTestBase {
 
     $this->drupalLogin($this->rootUser);
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Check that 'Add page' and 'Add card' actions are visible.
     $this->drupalGet('/admin/structure/webform/manage/contact');

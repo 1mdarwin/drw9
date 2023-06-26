@@ -17,7 +17,10 @@ abstract class ProfileTestBase extends BrowserTestBase {
 
   use ProfileTestTrait;
 
-  public static $modules = ['profile', 'field_ui', 'text', 'block'];
+  /**
+   * {@inheritdoc}
+   */
+  protected static $modules = ['profile', 'field_ui', 'text', 'block'];
 
   /**
    * Testing profile type entity.
@@ -57,7 +60,12 @@ abstract class ProfileTestBase extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected $defaultTheme = 'stark';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function setUp(): void {
     parent::setUp();
 
     $this->drupalPlaceBlock('local_tasks_block');

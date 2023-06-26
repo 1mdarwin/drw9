@@ -17,7 +17,7 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
    *
    * @var array
    */
-  public static $modules = ['system', 'webform', 'user'];
+  protected static $modules = ['system', 'webform', 'user'];
 
   /**
    * The webform elements validator.
@@ -29,7 +29,7 @@ class WebformEntityElementsValidationTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
     $this->validator = \Drupal::service('webform.elements_validator');
   }
@@ -188,7 +188,7 @@ card:
           'Pages and cards cannot be used in the same webform. Please remove or convert the pages/cards to the same element type.',
         ],
       ],
-
+// phpcs:disable
 /*
       // Check validate rendering.
       [
@@ -207,6 +207,7 @@ card:
         ],
       ],
 */
+// phpcs:enable
     ];
 
     // Check invalid YAML.

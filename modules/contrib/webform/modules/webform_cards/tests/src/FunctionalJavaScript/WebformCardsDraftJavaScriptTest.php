@@ -16,7 +16,7 @@ class WebformCardsDraftJavaScriptTest extends WebformWebDriverTestBase {
    *
    * @var array
    */
-  public static $modules = ['webform', 'webform_cards', 'webform_cards_test'];
+  protected static $modules = ['webform', 'webform_cards', 'webform_cards_test'];
 
   /**
    * Test webform cards draft.
@@ -26,7 +26,7 @@ class WebformCardsDraftJavaScriptTest extends WebformWebDriverTestBase {
     $page = $session->getPage();
     $assert_session = $this->assertSession();
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     // Get the webform and load card 1.
     $this->drupalGet('/webform/test_cards_draft');

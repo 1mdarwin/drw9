@@ -37,10 +37,10 @@ abstract class TextBase extends WebformElementBase {
    * {@inheritdoc}
    */
   protected function defineTranslatableProperties() {
-    return array_merge(parent::defineTranslatableProperties(), ['counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
+    return array_merge(parent::defineTranslatableProperties(), ['default_value', 'counter_minimum_message', 'counter_maximum_message', 'pattern_error']);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * {@inheritdoc}
@@ -224,8 +224,6 @@ abstract class TextBase extends WebformElementBase {
     $t_args = [
       '@type' => ($type === 'character') ? t('characters') : t('words'),
       '@name' => $element['#title'],
-      '%max' => $max,
-      '%min' => $min,
     ];
 
     // Get character/word count.
@@ -241,9 +239,11 @@ abstract class TextBase extends WebformElementBase {
 
     // Validate character/word count.
     if ($max && $length > $max) {
+      $t_args['%max'] = $max;
       $form_state->setError($element, t('@name cannot be longer than %max @type but is currently %length @type long.', $t_args));
     }
     elseif ($min && $length < $min) {
+      $t_args['%min'] = $min;
       $form_state->setError($element, t('@name must be longer than %min @type but is currently %length @type long.', $t_args));
     }
   }
@@ -344,9 +344,9 @@ abstract class TextBase extends WebformElementBase {
     }
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Input masks.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Get input masks.
@@ -433,14 +433,14 @@ abstract class TextBase extends WebformElementBase {
       ],
     ];
 
-    // Get input masks.
-    $modules = \Drupal::moduleHandler()->getImplementations('webform_element_input_masks');
-    foreach ($modules as $module) {
-      $input_masks += \Drupal::moduleHandler()->invoke($module, 'webform_element_input_masks');
-    }
+    // Get input masks, use ModuleHandler::invokeAllWith() to ensure that
+    // numeric keys are not lost.
+    $this->moduleHandler->invokeAllWith('webform_element_input_masks', function (callable $hook, string $module_name) use (&$input_masks) {
+      $input_masks += $hook();
+    });
 
     // Alter input masks.
-    \Drupal::moduleHandler()->alter('webform_element_input_masks', $input_masks);
+    $this->moduleHandler->alter('webform_element_input_masks', $input_masks);
 
     return $input_masks;
   }

@@ -18,7 +18,7 @@ class WebformElementStatesSelectorsTest extends WebformElementBrowserTestBase {
    *
    * @var array
    */
-  public static $modules = ['filter', 'file', 'language', 'taxonomy', 'node', 'webform'];
+  protected static $modules = [ 'file', 'language', 'taxonomy', 'node', 'webform'];
 
   /**
    * Webforms to load.
@@ -30,7 +30,7 @@ class WebformElementStatesSelectorsTest extends WebformElementBrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Create 'tags' vocabulary.
@@ -79,7 +79,7 @@ class WebformElementStatesSelectorsTest extends WebformElementBrowserTestBase {
 
     // Check the value element is included.
     $selectors = $webform->getElementsSelectorOptions(['excluded_elements' => []]);
-    $this->assertEqual($selectors[':input[name="value"]'], 'Value [Value]');
+    $this->assertEquals($selectors[':input[name="value"]'], 'Value [Value]');
   }
 
 }

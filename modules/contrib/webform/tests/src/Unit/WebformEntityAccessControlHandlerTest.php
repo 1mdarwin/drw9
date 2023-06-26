@@ -40,7 +40,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     $this->container = new ContainerBuilder();
@@ -48,9 +48,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
 
     // Mock cache context manager and set container.
     // @copied from \Drupal\Tests\Core\Access\AccessResultTest::setUp
-    $cache_contexts_manager = $this->getMockBuilder('Drupal\Core\Cache\Context\CacheContextsManager')
-      ->disableOriginalConstructor()
-      ->getMock();
+    $cache_contexts_manager = $this->createMock('Drupal\Core\Cache\Context\CacheContextsManager');
 
     $cache_contexts_manager->method('assertValidTokens')->willReturn(TRUE);
     $this->container->set('cache_contexts_manager', $cache_contexts_manager);
@@ -106,7 +104,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'access_result_cache_contexts' => [],
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $token = $this->randomMachineName();
 
@@ -114,35 +112,29 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     $entity_type = new ConfigEntityType(['id' => 'webform']);
 
     // Mock request stack.
-    $request_stack = $this->getMockBuilder(RequestStack::class)
-      ->disableOriginalConstructor()
-      ->getMock();
+    $request_stack = $this->createMock(RequestStack::class);
     $request_stack->method('getCurrentRequest')
       ->willReturn(new Request(['token' => $token], [], ['_format' => $options['request_format']]));
 
     // Mock webform submission storage.
-    $webform_submission_storage = $this->getMockBuilder(WebformSubmissionStorageInterface::class)
-      ->getMock();
+    $webform_submission_storage = $this->createMock(WebformSubmissionStorageInterface::class);
 
     // Mock entity type manager.
-    $entity_type_manager = $this->getMockBuilder(EntityTypeManagerInterface::class)
-      ->getMock();
+    $entity_type_manager = $this->createMock(EntityTypeManagerInterface::class);
     $entity_type_manager->method('getStorage')
       ->willReturnMap([
         ['webform_submission', $webform_submission_storage],
       ]);
 
     // Mock webform source entity manager.
-    $webform_source_entity_manager = $this->getMockBuilder(WebformSourceEntityManagerInterface::class)
-      ->getMock();
+    $webform_source_entity_manager = $this->createMock(WebformSourceEntityManagerInterface::class);
     $webform_source_entity_manager->method('getSourceEntity')
       ->willReturn(NULL);
 
     // Mock account.
     $permissions = $options['permissions'];
     $account_id = 2;
-    $account = $this->getMockBuilder(AccountInterface::class)
-      ->getMock();
+    $account = $this->createMock(AccountInterface::class);
     $account->method('hasPermission')
       ->willReturnCallback(function ($permission) use ($permissions) {
         return in_array($permission, $permissions);
@@ -153,8 +145,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       ->willReturn($account->id() > 0);
 
     // Mock webform.
-    $webform = $this->getMockBuilder(WebformInterface::class)
-      ->getMock();
+    $webform = $this->createMock(WebformInterface::class);
     $webform->method('getOwnerId')
       ->willReturn($account_id);
     $webform->method('isTemplate')
@@ -165,8 +156,8 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       ->willReturnMap([
         ['create', $account, TRUE, AccessResult::allowed()],
       ]);
-    $webform->method('getSetting')->willReturnMap([
-      ['page', FALSE, TRUE],
+    $webform->method('hasPage')->willReturnOnConsecutiveCalls([
+      FALSE, TRUE,
     ]);
     $webform->method('getCacheMaxAge')
       ->willReturn(Cache::PERMANENT);
@@ -176,8 +167,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       ->willReturn(['webform_cache_tag']);
 
     // Mock webform submissions.
-    $webform_submission = $this->getMockBuilder(WebformSubmissionInterface::class)
-      ->getMock();
+    $webform_submission = $this->createMock(WebformSubmissionInterface::class);
     $webform_submission->method('getCacheContexts')
       ->willReturn(['webform_submission_cache_context']);
     $webform_submission->method('getCacheTags')
@@ -192,8 +182,7 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       ]);
 
     // Mock access rules manager.
-    $access_rules_manager = $this->getMockBuilder(WebformAccessRulesManagerInterface::class)
-      ->getMock();
+    $access_rules_manager = $this->createMock(WebformAccessRulesManagerInterface::class);
     $access_rules_manager->method('checkWebformAccess')
       ->will(
         $this->returnCallback(
@@ -206,10 +195,17 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
         )
       );
 
-    /**************************************************************************/
+    // Build container.
+    $container = new ContainerBuilder();
+    $container->set('request_stack', $request_stack);
+    $container->set('entity_type.manager', $entity_type_manager);
+    $container->set('plugin.manager.webform.source_entity', $webform_source_entity_manager);
+    $container->set('webform.access_rules_manager', $access_rules_manager);
+
+    /* ********************************************************************** */
 
     // Create webform access control handler.
-    $access_handler = new WebformEntityAccessControlHandler($entity_type, $request_stack, $entity_type_manager, $webform_source_entity_manager, $access_rules_manager);
+    $access_handler = WebformEntityAccessControlHandler::createInstance($container, $entity_type);
 
     // Check access.
     $access_result = $access_handler->checkAccess($webform, $operation, $account);
@@ -217,8 +213,8 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
     // Check expected results.
     $this->assertEquals($expected['access_result_is_allowed'], $access_result->isAllowed(), $assert_message);
     $this->assertEquals(Cache::PERMANENT, $access_result->getCacheMaxAge(), $assert_message . ': cache max age');
-    $this->assertArrayEquals($expected['access_result_cache_contexts'], $access_result->getCacheContexts(), $assert_message . ': cache contexts');
-    $this->assertArrayEquals($expected['access_result_cache_tags'], $access_result->getCacheTags(), $assert_message . ': cache tags');
+    $this->assertEqualsCanonicalizing($expected['access_result_cache_contexts'], $access_result->getCacheContexts(), $assert_message . ': cache contexts');
+    $this->assertEqualsCanonicalizing($expected['access_result_cache_tags'], $access_result->getCacheTags(), $assert_message . ': cache tags');
   }
 
   /**
@@ -229,9 +225,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
   public function providerCheckAccess() {
     $tests = [];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "view" HTML operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'view',
@@ -270,9 +266,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'View when has "administer" access rule',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "view" configuration operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'view',
@@ -359,9 +355,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'View when has "access own webform configuration" permission and is owner and request form is NOT HTML',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "test" operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'test',
@@ -441,9 +437,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'Test when has "edit own webform" permission and is owner',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "update" operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'update',
@@ -521,9 +517,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'Update when has "edit own webform" permission and is owner',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "duplicate" operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'duplicate',
@@ -616,9 +612,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'Duplicate when has "create webform" and "edit own webform" permissions and is owner',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "delete" operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'delete',
@@ -698,9 +694,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'Delete when has "delete own webform" permission and is owner',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "purge" operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'submission_purge',
@@ -728,9 +724,9 @@ class WebformEntityAccessControlHandlerTest extends UnitTestCase {
       'Purge when has "purge_any" access rule',
     ];
 
-    /**************************************************************************/
+    /* ********************************************************************** */
     // The "view" operation.
-    /**************************************************************************/
+    /* ********************************************************************** */
 
     $tests[] = [
       'submission_view_any',

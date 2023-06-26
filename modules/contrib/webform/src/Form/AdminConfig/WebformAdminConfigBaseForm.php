@@ -10,11 +10,29 @@ use Drupal\webform\Plugin\WebformElement\TableSelect;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
 use Drupal\webform\Plugin\WebformHandlerManager;
 use Drupal\webform\Utility\WebformElementHelper;
+use Drupal\webform\Utility\WebformYaml;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base webform admin settings form.
  */
 abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
+
+  /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    $instance = parent::create($container);
+    $instance->entityTypeManager = $container->get('entity_type.manager');
+    return $instance;
+  }
 
   /**
    * {@inheritdoc}
@@ -28,7 +46,14 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config = $this->config('webform.settings');
+
     _webform_config_update($config);
+
+    // Normalizing the data.
+    $data = $config->getRawData();
+    WebformYaml::normalize($data);
+    $config->setData($data);
+
     $config->save();
 
     parent::submitForm($form, $form_state);
@@ -39,10 +64,11 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
    *
    * @param array $settings
    *   Webform settings.
-   * @param $entity_type_id
+   * @param string $entity_type_id
    *   The entity type id. (webform or webform_submission)
    *
    * @return array
+   *   Bulk operation settings.
    */
   protected function buildBulkOperations(array $settings, $entity_type_id) {
     $element = [
@@ -72,7 +98,7 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
     $options = [];
     $default_actions = [];
     /** @var \Drupal\system\ActionConfigEntityInterface[] $actions */
-    $actions = \Drupal::entityTypeManager()->getStorage('action')->loadMultiple();
+    $actions = $this->entityTypeManager->getStorage('action')->loadMultiple();
     foreach ($actions as $action) {
       if ($action->getType() === $entity_type_id) {
         $options[$action->id()] = ['label' => $action->label()];
@@ -108,7 +134,7 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
     return $element;
   }
 
-    /**
+  /**
    * Form API callback. Validate bulk form actions.
    */
   public static function validateBulkFormActions(array &$element, FormStateInterface $form_state) {
@@ -128,9 +154,9 @@ abstract class WebformAdminConfigBaseForm extends ConfigFormBase {
     $form_state->setValueForElement($element, $actions_value);
   }
 
-  /****************************************************************************/
+  /* ************************************************************************ */
   // Exclude plugins.
-  /****************************************************************************/
+  /* ************************************************************************ */
 
   /**
    * Build excluded plugins element.

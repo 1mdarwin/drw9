@@ -12,6 +12,7 @@ bootstrap_barrio_sidebar_second_offset: 0
 
 # Container.
 # ----------------------------
+bootstrap_barrio_container: 'container'
 bootstrap_barrio_fluid_container: 0
 
 # Buttons.

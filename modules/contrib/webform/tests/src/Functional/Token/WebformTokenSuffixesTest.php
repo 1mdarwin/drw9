@@ -93,6 +93,13 @@ class WebformTokenSuffixesTest extends WebformBrowserTestBase {
         'expected' => '&lt;b&gt;Testing&lt;/b&gt;',
         'message' => 'HTML decode and then XML encode',
       ],
+      // :base64encode
+      [
+        'site_name' => 'Testing',
+        'text' => '[site:name:base64encode]',
+        'expected' => 'VGVzdGluZw==',
+        'message' => 'Base64 encode',
+      ],
     ];
     foreach ($tests as $test) {
       // Set default options.
@@ -108,7 +115,7 @@ class WebformTokenSuffixesTest extends WebformBrowserTestBase {
           ->save();
       }
       $result = $token_manager->replace($test['text'], NULL, [], $test['options']);
-      $this->assertEqual($result, $test['expected'], $test['message']);
+      $this->assertEquals($result, $test['expected'], $test['message']);
     }
 
   }

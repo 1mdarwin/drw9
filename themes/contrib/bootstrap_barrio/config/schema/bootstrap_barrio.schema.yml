@@ -19,6 +19,9 @@ bootstrap_barrio.settings:
     bootstrap_barrio_fluid_container:
       type: integer
       label: 'Fluid container'
+    bootstrap_barrio_container:
+      type: string
+      label: 'Container'
 
     # Region.
     # ----------------------------
@@ -191,6 +194,12 @@ bootstrap_barrio.settings:
       type: integer
       label: 'Hide node label'
 
+    # Breadcrumb
+    # ----------------------------
+    bootstrap_barrio_breadcrumb_divider:
+      type: string
+      label: 'Breadcrumb Divider'
+
     # Buttons.
     # ----------------------------
     bootstrap_barrio_button:
@@ -199,6 +208,9 @@ bootstrap_barrio.settings:
     bootstrap_barrio_button_size:
       type: string
       label: 'Default button size'
+    bootstrap_barrio_button_type:
+      type: string
+      label: 'Default button type'
     bootstrap_barrio_button_outline:
       type: integer
       label: 'Button with outline format'
@@ -256,18 +268,12 @@ bootstrap_barrio.settings:
 
     # Form.
     # ----------------------------
-    bootstrap_barrio_radio:
+    bootstrap_barrio_float_label:
       type: string
-      label: 'Radio widget'
+      label: 'Float Labels'
     bootstrap_barrio_checkbox:
       type: string
-      label: 'Checkbox widget'
-    bootstrap_barrio_select:
-      type: string
-      label: 'Select widget'
-    bootstrap_barrio_file:
-      type: string
-      label: 'File widget'
+      label: 'Checkbox & Radio Style'
 
     # Affix.
     # ----------------------------

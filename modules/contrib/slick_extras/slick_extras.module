@@ -1,0 +1,33 @@
+<?php
+
+/**
+ * @file
+ * Provides Slick extra utilities.
+ */
+
+/**
+ * Implements hook_slick_skins_info().
+ *
+ * The class must implement \Drupal\slick\SlickSkinInterface.
+ *
+ * @todo remove post Slick 3.x for the new skins as plugins.
+ */
+function slick_extras_slick_skins_info() {
+  return '\Drupal\slick_extras\SlickExtrasSkin';
+}
+
+/**
+ * Returns the path.
+ *
+ * @todo remove for Bazy:2.6+ when min D9.3.
+ */
+function slick_extras_get_path($type, $name, $absolute = FALSE) {
+  $function = 'drupal_get_path';
+  if (\Drupal::hasService('extension.path.resolver')) {
+    $path = \Drupal::service('extension.path.resolver')->getPath($type, $name);
+  }
+  else {
+    $path = is_callable($function) ? $function($type, $name) : '';
+  }
+  return $absolute ? base_path() . $path : $path;
+}

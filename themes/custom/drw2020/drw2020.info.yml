@@ -5,7 +5,7 @@ base theme: bootstrap
 name: 'drw2020'
 description: 'Subtema de bootstrap extend from jhonathantheme based on bootstrap 3.0'
 package: 'Bootstrap'
-core_version_requirement: ^8| ^9
+core_version_requirement: ">=8"
 
 regions:
   navigation: 'Navigation'
