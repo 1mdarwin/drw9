@@ -149,7 +149,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
   /**
    * Any additional configuration that's needed for this entity type.
    */
-  protected function setUpEntityType() {}
+  protected function setUpEntityType(): void {}
 
   /**
    * A list of default values to add to the entity being created.
@@ -157,7 +157,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
    * @return array
    *   Default values.
    */
-  protected function entityDefaultValues($title = 'Barfoo') {
+  protected function entityDefaultValues($title = 'Barfoo'): array {
     return [
       $this->entityTitleField . '[0][value]' => $title,
     ];
@@ -166,7 +166,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
   /**
    * Add a Metatag field to this entity type.
    */
-  protected function addField() {
+  protected function addField(): void {
     // Add a metatag field to the entity type test_entity.
     $this->drupalGet($this->entityFieldAdminPath . '/add-field');
     $this->assertSession()->statusCodeEquals(200);
@@ -439,7 +439,7 @@ abstract class MetatagFieldTestBase extends BrowserTestBase {
    *
    * @todo Finish this.
    */
-  public function tofixTestEntityField() {
+  public function todoTestEntityField() {
     // Add a field to the entity type.
     $this->addField();
 
