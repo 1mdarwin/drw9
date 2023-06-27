@@ -62,7 +62,6 @@ blacklist:
   - block.block.drw2022_barrio_widget
   - bootstrap_barrio.settings
   - drw2022_barrio.settings
-  - system.performance
 graylist: {  }
 graylist_dependents: true
 graylist_skip_equal: true
