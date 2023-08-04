@@ -11,7 +11,7 @@ dependencies:
     - drw2020
 third_party_settings:
   block_class:
-    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3 '
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
 id: views_block__listablogs_block_1
 theme: drw2020
 region: footer
@@ -20,10 +20,10 @@ provider: null
 plugin: 'views_block:listablogs-block_1'
 settings:
   id: 'views_block:listablogs-block_1'
-  label: 'Our Blog'
+  label: 'Nuestro Blog'
   label_display: visible
   provider: views
-  views_label: 'Our Blog'
+  views_label: 'Nuestro Blog'
   items_per_page: none
   exposed: {  }
 visibility: {  }

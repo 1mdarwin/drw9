@@ -3,5 +3,3 @@ settings:
 handlers:
   email_notification:
     label: 'Aviso por correo electrónico'
-    settings:
-      body: '<p>[webform_submission:values:message:value]</p>'

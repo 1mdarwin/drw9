@@ -1,4 +1,15 @@
 title: Contacto
+settings:
+  confirmation_message: '<p>Se ha enviado su mensaje. Lo contactaremos tan pronto como podamos hacerlo.</p>'
+handlers:
+  email_confirmation:
+    label: 'Confirmación por correo electrónico'
+    settings:
+      body: '<p>[webform_submission:values:message:value]</p>'
+  email_notification:
+    label: 'Aviso por correo electrónico'
+    settings:
+      body: '<p>[webform_submission:values:message:value]</p>'
 description: '<p>Basic email contact webform.</p>'
 elements: |
   name:
@@ -11,14 +22,3 @@ elements: |
     '#title': Mensaje
   actions:
     '#submit__label': 'Enviar mensaje'
-settings:
-  confirmation_message: '<p>Se ha enviado su mensaje. Lo contactaremos tan pronto como podamos hacerlo.</p>'
-handlers:
-  email_confirmation:
-    label: 'Confirmación por correo electrónico'
-    settings:
-      body: '<p>[webform_submission:values:message:value]</p>'
-  email_notification:
-    label: 'Aviso por correo electrónico'
-    settings:
-      body: '<p>[webform_submission:values:message:value]</p>'
