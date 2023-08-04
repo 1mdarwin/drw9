@@ -4,7 +4,6 @@ namespace Drupal\webform\Plugin\WebformElement;
 
 use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\Environment;
 use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
 use Drupal\Core\File\FileSystemInterface;
@@ -297,8 +296,9 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
     // Allow ManagedFile Ajax callback to disable flexbox wrapper.
     // @see \Drupal\file\Element\ManagedFile::uploadAjaxCallback
     // @see \Drupal\webform\Plugin\WebformElementBase::preRenderFixFlexboxWrapper
+    $request_params = \Drupal::request()->request->all();
     if (\Drupal::request()->request->get('_drupal_ajax')
-      && \Drupal::request()->request->get('files')) {
+      && !empty($request_params['files'])) {
       $element['#webform_wrapper'] = FALSE;
     }
 
@@ -618,7 +618,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
    * @param array $element
    *   An element.
    *
-   * @return int
+   * @return string
    *   File extensions.
    */
   protected function getFileExtensions(array $element = NULL) {
@@ -630,7 +630,7 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
   /**
    * Get the default allowed file extensions.
    *
-   * @return int
+   * @return string
    *   File extensions.
    */
   protected function getDefaultFileExtensions() {
@@ -1376,12 +1376,14 @@ abstract class WebformManagedFileBase extends WebformElementBase implements Webf
       /** @var \Drupal\Core\File\FileSystemInterface $file_system */
       $file_system = \Drupal::service('file_system');
       $filename = $file_system->basename($uri);
+      // Fallback name in case file name contains none ASCII characters.
+      $filename_fallback = \Drupal::transliteration()->transliterate($filename);
       // Force blacklisted files to be downloaded instead of opening in the browser.
       if (in_array($headers['Content-Type'], static::$blacklistedMimeTypes)) {
-        $headers['Content-Disposition'] = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, (string) $filename);
+        $headers['Content-Disposition'] = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_ATTACHMENT, (string) $filename, $filename_fallback);
       }
       else {
-        $headers['Content-Disposition'] = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, (string) $filename);
+        $headers['Content-Disposition'] = HeaderUtils::makeDisposition(HeaderUtils::DISPOSITION_INLINE, (string) $filename, $filename_fallback);
       }
       return $headers;
     }

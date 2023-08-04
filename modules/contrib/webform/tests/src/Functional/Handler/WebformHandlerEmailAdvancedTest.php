@@ -17,7 +17,7 @@ class WebformHandlerEmailAdvancedTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = [ 'file', 'webform'];
+  protected static $modules = ['file', 'webform'];
 
   /**
    * Webforms to load.

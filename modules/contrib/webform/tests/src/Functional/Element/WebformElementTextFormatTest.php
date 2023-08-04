@@ -21,7 +21,7 @@ class WebformElementTextFormatTest extends WebformElementBrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = [ 'file', 'webform'];
+  protected static $modules = ['file', 'webform'];
 
   /**
    * Webforms to load.

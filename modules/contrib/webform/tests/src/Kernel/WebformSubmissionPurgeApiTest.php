@@ -66,9 +66,13 @@ class WebformSubmissionPurgeApiTest extends KernelTestBase {
       $submission_ids[$webform_submission->id()] = $webform_submission->id();
     }
     \Drupal::entityTypeManager()->getStorage('webform_submission')->purge(10);
+    // At this point the submissions array will be shifted by a handler.
+    array_shift($submission_ids);
     $this->assertEquals($submission_ids, \Drupal::state()->get('webform_test_purge_handler_pre'));
-    $this->assertEquals($submission_ids, \Drupal::state()->get('webform_test_purge_handler_post'));
+    // At this point the submissions array will be shifted by a hook.
+    array_shift($submission_ids);
     $this->assertEquals($submission_ids, \Drupal::state()->get('webform_test_purge_hook_pre'));
+    $this->assertEquals($submission_ids, \Drupal::state()->get('webform_test_purge_handler_post'));
     $this->assertEquals($submission_ids, \Drupal::state()->get('webform_test_purge_hook_post'));
   }
 

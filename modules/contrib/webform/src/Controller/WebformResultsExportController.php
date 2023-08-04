@@ -250,7 +250,7 @@ class WebformResultsExportController extends ControllerBase implements Container
     if (empty($context['sandbox'])) {
       $context['sandbox']['progress'] = 0;
       $context['sandbox']['offset'] = 0;
-      $context['sandbox']['max'] = $submission_exporter->getQuery()->count()->execute();
+      $context['sandbox']['max'] = $submission_exporter->getQuery()->accessCheck(FALSE)->count()->execute();
       // Store entity ids and not the actual webform or source entity in the
       // $context to prevent "The container was serialized" errors.
       // @see https://www.drupal.org/node/2822023

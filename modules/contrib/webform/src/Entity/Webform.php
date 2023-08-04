@@ -113,7 +113,7 @@ use Drupal\webform\WebformSubmissionStorageInterface;
  *     "uuid",
  *     "title",
  *     "description",
- *     "category",
+ *     "categories",
  *     "elements",
  *     "css",
  *     "javascript",
@@ -239,11 +239,11 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
   protected $description;
 
   /**
-   * The webform options category.
+   * The webform categories.
    *
-   * @var string
+   * @var array
    */
-  protected $category;
+  protected $categories = [];
 
   /**
    * The owner's uid.
@@ -496,6 +496,13 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * @var bool
    */
   protected $hasAnonymousSubmissionTrackingHandler;
+
+  /**
+   * Track if the webform has message handler.
+   *
+   * @var bool
+   */
+  private $hasMessagehandler;
 
   /**
    * {@inheritdoc}
@@ -1504,7 +1511,7 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
     catch (\Exception $exception) {
       $link = $this->toLink($this->t('Edit'), 'edit-form')->toString();
       \Drupal::logger('webform')
-        ->notice('%title elements are not valid. @message', [
+        ->error('%title elements are not valid. @message', [
           '%title' => $this->label(),
           '@message' => $exception->getMessage(),
           'link' => $link,
@@ -3224,8 +3231,8 @@ class Webform extends ConfigEntityBundleBase implements WebformInterface {
    * {@inheritdoc}
    */
   public static function sort(ConfigEntityInterface $a, ConfigEntityInterface $b) {
-    $a_label = $a->get('category') . $a->label();
-    $b_label = $b->get('category') . $b->label();
+    $a_label = $a->label();
+    $b_label = $b->label();
     return strnatcasecmp($a_label, $b_label);
   }
 

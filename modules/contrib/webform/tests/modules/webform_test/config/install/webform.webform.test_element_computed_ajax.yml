@@ -14,7 +14,8 @@ archive: false
 id: test_element_computed_ajax
 title: 'Test: Element: Computed ajax'
 description: 'Test computed element using Ajax.'
-category: 'Test: Element'
+categories:
+  - 'Test: Element'
 elements: |
   a:
     '#type': webform_select_other
@@ -91,7 +92,6 @@ elements: |
       {% endapply %}
 
     '#ajax': true
-  
 css: ''
 javascript: ''
 settings:
@@ -179,6 +179,8 @@ settings:
   wizard_toggle: false
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
   preview: 1
   preview_label: ''
   preview_title: ''

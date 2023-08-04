@@ -310,7 +310,7 @@ class WebformSubmissionCommands extends WebformCommandsBase {
   /**
    * Purge webform submissions from the databases.
    *
-   * @param sring $webform
+   * @param string $webform
    *   A webform machine name. If not provided, user may choose from a
    *   list of names.
    * @param array $options

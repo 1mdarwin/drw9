@@ -9,6 +9,12 @@ webform.settings:
         default_status:
           type: string
           label: 'Default status'
+        default_categories:
+          type: sequence
+          label: 'Default categories'
+          sequence:
+            type: label
+            label: 'Default category'
         default_page:
           type: boolean
           label: 'Default enable page'
@@ -149,6 +155,10 @@ webform.settings:
         default_confirmation_back_label:
           type: label
           label: 'Default confirmation back label'
+          webform_type: html
+        default_confirmation_noindex:
+          type: boolean
+          label: 'Default confirmation noindex'
           webform_type: html
         default_limit_total_message:
           type: text

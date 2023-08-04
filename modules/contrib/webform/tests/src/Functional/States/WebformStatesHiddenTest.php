@@ -23,7 +23,7 @@ class WebformStatesHiddenTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = [ 'file', 'webform'];
+  protected static $modules = ['file', 'webform'];
 
   /**
    * {@inheritdoc}

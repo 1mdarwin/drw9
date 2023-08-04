@@ -40,7 +40,19 @@
     }
   };
 
-  $(once('webform_cvjquery', document)).on('cv-jquery-validate-options-update', function (event, options) {
+  // Trigger 'cvjquery' once to prevent the cv.jquery.ife.js from initializing.
+  // The webform_clientside_validation.module loads before the
+  // clientside_validation_jquery.module.
+  // @see clientside_validation/clientside_validation_jquery/js/cv.jquery.ife.js
+  // @see https://www.drupal.org/project/clientside_validation/issues/3322946
+  // @see https://www.drupal.org/node/3158256
+  //
+  // Drupal 10: Using once can not use `window` or `document` directly.
+  once('cvjquery', 'html');
+  // Drupal 9: Use jQuery once plugin.
+  $(document).once && $(document).once('cvjquery');
+
+  $(document).on('cv-jquery-validate-options-update', function (event, options) {
     options.errorElement = 'strong';
     options.showErrors = function (errorMap, errorList) {
       // Show errors using defaultShowErrors().
@@ -51,7 +63,16 @@
 
       // Move all radios, checkboxes, and datelist errors to appear after
       // the parent container.
-      $(this.currentForm).find('.form-checkboxes, .form-radios, .form-type-datelist .container-inline, .form-type-tel, .webform-type-webform-height .form--inline, .js-webform-tableselect').each(function () {
+      var selectors = [
+        '.form-checkboxes',
+        '.form-radios',
+        '.form-boolean-group',
+        '.form-type-datelist .container-inline',
+        '.form-type-tel',
+        '.webform-type-webform-height .form--inline',
+        '.js-webform-tableselect'
+      ];
+      $(this.currentForm).find(selectors.join(', ')).each(function () {
         var $container = $(this);
         var $errorMessages = $container.find('strong.error.form-item--error-message');
         $errorMessages.insertAfter($container);

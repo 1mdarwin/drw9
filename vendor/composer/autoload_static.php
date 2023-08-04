@@ -151,6 +151,7 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         'D' => 
         array (
             'Drush\\' => 6,
+            'Drupal\\bootstrap\\' => 17,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
             'Drupal\\Composer\\Plugin\\VendorHardening\\' => 39,
@@ -442,6 +443,10 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         'Drush\\' => 
         array (
             0 => __DIR__ . '/..' . '/drush/drush/src',
+        ),
+        'Drupal\\bootstrap\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/themes/contrib/bootstrap/src',
         ),
         'Drupal\\Driver\\' => 
         array (

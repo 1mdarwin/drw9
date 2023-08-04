@@ -116,6 +116,13 @@ class WebformSubmissionExportImportImporter implements WebformSubmissionExportIm
   protected $fileSystem;
 
   /**
+   * Webform element types.
+   *
+   * @var array
+   */
+  protected $elementTypes;
+
+  /**
    * Constructs a WebformSubmissionExportImport object.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
