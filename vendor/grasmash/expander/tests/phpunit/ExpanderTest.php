@@ -5,9 +5,8 @@ namespace Grasmash\Expander\Tests\Command;
 use Dflydev\DotAccessData\Data;
 use Grasmash\Expander\Expander;
 use Grasmash\Expander\Stringifier;
-use PHPUnit\Framework\TestCase;
 
-class ExpanderTest extends TestCase
+class ExpanderTest extends \PHPUnit_Framework_TestCase
 {
 
     /**
@@ -16,14 +15,13 @@ class ExpanderTest extends TestCase
      * @param array $array
      * @param array $reference_array
      *
-     * @dataProvider providerSourceData
+     * @dataProvider providerYaml
      */
     public function testExpandArrayProperties(array $array, array $reference_array)
     {
         $expander = new Expander();
 
-        $this->setEnvVarFixture('test', 'gomjabbar');
-
+        putenv("test=gomjabbar");
         $expanded = $expander->expandArrayProperties($array);
         $this->assertEquals('gomjabbar', $expanded['env-test']);
         $this->assertEquals('Frank Herbert 1965', $expanded['book']['copyright']);
@@ -32,11 +30,6 @@ class ExpanderTest extends TestCase
         $this->assertEquals('${book.media.1}, hardcover', $expanded['available-products']);
         $this->assertEquals('Dune', $expanded['product-name']);
         $this->assertEquals(Stringifier::stringifyArray($array['inline-array']), $expanded['expand-array']);
-
-        $this->assertEquals(true, $expanded['boolean-value']);
-        $this->assertIsBool($expanded['boolean-value']);
-        $this->assertEquals(true, $expanded['expand-boolean']);
-        $this->assertIsBool($expanded['expand-boolean']);
 
         $expanded = $expander->expandArrayProperties($array, $reference_array);
         $this->assertEquals('Dune Messiah, and others.', $expanded['sequels']);
@@ -47,7 +40,7 @@ class ExpanderTest extends TestCase
      * @return array
      *   An array of values to test.
      */
-    public function providerSourceData()
+    public function providerYaml()
     {
         return [
           [
@@ -84,7 +77,6 @@ class ExpanderTest extends TestCase
               'available-products' => '${book.media.1}, ${book.media.0}',
               'product-name' => '${${type}.title}',
               'boolean-value' => true,
-              'expand-boolean' => '${boolean-value}',
               'null-value' => null,
               'inline-array' => [
                 0 => 'one',
@@ -93,12 +85,10 @@ class ExpanderTest extends TestCase
               ],
               'expand-array' => '${inline-array}',
               'env-test' => '${env.test}',
-              'test_expanded_to_null' => '${book.expanded_to_null}'
             ],
             [
               'book' => [
-                'sequel' => 'Dune Messiah',
-                'expanded_to_null' => null,
+                'sequel' => 'Dune Messiah'
               ]
             ]
           ],
@@ -128,11 +118,5 @@ class ExpanderTest extends TestCase
             [ ['author' => 'Frank Herbert'], 'author', '${author}', 'Frank Herbert' ],
             [ ['book' =>  ['author' => 'Frank Herbert' ]], 'book.author', '${book.author}', 'Frank Herbert' ],
         ];
-    }
-
-    protected function setEnvVarFixture($key, $value)
-    {
-        putenv("$key=$value");
-        $_SERVER[$key] = $value;
     }
 }

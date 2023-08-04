@@ -1,6 +1,4 @@
-.phpunit.result.cache
 .idea/
-tools
 box.phar
 build
 example.phar

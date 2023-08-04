@@ -315,9 +315,7 @@ class FieldCreateCommands extends DrushCommands implements CustomEventAwareInter
             $choices[$name] = $label;
         }
 
-        $default = $this->input->getOption('show-machine-names') ? key($choices) : current($choices);
-
-        return $this->io()->choice('Field widget', $choices, $default);
+        return $this->io()->choice('Field widget', $choices, key($choices));
     }
 
     protected function askRequired(): bool
@@ -429,7 +427,6 @@ class FieldCreateCommands extends DrushCommands implements CustomEventAwareInter
 
             if ($targetTypeDefinition->hasKey('bundle')) {
                 if ($referencedBundle = $this->input->getOption('target-bundle')) {
-                    $this->validateBundle($targetType, $referencedBundle);
                     $referencedBundles = [$referencedBundle];
                 } else {
                     $referencedBundles = $this->askReferencedBundles($field);

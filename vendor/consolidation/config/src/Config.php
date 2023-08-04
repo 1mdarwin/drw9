@@ -11,15 +11,15 @@ class Config implements ConfigInterface, ConfigInterpolatorInterface
     use ConfigInterpolatorTrait;
 
     /**
-     * @var \Dflydev\DotAccessData\Data
+     * @var Data
      */
     protected $config;
 
     /**
      * TODO: make this private in 2.0 to prevent being saved as an array
-     * Making private now breaks backward compatibility
+     *   Making private now breaks backward compatibility
      *
-     * @var \Dflydev\DotAccessData\Data
+     * @var Data
      */
     protected $defaults;
 
@@ -27,12 +27,11 @@ class Config implements ConfigInterface, ConfigInterpolatorInterface
      * Create a new configuration object, and initialize it with
      * the provided nested array containing configuration data.
      *
-     * @param array $data
-     *   Config data to store.
+     * @param array $data - Config data to store
      */
     public function __construct(array $data = null)
     {
-        $this->config = new Data($data ?: []);
+        $this->config = new Data($data);
         $this->setDefaults(new Data());
     }
 
@@ -77,7 +76,7 @@ class Config implements ConfigInterface, ConfigInterpolatorInterface
      */
     public function replace($data)
     {
-        $this->config = new Data($data ?: []);
+        $this->config = new Data($data);
         return $this;
     }
 
@@ -129,7 +128,7 @@ class Config implements ConfigInterface, ConfigInterpolatorInterface
      * Return the class $defaults property and ensure it's a Data object
      * TODO: remove Data object validation in 2.0
      *
-     * @return \Dflydev\DotAccessData\Data
+     * @return Data
      */
     protected function getDefaults()
     {
@@ -144,7 +143,7 @@ class Config implements ConfigInterface, ConfigInterpolatorInterface
      * Sets the $defaults class parameter
      * TODO: remove support for array in 2.0 as this would currently break backward compatibility
      *
-     * @param \Dflydev\DotAccessData\Data|array $defaults
+     * @param Data|array $defaults
      *
      * @throws \Exception
      */

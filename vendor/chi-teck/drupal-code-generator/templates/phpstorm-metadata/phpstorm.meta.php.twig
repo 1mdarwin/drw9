@@ -12,6 +12,15 @@ namespace PHPSTORM_META {
   );
 
   override(
+    \Symfony\Component\DependencyInjection\ContainerInterface::get(0),
+    map([
+{% for service_id, class in services %}
+      '{{ service_id }}' => '{{ class }}',
+{% endfor %}
+    ])
+  );
+
+  override(
     \Drupal\Core\Entity\EntityTypeManagerInterface::getStorage(0),
     map([
 {% for entity_type_id, class in storages %}

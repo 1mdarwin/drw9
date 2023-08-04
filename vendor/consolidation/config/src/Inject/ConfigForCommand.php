@@ -1,5 +1,4 @@
 <?php
-
 namespace Consolidation\Config\Inject;
 
 use Consolidation\Config\ConfigInterface;
@@ -9,18 +8,11 @@ use Symfony\Component\Console\ConsoleEvents;
 use Symfony\Component\Console\Event\ConsoleCommandEvent;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Input\InputOption;
 
 class ConfigForCommand implements EventSubscriberInterface
 {
-
-    /**
-     * @var \Consolidation\Config\ConfigInterface
-     */
     protected $config;
-
-    /**
-     * @var \Symfony\Component\Console\Application
-     */
     protected $application;
 
     public function __construct(ConfigInterface $config)
@@ -60,9 +52,6 @@ class ConfigForCommand implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     */
     protected function injectConfigurationForGlobalOptions($input)
     {
         if (!$this->application) {
@@ -74,13 +63,9 @@ class ConfigForCommand implements EventSubscriberInterface
         $definition = $this->application->getDefinition();
         $options = $definition->getOptions();
 
-        $this->injectConfigGroupIntoOptions($configGroup, $options, $input);
+        return $this->injectConfigGroupIntoOptions($configGroup, $options, $input);
     }
 
-    /**
-     * @param \Symfony\Component\Console\Command\Command $command
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     */
     protected function injectConfigurationForCommand($command, $input)
     {
         $commandName = $command->getName();
@@ -90,14 +75,9 @@ class ConfigForCommand implements EventSubscriberInterface
         $definition = $command->getDefinition();
         $options = $definition->getOptions();
 
-        $this->injectConfigGroupIntoOptions($configGroup, $options, $input);
+        return $this->injectConfigGroupIntoOptions($configGroup, $options, $input);
     }
 
-    /**
-     * @param \Consolidation\Config\Util\ConfigGroup $configGroup
-     * @param array $options
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     */
     protected function injectConfigGroupIntoOptions($configGroup, $options, $input)
     {
         foreach ($options as $option => $inputOption) {
@@ -113,12 +93,6 @@ class ConfigForCommand implements EventSubscriberInterface
         }
     }
 
-    /**
-     * @param \Symfony\Component\Console\Command\Command $command
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     *
-     * @return false|\Symfony\Component\Console\Command\Command
-     */
     protected function getHelpCommandTarget($command, $input)
     {
         if (($command->getName() != 'help') || (!isset($this->application))) {
@@ -138,10 +112,6 @@ class ConfigForCommand implements EventSubscriberInterface
         return $this->application->find($nameOfCommandToDescribe);
     }
 
-    /**
-     * @param \Symfony\Component\Console\Command\Command $command
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     */
     protected function fixInputForSymfony2($command, $input)
     {
         // Symfony 3.x prepares $input for us; Symfony 2.x, on the other
