@@ -318,9 +318,6 @@ class WebformElementManagedFileTest extends WebformElementManagedFileTestBase {
     /** @var \Drupal\webform\WebformSubmissionInterface $submission */
     $submission = WebformSubmission::load($sid);
 
-    /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
-    $file_url_generator = \Drupal::service('file_url_generator');
-
     /** @var \Drupal\file\FileInterface $file */
     $fid = $this->getLastFileId();
     $file = File::load($fid);

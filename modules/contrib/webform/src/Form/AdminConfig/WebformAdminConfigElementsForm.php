@@ -102,8 +102,8 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
       '#type' => 'webform_radios_other',
       '#title' => $this->t('Allowed tags'),
       '#options' => [
-        'admin' => $this->t('Admin tags Excludes: script, iframe, etc…'),
-        'html' => $this->t('HTML tags: Includes only @html_tags.', ['@html_tags' => WebformArrayHelper::toString(Xss::getHtmlTagList())]),
+        'admin' => $this->t('Admin tags -- Admin tags include %html_tags.', ['%html_tags' => WebformArrayHelper::toString(Xss::getAdminTagList())]),
+        'html' => $this->t('HTML tags -- HTML tags include %html_tags.', ['%html_tags' => WebformArrayHelper::toString(Xss::getHtmlTagList())]),
       ],
       '#other__option_label' => $this->t('Custom tags'),
       '#other__placeholder' => $this->t('Enter multiple tags delimited using spaces'),
@@ -535,7 +535,7 @@ class WebformAdminConfigElementsForm extends WebformAdminConfigBaseForm {
     parent::submitForm($form, $form_state);
 
     // Make sure the HTML Editor is up-to-date.
-    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install').
+    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install');
     _webform_update_html_editor();
 
     // Reset libraries cached.

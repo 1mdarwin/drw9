@@ -129,14 +129,14 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
       ];
       $form['webform'] = [
         '#type' => 'item',
-        '#title' => $this->t('Webform'),
+        '#title' => $this->t('Webform', [], ['context' => 'form']),
         '#markup' => $options[$webform_id],
       ];
     }
     else {
       $form['webform_ids'] = [
         '#type' => 'checkboxes',
-        '#title' => $this->t('Webform'),
+        '#title' => $this->t('Webform', [], ['context' => 'form']),
         '#description' => $this->t('Restrict submissions to these webforms.'),
         '#required' => TRUE,
         '#options' => $options,
@@ -258,7 +258,7 @@ class WebformSubmissionDevelGenerate extends DevelGenerateBase implements Contai
             '@feedback' => $feedback,
             '@rate' => ($feedback * 60) / ($now - $start),
           ];
-          \Drupal::logger('webform')->notice($this->t('Completed @feedback submissions (@rate submissions/min)', $dt_args));
+          \Drupal::logger('webform')->notice('Completed @feedback submissions (@rate submissions/min)', $dt_args);
           $start = $now;
         }
       }

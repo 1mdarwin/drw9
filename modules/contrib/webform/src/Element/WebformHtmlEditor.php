@@ -289,15 +289,11 @@ class WebformHtmlEditor extends FormElement implements TrustedCallbackInterface 
    *   The processed element.
    */
   public static function processTextFormat($element, FormStateInterface $form_state, &$complete_form) {
-    // Remove the 'webform' default text format from allowed formats.
-    // This is needed because the webform default text format DOES NOT filter HTML.
-    if (empty($element['#allowed_formats'])) {
-      $user = \Drupal::currentUser();
-      $formats = filter_formats($user);
-      if (isset($formats[static::DEFAULT_FILTER_FORMAT])) {
-        unset($formats[static::DEFAULT_FILTER_FORMAT]);
-        $element['#allowed_formats'] = array_keys($formats);
-      }
+    if ($element['format']['format']['#default_value'] !== static::DEFAULT_FILTER_FORMAT) {
+      unset(
+        $element['format']['format']['#options'][static::DEFAULT_FILTER_FORMAT],
+        $element['format']['guidelines'][static::DEFAULT_FILTER_FORMAT]
+      );
     }
     return $element;
   }
@@ -335,8 +331,16 @@ class WebformHtmlEditor extends FormElement implements TrustedCallbackInterface 
   public static function preRenderProcessedText($element) {
     $format_id = $element['#format'] ?? NULL;
     if ($format_id === static::DEFAULT_FILTER_FORMAT) {
-      $message = "Disabled text format: %format. This text format can not be used outside of the Webform module's HTML editor.";
-      \Drupal::logger('webform')->alert($message, ['%format' => $format_id]);
+      // Determine if this is a CKEditor(4) test format tags to be processed.
+      // (i.e, <h1>TEST</h1>)
+      // @see \Drupal\ckeditor\Plugin\CKEditorPlugin\Internal::generateFormatTagsSetting
+      // @see https://www.drupal.org/project/webform/issues/3331164
+      $is_ckeditor_test = preg_match('#^<([a-z0-9]+)>TEST</\1>$#', $element['#markup'] ?? '');
+      // Log issue, except for CKEditor(4) test format tags.
+      if (!$is_ckeditor_test) {
+        $message = "Disabled text format: %format. This text format can not be used outside of the Webform module's HTML editor.";
+        \Drupal::logger('webform')->alert($message, ['%format' => $format_id]);
+      }
       $element['#markup'] = '';
       return $element;
     }

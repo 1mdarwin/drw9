@@ -61,7 +61,7 @@ class WebformFieldTest extends WebformBrowserTestBase {
     // Add category to 'contact' webform.
     /** @var \Drupal\webform\WebformInterface $webform */
     $webform = Webform::load('contact');
-    $webform->set('category', '{Some category}');
+    $webform->set('categories', ['{Some category}']);
     $webform->save();
 
     // Check that webform select menu included optgroup.

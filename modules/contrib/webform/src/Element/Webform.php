@@ -48,14 +48,23 @@ class Webform extends RenderElement {
    */
   public static function preRenderWebformElement($element) {
     // If #lazy, then return a lazy builder placeholder.
-    if ($element['#lazy']) {
-      if ($element['#webform'] instanceof WebformInterface) {
-        $element['#webform'] = $element['#webform']->id();
+    if (!empty($element['#lazy'])) {
+      $webform = $element['#webform'] ?? NULL;
+      if ($webform instanceof WebformInterface) {
+        $element['#webform'] = $webform->id();
       }
-      $serialized_element = Json::encode(array_intersect_key($element, static::$defaultProperties));
+      $lazy_args = array_intersect_key($element, static::$defaultProperties);
+      // In lazy mode, set the entity reference in the callback argument.
+      // Otherwise, the source entity relationship is disconnected.
+      $entity = $element['#entity'] ?? NULL;
+      if ($entity instanceof EntityInterface) {
+        $lazy_args['#entity_type'] = $entity->getEntityTypeId();
+        $lazy_args['#entity_id'] = $entity->id();
+      }
+      $serialized_args = Json::encode($lazy_args);
       return [
         'lazy_builder' => [
-          '#lazy_builder' => ['\Drupal\webform\Element\Webform::lazyBuilder', [$serialized_element]],
+          '#lazy_builder' => ['\Drupal\webform\Element\Webform::lazyBuilder', [$serialized_args]],
           '#create_placeholder' => TRUE,
         ],
       ];

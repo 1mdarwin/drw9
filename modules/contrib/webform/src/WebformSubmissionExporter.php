@@ -6,6 +6,7 @@ use Drupal\Core\Archiver\ArchiverManager;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Entity\Query\QueryInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
@@ -943,7 +944,7 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
   /**
    * {@inheritdoc}
    */
-  public function getQuery() {
+  public function getQuery(): QueryInterface {
     $export_options = $this->getExportOptions();
 
     $webform = $this->getWebform();
@@ -1045,6 +1046,13 @@ class WebformSubmissionExporter implements WebformSubmissionExporterInterface {
       // Sort by created and sid in ASC or DESC order.
       $query->sort('created', $export_options['order'] ?? 'ASC');
       $query->sort('sid', $export_options['order'] ?? 'ASC');
+    }
+
+    // Do not check access to submissions via Drush CLI.
+    // There is already submission access checking being applied.
+    // @see webform_query_webform_submission_access_alter()
+    if (PHP_SAPI === 'cli') {
+      $query->accessCheck(FALSE);
     }
 
     return $query;

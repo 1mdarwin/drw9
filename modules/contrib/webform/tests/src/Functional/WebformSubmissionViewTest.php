@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\webform\Functional;
 
-use Drupal\Component\Render\FormattableMarkup;
 use Drupal\user\Entity\User;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
@@ -19,7 +18,7 @@ class WebformSubmissionViewTest extends WebformBrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = [ 'node', 'webform'];
+  protected static $modules = ['node', 'webform'];
 
   /**
    * Webforms to load.

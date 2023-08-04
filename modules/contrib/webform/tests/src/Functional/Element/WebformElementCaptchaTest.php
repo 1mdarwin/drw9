@@ -39,9 +39,6 @@ class WebformElementCaptchaTest extends WebformElementBrowserTestBase {
     $assert_session->responseContains('<label for="edit-captcha-response--4" class="js-form-required form-required">{captcha_math_title}</label>');
     $assert_session->responseContains('{captcha_math_description}');
 
-    // Check CAPTCHA image refresh link.
-    $assert_session->linkExists('Get new captcha!');
-
     // Enable CAPTCHA admin mode.
     \Drupal::configFactory()
       ->getEditable('captcha.settings')
