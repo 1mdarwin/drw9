@@ -29,6 +29,7 @@
         "drupal/bootstrap_barrio": "^5.5",
         "drupal/bootstrap_layouts": "^5.3",
         "drupal/bootstrap_library": "^2.0.1",
+        "drupal/captcha": "^2.0",
         "drupal/config_split": "^1.8",
         "drupal/core-composer-scaffold": "^9.4.8",
         "drupal/core-project-message": "^9.4.8",
