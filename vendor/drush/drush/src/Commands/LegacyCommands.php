@@ -8,6 +8,7 @@ class LegacyCommands extends DrushCommands
      * The core:init command was removed. Please edit your .bashrc manually.
      *
      * @command core:init
+     * @aliases init
      * @hidden
      * @obsolete
      */

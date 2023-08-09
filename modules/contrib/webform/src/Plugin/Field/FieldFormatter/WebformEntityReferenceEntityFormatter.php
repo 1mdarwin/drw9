@@ -140,12 +140,12 @@ class WebformEntityReferenceEntityFormatter extends WebformEntityReferenceFormat
     // Determine if webform is previewed within a Paragraph on
     // entity edit forms (via *.edit_form or .content_translation_add routes).
     $route_name = $this->routeMatch->getRouteName();
-    $is_entity_edit_form = (preg_match('/\.edit_form$/', $route_name)
+    $is_entity_edit_form = $route_name && (preg_match('/\.edit_form$/', $route_name)
       || preg_match('/\.content_translation_add$/', $route_name)
       || in_array($route_name, ['entity.block_content.canonical']));
 
     // Same goes for entity add forms.
-    $is_entity_add_form = preg_match('/\.add$/', $route_name);
+    $is_entity_add_form = $route_name && preg_match('/\.add$/', $route_name);
 
     $is_paragraph = ($items_entity && $items_entity->getEntityTypeId() === 'paragraph');
 

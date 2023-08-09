@@ -99,20 +99,6 @@ class WebformElementDateTimeTest extends WebformElementBrowserTestBase {
     $this->submitForm($edit, 'Submit');
     $assert_session->responseContains('<em class="placeholder">datetime_min_max_time</em> must be on or after <em class="placeholder">2009-01-01 09:00:00</em>.');
 
-    // Check datetime #date_max time validation.
-    $this->drupalGet('/webform/test_element_datetime');
-    $edit = ['datetime_min_max_time[time]' => '01:00:00'];
-    $this->submitForm($edit, 'Submit');
-    $assert_session->responseContains('<em class="placeholder">datetime_min_max_time: Time</em> must be on or after <em class="placeholder">09:00:00</em>.');
-    $assert_session->responseContains('<em class="placeholder">datetime_min_max_time</em> must be on or after <em class="placeholder">2009-01-01 09:00:00</em>.');
-
-    // Check datetime #date_min time validation.
-    $this->drupalGet('/webform/test_element_datetime');
-    $edit = ['datetime_min_max_time[time]' => '01:00:00'];
-    $this->submitForm($edit, 'Submit');
-    $assert_session->responseContains('<em class="placeholder">datetime_min_max_time: Time</em> must be on or after <em class="placeholder">09:00:00</em>.');
-    $assert_session->responseContains('<em class="placeholder">datetime_min_max_time</em> must be on or after <em class="placeholder">2009-01-01 09:00:00</em>.');
-
     // Check: Issue #2723159: Datetime form element cannot validate when using a
     // format without seconds.
     $sid = $this->postSubmission($webform);

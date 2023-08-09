@@ -1,9 +1,7 @@
-[![Build Status](https://app.travis-ci.com/grasmash/expander.svg?branch=master)](https://app.travis-ci.com/grasmash/expander) [![Packagist](https://img.shields.io/packagist/v/grasmash/expander.svg)](https://packagist.org/packages/grasmash/expander)
+[![Build Status](https://travis-ci.org/grasmash/expander.svg?branch=master)](https://travis-ci.org/grasmash/expander) [![Packagist](https://img.shields.io/packagist/v/grasmash/expander.svg)](https://packagist.org/packages/grasmash/expander)
 [![Total Downloads](https://poser.pugx.org/grasmash/expander/downloads)](https://packagist.org/packages/grasmash/expander) [![Coverage Status](https://coveralls.io/repos/github/grasmash/expander/badge.svg?branch=master)](https://coveralls.io/github/grasmash/expander?branch=master)
 
-This tool expands dot-notated, string property references into their corresponding values. This is useful for run time expansion of property references in configuration files.
-
-For example implementation, see [Yaml Expander](https://github.com/grasmash/yaml-expander).
+This tool expands property references in PHP arrays. For example implementation, see Yaml Expander.
 
 ### Installation
 
@@ -52,7 +50,6 @@ $array = [
     'available-products' => '${book.media.1}, ${book.media.0}',
     'product-name' => '${${type}.title}',
     'boolean-value' => true,
-    'expand-boolean' => '${boolean-value}',
     'null-value' => NULL,
     'inline-array' => [
         0 => 'one',
@@ -112,7 +109,7 @@ Array
                     [aliases] => Array
                         (
                             [0] => Usul
-                            [1] => Muad\'Dib
+                            [1] => Muad'Dib
                             [2] => The Preacher
                         )
 
@@ -131,8 +128,7 @@ Array
     [sequels] => Dune Messiah, and others.
     [available-products] => paperback, hardcover
     [product-name] => Dune
-    [boolean-value] => true,
-    [expand-boolean] => true,
+    [boolean-value] => 1
     [null-value] =>
     [inline-array] => Array
         (

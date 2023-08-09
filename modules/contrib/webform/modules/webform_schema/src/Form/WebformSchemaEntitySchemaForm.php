@@ -57,7 +57,12 @@ class WebformSchemaEntitySchemaForm extends EntityForm {
         if ($key === 'options_value' || $key === 'options_text') {
           $value = implode('; ', array_slice($value, 0, 12)) . (count($value) > 12 ? '; …' : '');
         }
-        $rows[$element_key][$key] = ['#markup' => $value];
+        if (is_array($value)) {
+          $rows[$element_key][$key] = $value;
+        }
+        else {
+          $rows[$element_key][$key] = ['#markup' => $value];
+        }
       }
 
       if ($element['datatype'] === 'Composite') {

@@ -1,5 +1,4 @@
 <?php
-
 namespace Consolidation\Config\Util;
 
 /**
@@ -32,12 +31,6 @@ class ArrayUtil
     /**
      * Process the value in an mergeRecursiveDistinct - make a recursive
      * call if needed.
-     *
-     * @param array $merged
-     * @param string $key
-     * @param mixed $value
-     *
-     * @return mixed
      */
     protected static function mergeRecursiveValue(&$merged, $key, $value)
     {
@@ -53,8 +46,6 @@ class ArrayUtil
      *
      * @param array $array1
      * @param array $array2
-     * @param array $selectionList
-     * @param string $keyPrefix
      *
      * @return array
      *
@@ -77,14 +68,6 @@ class ArrayUtil
     /**
      * Process the value in an mergeRecursiveDistinct - make a recursive
      * call if needed.
-     *
-     * @param array $merged
-     * @param string $key
-     * @param mixed $value
-     * @param array $selectionList
-     * @param string $keyPrefix
-     *
-     * @return mixed
      */
     protected static function mergeRecursiveSelectValue(&$merged, $key, $value, $selectionList, $keyPrefix)
     {
@@ -98,13 +81,6 @@ class ArrayUtil
         return $value;
     }
 
-    /**
-     * @param string $keyPrefix
-     * @param string $key
-     * @param array $selectionList
-     *
-     * @return bool
-     */
     protected static function selectMerge($keyPrefix, $key, $selectionList)
     {
         return in_array("${keyPrefix}${key}", $selectionList);
@@ -114,11 +90,6 @@ class ArrayUtil
     /**
      * Fills all of the leaf-node values of a nested array with the
      * provided replacement value.
-     *
-     * @param array $data
-     * @param mixed $fill
-     *
-     * @return array
      */
     public static function fillRecursive(array $data, $fill)
     {
@@ -135,10 +106,6 @@ class ArrayUtil
     /**
      * Return true if the provided parameter is an array, and at least
      * one key is non-numeric.
-     *
-     * @param mixed $testArray
-     *
-     * @return bool
      */
     public static function isAssociative($testArray)
     {

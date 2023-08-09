@@ -182,6 +182,12 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       ],
       '#options_display' => 'side_by_side',
     ];
+    $form['form_settings']['default_categories'] = [
+      '#type' => 'webform_multiple',
+      '#title' => $this->t('Default webform categories'),
+      '#description' => $this->t('Enter default webform categories that will always be available when users are creating and managing a form.'),
+      '#default_value' => $settings['default_categories'],
+    ];
     $form['form_settings']['default_form_open_message'] = [
       '#type' => 'webform_html_editor',
       '#title' => $this->t('Default open message'),
@@ -457,6 +463,13 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
       '#title' => $this->t('Confirmation back link CSS classes'),
       '#description' => $this->t('A list of classes that will be provided in the "Confirmation back link CSS classes" dropdown. Enter one or more classes on each line. These styles should be available in your theme\'s CSS file.'),
       '#default_value' => $settings['confirmation_back_classes'],
+    ];
+    $form['confirmation_settings']['default_confirmation_noindex'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Default confirmation robots noindex'),
+      '#description' => $this->t('If checked, a meta tag robots noindex directive  will be added to the confirmation page of all webforms.'),
+      '#return_value' => TRUE,
+      '#default_value' => $settings['default_confirmation_noindex'],
     ];
     $form['confirmation_settings']['token_tree_link'] = $this->tokenManager->buildTreeElement();
 
@@ -739,8 +752,7 @@ class WebformAdminConfigFormsForm extends WebformAdminConfigBaseForm {
     $config->set('third_party_settings', $form_state->getValue('third_party_settings') ?: []);
     parent::submitForm($form, $form_state);
 
-    /* Update paths */
-
+    // Update paths.
     if ($update_paths) {
       /** @var \Drupal\webform\WebformInterface[] $webforms */
       $webforms = Webform::loadMultiple();

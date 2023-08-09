@@ -105,7 +105,7 @@ class WebformBlock extends BlockBase implements ContainerFactoryPluginInterface 
     $form['#attributes'] = ['class' => ['webform-block-settings-tray-form']];
     $form['webform_id'] = [
       '#type' => 'entity_autocomplete',
-      '#title' => $this->t('Webform'),
+      '#title' => $this->t('Webform', [], ['context' => 'form']),
       '#description' => $this->t('Select the webform that you would like to display in this block.'),
       '#target_type' => 'webform',
       '#required' => TRUE,

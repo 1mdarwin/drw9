@@ -65,12 +65,12 @@ class PmCommands extends DrushCommands
     /**
      * Enable one or more modules.
      *
-     * @command pm:install
+     * @command pm:enable
      * @param $modules A comma delimited list of modules.
-     * @aliases in, install, pm-install, en, pm-enable, pm:enable
+     * @aliases en,pm-enable
      * @bootstrap root
      */
-    public function install(array $modules): void
+    public function enable(array $modules): void
     {
         $modules = StringUtils::csvToArray($modules);
         $todo = $this->addInstallDependencies($modules);
@@ -97,7 +97,7 @@ class PmCommands extends DrushCommands
     /**
      * Run requirements checks on the module installation.
      *
-     * @hook validate pm:install
+     * @hook validate pm:enable
      *
      * @throws UserAbortException
      * @throws MissingDependencyException
@@ -116,15 +116,7 @@ class PmCommands extends DrushCommands
         require_once DRUSH_DRUPAL_CORE . '/includes/install.inc';
         $error = false;
         foreach ($modules as $module) {
-            // Note: we can't just call the API ($moduleHandler->loadInclude($module, 'install')),
-            // because the API ignores modules that haven't been installed yet. We have
-            // to do it the same way the `function drupal_check_module($module)` does.
-            $module_list = \Drupal::service('extension.list.module');
-            $file = DRUPAL_ROOT . '/' . $module_list->getPath($module) . "/$module.install";
-            if (is_file($file)) {
-                require_once $file;
-            }
-            // Once we've loaded the module, we can invoke its requirements hook.
+            module_load_install($module);
             $requirements = $this->getModuleHandler()->invoke($module, 'requirements', ['install']);
             if (is_array($requirements) && drupal_requirements_severity($requirements) == REQUIREMENT_ERROR) {
                 $error = true;

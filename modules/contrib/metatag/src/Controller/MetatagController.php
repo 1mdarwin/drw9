@@ -58,7 +58,7 @@ class MetatagController extends ControllerBase {
    * @return array
    *   The Metatag plugins report page.
    */
-  public function reportPlugins() {
+  public function reportPlugins(): array {
     // Get tags.
     $tag_definitions = $this->tagManager->getDefinitions();
     uasort($tag_definitions, [

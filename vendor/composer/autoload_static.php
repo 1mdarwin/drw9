@@ -151,6 +151,7 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         'D' => 
         array (
             'Drush\\' => 6,
+            'Drupal\\bootstrap\\' => 17,
             'Drupal\\Driver\\' => 14,
             'Drupal\\Core\\' => 12,
             'Drupal\\Composer\\Plugin\\VendorHardening\\' => 39,
@@ -162,7 +163,6 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
             'Doctrine\\Common\\Lexer\\' => 22,
             'Doctrine\\Common\\Annotations\\' => 28,
             'Doctrine\\Common\\' => 16,
-            'Dflydev\\DotAccessData\\' => 22,
         ),
         'C' => 
         array (
@@ -444,6 +444,10 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         array (
             0 => __DIR__ . '/..' . '/drush/drush/src',
         ),
+        'Drupal\\bootstrap\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/themes/contrib/bootstrap/src',
+        ),
         'Drupal\\Driver\\' => 
         array (
             0 => __DIR__ . '/../..' . '/drivers/lib/Drupal/Driver',
@@ -489,10 +493,6 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
             0 => __DIR__ . '/..' . '/doctrine/common/src',
             1 => __DIR__ . '/..' . '/doctrine/event-manager/src',
             2 => __DIR__ . '/..' . '/doctrine/reflection/lib/Doctrine/Common',
-        ),
-        'Dflydev\\DotAccessData\\' => 
-        array (
-            0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
         ),
         'Consolidation\\SiteProcess\\' => 
         array (
@@ -549,6 +549,13 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
             'Stack' => 
             array (
                 0 => __DIR__ . '/..' . '/stack/builder/src',
+            ),
+        ),
+        'D' => 
+        array (
+            'Dflydev\\DotAccessData' => 
+            array (
+                0 => __DIR__ . '/..' . '/dflydev/dot-access-data/src',
             ),
         ),
         'C' => 

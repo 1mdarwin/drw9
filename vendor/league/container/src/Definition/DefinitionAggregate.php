@@ -1,6 +1,4 @@
-<?php
-
-declare(strict_types=1);
+<?php declare(strict_types=1);
 
 namespace League\Container\Definition;
 
@@ -17,31 +15,39 @@ class DefinitionAggregate implements DefinitionAggregateInterface
      */
     protected $definitions = [];
 
+    /**
+     * Construct.
+     *
+     * @param DefinitionInterface[] $definitions
+     */
     public function __construct(array $definitions = [])
     {
-        $this->definitions = array_filter($definitions, static function ($definition) {
+        $this->definitions = array_filter($definitions, function ($definition) {
             return ($definition instanceof DefinitionInterface);
         });
     }
 
-    public function add(string $id, $definition): DefinitionInterface
+    /**
+     * {@inheritdoc}
+     */
+    public function add(string $id, $definition, bool $shared = false) : DefinitionInterface
     {
-        if (false === ($definition instanceof DefinitionInterface)) {
+        if (!$definition instanceof DefinitionInterface) {
             $definition = new Definition($id, $definition);
         }
 
-        $this->definitions[] = $definition->setAlias($id);
+        $this->definitions[] = $definition
+            ->setAlias($id)
+            ->setShared($shared)
+        ;
 
         return $definition;
     }
 
-    public function addShared(string $id, $definition): DefinitionInterface
-    {
-        $definition = $this->add($id, $definition);
-        return $definition->setShared(true);
-    }
-
-    public function has(string $id): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function has(string $id) : bool
     {
         foreach ($this->getIterator() as $definition) {
             if ($id === $definition->getAlias()) {
@@ -52,7 +58,10 @@ class DefinitionAggregate implements DefinitionAggregateInterface
         return false;
     }
 
-    public function hasTag(string $tag): bool
+    /**
+     * {@inheritdoc}
+     */
+    public function hasTag(string $tag) : bool
     {
         foreach ($this->getIterator() as $definition) {
             if ($definition->hasTag($tag)) {
@@ -63,55 +72,53 @@ class DefinitionAggregate implements DefinitionAggregateInterface
         return false;
     }
 
-    public function getDefinition(string $id): DefinitionInterface
+    /**
+     * {@inheritdoc}
+     */
+    public function getDefinition(string $id) : DefinitionInterface
     {
         foreach ($this->getIterator() as $definition) {
             if ($id === $definition->getAlias()) {
-                return $definition->setContainer($this->getContainer());
+                return $definition->setLeagueContainer($this->getLeagueContainer());
             }
         }
 
         throw new NotFoundException(sprintf('Alias (%s) is not being handled as a definition.', $id));
     }
 
-    public function resolve(string $id)
+    /**
+     * {@inheritdoc}
+     */
+    public function resolve(string $id, bool $new = false)
     {
-        return $this->getDefinition($id)->resolve();
+        return $this->getDefinition($id)->resolve($new);
     }
 
-    public function resolveNew(string $id)
-    {
-        return $this->getDefinition($id)->resolveNew();
-    }
-
-    public function resolveTagged(string $tag): array
+    /**
+     * {@inheritdoc}
+     */
+    public function resolveTagged(string $tag, bool $new = false) : array
     {
         $arrayOf = [];
 
         foreach ($this->getIterator() as $definition) {
             if ($definition->hasTag($tag)) {
-                $arrayOf[] = $definition->setContainer($this->getContainer())->resolve();
+                $arrayOf[] = $definition->setLeagueContainer($this->getLeagueContainer())->resolve($new);
             }
         }
 
         return $arrayOf;
     }
 
-    public function resolveTaggedNew(string $tag): array
+    /**
+     * {@inheritdoc}
+     */
+    public function getIterator() : Generator
     {
-        $arrayOf = [];
+        $count = count($this->definitions);
 
-        foreach ($this->getIterator() as $definition) {
-            if ($definition->hasTag($tag)) {
-                $arrayOf[] = $definition->setContainer($this->getContainer())->resolveNew();
-            }
+        for ($i = 0; $i < $count; $i++) {
+            yield $this->definitions[$i];
         }
-
-        return $arrayOf;
-    }
-
-    public function getIterator(): Generator
-    {
-        yield from $this->definitions;
     }
 }

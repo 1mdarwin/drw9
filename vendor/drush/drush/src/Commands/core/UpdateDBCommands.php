@@ -231,12 +231,7 @@ class UpdateDBCommands extends DrushCommands implements SiteAliasManagerAwareInt
 
         // Record the schema update if it was completed successfully.
         if ($context['finished'] >= 1 && empty($ret['#abort'])) {
-            // TODO: setInstalledVersion in update.update_hook_registry introduced in Drupal 9.3.0
-            if (!function_exists('drupal_set_installed_schema_version')) {
-                \Drupal::service("update.update_hook_registry")->setInstalledVersion($module, $number);
-            } else {
-                drupal_set_installed_schema_version($module, $number);
-            }
+            drupal_set_installed_schema_version($module, $number);
             // Setting this value will output a success message.
             // @see \DrushBatchContext::offsetSet()
             $context['message'] = "Update completed: $function";
@@ -265,18 +260,11 @@ class UpdateDBCommands extends DrushCommands implements SiteAliasManagerAwareInt
             return;
         }
 
-        list($extension, $name) = explode('_post_update_', $function, 2);
-        $update_registry = \Drupal::service('update.post_update_registry');
-        // https://www.drupal.org/project/drupal/issues/3259188 Support theme's
-        // having post update functions when it is supported in Drupal core.
-        if (method_exists($update_registry, 'getUpdateFunctions')) {
-            \Drupal::service('update.post_update_registry')->getUpdateFunctions($extension);
-        } else {
-            \Drupal::service('update.post_update_registry')->getModuleUpdateFunctions($extension);
-        }
-
+        list($module, $name) = explode('_post_update_', $function, 2);
+        $filename = $module . '.post_update';
+        \Drupal::moduleHandler()->loadInclude($module, 'php', $filename);
         if (function_exists($function)) {
-            if (empty($context['results'][$extension][$name]['type'])) {
+            if (empty($context['results'][$module][$name]['type'])) {
                 Drush::logger()->notice("Update started: $function");
             }
             try {
@@ -313,10 +301,10 @@ class UpdateDBCommands extends DrushCommands implements SiteAliasManagerAwareInt
             $context['finished'] = $context['sandbox']['#finished'];
             unset($context['sandbox']['#finished']);
         }
-        if (!isset($context['results'][$extension][$name])) {
-            $context['results'][$extension][$name] = [];
+        if (!isset($context['results'][$module][$name])) {
+            $context['results'][$module][$name] = [];
         }
-        $context['results'][$extension][$name] = array_merge($context['results'][$extension][$name], $ret);
+        $context['results'][$module][$name] = array_merge($context['results'][$module][$name], $ret);
 
         // Log the message that was returned.
         if (!empty($ret['results']['query'])) {
@@ -380,12 +368,7 @@ class UpdateDBCommands extends DrushCommands implements SiteAliasManagerAwareInt
                 // correct place. (The updates are already sorted, so we can simply base
                 // this on the first one we come across in the above foreach loop.)
                 if (isset($start[$update['module']])) {
-                    // TODO: setInstalledVersion in update.update_hook_registry introduced in Drupal 9.3.0
-                    if (!function_exists('drupal_set_installed_schema_version')) {
-                        \Drupal::service("update.update_hook_registry")->setInstalledVersion($update['module'], $update['number'] - 1);
-                    } else {
-                        drupal_set_installed_schema_version($update['module'], $update['number'] - 1);
-                    }
+                    drupal_set_installed_schema_version($update['module'], $update['number'] - 1);
                     unset($start[$update['module']]);
                 }
                 // Add this update function to the batch.

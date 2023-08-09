@@ -448,9 +448,6 @@ class DateTime extends DateBase implements TrustedCallbackInterface {
       if (!empty($element["#date_time_$property"])) {
         $value = $element["#date_time_$property"];
       }
-      elseif (!empty($element["#date_$property"])) {
-        $value = date('H:i:s', strtotime($element["#date_$property"]));
-      }
       else {
         $value = NULL;
       }

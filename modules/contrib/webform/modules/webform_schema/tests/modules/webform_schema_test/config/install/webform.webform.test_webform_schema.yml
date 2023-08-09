@@ -14,11 +14,13 @@ archive: false
 id: test_webform_schema
 title: 'Test: Webform: Schema'
 description: 'Test webform schema view and export'
-category: 'Test: Webform'
+categories:
+  - 'Test: Webform'
 elements: |
   textfield:
     '#type': textfield
     '#title': textfield
+    '#admin_notes': '<p>This is a note</p>'
   textarea:
     '#type': textarea
     '#title': textarea
@@ -143,6 +145,8 @@ settings:
   wizard_toggle: false
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
   preview: 0
   preview_label: ''
   preview_title: ''

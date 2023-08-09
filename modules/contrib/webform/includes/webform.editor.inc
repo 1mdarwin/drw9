@@ -28,7 +28,7 @@ use Drupal\Core\Access\AccessResult;
  * Implements hook_ENTITY_TYPE_access().
  */
 function webform_filter_format_access(FilterFormatInterface $filter_format, $operation, AccountInterface $account) {
-  if ($filter_format->id() ===  WebformHtmlEditor::DEFAULT_FILTER_FORMAT
+  if ($filter_format->id() === WebformHtmlEditor::DEFAULT_FILTER_FORMAT
     && $operation !== 'use') {
     return AccessResult::forbidden('This text format can only be managed by the Webform module.');
   }
@@ -45,7 +45,7 @@ function webform_filter_format_load($entities) {
     if ($entity->id() === WebformHtmlEditor::DEFAULT_FILTER_FORMAT
       && \Drupal::routeMatch()->getRouteName() === 'filter.admin_overview') {
       // Set status to FALSE which hides the default webform filter format.
-      $entity->set('status',  FALSE);
+      $entity->set('status', FALSE);
     }
   }
 }

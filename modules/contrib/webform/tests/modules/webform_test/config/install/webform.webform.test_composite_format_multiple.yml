@@ -14,7 +14,8 @@ archive: false
 id: test_composite_format_multiple
 title: 'Test: Composite: Format composite multiple values'
 description: 'Test composite element formatting with multiple value.'
-category: 'Test: Composite'
+categories:
+  - 'Test: Composite'
 elements: |
   composite_elements:
     '#type': details
@@ -641,7 +642,6 @@ elements: |
             phone: '+1 212-333-4444'
             ext: 0
         '#format_items': table
-  
 css: ''
 javascript: ''
 settings:
@@ -729,6 +729,8 @@ settings:
   wizard_toggle: false
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
   preview: 1
   preview_label: ''
   preview_title: ''

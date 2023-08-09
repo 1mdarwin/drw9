@@ -121,11 +121,8 @@ class EditCommands extends DrushCommands implements SiteAliasManagerAwareInterfa
 
     public static function phpIniFiles(): array
     {
-        $return = [];
-        if ($file = php_ini_loaded_file()) {
-            $return = [$file];
-        }
-        return $return;
+        $paths[] = php_ini_loaded_file();
+        return $paths;
     }
 
     public function bashFiles(): array

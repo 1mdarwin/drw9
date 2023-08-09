@@ -312,6 +312,7 @@ class WebformTwigExtension extends AbstractExtension {
       'elements' => $webform_submission->getWebform()->getElementsDecoded(),
       'elements_flattened' => $webform_submission->getWebform()->getElementsDecodedAndFlattened(),
       'options' => $options,
+      'data' => $webform_submission->getData(),
       'original_data' => $webform_submission->getOriginalData(),
     ] + $webform_submission->toArray(TRUE);
 

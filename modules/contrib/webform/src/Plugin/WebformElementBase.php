@@ -36,7 +36,6 @@ use Drupal\webform\Utility\WebformFormHelper;
 use Drupal\webform\Utility\WebformHtmlHelper;
 use Drupal\webform\Utility\WebformOptionsHelper;
 use Drupal\webform\Utility\WebformReflectionHelper;
-use Drupal\webform\Utility\WebformXss;
 use Drupal\webform\WebformInterface;
 use Drupal\webform\WebformSubmissionConditionsValidator;
 use Drupal\webform\WebformSubmissionInterface;
@@ -232,7 +231,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       'multiple__add_more_input' => TRUE,
       'multiple__add_more_input_label' => (string) $this->t('more items'),
       'multiple__item_label' => (string) $this->t('item'),
-      'multiple__no_items_message' => (string) $this->t('No items entered. Please add items below.'),
+      'multiple__no_items_message' => '<p>' . $this->t('No items entered. Please add items below.') . '</p>',
       'multiple__sorting' => TRUE,
       'multiple__operations' => TRUE,
       'multiple__add' => TRUE,
@@ -809,7 +808,7 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
       // Convert #title to HTML markup so that it can displayed properly
       // in error messages.
       if (isset($element['#title'])) {
-        $element['#title'] = WebformHtmlHelper::toHtmlMarkup($element['#title'], WebformXss::getHtmlTagList());
+        $element['#title'] = WebformHtmlHelper::toHtmlMarkup($element['#title'], $element['#allowed_tags']);
       }
     }
 
@@ -1674,7 +1673,6 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     return $value;
   }
 
-
   /**
    * Get element's submission value items.
    *
@@ -2039,9 +2037,18 @@ class WebformElementBase extends PluginBase implements WebformElementInterface, 
     if ($sid = $webform_submission->id()) {
       $query->condition('ws.sid', $sid, '<>');
     }
+    // Get duplicate values to account for case-insensitivity.
+    $duplicate_values = $query->execute()->fetchCol();
+    if (empty($duplicate_values)) {
+      return;
+    }
+    // Determine the duplicate values.
+    $duplicate_values = array_intersect((array) $value, $duplicate_values);
+    if (empty($duplicate_values)) {
+      return;
+    }
     // Get single duplicate value.
-    $query->range(0, 1);
-    $duplicate_value = $query->execute()->fetchField();
+    $duplicate_value = reset($duplicate_values);
 
     // Skip NULL or empty string value.
     if ($duplicate_value === FALSE || $duplicate_value === '') {

@@ -24,8 +24,6 @@ interface ConfigLoaderInterface
 
     /**
      * Return a symbolic name for this configuration loader instance.
-     *
-     * @return string
      */
     public function getSourceName();
 }

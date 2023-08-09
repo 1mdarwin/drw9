@@ -1,11 +1,7 @@
 settings:
-  confirmation_message: '<p>Se ha enviado su mensaje. Lo contactaremos tan pronto como podamos hacerlo.</p>'
+  confirmation_message: "Se ha enviado su mensaje.\r\nLo contactaremos tan pronto como podamos hacerlo."
 handlers:
   email_confirmation:
     label: 'Confirmación por correo electrónico'
-    settings:
-      body: '<p>[webform_submission:values:message:value]</p>'
   email_notification:
     label: 'Aviso por correo electrónico'
-    settings:
-      body: '<p>[webform_submission:values:message:value]</p>'

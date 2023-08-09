@@ -102,7 +102,7 @@ function webform_modules_installed($modules) {
   // Update Webform HTML editor.
   if (in_array('ckeditor', $modules)
     || in_array('ckeditor5', $modules)) {
-    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install').
+    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install') .
     _webform_update_html_editor();
   }
 }
@@ -135,7 +135,7 @@ function webform_modules_uninstalled($modules) {
   // Update Webform HTML editor.
   if (in_array('ckeditor', $modules)
     || in_array('ckeditor5', $modules)) {
-    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install').
+    \Drupal::moduleHandler()->loadInclude('webform', 'inc', 'includes/webform.install') .
     _webform_update_html_editor();
   }
 }
@@ -609,6 +609,36 @@ function webform_page_attachments(array &$attachments) {
   if ($route_name === 'help.page' && \Drupal::routeMatch()->getRawParameter('name') === 'token') {
     $attachments['#attached']['library'][] = 'webform/webform.token';
   }
+
+  // Attach meta tag robots noindex directive to all webform confirmation pages
+  // , if the metatag module is not installed.
+  // @see webform_metatags_alter()
+  if (!\Drupal::moduleHandler()->moduleExists('metatag')
+    && !empty(\Drupal::config('webform.settings')->get('settings.default_confirmation_noindex'))
+    && preg_match('/^(entity\.webform\.confirmation|entity\.[a-z-_]+\.webform\.confirmation)$/', $route_name)) {
+    $attachments['#attached']['html_head'][] = [
+      [
+        '#tag' => 'meta',
+        '#attributes' => ['name' => 'robots', 'content' => 'noindex'],
+      ],
+      'webform_confirmation_noindex',
+    ];
+  }
+}
+
+/**
+ * Implements hook_metatags_alter().
+ */
+function webform_metatags_alter(array &$metatags, array &$context) {
+  $route_name = \Drupal::routeMatch()->getRouteName();
+  if (!empty(\Drupal::config('webform.settings')->get('settings.default_confirmation_noindex'))
+    && preg_match('/^(entity\.webform\.confirmation|entity\.[a-z-_]+\.webform\.confirmation)$/', $route_name)) {
+    $robots = (!empty($metatags['robots']))
+      ? preg_split('/\s*,\s*/', $metatags['robots'])
+      : [];
+    $robots[] = 'noindex';
+    $metatags['robots'] = implode(', ', array_unique($robots));
+  }
 }
 
 /**
@@ -961,8 +991,8 @@ function webform_element_info_alter(array &$info) {
 
   if (isset($info['text_format'])) {
     $info['text_format']['#process'] = array_merge(
-      [['\Drupal\webform\Element\WebformHtmlEditor', 'processTextFormat']],
-      $info['text_format']['#process'] ?? []
+      $info['text_format']['#process'] ?? [],
+      [['\Drupal\webform\Element\WebformHtmlEditor', 'processTextFormat']]
     );
     $info['text_format']['#pre_render'] = array_merge(
       [['\Drupal\webform\Element\WebformHtmlEditor', 'preRenderTextFormat']],
@@ -972,7 +1002,7 @@ function webform_element_info_alter(array &$info) {
   if (isset($info['processed_text'])) {
     $info['processed_text']['#pre_render'][] = [
       '\Drupal\webform\Element\WebformHtmlEditor',
-      'preRenderProcessedText'
+      'preRenderProcessedText',
     ];
   }
 }

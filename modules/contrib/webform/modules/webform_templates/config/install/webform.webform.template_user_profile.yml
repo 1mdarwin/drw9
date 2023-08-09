@@ -14,7 +14,7 @@ archive: false
 id: template_user_profile
 title: 'User Profile'
 description: 'A user profile webform template.'
-category: ''
+categories: {  }
 elements: |
   account_information:
     '#title': 'Your Account Information'
@@ -119,7 +119,6 @@ elements: |
     '#type': webform_actions
     '#title': 'Submit button(s)'
     '#submit__label': Register
-  
 css: ''
 javascript: ''
 settings:
@@ -207,6 +206,8 @@ settings:
   wizard_toggle: false
   wizard_toggle_show_label: ''
   wizard_toggle_hide_label: ''
+  wizard_page_type: container
+  wizard_page_title_tag: h2
   preview: 0
   preview_label: ''
   preview_title: ''

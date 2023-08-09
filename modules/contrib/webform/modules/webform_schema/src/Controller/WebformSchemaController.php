@@ -4,6 +4,7 @@ namespace Drupal\webform_schema\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
+use Drupal\Core\Mail\MailFormatHelper;
 use Drupal\webform\WebformInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -21,6 +22,13 @@ class WebformSchemaController extends ControllerBase implements ContainerInjecti
   protected $configFactory;
 
   /**
+   * The renderer.
+   *
+   * @var \Drupal\Core\Render\RendererInterface
+   */
+  protected $renderer;
+
+  /**
    * The webform schema manager.
    *
    * @var \Drupal\webform_schema\WebformSchemaInterface
@@ -33,6 +41,7 @@ class WebformSchemaController extends ControllerBase implements ContainerInjecti
   public static function create(ContainerInterface $container) {
     $instance = parent::create($container);
     $instance->configFactory = $container->get('config.factory');
+    $instance->renderer = $container->get('renderer');
     $instance->schemaManager = $container->get('webform_schema.manager');
     return $instance;
   }
@@ -61,6 +70,9 @@ class WebformSchemaController extends ControllerBase implements ContainerInjecti
       foreach ($elements as $element) {
         $element['options_text'] = implode($multiple_delimiter, $element['options_text']);
         $element['options_value'] = implode($multiple_delimiter, $element['options_value']);
+        $element['notes'] = trim(MailFormatHelper::htmlToText(
+          $this->renderer->renderPlain($element['notes'])
+        ));
         fputcsv($handle, $element);
       }
 

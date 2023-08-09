@@ -70,7 +70,8 @@
     },
     detach: function detach(context, settings, trigger) {
       if (trigger === 'unload') {
-        $(context).find('input[type="file"]').removeOnce('webform-auto-file-upload').each(function () {
+        const removedElements = once.remove('webform-auto-file-upload', 'input[type="file"]', context);
+        $(removedElements).each(function () {
           if ($(this).data('webform-auto-file-upload')) {
             // Remove file upload tracking.
             $(this).removeData('webform-auto-file-upload');
@@ -101,7 +102,7 @@
 
     var message = Drupal.t('File upload in progress. Uploaded file may be lost.') +
       '\n' +
-      Drupal.t('Do you want to continue?');
+      Drupal.t('Click OK to submit the form without finishing the file upload or cancel to return to form.');
     var result = !window.confirm(message);
 
     // If submit once behavior is available, make sure to clear it if the form

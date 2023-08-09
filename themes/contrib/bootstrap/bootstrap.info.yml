@@ -78,7 +78,7 @@ libraries-override:
       theme:
         css/node.preview.css: false
 
-# Information added by Drupal.org packaging script on 2023-04-03
-version: '8.x-3.28'
+# Information added by Drupal.org packaging script on 2023-07-11
+version: '8.x-3.29'
 project: 'bootstrap'
-datestamp: 1680536064
+datestamp: 1689102547

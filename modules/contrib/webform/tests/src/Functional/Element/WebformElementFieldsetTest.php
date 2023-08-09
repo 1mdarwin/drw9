@@ -43,7 +43,7 @@ class WebformElementFieldsetTest extends WebformElementBrowserTestBase {
     $assert_session->responseContains('<span class="fieldset-legend"></span>');
 
     // Check fieldset description_display: before.
-    $assert_session->responseContains('<span class="field-prefix">prefix<div id="edit-fieldset-description-before--description" data-drupal-field-elements="description" class="webform-element-description">This is a description before.</div>');
+    $assert_session->responseContains('<div class="description"><div id="edit-fieldset-description-before--description" data-drupal-field-elements="description" class="webform-element-description">This is a description before.</div>');
   }
 
 }
