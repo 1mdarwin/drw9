@@ -340,3 +340,33 @@ bootstrap_barrio.settings:
     bootstrap_barrio_tabs_style:
       type: string
       label: 'Tabs style'
+
+    # Colors.
+    # ----------------------------
+    bootstrap_barrio_enable_color:
+      type: boolean
+      label: 'Enable color Sheme'
+    bootstrap_barrio_color_scheme:
+      type: string
+      label: 'Barrio Color Scheme'
+    bootstrap_barrio_base_primary_color:
+      type: string
+      label: 'Primary base color'
+    bootstrap_barrio_base_secondary_color:
+      type: string
+      label: 'Secondary base color'
+    bootstrap_barrio_body_color:
+      type: string
+      label: 'Body color'
+    bootstrap_barrio_body_bg_color:
+      type: string
+      label: 'Body Background Color'
+    bootstrap_barrio_h1_color:
+      type: string
+      label: 'H1 color'
+    bootstrap_barrio_h2_color:
+      type: string
+      label: 'H2 color'
+    bootstrap_barrio_h3_color:
+      type: string
+      label: 'H3 color'
