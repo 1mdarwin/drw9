@@ -43,5 +43,6 @@ return array(
     '8825ede83f2f289127722d4e842cf7e8' => $vendorDir . '/symfony/polyfill-intl-grapheme/bootstrap.php',
     'b6b991a57620e2fb6b2f66f03fe9ddc2' => $vendorDir . '/symfony/string/Resources/functions.php',
     '801c31d8ed748cfa537fa45402288c95' => $vendorDir . '/psy/psysh/src/functions.php',
+    '38143a9afc50997d55e4815db8489d1c' => $vendorDir . '/rector/rector/bootstrap.php',
     '3917c79c5052b270641b5a200963dbc2' => $vendorDir . '/kint-php/kint/init.php',
 );

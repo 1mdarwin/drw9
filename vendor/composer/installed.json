@@ -6529,6 +6529,86 @@
             "install-path": "../oomphinc/composer-installers-extender"
         },
         {
+            "name": "palantirnet/drupal-rector",
+            "version": "0.15.1",
+            "version_normalized": "0.15.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/palantirnet/drupal-rector.git",
+                "reference": "85382a67a07b928f5a963d94fbca11d7be33d6ca"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/palantirnet/drupal-rector/zipball/85382a67a07b928f5a963d94fbca11d7be33d6ca",
+                "reference": "85382a67a07b928f5a963d94fbca11d7be33d6ca",
+                "shasum": ""
+            },
+            "require": {
+                "rector/rector": "~0.15.2",
+                "webflo/drupal-finder": "^1.2"
+            },
+            "replace": {
+                "drupal8-rector/drupal8-rector": "*",
+                "palantirnet/drupal8-rector": "*"
+            },
+            "require-dev": {
+                "cweagans/composer-patches": "^1.7.2",
+                "php": "^8.1",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan": "^1.0",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpunit/phpunit": "^10.0",
+                "rector/rector-src": "dev-main",
+                "symfony/yaml": "^5 || ^6",
+                "symplify/vendor-patches": "^11.0"
+            },
+            "time": "2023-03-23T20:57:43+00:00",
+            "type": "library",
+            "extra": {
+                "enable-patching": true
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "DrupalRector\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Dezső Biczó",
+                    "email": "mxr576@gmail.com"
+                },
+                {
+                    "name": "Ofer Shaal",
+                    "email": "shaal@palantir.net"
+                },
+                {
+                    "name": "Daniel Montgomery",
+                    "email": "montgomery@palantir.net"
+                },
+                {
+                    "name": "Matt Glaman",
+                    "email": "nmd.matt@gmail.com"
+                }
+            ],
+            "description": "Instant fixes for your Drupal code by using Rector.",
+            "keywords": [
+                "Code style",
+                "Drupal 8",
+                "ast",
+                "drupal 9",
+                "rector"
+            ],
+            "support": {
+                "source": "https://github.com/palantirnet/drupal-rector/tree/0.15.1"
+            },
+            "install-path": "../palantirnet/drupal-rector"
+        },
+        {
             "name": "pear/archive_tar",
             "version": "1.4.14",
             "version_normalized": "1.4.14.0",
@@ -7260,6 +7340,70 @@
             ],
             "description": "A polyfill for getallheaders.",
             "install-path": "../ralouphie/getallheaders"
+        },
+        {
+            "name": "rector/rector",
+            "version": "0.15.24",
+            "version_normalized": "0.15.24.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/rectorphp/rector.git",
+                "reference": "716473919bcfdc27bdd2a32afb72adbf4c224e59"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/716473919bcfdc27bdd2a32afb72adbf4c224e59",
+                "reference": "716473919bcfdc27bdd2a32afb72adbf4c224e59",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2|^8.0",
+                "phpstan/phpstan": "^1.10.1"
+            },
+            "conflict": {
+                "rector/rector-doctrine": "*",
+                "rector/rector-downgrade-php": "*",
+                "rector/rector-phpunit": "*",
+                "rector/rector-symfony": "*"
+            },
+            "time": "2023-04-05T08:49:11+00:00",
+            "bin": [
+                "bin/rector"
+            ],
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-main": "0.15-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Instant Upgrade and Automated Refactoring of any PHP code",
+            "keywords": [
+                "automation",
+                "dev",
+                "migration",
+                "refactoring"
+            ],
+            "support": {
+                "issues": "https://github.com/rectorphp/rector/issues",
+                "source": "https://github.com/rectorphp/rector/tree/0.15.24"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/tomasvotruba",
+                    "type": "github"
+                }
+            ],
+            "install-path": "../rector/rector"
         },
         {
             "name": "stack/builder",
@@ -10458,5 +10602,8 @@
         }
     ],
     "dev": true,
-    "dev-package-names": []
+    "dev-package-names": [
+        "palantirnet/drupal-rector",
+        "rector/rector"
+    ]
 }

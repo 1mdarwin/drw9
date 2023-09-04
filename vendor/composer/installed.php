@@ -3,7 +3,7 @@
         'name' => 'drupal/legacy-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '78533a5ddce5fc88de96d21b3e43c03f452da550',
+        'reference' => '5dc9fc9957b1fe2d80abe2c7aa1f2002d75ad4a7',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -628,7 +628,7 @@
         'drupal/legacy-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '78533a5ddce5fc88de96d21b3e43c03f452da550',
+            'reference' => '5dc9fc9957b1fe2d80abe2c7aa1f2002d75ad4a7',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -795,6 +795,12 @@
             'install_path' => __DIR__ . '/../../modules/contrib/widget',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'drupal8-rector/drupal8-rector' => array(
+            'dev_requirement' => true,
+            'replaced' => array(
+                0 => '*',
+            ),
         ),
         'drush/drush' => array(
             'pretty_version' => '11.0.5',
@@ -1006,6 +1012,21 @@
                 0 => '~2.0',
             ),
         ),
+        'palantirnet/drupal-rector' => array(
+            'pretty_version' => '0.15.1',
+            'version' => '0.15.1.0',
+            'reference' => '85382a67a07b928f5a963d94fbca11d7be33d6ca',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../palantirnet/drupal-rector',
+            'aliases' => array(),
+            'dev_requirement' => true,
+        ),
+        'palantirnet/drupal8-rector' => array(
+            'dev_requirement' => true,
+            'replaced' => array(
+                0 => '*',
+            ),
+        ),
         'pear/archive_tar' => array(
             'pretty_version' => '1.4.14',
             'version' => '1.4.14.0',
@@ -1153,6 +1174,15 @@
             'install_path' => __DIR__ . '/../ralouphie/getallheaders',
             'aliases' => array(),
             'dev_requirement' => false,
+        ),
+        'rector/rector' => array(
+            'pretty_version' => '0.15.24',
+            'version' => '0.15.24.0',
+            'reference' => '716473919bcfdc27bdd2a32afb72adbf4c224e59',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../rector/rector',
+            'aliases' => array(),
+            'dev_requirement' => true,
         ),
         'roundcube/plugin-installer' => array(
             'dev_requirement' => false,

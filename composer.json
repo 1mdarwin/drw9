@@ -136,5 +136,8 @@
                 "      composer remove drupal/core-project-message"
             ]
         }
+    },
+    "require-dev": {
+        "palantirnet/drupal-rector": "^0.15.1"
     }
 }
