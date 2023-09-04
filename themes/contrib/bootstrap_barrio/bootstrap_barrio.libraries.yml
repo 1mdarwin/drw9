@@ -51,6 +51,7 @@ affix:
       css/components/affix.css: {}
   dependencies:
     - core/jquery
+    - core/once
 alerts:
   version: VERSION
   css:
@@ -73,6 +74,24 @@ breadcrumb:
   css:
     component:
       css/components/breadcrumb.css: {}
+
+color-picker:
+  version: VERSION
+  css:
+    component:
+      css/components/color-picker.css: {}
+  js:
+    js/color-picker.js: {}
+  dependencies:
+    - core/drupal
+    - core/once
+    - core/drupal.announce
+
+colors:
+  version: VERSION
+  css:
+    component:
+      css/colors/colors.css: {}
 
 comments:
   css:
@@ -359,12 +378,10 @@ views.ajax:
 
 bootstrap:
   js:
-    /libraries/bootstrap/dist/js/bootstrap.min.js: {}
+    /libraries/bootstrap/dist/js/bootstrap.bundle.min.js: { minified: true }
   css:
     component:
       /libraries/bootstrap/dist/css/bootstrap.min.css: {}
-  dependencies:
-    - core/popperjs
 bootstrap_cdn:
   js:
     //cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js: { type: external, minified: true }
