@@ -1695,18 +1695,18 @@
         },
         {
             "name": "drupal/blazy",
-            "version": "2.16.0",
-            "version_normalized": "2.16.0.0",
+            "version": "2.17.0",
+            "version_normalized": "2.17.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/blazy.git",
-                "reference": "8.x-2.16"
+                "reference": "8.x-2.17"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/blazy-8.x-2.16.zip",
-                "reference": "8.x-2.16",
-                "shasum": "ae84ac6083f734968eb9c7cc008b32aaa04c5b9c"
+                "url": "https://ftp.drupal.org/files/projects/blazy-8.x-2.17.zip",
+                "reference": "8.x-2.17",
+                "shasum": "84ab9c7b7dc516890300f252dd64c8404e333d4b"
             },
             "require": {
                 "drupal/core": "^8.8 || ^9 || ^10"
@@ -1717,8 +1717,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.16",
-                    "datestamp": "1685788557",
+                    "version": "8.x-2.17",
+                    "datestamp": "1695019671",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4210,28 +4210,28 @@
         },
         {
             "name": "drupal/slick",
-            "version": "2.9.0",
-            "version_normalized": "2.9.0.0",
+            "version": "2.10.0",
+            "version_normalized": "2.10.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/slick.git",
-                "reference": "8.x-2.9"
+                "reference": "8.x-2.10"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/slick-8.x-2.9.zip",
-                "reference": "8.x-2.9",
-                "shasum": "1c2cec19148a096f875390e2fd6a9e56caf5bacd"
+                "url": "https://ftp.drupal.org/files/projects/slick-8.x-2.10.zip",
+                "reference": "8.x-2.10",
+                "shasum": "818d4aab661d94c06e2047eaa14bd45df589e14b"
             },
             "require": {
-                "drupal/blazy": ">=2.14",
+                "drupal/blazy": "^2.17",
                 "drupal/core": "^8.8 || ^9 || ^10"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-2.9",
-                    "datestamp": "1685789618",
+                    "version": "8.x-2.10",
+                    "datestamp": "1695019811",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4893,40 +4893,41 @@
         },
         {
             "name": "drush/drush",
-            "version": "11.0.5",
-            "version_normalized": "11.0.5.0",
+            "version": "11.0.1",
+            "version_normalized": "11.0.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drush-ops/drush.git",
-                "reference": "dce2da2806961827662384058b460cc432fa24df"
+                "reference": "a14fc9cd073e91f8bbfb44d788119636ed8ca528"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drush-ops/drush/zipball/dce2da2806961827662384058b460cc432fa24df",
-                "reference": "dce2da2806961827662384058b460cc432fa24df",
+                "url": "https://api.github.com/repos/drush-ops/drush/zipball/a14fc9cd073e91f8bbfb44d788119636ed8ca528",
+                "reference": "a14fc9cd073e91f8bbfb44d788119636ed8ca528",
                 "shasum": ""
             },
             "require": {
-                "chi-teck/drupal-code-generator": "^2.4",
+                "chi-teck/drupal-code-generator": "^2.3",
                 "composer/semver": "^1.4 || ^3",
-                "consolidation/annotated-command": "^4.5",
+                "consolidation/annotated-command": "^4.4",
                 "consolidation/config": "^1.2",
                 "consolidation/filter-via-dot-access-data": "^1",
                 "consolidation/robo": "^3",
                 "consolidation/site-alias": "^3.1.3",
-                "consolidation/site-process": "^4.1.3",
+                "consolidation/site-process": "^4",
                 "enlightn/security-checker": "^1",
                 "ext-dom": "*",
+                "grasmash/yaml-expander": "^1.1.1",
                 "guzzlehttp/guzzle": "^6.3 || ^7.0",
                 "league/container": "^3.4",
                 "php": ">=7.4",
                 "psr/log": "~1.0",
                 "psy/psysh": "~0.11",
-                "symfony/event-dispatcher": "^4.0 || ^5.0 || ^6.0",
-                "symfony/finder": "^4.0 || ^5 || ^6",
+                "symfony/event-dispatcher": "^4.0",
+                "symfony/finder": "^4.0 || ^5",
                 "symfony/polyfill-php80": "^1.23",
-                "symfony/var-dumper": "^4.0 || ^5.0 || ^6.0",
-                "symfony/yaml": "^4.0 || ^5.0 || ^6.0",
+                "symfony/var-dumper": "^4.0 || ^5.0",
+                "symfony/yaml": "^4.0",
                 "webflo/drupal-finder": "^1.2",
                 "webmozart/path-util": "^2.1.0"
             },
@@ -4939,15 +4940,15 @@
                 "composer/installers": "^1.7",
                 "cweagans/composer-patches": "~1.0",
                 "david-garcia/phpwhois": "4.3.0",
-                "drupal/core-recommended": "^9 || ^10",
-                "drupal/semver_example": "2.3.0",
+                "drupal/core-recommended": "^9",
+                "drupal/semver_example": "2.2.0",
                 "phpunit/phpunit": ">=7.5.20",
                 "rector/rector": "^0.12",
-                "squizlabs/php_codesniffer": "^3.6",
+                "squizlabs/php_codesniffer": "^2.7 || ^3",
                 "vlucas/phpdotenv": "^2.4",
                 "yoast/phpunit-polyfills": "^0.2.0"
             },
-            "time": "2022-02-08T14:17:13+00:00",
+            "time": "2022-01-17T16:17:28+00:00",
             "bin": [
                 "drush"
             ],
@@ -5031,7 +5032,7 @@
                 "irc": "irc://irc.freenode.org/drush",
                 "issues": "https://github.com/drush-ops/drush/issues",
                 "slack": "https://drupal.slack.com/messages/C62H9CWQM",
-                "source": "https://github.com/drush-ops/drush/tree/11.0.5"
+                "source": "https://github.com/drush-ops/drush/tree/11.0.1"
             },
             "funding": [
                 {
@@ -5229,6 +5230,61 @@
                 "source": "https://github.com/grasmash/expander/tree/master"
             },
             "install-path": "../grasmash/expander"
+        },
+        {
+            "name": "grasmash/yaml-expander",
+            "version": "1.4.0",
+            "version_normalized": "1.4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/grasmash/yaml-expander.git",
+                "reference": "3f0f6001ae707a24f4d9733958d77d92bf9693b1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/grasmash/yaml-expander/zipball/3f0f6001ae707a24f4d9733958d77d92bf9693b1",
+                "reference": "3f0f6001ae707a24f4d9733958d77d92bf9693b1",
+                "shasum": ""
+            },
+            "require": {
+                "dflydev/dot-access-data": "^1.1.0",
+                "php": ">=5.4",
+                "symfony/yaml": "^2.8.11|^3|^4"
+            },
+            "require-dev": {
+                "greg-1-anderson/composer-test-scenarios": "^1",
+                "phpunit/phpunit": "^4.8|^5.5.4",
+                "satooshi/php-coveralls": "^1.0.2|dev-master",
+                "squizlabs/php_codesniffer": "^2.7"
+            },
+            "time": "2017-12-16T16:06:03+00:00",
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.x-dev"
+                }
+            },
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "Grasmash\\YamlExpander\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Matthew Grasmick"
+                }
+            ],
+            "description": "Expands internal property references in a yaml file.",
+            "support": {
+                "issues": "https://github.com/grasmash/yaml-expander/issues",
+                "source": "https://github.com/grasmash/yaml-expander/tree/master"
+            },
+            "install-path": "../grasmash/yaml-expander"
         },
         {
             "name": "guzzlehttp/guzzle",
@@ -5842,33 +5898,33 @@
         },
         {
             "name": "laminas/laminas-stdlib",
-            "version": "3.17.0",
-            "version_normalized": "3.17.0.0",
+            "version": "3.18.0",
+            "version_normalized": "3.18.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/laminas/laminas-stdlib.git",
-                "reference": "dd35c868075bad80b6718959740913e178eb4274"
+                "reference": "e85b29076c6216e7fc98e72b42dbe1bbc3b95ecf"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/dd35c868075bad80b6718959740913e178eb4274",
-                "reference": "dd35c868075bad80b6718959740913e178eb4274",
+                "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/e85b29076c6216e7fc98e72b42dbe1bbc3b95ecf",
+                "reference": "e85b29076c6216e7fc98e72b42dbe1bbc3b95ecf",
                 "shasum": ""
             },
             "require": {
-                "php": "~8.1.0 || ~8.2.0"
+                "php": "~8.1.0 || ~8.2.0 || ~8.3.0"
             },
             "conflict": {
                 "zendframework/zend-stdlib": "*"
             },
             "require-dev": {
                 "laminas/laminas-coding-standard": "^2.5",
-                "phpbench/phpbench": "^1.2.9",
-                "phpunit/phpunit": "^10.0.16",
+                "phpbench/phpbench": "^1.2.14",
+                "phpunit/phpunit": "^10.3.3",
                 "psalm/plugin-phpunit": "^0.18.4",
-                "vimeo/psalm": "^5.8"
+                "vimeo/psalm": "^5.15.0"
             },
-            "time": "2023-03-20T13:51:37+00:00",
+            "time": "2023-09-19T10:15:21+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -8137,26 +8193,24 @@
         },
         {
             "name": "symfony/finder",
-            "version": "v6.3.3",
-            "version_normalized": "6.3.3.0",
+            "version": "v4.4.44",
+            "version_normalized": "4.4.44.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/finder.git",
-                "reference": "9915db259f67d21eefee768c1abcf1cc61b1fc9e"
+                "reference": "66bd787edb5e42ff59d3523f623895af05043e4f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/finder/zipball/9915db259f67d21eefee768c1abcf1cc61b1fc9e",
-                "reference": "9915db259f67d21eefee768c1abcf1cc61b1fc9e",
+                "url": "https://api.github.com/repos/symfony/finder/zipball/66bd787edb5e42ff59d3523f623895af05043e4f",
+                "reference": "66bd787edb5e42ff59d3523f623895af05043e4f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=8.1"
+                "php": ">=7.1.3",
+                "symfony/polyfill-php80": "^1.16"
             },
-            "require-dev": {
-                "symfony/filesystem": "^6.0"
-            },
-            "time": "2023-07-31T08:31:44+00:00",
+            "time": "2022-07-29T07:35:46+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -8184,7 +8238,7 @@
             "description": "Finds files and directories via an intuitive fluent interface",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/finder/tree/v6.3.3"
+                "source": "https://github.com/symfony/finder/tree/v4.4.44"
             },
             "funding": [
                 {

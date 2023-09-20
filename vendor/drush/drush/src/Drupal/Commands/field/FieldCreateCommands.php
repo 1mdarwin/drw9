@@ -315,7 +315,7 @@ class FieldCreateCommands extends DrushCommands implements CustomEventAwareInter
             $choices[$name] = $label;
         }
 
-        return $this->io()->choice('Field widget', $choices, key($choices));
+        return $this->io()->choice('Field widget', $choices);
     }
 
     protected function askRequired(): bool

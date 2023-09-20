@@ -2,51 +2,16 @@
 
 namespace Drupal\blazy\Field;
 
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Render\Element;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\Media\BlazyMedia;
+use Drupal\blazy\internals\Internals;
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Render\Element;
 
 /**
  * Provides common field API operation methods.
  */
 class BlazyField {
-
-  /**
-   * Returns file view or media due to being empty returned by view builder.
-   *
-   * @todo make it usable for other file-related entities.
-   */
-  public static function getOrViewMedia($file, array $settings, $rendered = TRUE) {
-    // Might be accessed by tests, or anywhere outside the workflow.
-    Blazy::verify($settings);
-    $blazies = $settings['blazies'];
-
-    if ($manager = Blazy::service('blazy.manager')) {
-      [$type] = explode('/', $file->getMimeType(), 2);
-
-      if ($type == 'video') {
-        // As long as you are not being too creative by renaming or changing
-        // fields provided by core, this should be your good friend.
-        $blazies->set('media.source', 'video_file');
-        $blazies->set('media.source_field', 'field_media_video_file');
-      }
-
-      $source_field = $blazies->get('media.source_field');
-      if ($blazies->get('media.source') && $source_field) {
-        $media = $manager->loadByProperties([
-          $source_field => ['fid' => $file->id()],
-        ], 'media', TRUE);
-
-        if ($media = reset($media)) {
-          return $rendered ? BlazyMedia::build($media, $settings) : $media;
-        }
-      }
-    }
-
-    return [];
-  }
 
   /**
    * Returns the string value of the fields: link, or text.
@@ -106,36 +71,81 @@ class BlazyField {
   }
 
   /**
-   * Provides field-related settings.
+   * Returns available bundles.
    */
-  public static function settings(array &$settings, array $data, $field): void {
-    // @todo remove for blazies after admin updated and sub-modules.
-    $settings['blazies'] = $blazies = Blazy::settings();
-    $info = [
-      'field_label' => $field->getLabel(),
-      'field_name'  => $field->getName(),
-      'field_type'  => $field->getType(),
-      'entity_type' => $field->getTargetEntityTypeId(),
+  public static function getAvailableBundles($field): array {
+    $type     = $field->getSetting('target_type');
+    $views_ui = $field->getSetting('handler') == 'default';
+    $handlers = $field->getSetting('handler_settings');
+    $targets  = $handlers ? ($handlers['target_bundles'] ?? []) : [];
+    $bundles  = $views_ui ? [] : $targets;
+
+    // Fix for Views UI not recognizing Media bundles, unlike Formatters.
+    if (empty($bundles)
+      && $type
+      && $service = Internals::service('entity_type.bundle.info')) {
+      $bundles = $service->getBundleInfo($type);
+    }
+
+    return $bundles;
+  }
+
+  /**
+   * Provides field-related settings, called by back-end and front-end.
+   */
+  public static function settings(array &$settings, $field, array $data = []): array {
+    $settings['blazies'] = $settings['blazies'] ?? Internals::settings();
+    $blazies = $settings['blazies'];
+    $bundles = self::getAvailableBundles($field);
+
+    $submodules = [
+      'cardinality'    => $field->getFieldStorageDefinition()->getCardinality(),
+      'field_type'     => $field->getType(),
+      'target_bundles' => $bundles,
+      'target_type'    => $field->getSetting('target_type'),
     ];
 
-    foreach ($data as $key => $value) {
-      $blazies->set('field.' . $key, $value);
+    $info = [
+      'field_label'   => $field->getLabel(),
+      'field_name'    => $field->getName(),
+      'entity_type'   => $field->getTargetEntityTypeId(),
+      'target_bundle' => $field->getTargetBundle(),
+    ] + $submodules;
+
+    if ($data) {
+      $blazies->set('field', $data, TRUE);
+    }
+
+    $blazies->set('field.settings', $field->getSettings());
+    if (!$blazies->get('namespace')
+      && $namespace = $settings['namespace'] ?? NULL) {
+      $blazies->set('namespace', $namespace);
     }
 
     foreach ($info as $key => $value) {
       $k = str_replace('field_', '', $key);
       $blazies->set('field.' . $k, $value);
+    }
 
-      // @todo remove at 3.x after sub-modules.
+    // Cannot use blazies.field.settings.handler_settings.target_bundles, since
+    // they are always empty at View UI.
+    if ($bundles) {
+      $blazies->set('field.target_bundles', $bundles);
+    }
+
+    // @todo remove at/ by 3.x after migration and sub-modules: EZ, Splidebox.
+    foreach ($submodules as $key => $value) {
       $settings[$key] = $value;
     }
+
+    return $settings;
   }
 
   /**
    * Returns the formatted renderable array of the field.
    */
-  public static function view($entity, $field_name, $view_mode, $multiple = TRUE) {
-    if ($entity->hasField($field_name)) {
+  public static function view($entity, $field_name, $view_mode, $multiple = TRUE): array {
+    if ($entity && $entity->hasField($field_name)) {
       $view = $entity->get($field_name)->view($view_mode);
 
       if (empty($view[0])) {
@@ -159,10 +169,28 @@ class BlazyField {
         $items['#weight'] = $weight;
         return $items;
       }
-      return $view[0];
+      return $view[0] ?? [];
     }
 
     return [];
+  }
+
+  /**
+   * Returns file view or media due to being empty returned by view builder.
+   *
+   * @deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use
+   *   BlazyMedia::view() instead.
+   * @see https://www.drupal.org/node/3103018
+   */
+  public static function getOrViewMedia($file, array $settings, $rendered = TRUE) {
+    $data = [
+      '#entity' => $file,
+      '#settings' => $settings,
+    ];
+    if ($manager = Internals::service('blazy.media')) {
+      return $rendered ? $manager->view($data) : $manager->fromFile($data);
+    }
+    return $rendered ? [] : NULL;
   }
 
 }

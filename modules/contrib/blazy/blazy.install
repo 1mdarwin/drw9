@@ -16,14 +16,25 @@ function blazy_requirements($phase) {
     // If updating from Blazy 1.x to 2.x, Media module may not being installed
     // and as it is now a dependency we need to let the administrator know it
     // will be installed.
-    if (!\Drupal::moduleHandler()->moduleExists('media')) {
+    if (!blazy()->moduleExists('media')) {
       $requirements['blazy_media'] = [
         'title'       => t('Blazy requires Media core module'),
         'description' => t('Blazy now requires core Media module, which is currently not installed. By continuing the update the module will be installed.'),
         'severity'    => REQUIREMENT_WARNING,
       ];
     }
-
+  }
+  elseif ($phase === 'runtime') {
+    $enabled = blazy()->config('use_theme_blazy');
+    $enabled = !empty($enabled);
+    $requirements['blazy_theme'] = [
+      'title'       => t('Blazy'),
+      'description' => t('Blazy 3.x replaces sub-modules theme_ITEM() contents with theme_blazy(). Keep "Use theme_blazy()" enabled at <a href=":url">Blazy UI</a> to pass blazy:3.x.', [
+        ':url' => '/admin/config/media/blazy',
+      ]),
+      'severity'    => $enabled ? REQUIREMENT_OK : REQUIREMENT_ERROR,
+      'value'       => $enabled ? t('Enabled: Use theme_blazy()') : t('Not enabled: Use theme_blazy()'),
+    ];
   }
 
   return $requirements;
@@ -99,4 +110,11 @@ function blazy_update_8208() {
   $config = \Drupal::configFactory()->getEditable('blazy.settings');
   $config->clear('native');
   $config->save(TRUE);
+}
+
+/**
+ * Matching a more relevant module version.
+ */
+function blazy_update_8217() {
+  // Do nothing to clear cache.
 }

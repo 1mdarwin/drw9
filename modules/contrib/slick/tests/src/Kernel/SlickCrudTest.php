@@ -3,11 +3,11 @@
 namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Component\Render\FormattableMarkup;
-use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
+use Drupal\slick\SlickDefault;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
-use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 use Drupal\Tests\slick\Traits\SlickKernelTrait;
+use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 use PHPUnit\Framework\Exception as UnitException;
 
 /**
@@ -41,7 +41,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     $this->installConfig(static::$modules);
     $this->installEntitySchema('slick');
 
-    $this->blazyAdmin     = $this->container->get('blazy.admin.extended');
+    $this->blazyAdmin     = $this->container->get('blazy.admin.formatter');
     $this->slickManager   = $this->container->get('slick.manager');
     $this->slickFormatter = $this->container->get('slick.formatter');
     $this->slickAdmin     = $this->container->get('slick.admin');
@@ -117,7 +117,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     }
 
     $options = $main->getSettings();
-    $cleaned = $main->removeDefaultValues($options);
+    $cleaned = $main->toJson($options);
     $this->assertArrayHasKey('responsive', $cleaned);
 
     foreach ($responsive_options as $key => $responsive) {
@@ -127,7 +127,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     $main->save();
 
     $options = $main->getSettings();
-    $cleaned = $main->removeDefaultValues($options);
+    $cleaned = $main->toJson($options);
 
     foreach ($cleaned['responsive'] as $key => $responsive) {
       $this->assertEquals('unslick', $responsive['settings']);
@@ -194,7 +194,7 @@ class SlickCrudTest extends BlazyKernelTestBase {
     $nav->save();
     $this->assertTrue(!empty($nav->getSetting('mobileFirst')));
 
-    $nav->removeDefaultValues($settings);
+    $nav->toJson($settings);
     $this->assertArrayNotHasKey('lazyLoad', $settings);
 
     // Delete the slick optionset.
@@ -211,13 +211,13 @@ class SlickCrudTest extends BlazyKernelTestBase {
    *   The Slick instance.
    */
   public function verifySlickOptionset(Slick $slick) {
-    $t_args = ['%slick' => $slick->label()];
+    $t_args = ['@slick' => $slick->label()];
     $default_langcode = \Drupal::languageManager()->getDefaultLanguage()->getId();
 
     // Verify the loaded slick has all properties.
     $slick = Slick::load($slick->id());
-    $this->assertEquals($slick->id(), $slick->id(), new FormattableMarkup('Slick::load: Proper slick id for slick optionset %slick.', $t_args));
-    $this->assertEquals($slick->label(), $slick->label(), new FormattableMarkup('Slick::load: Proper title for slick optionset %slick.', $t_args));
+    $this->assertEquals($slick->id(), $slick->id(), new FormattableMarkup('Slick::load: Proper slick id for slick optionset @slick.', $t_args));
+    $this->assertEquals($slick->label(), $slick->label(), new FormattableMarkup('Slick::load: Proper title for slick optionset @slick.', $t_args));
 
     // Check that the slick was created in site default language.
     $this->assertEquals($slick->language()->getId(), $default_langcode, new FormattableMarkup('Slick::load: Proper language code for slick optionset %slick.', $t_args));

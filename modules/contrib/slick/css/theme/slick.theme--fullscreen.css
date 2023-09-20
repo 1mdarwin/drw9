@@ -8,8 +8,8 @@
 html,
 body {
   height: 100%;
-  margin: 0;
   min-height: 100%;
+  margin: 0;
 }
 
 body {
@@ -23,9 +23,9 @@ body {
 .slick-wrapper--fullscreen,
 .slick-wrapper--fullscreen .slick,
 .slick--skin--fullscreen {
-  left: 0;
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
 }
 
@@ -44,15 +44,15 @@ body {
 }
 
 .slick-wrapper--fullscreen .slick.slick--thumbnail {
-  bottom: 0;
-  top: auto;
   z-index: 999;
+  top: auto;
+  bottom: 0;
 }
 
 .slick-wrapper--fullscreen.slick-wrapper--tn-top .slick.slick--thumbnail {
-  bottom: auto;
-  top: 0;
   z-index: 999;
+  top: 0;
+  bottom: auto;
 }
 
 .slick-wrapper--fullscreen .slick__slider {
@@ -61,8 +61,8 @@ body {
 
 .slick--skin--fullscreen .slick__slider {
   height: 100%;
-  margin-bottom: 0;
   min-height: 100%;
+  margin-bottom: 0;
 }
 
 /** @todo better way than over-specificity to support nested slicks. */
@@ -88,21 +88,21 @@ body {
 }
 
 .slick--skin--fullscreen .slide__media img {
-  height: auto;
-  left: 0;
-  margin: 0 auto;
-  min-height: 100%;
-  min-width: 100%;
   position: absolute;
   top: 0;
+  left: 0;
   width: 100%;
+  min-width: 100%;
+  height: auto;
+  min-height: 100%;
+  margin: 0 auto;
 }
 
 .slick--skin--fullscreen .slide__constrained {
-  left: 50%;
-  margin-left: -49%;
   position: absolute;
+  left: 50%;
   width: 98%;
+  margin-left: -49%;
 }
 
 .slick--skin--fullscreen .slide__constrained .slide__caption {
@@ -110,31 +110,31 @@ body {
 }
 
 .slick--skin--fullscreen .slide__caption {
+  color: #fff;
   font-size: 22px;
   font-size: 1.375rem;
-  color: #fff;
 }
 
 .slick--skin--fullscreen .slide__title {
+  text-transform: uppercase;
   color: #fff;
   font-size: 48px;
   font-size: 3rem;
   line-height: 1;
-  text-transform: uppercase;
 }
 
 .slick--skin--fullscreen .slide__link a {
-  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
-  border-top: 2px solid rgba(255, 255, 255, 0.8);
+  text-decoration: none;
   color: #fff;
   color: rgba(255, 255, 255, 0.8);
-  text-decoration: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.8);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.8);
 }
 
 .slick--skin--fullscreen .slide__link a:hover {
-  border-color: #fff;
-  color: #fff;
   text-decoration: none;
+  color: #fff;
+  border-color: #fff;
 }
 
 .slick--skin--fullscreen .slick-dots {
@@ -150,13 +150,13 @@ body.path-admin {
 .path-admin .slick-wrapper--fullscreen .slick,
 .path-admin .slick--skin--fullscreen,
 .path-admin .slick--skin--fullscreen .slide__media {
-  min-height: 620px;
   position: relative;
+  min-height: 620px;
 }
 
 .path-admin .slick-wrapper--fullscreen .slick--thumbnail {
-  min-height: 80px;
   position: absolute;
+  min-height: 80px;
 }
 
 .path-admin .slick--skin--fullscreen .slick__slider {
@@ -185,7 +185,7 @@ body.path-admin {
 
 @media (min-width: 90em) {
   .slick--skin--fullscreen .slide__constrained {
-    margin-left: -585px;
     width: 1170px;
+    margin-left: -585px;
   }
 }

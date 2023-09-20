@@ -15,7 +15,7 @@ slick.easing:
   remote: https://github.com/gdsmith/jquery.easing
   license:
     name: MIT
-    url: http://www.opensource.org/licenses/mit-license.php
+    url: https://www.opensource.org/licenses/mit-license.php
     gpl-compatible: true
   version: 1.3
   js:
@@ -24,7 +24,7 @@ slick.easing:
     - core/jquery
 
 slick:
-  remote: http://kenwheeler.github.io/slick/
+  remote: https://kenwheeler.github.io/slick/
   version: 1.x
   license:
     name: MIT

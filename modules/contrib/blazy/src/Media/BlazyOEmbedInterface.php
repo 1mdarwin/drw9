@@ -18,25 +18,42 @@ interface BlazyOEmbedInterface {
   public function getUrlResolver();
 
   /**
-   * Returns the Media oEmbed url resolver fecthers.
-   */
-  public function getIframeUrlHelper();
-
-  /**
-   * Returns the blazy manager.
+   * Returns the blazy manager service.
+   *
+   * @return \Drupal\blazy\BlazyManagerInterface
+   *   The blazy manager.
    */
   public function blazyManager();
 
   /**
+   * Returns the blazy media.
+   *
+   * @return \Drupal\blazy\Media\BlazyMediaInterface
+   *   The blazy manager.
+   */
+  public function blazyMedia();
+
+  /**
+   * Returns the oEmbed provider based on the given media input url.
+   *
+   * @param string $input
+   *   The input url.
+   *
+   * @return \Drupal\media\OEmbed\Provider|null
+   *   The oEmbed provider if available, or NULL.
+   */
+  public function getProvider($input): ?object;
+
+  /**
    * Returns the oEmbed Resource based on the given media input url.
    *
-   * @param string $input_url
-   *   The video url.
+   * @param string $input
+   *   The input url.
    *
-   * @return \Drupal\media\OEmbed\Resource[]
+   * @return \Drupal\media\OEmbed\Resource|null
    *   The oEmbed resource.
    */
-  public function getResource($input_url);
+  public function getResource($input): ?object;
 
   /**
    * Builds media-related settings based on the given media input url.
@@ -50,7 +67,11 @@ interface BlazyOEmbedInterface {
    *   Or just settings content for old deprecated approach.
    * @param object $entity
    *   The Media entity, File entity, ER, FieldItemList, etc., optional
-   *   to accomodate old approach (pre 2.10) and UGC.
+   *   to accommodate old approach (pre 2.10) and UGC.
+   *
+   * @todo should be at non-static BlazyMedia at 4.x, if too late for 3.x.
+   * @todo add a return to avoid potential issues with references at 3.x.
+   * @todo make it single param like the rest by 3.x.
    */
   public function build(array &$build, $entity = NULL): void;
 
@@ -58,8 +79,54 @@ interface BlazyOEmbedInterface {
    * Checks the given input URL.
    *
    * @param array $settings
-   *   The settings to modify.
+   *   The settings being modified.
+   * @param string $input
+   *   The input to modify.
+   *
+   * @return string
+   *   The modified input url.
    */
-  public function checkInputUrl(array &$settings): void;
+  public function checkInputUrl(array &$settings, $input): ?string;
+
+  /**
+   * Checks for the provider and its resources, to determine oembed, or not.
+   *
+   * @param string $input
+   *   The media input url.
+   * @param object $blazies
+   *   The blazies object to check and store the provider and its resources.
+   */
+  public function checkProviderAndResource($input, $blazies): void;
+
+  /**
+   * Returns external image item from resource for BlazyFilter or VEF.
+   *
+   * The settings fallbacks are preserved for minimal BVEF compat. This method
+   * allows VEF to have TITLE or ALT for media related displays.
+   *
+   * @param array $settings
+   *   The settings being modified.
+   * @param bool $fallback
+   *   If it is as fallback to fetch image, else just global definitions.
+   *
+   * @return object
+   *   The fake image item, or null if failed, or not a fallback.
+   */
+  public function getThumbnail(array &$settings, $fallback = TRUE): ?object;
+
+  /**
+   * Converts input URL into embed URL.
+   *
+   * @param object $blazies
+   *   The \Drupal\blazy\BlazySettings object.
+   * @param string $input
+   *   The input to modify.
+   * @param array $params
+   *   The optional parameters, normally just autoplay.
+   *
+   * @return string
+   *   The media oembed url.
+   */
+  public function toEmbedUrl($blazies, $input, array $params = []): string;
 
 }

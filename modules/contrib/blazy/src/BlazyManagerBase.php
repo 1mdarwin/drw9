@@ -3,29 +3,47 @@
 namespace Drupal\blazy;
 
 use Drupal\blazy\Cache\BlazyCache;
-use Drupal\blazy\Media\BlazyImage;
+use Drupal\blazy\Deprecated\BlazyManagerDeprecatedTrait;
+use Drupal\blazy\internals\Internals;
+use Drupal\blazy\Media\Thumbnail;
 use Drupal\blazy\Utility\Check;
+use Drupal\blazy\Utility\CheckItem;
 use Drupal\blazy\Utility\Path;
-use Drupal\blazy\Traits\BlazyManagerDeprecatedTrait;
 
 /**
  * Provides common shared methods across Blazy ecosystem to DRY.
- *
- * @todo implements BlazyManagerBaseInterface after sub-modules.
  */
-abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterface {
+abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerBaseInterface {
 
+  // @todo remove at 3.x:
   use BlazyManagerDeprecatedTrait;
 
   /**
    * {@inheritdoc}
    */
   public function attach(array $attach = []) {
+    // @todo enable at 3.x: $load = $this->libraries->attach($attach);
+    // $blazies = $attach['blazies'];
     $load = [];
-    Check::attachments($load, $attach);
+    $blazies = Check::attachments($load, $attach);
 
-    $this->moduleHandler->alter('blazy_attach', $load, $attach);
+    $this->attachments($load, $attach, $blazies);
+
+    // Since 2.17 with self::attachments(), allows altering the ecosystem once.
+    $this->moduleHandler->alter('blazy_attach', $load, $attach, $blazies);
+
+    // No blazy libraries are loaded when `No JavaScript`, etc. enabled.
+    if (isset($load['library'])) {
+      $load['library'] = array_unique($load['library']);
+    }
     return $load;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function containerAttributes(array &$attributes, array $settings): void {
+    Blazy::containerAttributes($attributes, $settings);
   }
 
   /**
@@ -54,7 +72,7 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
       $value = $key == 'threshold' ? $formatted : $this->config('io.' . $key);
       $io[$key] = $attach['io.' . $key] ?? ($value ?: $default);
     }
-
+    // @todo enable at 3.x: return $this->libraries->getIoSettings($attach);
     return (object) $io;
   }
 
@@ -64,7 +82,26 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
   public function getImageEffects(): array {
     $cid = 'blazy_image_effects';
     $effects[] = 'blur';
-    return $this->getCachedData($cid, $effects);
+    return $this->getCachedOptions($cid, $effects);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function imageStyles(array &$settings, $multiple = FALSE, array $styles = []): void {
+    $blazies = $settings['blazies'];
+    $styles  = $styles ?: BlazyDefault::imageStyles();
+
+    foreach ($styles as $key) {
+      if (!$blazies->get($key . '.style') || $multiple) {
+        if ($_style = ($settings[$key . '_style'] ?? '')) {
+          if ($entity = $this->load($_style, 'image_style')) {
+            $blazies->set($key . '.style', $entity)
+              ->set($key . '.id', $entity->id());
+          }
+        }
+      }
+    }
   }
 
   /**
@@ -72,8 +109,9 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
    */
   public function getLightboxes(): array {
     $cid = 'blazy_lightboxes';
+    // @todo at 3.x: $this->libraries->getLightboxes();
     $data = BlazyCache::lightboxes($this->root);
-    return $this->getCachedData($cid, $data);
+    return $this->getCachedOptions($cid, $data);
   }
 
   /**
@@ -86,28 +124,77 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
       'flex' => 'Flexbox Masonry',
       'nativegrid' => 'Native Grid',
     ];
-    $this->moduleHandler->alter('blazy_style', $styles);
+    $this->moduleHandler->alter('blazy_styles', $styles);
     return $styles;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getThumbnail(array $settings, $item = NULL): array {
-    return BlazyImage::thumbnail($settings, $item);
+  public function getThumbnail(array $settings, $item = NULL, array $captions = []): array {
+    return Thumbnail::view($settings, $item, $captions);
   }
 
   /**
    * {@inheritdoc}
    */
   public function isBlazy(array &$settings, array $data = []): void {
+    $original = $data;
     Check::blazyOrNot($settings, $data);
+
+    // Allows lightboxes to inject options into `data-LIGHTBOX` attribute
+    // at any blazy/ sub-modules containers using:
+    // $blazies->set('data.LIGHTBOX_NAME', $options) only if needed.
+    $this->moduleHandler->alter('blazy_is_blazy', $settings, $original);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function prepareData(array &$build, $entity = NULL): void {
+  public function preBlazy(array &$build, $item = NULL): BlazySettings {
+    $this->hashtag($build);
+    $settings = &$build['#settings'];
+
+    $this->verifySafely($settings);
+
+    // Prevents double checks.
+    // BlazySettings is a self containing object, initialized at container level
+    // and must be renewed at item level to get correct delta, see #3278525.
+    $blazies = $settings['blazies']->reset($settings);
+    $delta   = $blazies->get('delta', $build['#delta'] ?? 0);
+    $style   = $settings['image_style'] ?? NULL;
+
+    // Workflows might be by-passed such as passing core Image formatter, not
+    // Blazy for the main image displays within carousels, etc.
+    if ($style && !$blazies->get('image.id')) {
+      $this->imageStyles($settings);
+    }
+
+    $blazies->set('delta', $delta)
+      ->set('is.api', TRUE);
+
+    $this->moduleHandler->alter('blazy_preblazy', $settings, $build);
+
+    CheckItem::essentials($settings, $item);
+    return $blazies;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function postBlazy(array &$build, array $blazy): void {
+    $item_build = $blazy['#build'] ?? [];
+
+    // Update with blazy processed settings: unstyled extensions, SVG, etc.
+    if ($blazysets = $this->toHashtag($item_build)) {
+      $build['#settings']['blazies']->merge($blazysets['blazies']->storage());
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function prepareData(array &$build): void {
     // Do nothing, let extenders share data at ease as needed.
   }
 
@@ -115,26 +202,24 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
    * {@inheritdoc}
    */
   public function preSettings(array &$settings): void {
-    Blazy::verify($settings);
-
-    $blazies = $settings['blazies'];
-    $ui = array_intersect_key($this->config(), BlazyDefault::uiSettings());
+    $blazies = $this->verifySafely($settings);
+    $ui = $this->config();
     $iframe_domain = $this->config('iframe_domain', 'media.settings');
     $is_debug = !$this->config('css.preprocess', 'system.performance');
-    $ui['fx'] = $ui['fx'] ?? '';
-    $ui['fx'] = empty($settings['fx']) ? $ui['fx'] : $settings['fx'];
+    $ui['fx'] = $settings['fx'] ?? $ui['fx'] ?? '';
     $ui['blur_minwidth'] = (int) ($ui['blur_minwidth'] ?? 0);
     $fx = $settings['_fx'] ?? $ui['fx'];
     $fx = $blazies->get('fx', $fx);
     $language = $this->languageManager->getCurrentLanguage()->getId();
     $lightboxes = $this->getLightboxes();
-    $lightboxes = $blazies->get('lightbox.plugins', $lightboxes) ?: [];
+    $lightboxes = $blazies->get('lightbox.plugins', $lightboxes);
     $is_blur = $fx == 'blur';
     $is_resimage = $this->moduleExists('responsive_image');
+    $namespace = $blazies->get('namespace');
+    $use_blazy = $ui['use_theme_blazy'] ?? FALSE;
 
     $blazies->set('fx', $fx)
       ->set('iframe_domain', $iframe_domain)
-      ->set('is.blur', $is_blur)
       ->set('is.debug', $is_debug)
       ->set('is.resimage', $is_resimage)
       ->set('is.unblazy', $this->config('io.unblazy'))
@@ -142,10 +227,25 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
       ->set('libs.animate', $fx)
       ->set('libs.blur', $is_blur)
       ->set('lightbox.plugins', $lightboxes)
-      ->set('ui', $ui);
+      ->set('ui', $ui)
+      ->set('use.blur', $is_blur)
+      // @todo enable at 3.x after conversion from data-BLAH to data-b-BLAH.
+      ->set('use.data_b', FALSE)
+      ->set('use.theme_blazy', $use_blazy)
+      ->set('use.theme_thumbnail', $use_blazy)
+      ->set('version.blazy', Blazy::version('blazy'));
+
+    // @todo remove is.blur for use.blur at 3.x:
+    $blazies->set('is.blur', $is_blur);
+
+    if ($namespace && $namespace != 'blazy') {
+      if ($this->moduleExists($namespace)) {
+        $blazies->set('version.' . $namespace, Blazy::version($namespace));
+      }
+    }
 
     if ($router = Path::routeMatch()) {
-      $settings['route_name'] = $route_name = $router->getRouteName();
+      $route_name = $router->getRouteName();
       $blazies->set('route_name', $route_name);
     }
 
@@ -155,14 +255,14 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
     $this->preSettingsData($settings);
 
     // Preliminary globals when using the provided API.
-    BlazyInternal::preSettings($settings);
+    Internals::preSettings($settings);
   }
 
   /**
    * {@inheritdoc}
    */
   public function postSettings(array &$settings): void {
-    BlazyInternal::postSettings($settings);
+    Internals::postSettings($settings);
 
     // Sub-modules may need to override Blazy definitions.
     $this->postSettingsData($settings);
@@ -173,6 +273,22 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
    */
   public function postSettingsAlter(array &$settings, $entity = NULL): void {
     Check::settingsAlter($settings, $entity);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function thirdPartyFormatters(): array {
+    $formatters = ['file_audio', 'file_video'];
+    $this->moduleHandler->alter('blazy_third_party_formatters', $formatters);
+    return array_unique($formatters);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function toBlazy(array &$data, array &$captions, $delta): void {
+    // Do nothing for sub-modules to use.
   }
 
   /**
@@ -199,11 +315,14 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
     array $settings,
     array $attachments = []
   ): void {
-    $cache                = $this->getCacheMetadata($settings);
-    $attached             = $this->attach($settings);
-    $attachments          = Blazy::merge($attached, $attachments);
-    $element['#attached'] = Blazy::merge($attachments, $element, '#attached');
-    $element['#cache']    = Blazy::merge($cache, $element, '#cache');
+    $cache                 = $this->getCacheMetadata($settings);
+    $attached              = $this->attach($settings);
+    $attachments           = $this->merge($attached, $attachments);
+    $element['#attached']  = $this->merge($attachments, $element, '#attached');
+    $element['#cache']     = $this->merge($cache, $element, '#cache');
+    $element['#namespace'] = static::$namespace;
+
+    $this->moduleHandler->alter('blazy_element', $element, $settings);
   }
 
   /**
@@ -220,7 +339,7 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerInterfa
    *
    * @todo remove at/by 3.x after subs extending BlazyManagerBaseInterface.
    */
-  public function getBlazy(array $build, $delta = -1): array {
+  public function getBlazy(array $build): array {
     return [];
   }
 

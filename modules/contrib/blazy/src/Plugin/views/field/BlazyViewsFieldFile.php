@@ -2,6 +2,7 @@
 
 namespace Drupal\blazy\Plugin\views\field;
 
+use Drupal\file\Entity\File;
 use Drupal\views\ResultRow;
 
 /**
@@ -16,17 +17,21 @@ class BlazyViewsFieldFile extends BlazyViewsFieldPluginBase {
    */
   public function render(ResultRow $values) {
     /** @var \Drupal\file\Entity\File $entity */
-    $entity = $values->_entity;
+    // @todo recheck relationship and remove this $entity = $values->_entity;
+    $entity = $this->getEntity($values);
 
-    $settings = $this->mergedViewsSettings();
-    $settings['delta'] = $values->index;
+    if ($entity instanceof File) {
+      $settings = $this->mergedViewsSettings();
 
-    $data['settings'] = $this->mergedSettings = $settings;
-    $data['entity'] = $entity;
-    $data['fallback'] = $entity->getFilename();
+      $data['#entity']   = $entity;
+      $data['#settings'] = $settings;
+      $data['#delta']    = $values->index;
+      $data['fallback']  = $entity->getFilename();
 
-    // Pass results to \Drupal\blazy\BlazyEntity.
-    return $this->blazyEntity->build($data);
+      // Pass results to \Drupal\blazy\BlazyEntity.
+      return $this->blazyEntity->build($data);
+    }
+    return [];
   }
 
   /**

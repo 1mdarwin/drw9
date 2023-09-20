@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
-use Drupal\Tests\UnitTestCase;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\blazy\BlazyManager
@@ -51,6 +51,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
    * @covers ::config
    */
   public function testConfigLoad() {
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('config')
       ->with('blazy')
@@ -59,14 +60,10 @@ class BlazyManagerUnitTest extends UnitTestCase {
     $blazy = $this->blazyManager->config('blazy');
     $this->assertArrayHasKey('loadInvisible', $blazy);
 
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('config')
       ->with('admin_css')
-      ->willReturn(TRUE);
-
-    $this->blazyManager->expects($this->any())
-      ->method('config')
-      ->with('responsive_image')
       ->willReturn(TRUE);
   }
 
@@ -80,6 +77,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
     $styles = $this->setUpImageStyle();
     $ids = array_keys($styles);
 
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('loadMultiple')
       ->with('image_style')
@@ -88,6 +86,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
     $multiple = $this->blazyManager->loadMultiple('image_style', $ids);
     $this->assertArrayHasKey('large', $multiple);
 
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('load')
       ->with('large')
@@ -105,11 +104,13 @@ class BlazyManagerUnitTest extends UnitTestCase {
    */
   public function testGetBlazy($uri, $content, $expected_image, $expected_render) {
     $build = [];
-    $build['item'] = NULL;
+    $build['#item'] = NULL;
     $build['content'] = $content;
-    $build['settings']['uri'] = $uri;
+    $build['#settings']['uri'] = $uri;
 
     $theme = ['#theme' => 'blazy', '#build' => []];
+
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('getBlazy')
       ->willReturn($expected_image ? $theme : []);
@@ -164,6 +165,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
       'style'        => 'column',
     ];
 
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('attach')
       ->with($attach)
@@ -171,6 +173,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
     $attachments = $this->blazyManager->attach($attach);
 
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('attach')
       ->with($attach)
@@ -184,6 +187,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
    * @covers ::getLightboxes
    */
   public function testGetLightboxes() {
+    /* @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('getLightboxes')
       ->willReturn([]);

@@ -2,11 +2,12 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\BlazyDefault;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\FormatterBase;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\blazy\BlazyDefault;
+use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -26,21 +27,45 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class BlazyTextFormatter extends FormatterBase {
 
   use BlazyFormatterTrait;
-  use BlazyFormatterViewBaseTrait;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $namespace = 'blazy';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemId = 'content';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'blazy';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $fieldType = 'text';
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'text');
+    return static::injectServices($instance, $container, static::$fieldType);
   }
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return BlazyDefault::textSettings();
+    return BlazyDefault::gridSettings();
   }
 
   /**
@@ -48,21 +73,6 @@ class BlazyTextFormatter extends FormatterBase {
    */
   public function viewElements(FieldItemListInterface $items, $langcode) {
     return $this->baseViewElements($items, $langcode);
-  }
-
-  /**
-   * Build the grid text elements.
-   */
-  public function buildElements(array &$build, $items, $langcode) {
-    $settings = &$build['settings'];
-    $blazies  = $settings['blazies'];
-
-    $blazies->set('is.grid', TRUE)
-      ->set('is.unblazy', TRUE)
-      ->set('is.text', TRUE)
-      ->set('lazy', []);
-
-    $build += $this->getElements($items);
   }
 
   /**
@@ -75,27 +85,46 @@ class BlazyTextFormatter extends FormatterBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public static function isApplicable(FieldDefinitionInterface $field_definition) {
+    return $field_definition->getFieldStorageDefinition()->isMultiple();
+  }
+
+  /**
+   * Build the grid text elements.
+   */
+  protected function buildElements(array &$build, $items, $langcode) {
+    foreach ($this->getElements($items) as $element) {
+      $build['items'][] = $element;
+    }
+  }
+
+  /**
    * Returns the Blazy elements, also for sub-modules to re-use.
    */
-  protected function getElements($items): array {
-    $elements = [];
+  protected function getElements($items): \Generator {
     // The ProcessedText element already handles cache context & tag bubbling.
     // @see \Drupal\filter\Element\ProcessedText::preRenderText()
     foreach ($items as $item) {
-      if (empty($item->value)) {
-        continue;
+      $element = [];
+
+      if ($item instanceof FieldItemInterface) {
+        $class    = get_class($item);
+        $property = $class::mainPropertyName();
+
+        if ($value = $item->{$property}) {
+          $element = [
+            '#type'     => 'processed_text',
+            '#text'     => $value,
+            '#format'   => $item->format ?? NULL,
+            '#langcode' => $item->getLangcode(),
+          ];
+        }
       }
 
-      $element = [
-        '#type'     => 'processed_text',
-        '#text'     => $item->value,
-        '#format'   => $item->format,
-        '#langcode' => $item->getLangcode(),
-      ];
-
-      $elements[] = $element;
+      yield $element;
     }
-    return $elements;
   }
 
   /**
@@ -109,14 +138,19 @@ class BlazyTextFormatter extends FormatterBase {
       'no_layouts'       => TRUE,
       'responsive_image' => FALSE,
       'style'            => TRUE,
+      'multiple'         => $this->isMultiple(),
     ];
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function isApplicable(FieldDefinitionInterface $field_definition) {
-    return $field_definition->getFieldStorageDefinition()->isMultiple();
+  protected function preSettings(array &$settings, $langcode): void {
+    $blazies = $settings['blazies'];
+
+    $blazies->set('is.unblazy', TRUE)
+      ->set('is.text', TRUE)
+      ->set('lazy', []);
   }
 
 }

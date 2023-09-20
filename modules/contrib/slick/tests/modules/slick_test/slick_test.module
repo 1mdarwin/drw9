@@ -35,7 +35,6 @@ function slick_test_library_info_alter(array &$libraries, $extension) {
           'weight' => -4,
         ],
       ];
-      unset($libraries['slick']['js']['/libraries/slick/slick/slick.min.js']);
     }
   }
 }

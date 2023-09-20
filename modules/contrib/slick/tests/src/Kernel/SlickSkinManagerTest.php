@@ -3,8 +3,8 @@
 namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
-use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 use Drupal\Tests\slick\Traits\SlickKernelTrait;
+use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 
 /**
  * Tests the Slick skin manager methods.

@@ -5,8 +5,18 @@ namespace Drupal\blazy\Views;
 use Drupal\Component\Utility\Html;
 use Drupal\views\Views;
 
+@trigger_error('The ' . __NAMESPACE__ . '\BlazyStyleOptionsTrait is deprecated in blazy:8.x-2.17 and is removed from blazy:8.x-3.0. Use \Drupal\blazy\Views\BlazyStylePluginBase instead. See https://www.drupal.org/node/3367304', E_USER_DEPRECATED);
+
 /**
  * A Trait common for optional views style plugins.
+ *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module. Please extend base classes intead.
+ *
+ * @deprecated in blazy:8.x-2.17 and is removed from blazy:8.x-3.0. Use
+ *   Drupal\blazy\Views\BlazyStylePluginBase instead.
+ * @see https://www.drupal.org/node/3367304
  */
 trait BlazyStyleOptionsTrait {
 
@@ -18,9 +28,9 @@ trait BlazyStyleOptionsTrait {
   protected $viewsOptions;
 
   /**
-   * {@inheritdoc}
+   * Returns available fields for select options.
    */
-  public function getDefinedFieldOptions(array $defined_options = []): array {
+  protected function getDefinedFieldOptions(array $defined_options = []): array {
     $field_names = $this->displayHandler->getFieldLabels();
     $definition = [];
     $stages = [
@@ -48,6 +58,7 @@ trait BlazyStyleOptionsTrait {
           case 'media_thumbnail':
           case 'intense':
           case 'responsive_image':
+          case 'svg_image_field_formatter':
           case 'video_embed_field_thumbnail':
           case 'video_embed_field_colorbox':
           case 'youtube_thumbnail':
@@ -77,7 +88,7 @@ trait BlazyStyleOptionsTrait {
           $options['classes'][$field] = $field_names[$field];
         }
 
-        // Alloes nested sliders.
+        // Allows nested sliders.
         $sliders = strpos($formatter, 'slick') !== FALSE
           || strpos($formatter, 'splide') !== FALSE;
         if ($sliders || in_array($formatter, $stages)) {
@@ -139,50 +150,9 @@ trait BlazyStyleOptionsTrait {
       'handler' => $this->displayHandler,
       'view' => $this->view,
     ];
-    $this->blazyManager->moduleHandler()->alter('blazy_views_field_options', $definition, $contexts);
+    $this->manager->moduleHandler()->alter('blazy_views_field_options', $definition, $contexts);
 
     return $definition;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFieldString($row, $field_name, $index, $clean = TRUE): array {
-    $values = [];
-
-    // Content title/List/Text, either as link or plain text.
-    if ($value = $this->getFieldValue($index, $field_name)) {
-      $value = is_array($value) ? array_filter($value) : $value;
-
-      // Entity reference label where the above $value can be term ID.
-      if ($markup = $this->getField($index, $field_name)) {
-        $value = is_object($markup) ? trim(strip_tags($markup->__toString()) ?: '') : $value;
-      }
-
-      if (is_string($value)) {
-        // Only respects tags with default CSV, just too much to worry about.
-        if (strpos($value, ',') !== FALSE) {
-          $tags = explode(',', $value);
-          $rendered_tags = [];
-          foreach ($tags as $tag) {
-            $tag = trim($tag);
-            $rendered_tags[] = $clean ? Html::cleanCssIdentifier(mb_strtolower($tag)) : $tag;
-          }
-          $values[$index] = implode(' ', $rendered_tags);
-        }
-        else {
-          $values[$index] = $clean ? Html::cleanCssIdentifier(mb_strtolower($value)) : $value;
-        }
-      }
-      else {
-        $value = $value[0]['value'] ?? '';
-        if ($value) {
-          $values[$index] = $clean ? Html::cleanCssIdentifier(mb_strtolower($value)) : $value;
-        }
-      }
-    }
-
-    return $values;
   }
 
   /**
@@ -195,11 +165,12 @@ trait BlazyStyleOptionsTrait {
       $options = [];
 
       // Convert list of objects to options for the form.
-      foreach (Views::getEnabledViews() as $view_name => $view) {
+      foreach (Views::getEnabledViews() as $name => $view) {
         foreach ($view->get('display') as $id => $display) {
           $valid = ($display['display_options']['style']['type'] ?? NULL) == $plugin;
           if ($valid) {
-            $options[$view_name . ':' . $id] = $view->label() . ' (' . $display['display_title'] . ')';
+            $label = $view->label() . ' (' . $display['display_title'] . ')';
+            $options[$name . ':' . $id] = Html::escape($label);
           }
         }
       }

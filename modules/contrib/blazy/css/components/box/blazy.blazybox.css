@@ -3,49 +3,97 @@
  * Provides fullscreen video view.
  */
 
+.blazybox,
+.blazybox *,
+.blazybox *::before,
+.blazybox *::after {
+  box-sizing: border-box;
+}
+
 .is-blazybox--open {
   overflow: hidden;
 }
 
 .blazybox,
 .blazybox__close {
-  background: #000;
-  background: rgba(0, 0, 0, .9);
   position: fixed;
+  background: #000;
+  background: rgba(0, 0, 0, 0.9);
 }
 
 .blazybox {
+  z-index: -1;
+  top: 0;
+  right: 0;
   bottom: 0;
   left: 0;
-  right: 0;
-  top: 0;
   width: 100%;
   height: 100%;
-  z-index: -1;
 }
 
 .is-blazybox--open .blazybox {
-  z-index: 1001;
+  z-index: 9999;
+}
+
+.blazybox__content {
+  position: relative;
+  width: inherit;
+  height: inherit;
+}
+
+.is-bbox--fs .blazybox__content {
+  height: 100vh;
 }
 
 .blazybox__close {
-  box-sizing: border-box;
-  border: 1px solid rgba(255, 255, 255, .8);
-  border-top: 0;
-  color: #fff;
-  display: block;
-  cursor: pointer;
-  font-size: 22px;
-  left: 50%;
+  z-index: 10000;
   top: 0;
-  transform: translateX(-50%);
+  left: 50%;
+  display: block;
+  box-sizing: border-box;
   width: 42px;
   height: 42px;
-  z-index: 1002;
+  cursor: pointer;
+  transform: translateX(-50%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-top: 0;
+  font-size: 22px;
 }
 
-.blazybox iframe,
-.blazybox .media--fullscreen {
-  height: 100vh;
-  width: 100%;
+.blazybox .blazybox__html,
+.blazybox .blazybox__media {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  max-width: 100%;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
+  max-height: 100%;
+  transform: translate(-50%, -50%);
 }
+
+.blazybox.b-provider--twitter {
+  min-height: 402px;
+}
+
+.blazybox.b-provider--pinterest {
+  min-height: 416px;
+}
+
+.blazybox.b-provider--instagram {
+  min-height: 580px;
+}
+
+/*
+.blazybox .media,
+.blazybox .media__element,
+.blazybox iframe,
+.blazybox audio,
+.blazybox video {
+  margin: auto;
+  object-fit: cover;
+  max-height: 100%;
+  max-width: 100%;
+}
+*/

@@ -56,6 +56,8 @@ slashes, single and double quotes:</p>
   <li><code>[slide]</code> can have attributes, including <code>caption</code>,
   e.g.: <br>
   <code>[slide class="slide--custom-class" caption='Read more...']</code>.</li>
+  <li>To disable thumbnail/ text navigation add <code>nav="false"</code>:
+  <code>[slick nav="false"]</code>.</li>
   <li>Except for self-closing one-liner <code>data</code> attribute, be sure
   slide items are stacked, separated by line breaks, or any relevant HTML tags,
   and wrapped each with <code>[slide]</code>:<br>

@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\blazy\Kernel;
 
-use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 use Drupal\Tests\blazy\Traits\BlazyKernelTestTrait;
+use Drupal\Tests\field\Kernel\FieldKernelTestBase;
 
 /**
  * Defines base class for the Blazy formatter tests.
