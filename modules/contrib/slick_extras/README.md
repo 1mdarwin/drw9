@@ -11,15 +11,17 @@ yours, and use it to learn how to make the most out of Slick module.
 This module will be updated at times to reflect the best shot Slick can give,
 so it may not keep your particular use.
 
+## <a name="first"> </a>FIRST THINGS FIRST!
+Read more at:
+* [Github](https://git.drupalcode.org/project/blazy/-/blob/8.x-2.x/docs/README.md#first-things-first)
+* [Blazy UI](/admin/help/blazy_ui#first)
+
 ## REQUIREMENTS
 
-* [Blazy](https://www.drupal.org/project/blazy) (any 8.x branch)
-* [Slick](https://www.drupal.org/project/slick) (any 8.x branch)
-* [Slick Views](https://www.drupal.org/project/slick_views) (any 8.x branch)
+* [Blazy](https://www.drupal.org/project/blazy) (2.17+)
+* [Slick](https://www.drupal.org/project/slick) (2.10+)
+* [Slick Views](https://www.drupal.org/project/slick_views) (2.8+)
 * field_image and field_images, see INSTALLATION.
-
-Branch 2.x forward is always recommended.
-
 
 ## INSTALLATION
 
@@ -231,7 +233,7 @@ To create Slick grid or multiple rows carousel, there are 3 options:
    slidesToShow, Rows and slidesPerRow = 1.
 
 The first 2 are supported by core library using pure JS approach.
-The last is the Module feature using pure CSS Foundation block-grid. The key is:
+The last is the Module feature using pure CSS Foundation b-grid. The key is:
 the total amount of Views results must be bigger than Visible slides, otherwise
 broken Grid, see skin Grid above for more details.
 
@@ -263,12 +265,12 @@ at production if you forget to uninstall though.
 
 See the project page at drupal.org:
 
-[Slick Extras](http://drupal.org/project/slick_extras)
+[Slick Extras](https://drupal.org/project/slick_extras)
 
 More info relevant to each option is available at their form display by hovering
 over them, and click a dark question mark.
 
 See the Slick docs at:
 
-* [Slick website](http://kenwheeler.github.io/slick/)
+* [Slick website](https://kenwheeler.github.io/slick/)
 * [Slick at Github](https://github.com/kenwheeler/slick/)

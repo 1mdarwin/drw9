@@ -3,7 +3,6 @@
 namespace Drupal\slick_example\Plugin\slick;
 
 use Drupal\slick\SlickSkinPluginBase;
-use Drupal\slick_example\SlickExampleSkinTrait;
 
 /**
  * Provides slick example skins.
@@ -15,15 +14,28 @@ use Drupal\slick_example\SlickExampleSkinTrait;
  */
 class SlickExampleSkin extends SlickSkinPluginBase {
 
-  use SlickExampleSkinTrait;
-
   /**
    * Sets the slick skins.
    *
    * @inheritdoc
    */
   protected function setSkins() {
-    return $this->definedSkins();
+    $path  = $this->getPath('module', 'slick_example');
+    $skins = [
+      'x_testimonial' => [
+        'name' => 'X: Testimonial',
+        'description' => $this->t('Testimonial with thumbnail and description with slidesToShow 2.'),
+        'group' => 'main',
+        'provider' => 'slick_example',
+        'css' => [
+          'theme' => [
+            $path . '/css/slick.theme--x-testimonial.css' => [],
+          ],
+        ],
+      ],
+    ];
+
+    return $skins;
   }
 
 }
