@@ -4,16 +4,16 @@
  */
 
 .slick .slick-dots--thumbnail-grid {
+  position: relative;
   bottom: 0;
   padding: 15px 0;
-  position: relative;
 }
 
 .slick .slick-dots--thumbnail-grid li {
   display: inline-block;
+  width: 120px;
   height: auto;
   vertical-align: top;
-  width: 120px;
 }
 
 .slick .slick-dots--thumbnail-grid button {
@@ -22,16 +22,16 @@
 }
 
 .slick .slick-dots--thumbnail-grid img {
-  border: 2px solid transparent;
   -webkit-transition: 0.3s;
   transition: 0.3s;
+  border: 2px solid transparent;
 }
 
 .slick .slick-dots--thumbnail-grid li:hover img,
 .slick .slick-dots--thumbnail-grid .slick-active img {
-  border-color: #ff6d2c;
   -webkit-transition-delay: 0s;
   transition-delay: 0s;
+  border-color: #ff6d2c;
 }
 
 /**

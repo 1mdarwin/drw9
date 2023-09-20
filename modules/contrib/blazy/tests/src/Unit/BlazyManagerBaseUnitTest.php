@@ -3,9 +3,9 @@
 namespace Drupal\Tests\blazy\Unit;
 
 use Drupal\blazy\BlazyManager;
-use Drupal\Tests\UnitTestCase;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -46,6 +46,7 @@ class BlazyManagerBaseUnitTest extends UnitTestCase {
       ['language_manager', $exception, $this->languageManager],
     ];
 
+    /* @phpstan-ignore-next-line */
     $container->expects($this->any())
       ->method('get')
       ->willReturnMap($map);

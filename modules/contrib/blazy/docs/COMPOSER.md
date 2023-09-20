@@ -58,16 +58,14 @@ Normally unwanted trailing commas.
 
 4. Then require any libraries as usual only prefixed with `npm-asset`, or
    `bower-asset` (deprecated). The versions must be re-checked, just samples:
-   + Install [Blazy](https://www.drupal.org/project/blazy):
-     `composer require npm-asset/blazy:^1.8.2` <= not required since Blazy 2.6.
    + If using [Slick](https://www.drupal.org/project/slick), the namespace is
      `slick-carousel`, not `slick`. The supported versions are `1.6.0 - 1.8.0`,
      not `1.8.1` up, use exact numbers:
-     `composer require npm-asset/slick-carousel:1.8.0`
+     * `composer require npm-asset/slick-carousel:1.8.0`
    + If using [Splide](https://www.drupal.org/project/splide):
-     `composer require npm-asset/splidejs--splide:^4`
+     * `composer require npm-asset/splidejs--splide:^4`
    + If using Colorbox, verify the latest supported version:
-     `composer require npm-asset/jquery-colorbox:^1.6.4`
+     * `composer require npm-asset/jquery-colorbox:^1.6.4`
    + etc.
 
    Or run them once:  
@@ -76,3 +74,8 @@ Normally unwanted trailing commas.
 
 5. To update:  
    `composer update --with-dependencies`
+
+### Warning!
+To avoid potential security issues, please only install the `dist` directory, if
+any, or only the required files, and not any other files from the archive. Check
+out the relevant module project requirements for the exact needed files.

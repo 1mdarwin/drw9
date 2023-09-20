@@ -3,8 +3,8 @@
 namespace Drupal\blazy\Controller;
 
 use Drupal\Core\Config\Entity\DraggableListBuilder;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Provides a listing of entity optionsets.

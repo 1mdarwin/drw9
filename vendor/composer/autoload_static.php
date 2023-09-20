@@ -142,6 +142,7 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
             'GuzzleHttp\\Psr7\\' => 16,
             'GuzzleHttp\\Promise\\' => 19,
             'GuzzleHttp\\' => 11,
+            'Grasmash\\YamlExpander\\' => 22,
             'Grasmash\\Expander\\' => 18,
         ),
         'E' => 
@@ -429,6 +430,10 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         'GuzzleHttp\\' => 
         array (
             0 => __DIR__ . '/..' . '/guzzlehttp/guzzle/src',
+        ),
+        'Grasmash\\YamlExpander\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/grasmash/yaml-expander/src',
         ),
         'Grasmash\\Expander\\' => 
         array (

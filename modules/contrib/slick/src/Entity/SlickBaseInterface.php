@@ -25,7 +25,7 @@ interface SlickBaseInterface extends ConfigEntityInterface {
   /**
    * Returns the array of slick settings.
    *
-   * @param string $ansich
+   * @param bool $ansich
    *   Whether to return the settings as is.
    *
    * @return array
@@ -45,15 +45,17 @@ interface SlickBaseInterface extends ConfigEntityInterface {
   public function setSettings(array $settings = []);
 
   /**
-   * Returns the value of a slick setting.
+   * Returns the value of a setting.
    *
-   * @param string $setting_name
+   * @param string $name
    *   The setting name.
+   * @param bool|string|null $default
+   *   The default value.
    *
    * @return mixed
    *   The setting value.
    */
-  public function getSetting($setting_name);
+  public function getSetting($name, $default = NULL);
 
   /**
    * Sets the value of a slick setting.
@@ -67,16 +69,5 @@ interface SlickBaseInterface extends ConfigEntityInterface {
    *   The class instance that this method is called on.
    */
   public function setSetting($setting_name, $value);
-
-  /**
-   * Returns available slick default options under group 'settings'.
-   *
-   * @param string $group
-   *   The name of group: settings, responsives.
-   *
-   * @return array
-   *   The default settings under options.
-   */
-  public static function defaultSettings($group = 'settings');
 
 }

@@ -2,7 +2,9 @@
 
 namespace Drupal\blazy\Traits;
 
-use Drupal\blazy\BlazySettings;
+use Drupal\blazy\Blazy;
+use Drupal\blazy\internals\Internals;
+use Drupal\blazy\Utility\Arrays;
 
 /**
  * A Trait for plugins, common for Blazy, Splide, Slick, etc.
@@ -14,37 +16,42 @@ use Drupal\blazy\BlazySettings;
 trait PluginScopesTrait {
 
   /**
-   * The form element scopes.
-   *
-   * @var array
-   */
-  protected $scopes = [];
-
-  /**
    * Converts old plugin scopes array into BlazySettings object to interop.
    */
-  protected function toPluginScopes(array $scopes = []): BlazySettings {
-    $definitions = [];
+  protected function toPluginScopes(array $scopes = []) {
+    $definitions = $current = [];
 
     if (empty($scopes)) {
-      return new BlazySettings($definitions);
+      return Internals::settings($definitions);
     }
 
+    // Allows to merge at admin level for consistent sane method uses.
     if (isset($scopes['scopes'])) {
-      $this->scopes = $scopes['scopes']->storage();
-    }
-    if ($this->scopes) {
-      $scopes = array_merge($this->scopes, $scopes);
-    }
-    else {
-      $this->scopes = $scopes;
+      $current = $scopes['scopes']->storage();
+      unset($scopes['scopes']);
     }
 
-    foreach ($scopes as $key => $value) {
+    $current = Arrays::merge($scopes, $current);
+
+    // Excludes unique keys out of scopes at admin form level.
+    foreach (['blazies', 'settings'] as $key) {
+      if (isset($current[$key])) {
+        unset($current[$key]);
+      }
+    }
+
+    foreach ($current as $key => $value) {
+      // All array values are grouped inside `data key`.
       if (is_array($value)) {
+        // Do not put duplicate keys into $data, already processed below.
+        if (in_array($key, ['data', 'entity', 'field', 'form', 'is'])) {
+          continue;
+        }
+
         $data[$key] = $value;
-        if (isset($scopes['data'])) {
-          $definitions['data'] = array_merge($scopes['data'], $data);
+
+        if (isset($current['data'])) {
+          $definitions['data'] = Arrays::merge($data, $current['data']);
         }
         else {
           $definitions['data'] = $data;
@@ -52,16 +59,27 @@ trait PluginScopesTrait {
       }
       else {
         if (is_bool($value)) {
-          $group = strpos($key, '_form') === FALSE ? 'use' : 'form';
+          $group = Blazy::has($key, '_form') ? 'form' : 'is';
           $key = str_replace('_form', '', $key);
           $definitions[$group][$key] = $value;
         }
         else {
-          $definitions[$key] = $value;
+          // @todo recheck and remove for blazies: field, and entity.
+          if (Blazy::has($key, 'field_')) {
+            $key = str_replace('field_', '', $key);
+            $definitions['field'][$key] = $value;
+          }
+          elseif (Blazy::has($key, 'entity_')) {
+            $key = str_replace('entity_', '', $key);
+            $definitions['entity'][$key] = $value;
+          }
+          else {
+            $definitions[$key] = $value;
+          }
         }
       }
     }
-    return new BlazySettings($definitions);
+    return Internals::settings($definitions);
   }
 
   /**
@@ -72,7 +90,6 @@ trait PluginScopesTrait {
       $id = 'blazy';
 
       $blazies->set('item.id', $id)
-        ->set('is.blazy', TRUE)
         ->set('lazy.id', $id)
         ->set('namespace', $id);
     }

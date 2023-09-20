@@ -7,7 +7,7 @@ namespace Drupal\blazy\Plugin\Field\FieldFormatter;
  *
  * @FieldFormatter(
  *   id = "blazy",
- *   label = @Translation("Blazy"),
+ *   label = @Translation("Blazy Image"),
  *   field_types = {"image"}
  * )
  */

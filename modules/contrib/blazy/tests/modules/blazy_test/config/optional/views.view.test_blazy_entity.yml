@@ -85,7 +85,6 @@ display:
           class: ''
           id: ''
           cache: 0
-          current_view_mode: default
       row:
         type: fields
         options:

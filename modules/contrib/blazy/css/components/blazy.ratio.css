@@ -12,19 +12,19 @@
  * not possible using ::pseudo selector approach.
  */
 .media.media--ratio {
+  position: relative;
   display: block;
-  height: 0;
+  overflow: hidden;
+  width: 100%;
   /* Fixed for overflowing video with hard-coded width like lightboxes. */
   max-width: 100%;
+  height: 0;
   min-height: 1px;
-  overflow: hidden;
-  position: relative;
-  width: 100%;
 }
 
 /* Trying to be nice to minimize abrupt changes. */
 .media--ratio.is-b-loaded {
-  transition: padding-bottom .2s;
+  transition: padding-bottom 0.2s;
 }
 
 /* 1:1 ratio */

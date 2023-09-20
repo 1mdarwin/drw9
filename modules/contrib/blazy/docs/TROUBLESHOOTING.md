@@ -1,15 +1,20 @@
 
 ***
 ## <a name="troubleshooting"></a>TROUBLESHOOTING
+* Masonry (Flexbox and or Native Grid) are messed up, try uninstalling BigPipe.
+  Before 2.7, we tried hard to be BigPipe-compatible, but it broke things like
+  Masonry on infinite pager VIS/ IO, etc. Not always, but applicable if any
+  other BigPipe-related JS/ CSS issues as seen at Slick/ Splide, etc. 
 * Any javascript-related issues might no longer be valid when
   `No JavaScript lazy` enabled. Unless the exceptions, things that Native
   doesn't support (Blur, BG, Video, etc.) are met, or for those who still
   support old IEs, and cannot ditch lazyloader script, yet.
-* Switch to core Bartik for a mo, in case your custom theme is the culprit.
+* Switch to core themes for a mo, in case your custom theme is the culprit.
 * Blazy and its sub-modules -- Slick, GridStack, etc. are tightly coupled.
   Be sure to have the latest release date or matching versions in the least.
   DEV for DEV, Beta for Beta, etc. Mismatched versions may lead to errors
-  especially before having RCs. Mismatched branches will surely be errors.
+  especially before having RCs. Mismatched branches will surely be errors,
+  unless clearly declared as supported or required.
 * Resizing is not supported. Just reload the page. **The main reason**:
   When being resized, the browser gave no data about pixel ratio from desktop
   to mobile, not vice versa. Unless delayed for 4s+, not less, which is of
@@ -22,19 +27,19 @@
 * Images are distorted. Solution: choose the correct Aspect ratio. If unsure,
   choose "fluid" to let the module calculate aspect ratio automatically.
 
-  [Check out few aspect ratio samples](https://cgit.drupalcode.org/blazy/tree/docs/ASPECT_RATIO.md)
+  [Check out few aspect ratio samples](https://git.drupalcode.org/project/blazy/tree/docs/ASPECT_RATIO.md)
 
 
 ### 1. JavaScript Errors
 Any references to bLazy library is no longer required for forked version at 2.6.  
 **Symptons**:  
-Blazy is not defined. Images are gone, only eternal blue loader is
-flipping like a drunk butterfly.
+Blazy is not defined. Images are gone, only eternal blue loader is flipping like
+a drunk butterfly.
 
 **Solution**:  
-Ensure that no extras errors. Steps:  
+Ensure that there are no extra errors. Steps:  
 
-* Switch to core Bartik for a moment in case your theme is the culprit. Any
+* Switch to core themes for a moment in case your theme is the culprit. Any
   theme JS errors might break Blazy. Press F12 at browsers to fix them one by
   one.
 * Try disabling `Disconnect` option under IO.  
@@ -55,7 +60,7 @@ Non-floating image parent containers aren't affected.
 ### 4. MIN-HEIGHT
 Add a min-height CSS to individual element to avoid layout reflow if not using
 **Aspect ratio** or when **Aspect ratio** is not supported such as with
-Responsive image. Otherwise some collapsed image containers will defeat the
+Native Grid, etc. Otherwise some collapsed image containers will defeat the
 purpose of lazyloading. When using CSS background, the container may also be
 collapsed.
 
@@ -85,8 +90,8 @@ exceptions, things that Native doesn't support (Blur, BG, Video, etc.) are met.
 * **IntersectionObserver API** is not loading all images, try disabling
   **Disconnect** option at Blazy UI.
 * **IntersectionObserver API** is not working with Slick `slidesToShow > 1`, try
-  disabling Slick `centerMode`. If still failing, choose one of the 4 lazy
-  load options, except Blazy.
+  disabling Slick `centerMode`. If still failing, choose `slider` or `unlazy`
+  under `Loading priority` formatter option.
 
 **FYI:**
 IO is also used for infinite pager and lazyloaded blocks like seen at IO.module.
@@ -110,14 +115,51 @@ slice, whatever.
 
 **Limitations**:
 Currently only works with a proper `Aspect ratio` as otherwise collapsed image.
-Be sure to add one. If not, add regular CSS `width: 100%` to the blurred
-image if doable with your design.
+Be sure to add one. If not, add regular CSS `width: 100%` and `min-height` to
+the blurred image if doable with your design.
 
-### 8. ASPECT RATIO
+### <a name="aspect-ratio"></a> 8. ASPECT RATIO
+**UPDATE 18/07/2023**:
+Aspect ratio **Fluid** will now calculate dimensions to match the fixed ones
+(1:1, 2:3, etc.) automatically to avoid JS works specific for non-responsive
+images. Useful if you are not sure. To add more aspect ratios:
++ Set yours via `blazies` object in the `hook_blazy_settings_alter`, like so:
+
+  ``$blazies->set('css.ratio', ['7:8', '6:5'], TRUE);``
+
+  The `TRUE` flag ensures to append, not nullify the existing ones:
+  ``['1:1', '3:2', '4:3', '8:5', '16:9']``  
+  See `blazy.api.php` for the available `hook_alter`.
++ Add the relevant CSS rules in your theme CSS using the convention as seen at
+  `css/components/blazy.ratio.css`.
++ Create image styles that stick to some aspect ratios you defined:
+  * `/admin/config/media/image-styles`
+  * `/admin/help/blazy_ui#aspect-ratio-template`
+
+
+Relevant to make aspect ratio `Fluid` option prioritize these ratios for pure
+CSS, and not using JavaScript. Only if a matching aspect ratio is found.
+None of these options, other than defaults, will be visible at admin forms.
+However they will be automatically picked up if matches are found.
+
+#### What is the fuss about aspect ratio?
+Aspect ratio fixes many issues with lazyloaded elements -- collapsed, distorted,
+excessive height, layout reflow, etc., including making iframe fully responsive.
+However it doesn't fix everything. Please bear with it.
+
+**If you have display issues, the correct Aspect ratio is your first best bet.**
+
+Depending on your particular issue, **enable or disable**, either way, is your
+potential solution. One good sample when Aspect ratio makes no sense is
+GridStack gapless grids, or Blazy `Native Grid`. Image sizes, hence aspect
+ratio, cannot be applied to gapless grids. Aspect ratio is based on image sizes,
+not grid sizes. The Native lazy load might not need aspect ratios, either,
+except for iframes so to be responsive without installing jQuery fitVids, etc.
+
 **UPDATE 05/02/2020**:
 Blazy RC7+ is 99% integrated with Responsive image, including
 CSS background and the notorious aspect ratio **Fluid**. The remaining 1% is
-some unknown glicthes.
+some unknown glitches.
 
 Aspect ratio was never supported for Responsive image till Blazy 2.rc7+, <s>not
 fully though. One remaining issue is to make Aspect ratio `Fluid` work for:
@@ -133,22 +175,11 @@ choose anything but `Fluid`.</s>
 
 Any **fixed** Aspect ratio (`4:3, 16:9`, etc), but `Fluid`, wants consistent
 aspect ratio down to mobile, which means it won't work with art direction
-technique, or Picture element. [Check out few aspect ratio samples](https://cgit.drupalcode.org/blazy/tree/docs/ASPECT_RATIO.md)
+technique, or Picture element. [Check out few aspect ratio samples](https://git.drupalcode.org/project/blazy/tree/docs/ASPECT_RATIO.md)
 
 Temporary workaround is to add regular CSS `width: 100%` to the controlling
 image if doable with your design. And a `min-height` per breakpoint via CSS
 mediaqueries.
-
-Aspect ratio fixes many issues with lazyloaded element -- collapsed, distorted,
-excessive height, layout reflow, etc., including making iframe fully responsive.
-However it doesn't fix everything. Please bear with it.
-
-**If you have display issues, the correct Aspect ratio is your first best bet.**
-
-Depending on your particular issue, **enable or disable**, either way, is your
-potential solution. One good sample when Aspect ratio makes no sense is
-GridStack gapless grids. Image sizes, hence Aspect ratio, cannot be applied
-to gapless grids. Aspect ratio is based on image sizes, not grid sizes.
 
 
 ### 9. BLAZY WITHIN SCROLLING CONTAINER DOES NOT LOAD
@@ -194,19 +225,26 @@ If confusing, just toggle **Use field template**, and see the output. You'll
 know which works.
 
 ### 12. NATIVE GRID MASONRY
-Q: The native grid masonry (_Display style_: native Grid, _Grid large_: any
-   single number) doesn't have correct bottom gaps?  
+Q: _One dimensional vs. two-dimensional native grids?_  
+A: Under **Display style**, choose **Native Grid**. Under **Grid large** option,
+   input any single grid column numbers, or input `WIDTHxHEIGHT` pairs.
+   + The native grid masonry is a two-dimensional grid made one dimensional,
+     which can be enabled by inputting any single number (2, 3, 4, etc.).
+   + To have a two-dimensional grid, input any space delimited `WIDTHxHEIGHT`
+     pairs, e.g.: `4x4 4x3 2x2 2x4 2x2 2x3 2x3 4x2 4x2`, or any combinations.
+
+Q: _The native grid masonry doesn't have correct bottom gaps?_  
 A: It does. Your eyes are likely being tricked. **Solutions**:  
 
    * Try adding background color to `.grid__content`. Notice even gaps. The
      problem is inner divities do not have 100%. Read more below.
    * If image and applicable, enable `CSS background` using Blazy formatter.
      If using Views, remove extra useless DIVs under `Style settings` by setting
-     them all to `None` and keep them with caution. And uncheck
+     them all to `None` and or keep them with caution. And uncheck
      `Provide default field wrapper elements` under ` Show: Fields Settings`.
      So that Blazy `CSS background` fills in the gaps. Try `Aspect ratio: Fluid`
      to minimize reflow in case useful here.
-   * If not or still an issue, manually adjust the image and the inner DIVs of
+   * If not, or still an issue, manually adjust the image and the inner DIVs of
      `.grid__content` heights to 100%.
    * For text contents, having light background color is enough.
    * Add enough min-height per breakpoint to the grid root container. See
@@ -219,6 +257,12 @@ Images does not load within hidden tabs, or other hidden containers:
 
 * `/admin/config/media/blazy`  
 * Enable `Load invisible` option.  
+* Specific for `Responsive image` within lightboxes under option
+  `Lightbox image style`, be sure to not use `-empty image-` option under
+  `Fallback image style`, edit them at
+  [/admin/config/media/responsive-image-style](/admin/config/media/responsive-image-style)
+  The reason, lightbox full size images are never lazy loaded by Blazy due to
+  lightbox library requirements. Lightboxes are another kind of lazy loadings.
 
 Only an issue with old bLazy, not IO, AFAIK. Other than that, be sure to read
 back the topmost troubleshooting section.

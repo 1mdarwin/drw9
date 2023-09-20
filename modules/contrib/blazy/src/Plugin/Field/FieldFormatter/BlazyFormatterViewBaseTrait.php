@@ -28,32 +28,51 @@ trait BlazyFormatterViewBaseTrait {
 
     // Collects specific settings to this formatter.
     $defaults = $this->buildSettings();
-    $settings = $settings ? array_merge($defaults, $settings) : $defaults;
+    $settings = $this->formatter->merge($settings, $defaults);
 
+    // Internal overrides before enough data is populated below.
     $this->preSettings($settings, $langcode);
 
+    // BlazyFormatter::buildSettings() contains media, irrelevant for texts.
+    // @todo move it into ::minimalSettings().
+    $this->formatter->fieldSettings($settings, $items);
+
+    // Ensures grids are respected in the least.
+    $this->formatter->minimalSettings($settings, $items);
+
+    // Internal overrides after enough data is populated above.
+    $this->postSettings($settings, $langcode);
+
     // Build the settings.
-    $build = ['settings' => $settings];
+    $build = ['#settings' => $settings, '#langcode' => $langcode];
 
-    // @todo re-check if to call BlazyFormatter::buildSettings() instead.
-    $this->formatter->fieldSettings($build, $items);
+    // Build the elements, and satisfy phpstan.
+    if (method_exists($this, 'buildElements')) {
+      // @todo remove $langcode at 3.x:
+      $this->buildElements($build, $items, $langcode);
+    }
 
-    // Build the elements.
-    $this->buildElements($build, $items, $langcode);
-
-    // Pass to manager for easy updates to all Blazy ecosystem formatters.
-    $output = $this->manager->build($build);
+    // Pass to manager for easy updates to all ecosystem formatters.
+    $output   = $this->manager->build($build);
+    $settings = $this->manager->toHashtag($build);
 
     // Return without field markup, if not so configured, else field.html.twig.
-    return empty($build['settings']['use_theme_field']) ? $output : [$output];
+    return empty($settings['use_theme_field']) ? $output : [$output];
   }
 
   /**
    * Prepare the settings, allows sub-modules to re-use and override.
    */
-  protected function preSettings(array &$settings, $langcode = NULL): void {
+  protected function preSettings(array &$settings, $langcode): void {
     $blazies = $settings['blazies'];
     $blazies->set('language.code', $langcode);
+  }
+
+  /**
+   * Overrides the settings, allows sub-modules to re-use and override.
+   */
+  protected function postSettings(array &$settings, $langcode): void {
+    // Do nothing.
   }
 
 }

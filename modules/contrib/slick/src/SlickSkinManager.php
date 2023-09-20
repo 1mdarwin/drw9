@@ -3,6 +3,7 @@
 namespace Drupal\slick;
 
 use Drupal\Component\Plugin\Mapper\MapperInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheBackendInterface;
@@ -22,7 +23,7 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   /**
    * The app root.
    *
-   * @var \SplString
+   * @var string
    */
   protected $root;
 
@@ -57,14 +58,14 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   /**
    * The easing library path.
    *
-   * @var string|bool
+   * @var string
    */
   protected $easingPath;
 
   /**
    * The slick library path.
    *
-   * @var string|bool
+   * @var string
    */
   protected $slickPath;
 
@@ -76,10 +77,29 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   protected $isBreaking;
 
   /**
+   * The skin methods.
+   *
+   * @var array
+   */
+  protected static $methods = ['skins', 'arrows', 'dots'];
+
+  /**
    * {@inheritdoc}
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, $root, ConfigFactoryInterface $config) {
-    parent::__construct('Plugin/slick', $namespaces, $module_handler, SlickSkinPluginInterface::class, 'Drupal\slick\Annotation\SlickSkin');
+  public function __construct(
+    \Traversable $namespaces,
+    CacheBackendInterface $cache_backend,
+    ModuleHandlerInterface $module_handler,
+    $root,
+    ConfigFactoryInterface $config
+  ) {
+    parent::__construct(
+      'Plugin/slick',
+      $namespaces,
+      $module_handler,
+      SlickSkinPluginInterface::class,
+      'Drupal\slick\Annotation\SlickSkin'
+    );
 
     $this->root = $root;
     $this->config = $config;
@@ -89,9 +109,105 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   }
 
   /**
-   * Returns the supported skins.
+   * {@inheritdoc}
    */
-  public function getConstantSkins() {
+  public function getCache() {
+    return $this->cacheBackend;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function root() {
+    return $this->root;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function attach(array &$load, array $attach, $blazies = NULL): void {
+    $blazies = $blazies ?: $attach['blazies'] ?? NULL;
+    if ($blazies && !$blazies->is('unlazy')) {
+      $load['library'][] = 'blazy/loading';
+    }
+
+    // Load optional easing library.
+    if ($this->getEasingPath()) {
+      $load['library'][] = 'slick/slick.easing';
+    }
+
+    if (!empty($attach['_vanilla'])) {
+      $load['library'][] = 'slick/vanilla';
+    }
+
+    // Allows Slick initializer to be disabled by a special flag _unload.
+    if (empty($attach['_unload'])) {
+      $load['library'][] = 'slick/slick.load';
+    }
+    else {
+      if ($this->config('slick_css')) {
+        $load['library'][] = 'slick/slick.css';
+      }
+    }
+
+    foreach (['colorbox', 'mousewheel'] as $component) {
+      if (!empty($attach[$component])) {
+        $load['library'][] = 'slick/slick.' . $component;
+      }
+    }
+
+    if (!empty($attach['skin'])) {
+      $this->attachSkin($load, $attach, $blazies);
+    }
+
+    // Attach default JS settings to allow responsive displays have a lookup,
+    // excluding wasted/trouble options, e.g.: PHP string vs JS object.
+    $excludes = explode(' ', 'mobileFirst appendArrows appendDots asNavFor prevArrow nextArrow respondTo pauseIcon playIcon');
+    $excludes = array_combine($excludes, $excludes);
+    $load['drupalSettings']['slick'] = array_diff_key(Slick::defaultSettings(), $excludes);
+  }
+
+  /**
+   * Provides skins only if required.
+   */
+  public function attachSkin(array &$load, array $attach, $blazies = NULL): void {
+    if ($this->config('slick_css')) {
+      $load['library'][] = 'slick/slick.css';
+    }
+
+    if ($this->config('module_css', 'slick.settings')) {
+      $load['library'][] = 'slick/slick.theme';
+    }
+
+    if (!empty($attach['thumbnail_effect'])) {
+      $load['library'][] = 'slick/slick.thumbnail.' . $attach['thumbnail_effect'];
+    }
+
+    if (!empty($attach['down_arrow'])) {
+      $load['library'][] = 'slick/slick.arrow.down';
+    }
+
+    foreach ($this->getConstantSkins() as $group) {
+      $skin = $group == 'main' ? $attach['skin'] : ($attach['skin_' . $group] ?? '');
+      if (!empty($skin)) {
+        $skins = $this->getSkinsByGroup($group);
+        $provider = $skins[$skin]['provider'] ?? 'slick';
+        $load['library'][] = 'slick/' . $provider . '.' . $group . '.' . $skin;
+      }
+    }
+  }
+
+  /**
+   * Returns slick config shortcut.
+   */
+  public function config($key = '', $settings = 'slick.settings') {
+    return $this->config->get($settings)->get($key);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getConstantSkins(): array {
     return [
       'browser',
       'lightbox',
@@ -105,37 +221,39 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   }
 
   /**
-   * Returns slick config shortcut.
+   * {@inheritdoc}
    */
-  public function config($key = '', $settings = 'slick.settings') {
-    return $this->config->get($settings)->get($key);
-  }
+  public function getEasingPath(): ?string {
+    if (!isset($this->easingPath)) {
+      $path = NULL;
+      if ($manager = self::service('slick.manager')) {
+        $easings = ['easing', 'jquery.easing'];
 
-  /**
-   * Returns cache backend service.
-   */
-  public function getCache() {
-    return $this->cacheBackend;
-  }
+        if ($check = $manager->getLibrariesPath($easings)) {
+          $path = $check . '/jquery.easing.min.js';
+          // Composer via bower-asset puts the library within `js` directory.
+          if (!is_file($this->root . '/' . $path)) {
+            $path = $check . '/js/jquery.easing.min.js';
+          }
+        }
+      }
 
-  /**
-   * Returns app root.
-   */
-  public function root() {
-    return $this->root;
+      $this->easingPath = $path;
+    }
+    return $this->easingPath;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function load($plugin_id) {
+  public function load($plugin_id): SlickSkinPluginInterface {
     return $this->createInstance($plugin_id);
   }
 
   /**
    * {@inheritdoc}
    */
-  public function loadMultiple() {
+  public function loadMultiple(): array {
     $skins = [];
     foreach ($this->getDefinitions() as $definition) {
       array_push($skins, $this->createInstance($definition['id']));
@@ -144,17 +262,18 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   }
 
   /**
-   * Returns slick skins registered via SlickSkin plugin and or defaults.
+   * {@inheritdoc}
    */
-  public function getSkins() {
+  public function getSkins(): array {
     if (!isset($this->skinDefinition)) {
       $cid = 'slick_skins_data';
+      $cache = $this->cacheBackend->get($cid);
 
-      if ($cache = $this->cacheBackend->get($cid)) {
-        $this->skinDefinition = $cache->data;
+      if ($cache && $data = $cache->data) {
+        $this->skinDefinition = $data;
       }
       else {
-        $methods = ['skins', 'arrows', 'dots'];
+        $methods = static::$methods;
         $skins = $items = [];
         foreach ($this->loadMultiple() as $skin) {
           foreach ($methods as $method) {
@@ -178,20 +297,21 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         $this->skinDefinition = $skins;
       }
     }
-    return $this->skinDefinition;
+    return $this->skinDefinition ?: [];
   }
 
   /**
-   * Returns available slick skins by group.
+   * {@inheritdoc}
    */
-  public function getSkinsByGroup($group = '', $option = FALSE) {
+  public function getSkinsByGroup($group = '', $option = FALSE): array {
     if (!isset($this->skinsByGroup[$group])) {
       $skins         = $groups = $ungroups = [];
       $nav_skins     = in_array($group, ['arrows', 'dots']);
       $defined_skins = $nav_skins ? $this->getSkins()[$group] : $this->getSkins()['skins'];
 
       foreach ($defined_skins as $skin => $properties) {
-        $item = $option ? strip_tags($properties['name']) : $properties;
+        $name = $properties['name'] ?? 'x';
+        $item = $option ? Html::escape($name) : $properties;
         if (!empty($group)) {
           if (isset($properties['group'])) {
             if ($properties['group'] != $group) {
@@ -211,9 +331,9 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   }
 
   /**
-   * Implements hook_library_info_build().
+   * {@inheritdoc}
    */
-  public function libraryInfoBuild() {
+  public function libraryInfoBuild(): array {
     if (!isset($this->libraryInfoBuild)) {
       if ($this->config('library') == 'accessible-slick') {
         $libraries['slick.css'] = [
@@ -253,128 +373,33 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
   }
 
   /**
-   * Provides slick skins and libraries.
+   * {@inheritdoc}
    */
-  public function attach(array &$load, array $attach = []) {
-    if (!empty($attach['lazy'])) {
-      $load['library'][] = 'blazy/loading';
-    }
-
-    // Load optional easing library.
-    if ($this->getEasingPath()) {
-      $load['library'][] = 'slick/slick.easing';
-    }
-
-    if (!empty($attach['_vanilla'])) {
-      $load['library'][] = 'slick/vanilla';
-    }
-
-    // Allows Slick initializer to be disabled by a special flag _unload.
-    if (empty($attach['_unload'])) {
-      $load['library'][] = 'slick/slick.load';
-    }
-    else {
-      if ($this->config('slick_css')) {
-        $load['library'][] = 'slick/slick.css';
-      }
-    }
-
-    foreach (['colorbox', 'mousewheel'] as $component) {
-      if (!empty($attach[$component])) {
-        $load['library'][] = 'slick/slick.' . $component;
-      }
-    }
-
-    if (!empty($attach['skin'])) {
-      $this->attachSkin($load, $attach);
-    }
-
-    // Attach default JS settings to allow responsive displays have a lookup,
-    // excluding wasted/trouble options, e.g.: PHP string vs JS object.
-    $excludes = explode(' ', 'mobileFirst appendArrows appendDots asNavFor prevArrow nextArrow respondTo pauseIcon playIcon');
-    $excludes = array_combine($excludes, $excludes);
-    $load['drupalSettings']['slick'] = array_diff_key(Slick::defaultSettings(), $excludes);
-  }
-
-  /**
-   * Provides skins only if required.
-   */
-  public function attachSkin(array &$load, $attach = []) {
-    if ($this->config('slick_css')) {
-      $load['library'][] = 'slick/slick.css';
-    }
-
-    if ($this->config('module_css', 'slick.settings')) {
-      $load['library'][] = 'slick/slick.theme';
-    }
-
-    if (!empty($attach['thumbnail_effect'])) {
-      $load['library'][] = 'slick/slick.thumbnail.' . $attach['thumbnail_effect'];
-    }
-
-    if (!empty($attach['down_arrow'])) {
-      $load['library'][] = 'slick/slick.arrow.down';
-    }
-
-    foreach ($this->getConstantSkins() as $group) {
-      $skin = $group == 'main' ? $attach['skin'] : ($attach['skin_' . $group] ?? '');
-      if (!empty($skin)) {
-        $skins = $this->getSkinsByGroup($group);
-        $provider = $skins[$skin]['provider'] ?? 'slick';
-        $load['library'][] = 'slick/' . $provider . '.' . $group . '.' . $skin;
-      }
-    }
-  }
-
-  /**
-   * Returns easing library path if available, else FALSE.
-   */
-  public function getEasingPath() {
-    if (!isset($this->easingPath)) {
-      if (slick_libraries_get_path('easing') || slick_libraries_get_path('jquery.easing')) {
-        $library_easing = slick_libraries_get_path('easing') ?: slick_libraries_get_path('jquery.easing');
-        if ($library_easing) {
-          $easing_path = $library_easing . '/jquery.easing.min.js';
-          // Composer via bower-asset puts the library within `js` directory.
-          if (!is_file($easing_path)) {
-            $easing_path = $library_easing . '/js/jquery.easing.min.js';
-          }
-        }
-      }
-      else {
-        if (is_file($this->root . '/libraries/easing/jquery.easing.min.js')) {
-          $easing_path = 'libraries/easing/jquery.easing.min.js';
-        }
-      }
-      $this->easingPath = $easing_path ?? FALSE;
-    }
-    return $this->easingPath;
-  }
-
-  /**
-   * Returns slick library path if available, else FALSE.
-   */
-  public function getSlickPath() {
+  public function getSlickPath(): ?string {
     if (!isset($this->slickPath)) {
-      if ($this->config('library') == 'accessible-slick') {
-        $this->slickPath = slick_libraries_get_path('accessible360--accessible-slick') ?: slick_libraries_get_path('accessible-slick');
-      }
-      else {
-        $this->slickPath = slick_libraries_get_path('slick-carousel') ?: slick_libraries_get_path('slick');
+      if ($manager = self::service('slick.manager')) {
+        if ($this->config('library') == 'accessible-slick') {
+          $libs = ['accessible360--accessible-slick', 'accessible-slick'];
+          $this->slickPath = $manager->getLibrariesPath($libs);
+        }
+        else {
+          $libs = ['slick-carousel', 'slick'];
+          $this->slickPath = $manager->getLibrariesPath($libs);
+        }
       }
     }
     return $this->slickPath;
   }
 
   /**
-   * Implements hook_library_info_alter().
+   * {@inheritdoc}
    */
-  public function libraryInfoAlter(&$libraries, $extension) {
-    if ($library_path = $this->getSlickPath()) {
+  public function libraryInfoAlter(&$libraries, $extension): void {
+    if ($path = $this->getSlickPath()) {
       if ($this->config('library') == 'accessible-slick') {
-        $libraries['accessible-slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
-        $libraries['accessible-slick']['css']['base'] = ['/' . $library_path . '/slick/slick.min.css' => []];
-        $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/accessible-slick-theme.min.css' => ['weight' => -2]];
+        $libraries['accessible-slick']['js'] = ['/' . $path . '/slick/slick.min.js' => ['weight' => -3]];
+        $libraries['accessible-slick']['css']['base'] = ['/' . $path . '/slick/slick.min.css' => []];
+        $libraries['slick.css']['css']['theme'] = ['/' . $path . '/slick/accessible-slick-theme.min.css' => ['weight' => -2]];
         $libraries_to_alter = [
           'slick.load',
           'slick.colorbox',
@@ -386,26 +411,33 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
         }
       }
       else {
-        $libraries['slick']['js'] = ['/' . $library_path . '/slick/slick.min.js' => ['weight' => -3]];
-        $libraries['slick']['css']['base'] = ['/' . $library_path . '/slick/slick.css' => []];
-        $libraries['slick.css']['css']['theme'] = ['/' . $library_path . '/slick/slick-theme.css' => ['weight' => -2]];
+        $libraries['slick']['js'] = ['/' . $path . '/slick/slick.min.js' => ['weight' => -3]];
+        $libraries['slick']['css']['base'] = ['/' . $path . '/slick/slick.css' => []];
+        $libraries['slick.css']['css']['theme'] = ['/' . $path . '/slick/slick-theme.css' => ['weight' => -2]];
       }
     }
 
-    if ($library_easing = $this->getEasingPath()) {
-      $libraries['slick.easing']['js'] = ['/' . $library_easing => ['weight' => -4]];
+    if ($path = $this->getEasingPath()) {
+      $libraries['slick.easing']['js'] = ['/' . $path => ['weight' => -4]];
     }
 
-    $library_mousewheel = slick_libraries_get_path('mousewheel') ?: slick_libraries_get_path('jquery-mousewheel');
-    if ($library_mousewheel) {
-      $libraries['slick.mousewheel']['js'] = ['/' . $library_mousewheel . '/jquery.mousewheel.min.js' => ['weight' => -4]];
+    if ($manager = self::service('slick.manager')) {
+      $libs = ['mousewheel', 'jquery-mousewheel', 'jquery.mousewheel'];
+      if ($mousewheel = $manager->getLibrariesPath($libs)) {
+        $path = $mousewheel . '/jquery.mousewheel.min.js';
+        // Has no .min for jquery.mousewheel 3.1.9, jquery-mousewheel 3.1.13.
+        if (!is_file($this->root . '/' . $path)) {
+          $path = $mousewheel . '/jquery.mousewheel.js';
+        }
+        $libraries['slick.mousewheel']['js'] = ['/' . $path => ['weight' => -4]];
+      }
     }
   }
 
   /**
-   * Check for breaking libraries: Slick 1.9.0, or Accessible Slick.
+   * {@inheritdoc}
    */
-  public function isBreaking() {
+  public function isBreaking(): bool {
     if (!isset($this->isBreaking)) {
       $this->isBreaking = FALSE;
       if ($this->config('library') == 'accessible-slick') {
@@ -442,6 +474,13 @@ class SlickSkinManager extends DefaultPluginManager implements SlickSkinManagerI
       $skins = NestedArray::mergeDeep($skins, $items);
     }
     return $skins;
+  }
+
+  /**
+   * Returns a wrapper to pass tests, or DI where adding params is troublesome.
+   */
+  private static function service($service) {
+    return \Drupal::hasService($service) ? \Drupal::service($service) : NULL;
   }
 
 }

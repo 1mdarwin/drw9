@@ -7,6 +7,8 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
 
 /**
  * Defines the Slick configuration entity.
+ *
+ * @todo extends BlazyConfigEntityBase post blazy:2.17.
  */
 abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface {
 
@@ -66,12 +68,13 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
    * {@inheritdoc}
    */
   public function getSettings($ansich = FALSE) {
-    if ($ansich && isset($this->options['settings'])) {
-      return $this->options['settings'];
+    $settings = $this->options['settings'] ?? [];
+    if ($ansich) {
+      return $settings;
     }
 
     // With the Optimized options, all defaults are cleaned out, merge em.
-    return isset($this->options['settings']) ? array_merge(self::defaultSettings(), $this->options['settings']) : self::defaultSettings();
+    return $settings + self::defaultSettings();
   }
 
   /**
@@ -85,8 +88,8 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   /**
    * {@inheritdoc}
    */
-  public function getSetting($name) {
-    return $this->getSettings()[$name] ?? NULL;
+  public function getSetting($name, $default = NULL) {
+    return $this->getSettings()[$name] ?? $default;
   }
 
   /**
@@ -98,12 +101,34 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   }
 
   /**
-   * {@inheritdoc}
+   * Returns available slick default options under group 'settings'.
+   *
+   * @param string $group
+   *   The name of group: settings, responsives.
+   *
+   * @return array
+   *   The default settings under options.
    */
-  public static function defaultSettings($group = 'settings') {
-    $settings = self::load('default')->options[$group];
+  public static function defaultSettings($group = 'settings'): array {
+    $settings = self::load('default')->options[$group] ?? [];
     self::removeUnsupportedSettings($settings);
     return $settings;
+  }
+
+  /**
+   * Load the optionset with a fallback.
+   *
+   * @param string $id
+   *   The optionset name.
+   *
+   * @return object
+   *   The optionset object.
+   */
+  public static function loadSafely($id) {
+    $optionset = self::load($id);
+
+    // Ensures deleted optionset while being used doesn't screw up.
+    return empty($optionset) ? self::load('default') : $optionset;
   }
 
   /**
@@ -129,16 +154,35 @@ abstract class SlickBase extends ConfigEntityBase implements SlickBaseInterface 
   }
 
   /**
+   * If optionset does not exist, create one.
+   *
+   * @param array $build
+   *   The build array.
+   * @param string $name
+   *   The optionset name.
+   *
+   * @return \Drupal\slick\Entity\Slick
+   *   The optionset object.
+   */
+  public static function verifyOptionset(array &$build, $name) {
+    // The element is normally present at template_preprocess, not builders.
+    $key = isset($build['element']) ? 'optionset' : '#optionset';
+    if (empty($build[$key])) {
+      $build[$key] = self::loadSafely($name);
+    }
+    // Also returns it for convenient.
+    return $build[$key];
+  }
+
+  /**
    * Load the optionset with a fallback.
+   *
+   * @todo deprecated in slick:8.x-2.10 and is removed from slick:3.0.0.
+   *   Use self::loadSafely() instead.
+   * @see https://www.drupal.org/node/3103018
    */
   public static function loadWithFallback($id) {
-    $optionset = self::load($id);
-
-    // Ensures deleted optionset while being used doesn't screw up.
-    if (empty($optionset)) {
-      $optionset = self::load('default');
-    }
-    return $optionset;
+    return self::loadSafely($id);
   }
 
 }

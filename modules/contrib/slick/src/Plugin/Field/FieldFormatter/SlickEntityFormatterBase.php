@@ -2,10 +2,7 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Field\FieldItemListInterface;
-// @todo enabled post Blazy:2.10:
-// use Drupal\blazy\Field\BlazyEntityVanillaBase;
-use Drupal\blazy\Dejavu\BlazyEntityBase as BlazyEntityVanillaBase;
+use Drupal\blazy\Field\BlazyEntityVanillaBase;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -22,9 +19,41 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
   /**
    * {@inheritdoc}
    */
+  protected static $namespace = 'slick';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $navId = 'thumb';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $fieldType = 'entity';
+
+  /**
+   * {@inheritdoc}
+   *
+   * @todo remove post blazy:2.17, no differences so far.
+   */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'entity');
+    return static::injectServices($instance, $container, static::$fieldType);
   }
 
   /**
@@ -38,21 +67,9 @@ abstract class SlickEntityFormatterBase extends BlazyEntityVanillaBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return ['view_mode' => ''] + SlickDefault::baseSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-    $entities = $this->getEntitiesToView($items, $langcode);
-
-    // Early opt-out if the field is empty.
-    if (empty($entities)) {
-      return [];
-    }
-
-    return $this->commonViewElements($items, $langcode, $entities);
+    return ['view_mode' => '']
+      + SlickDefault::baseSettings()
+      + parent::defaultSettings();
   }
 
 }

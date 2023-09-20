@@ -2,13 +2,12 @@
 
 namespace Drupal\slick_ui\Form;
 
-use Drupal\Core\Entity\EntityConfirmFormBase;
-use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\Form\BlazyDeleteFormBase;
 
 /**
  * Builds the form to delete a Slick optionset.
  */
-abstract class SlickDeleteFormBase extends EntityConfirmFormBase {
+abstract class SlickDeleteFormBase extends BlazyDeleteFormBase {
 
   /**
    * Defines the nice anme.
@@ -23,40 +22,5 @@ abstract class SlickDeleteFormBase extends EntityConfirmFormBase {
    * @var string
    */
   protected static $machineName = 'slick';
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getQuestion() {
-    return $this->t('Are you sure you want to delete the %name optionset %label?', [
-      '%name' => self::$niceName,
-      '%label' => $this->entity->label(),
-    ]);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getConfirmText() {
-    return $this->t('Delete');
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function submitForm(array &$form, FormStateInterface $form_state) {
-    $this->entity->delete();
-
-    $this->messenger()->addMessage($this->t('The %name optionset %label has been deleted.', [
-      '%name' => self::$niceName,
-      '%label' => $this->entity->label(),
-    ]));
-    $this->logger(self::$machineName)->notice('Deleted optionset %oid (%label)', [
-      '%oid' => $this->entity->id(),
-      '%label' => $this->entity->label(),
-    ]);
-
-    $form_state->setRedirectUrl($this->getCancelUrl());
-  }
 
 }

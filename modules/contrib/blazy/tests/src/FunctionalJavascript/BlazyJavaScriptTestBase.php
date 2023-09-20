@@ -2,12 +2,12 @@
 
 namespace Drupal\Tests\blazy\FunctionalJavascript;
 
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\internals\Internals;
 use Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyCreationTestTrait;
-use Drupal\blazy\Blazy;
-use Drupal\blazy\BlazyDefault;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 
 /**
  * Tests the Blazy JavaScript using PhantomJS, or Chromedriver.
@@ -50,7 +50,7 @@ abstract class BlazyJavaScriptTestBase extends WebDriverTestBase {
 
     $this->setUpVariables();
 
-    $this->root                   = Blazy::root($this->container);
+    $this->root                   = Internals::root($this->container);
     $this->fileSystem             = $this->container->get('file_system');
     $this->entityFieldManager     = $this->container->get('entity_field.manager');
     $this->formatterPluginManager = $this->container->get('plugin.manager.field.formatter');
@@ -89,6 +89,7 @@ abstract class BlazyJavaScriptTestBase extends WebDriverTestBase {
     $this->getSession()->wait(3000);
 
     // Verifies that one of the images is there once loaded.
+    /* @phpstan-ignore-next-line */
     $this->assertNotEmpty($this->assertSession()->waitForElement('css', '.b-loaded'));
 
     // Capture the loaded moment.

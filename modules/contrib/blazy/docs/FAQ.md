@@ -21,6 +21,16 @@ some code cleanup, and optimization where needed. Patches are very much welcome.
 * The `b-lazy` class is applied to the **target item** to lazy load, normally
   the children of `.blazy`, but not always. This can be IMG, VIDEO, DIV, etc.
 
+### BLAZY:DONE VS. BIO:DONE EVENTS
+The `blazy:done` event is for individual lazy-loaded elements, while `bio:done`
+is for the entire collections.
+
+Since 2.17, you can namespace colonized events like so: `blazy:done.MYMODULE`
+which was problematic with dot `blazy.done`. That is why `blazy.done` is
+deprecated for `blazy:done`. The dotted event names like `blazy.done` will
+continue working till 3.x. Changing them to colonized `blazy:done` is strongly
+recommended to pass 3.x. Newly added events will only use colons.
+
 ### WHAT `BLAZY` CSS CLASS IS FOR?
 Aside from the fact that a module must reserve its namespace including for CSS
 classes, the `blazy` is actually used to limit the scope to scan document.
@@ -100,7 +110,7 @@ To replace **Blur** effect with `animate.css` thingies, implements two things:
 function MYTHEME_preprocess_blazy(&$variables) {
   $settings = &$variables['settings'];
   $attributes = &$variables['attributes'];
-  $blazies = &$settings['blazies'];
+  $blazies = $settings['blazies'];
 
   // Be sure to limit the scope, only animate for particular conditions.
   if ($blazies->get('entity.id') == 123
@@ -108,13 +118,15 @@ function MYTHEME_preprocess_blazy(&$variables) {
     $fx = $blazies->get('fx');
 
     // This was taken care of by feeding $fx, or hard-coded here.
-    $attributes['data-animation'] = $fx ?: 'wobble';
+    // Since 2.17, `data-animation` is deprecated for `data-b-animation`.
+    $prefix = $blazies->use('data_b') ? 'data-b-' : 'data-';
+    $attributes[$prefix . 'animation'] = $fx ?: 'wobble';
 
     // The following can be defined manually.
-    $attributes['data-animation-duration'] = '3s';
-    $attributes['data-animation-delay'] = '.3s';
+    $attributes[$prefix . 'animation-duration'] = '3s';
+    $attributes[$prefix . 'animation-delay'] = '.3s';
     // Iteration can be any number, or infinite.
-    $attributes['data-animation-iteration-count'] = 'infinite';
+    $attributes[$prefix . 'animation-iteration-count'] = 'infinite';
   }
 }
 ```

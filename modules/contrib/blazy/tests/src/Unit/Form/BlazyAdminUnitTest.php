@@ -3,8 +3,8 @@
 namespace Drupal\Tests\blazy\Unit\Form;
 
 use Drupal\blazy\Form\BlazyAdmin;
-use Drupal\Tests\UnitTestCase;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\Tests\UnitTestCase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,6 +47,7 @@ class BlazyAdminUnitTest extends UnitTestCase {
       ['blazy.manager', $exception, $this->blazyManager],
     ];
 
+    /* @phpstan-ignore-next-line */
     $container->expects($this->any())
       ->method('get')
       ->willReturnMap($map);

@@ -2,18 +2,39 @@
 
 namespace Drupal\blazy;
 
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\NestedArray;
+use Drupal\blazy\Deprecated\BlazyDeprecatedTrait;
+use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Media\BlazyFile;
-use Drupal\blazy\Theme\BlazyAttribute;
-use Drupal\blazy\Theme\Grid;
+use Drupal\blazy\Media\BlazyImage;
+use Drupal\blazy\Theme\Attributes;
 use Drupal\blazy\Utility\CheckItem;
-use Drupal\blazy\Utility\Path;
 use Drupal\blazy\Utility\Sanitize;
-use Drupal\blazy\Traits\BlazyDeprecatedTrait;
 
 /**
  * Provides common public blazy utility and a few aliases for frequent methods.
+ *
+ * Was planned to be non-static since 1.x as blazy service, failed miserably
+ * and removed at 2.x as service due to some design problems.
+ * Since 2.17, we are preparing it for a service at 3.x, thus static methods
+ * similar to BlazyInterface will need to be removed at 3.x so that it can be
+ * made non-static and extends BlazyBase as a non-manager alternative. Those
+ * deprecated methods are stored in BlazyDeprecatedTrait for easy removal.
+ * Two reasons for the failures: no real motivations, and enjoying static
+ * methods better. More reasons for re-enacting it as a service: a new
+ * compelling motivation for blazy.skin service at 3.x for sub-modules
+ * boilerplate reducers, and more cool kid features like flybox, hoverable
+ * effects, skins etc.
+ *
+ * Using aliases allow Blazy to self-organize, or improve as needed. A good
+ * sample is BlazyGrid relocation, or likely BlazySettings, etc. If you are
+ * calling global methods marked as @internal, consider:
+ *   - changing them to the replacements below, if any.
+ *   - using the provided non-static manager services since most static classes
+ *     were proven to change to non-static overtime to overcome static class
+ *     limitations, or design problems. Some were moved into BlazyInterface
+ *     since early 2.16.
+ *
+ * @todo refactor as a service at 3.x for non-manager alternative.
  */
 class Blazy {
 
@@ -21,238 +42,152 @@ class Blazy {
   use BlazyDeprecatedTrait;
 
   /**
-   * The blazy HTML ID.
-   *
-   * @var int
+   * Alias for CheckItem::autoplay().
    */
-  private static $blazyId;
-
-  /**
-   * Provides attachments when not using the provided API.
-   */
-  public static function attach(array &$variables, array $settings = []): void {
-    if ($blazy = self::service('blazy.manager')) {
-      $attachments = $blazy->attach($settings) ?: [];
-      $variables['#attached'] = self::merge($attachments, $variables, '#attached');
-    }
+  public static function autoplay($url, $check = TRUE): string {
+    return CheckItem::autoplay($url, $check);
   }
 
   /**
-   * Provides autoplay URL, relevant for lightboxes to save another click.
+   * Alias for Attributes::container().
    */
-  public static function autoplay($url): string {
-    if (strpos($url, 'autoplay') === FALSE
-      || strpos($url, 'autoplay=0') !== FALSE) {
-      return strpos($url, '?') === FALSE
-        ? $url . '?autoplay=1'
-        : $url . '&autoplay=1';
-    }
-    return $url;
+  public static function containerAttributes(array &$attributes, array $settings): void {
+    Attributes::container($attributes, $settings);
   }
 
   /**
-   * Alias for BlazyEntity::settings() for sub-modules.
+   * Alias for BlazyFile::createUrl().
+   */
+  public static function createUrl($uri, $relative = FALSE): string {
+    return BlazyFile::createUrl($uri, $relative);
+  }
+
+  /**
+   * Alias for BlazyEntity::settings().
    */
   public static function entitySettings(array &$settings, $entity): void {
     BlazyEntity::settings($settings, $entity);
   }
 
   /**
-   * Returns the trusted HTML ID of a single instance.
+   * Alias for CheckItem::has().
    */
-  public static function getHtmlId($string = 'blazy', $id = ''): string {
-    if (!isset(self::$blazyId)) {
-      self::$blazyId = 0;
-    }
-
-    // Do not use dynamic Html::getUniqueId, otherwise broken AJAX.
-    $id = empty($id) ? ($string . '-' . ++self::$blazyId) : $id;
-    return Html::getId($id);
+  public static function has($content, $needle) {
+    return CheckItem::has($content, $needle);
   }
 
   /**
-   * Alias for Path::getPath().
+   * Initialize Blazy settings for convenience.
    */
-  public static function getPath($type, $name, $absolute = FALSE): ?string {
-    return Path::getPath($type, $name, $absolute);
+  public static function init(array $data = []): array {
+    return $data + BlazyDefault::htmlSettings();
   }
 
   /**
-   * Alias for Path::getLibrariesPath().
+   * Alias for BlazySettings().
    */
-  public static function getLibrariesPath($name, $base_path = FALSE): ?string {
-    return Path::getLibrariesPath($name, $base_path);
-  }
-
-  /**
-   * Merge data with a new one with an optional key.
-   */
-  public static function merge(array $data, array $element, $key = NULL): array {
-    if ($key) {
-      return empty($element[$key])
-        ? $data : NestedArray::mergeDeep($element[$key], $data);
-    }
-    return empty($element)
-      ? $data : NestedArray::mergeDeep($data, $element);
-  }
-
-  /**
-   * Reset the BlazySettings per item to have unique URI, delta, style, etc.
-   */
-  public static function reset(array &$settings): BlazySettings {
-    self::verify($settings);
-
-    // The settings instance must be unique per item.
-    $blazies = &$settings['blazies'];
-    if (!$blazies->was('reset')) {
-      $blazies->reset($settings);
-      $blazies->set('was.reset', TRUE);
-    }
-
-    return $blazies;
-  }
-
-  /**
-   * Returns the cross-compat D8 ~ D10 app root.
-   */
-  public static function root($container) {
-    return version_compare(\Drupal::VERSION, '9.0', '<') ? $container->get('app.root') : $container->getParameter('app.root');
-  }
-
-  /**
-   * Alias for Sanitize::attribute() for sub-modules.
-   */
-  public static function sanitize(array $attributes, $escaped = TRUE): array {
-    return Sanitize::attribute($attributes, $escaped);
-  }
-
-  /**
-   * Initialize BlazySettings object for convenience, and easy organization.
-   */
-  public static function settings(array $data = []): BlazySettings {
+  public static function initSettings(array $data = []): BlazySettings {
     return new BlazySettings($data);
   }
 
   /**
-   * Returns the translated entity if available.
+   * Return TRUE if an url is a data URI.
    */
-  public static function translated($entity, $langcode): object {
-    if ($langcode && $entity->hasTranslation($langcode)) {
-      return $entity->getTranslation($langcode);
-    }
-    return $entity;
+  public static function isDataUri($url) {
+    $url = trim($url ?: '');
+    return $url && mb_substr($url, 0, 10) === 'data:image';
   }
 
   /**
-   * Verify `blazies` exists, in case accessed outside the workflow.
-   */
-  public static function verify(array &$settings): void {
-    if (!isset($settings['blazies']) && !isset($settings['inited'])) {
-      $settings += BlazyDefault::htmlSettings();
-    }
-  }
-
-  /**
-   * Retrieves the request stack.
-   *
-   * @return \Symfony\Component\HttpFoundation\RequestStack
-   *   The request stack.
-   *
-   * @todo remove for Path::requestStack() after sub-modules, if any.
-   */
-  public static function requestStack() {
-    return self::service('request_stack');
-  }
-
-  /**
-   * Retrieves the currently active route match object.
-   *
-   * @return \Drupal\Core\Routing\RouteMatchInterface
-   *   The currently active route match object.
-   *
-   * @todo remove for Path::routeMatch() after sub-modules, if any.
-   */
-  public static function routeMatch() {
-    return self::service('current_route_match');
-  }
-
-  /**
-   * Retrieves the stream wrapper manager service.
-   *
-   * @return \Drupal\Core\StreamWrapper\StreamWrapperManager
-   *   The stream wrapper manager.
-   *
-   * @todo remove for Path::streamWrapperManager() after sub-modules.
-   */
-  public static function streamWrapperManager() {
-    return self::service('stream_wrapper_manager');
-  }
-
-  /**
-   * Returns a wrapper to pass tests, or DI where adding params is troublesome.
-   */
-  public static function service($service) {
-    return \Drupal::hasService($service) ? \Drupal::service($service) : NULL;
-  }
-
-  /**
-   * Alias for hook_config_schema_info_alter() for sub-modules.
-   */
-  public static function configSchemaInfoAlter(
-    array &$definitions,
-    $formatter = 'blazy_base',
-    array $settings = []
-  ): void {
-    BlazyAlter::configSchemaInfoAlter($definitions, $formatter, $settings);
-  }
-
-  /**
-   * Alias for BlazyAttribute::container() for sub-modules.
-   */
-  public static function containerAttributes(array &$attributes, array $settings): void {
-    BlazyAttribute::container($attributes, $settings);
-  }
-
-  /**
-   * Alias for Grid::build() for sub-modules and easy organization.
-   */
-  public static function grid(array $items, array $settings): array {
-    return Grid::build($items, $settings);
-  }
-
-  /**
-   * Alias for Grid::attributes() for sub-modules and easy organization.
-   */
-  public static function gridAttributes(array &$attributes, array $settings): void {
-    Grid::attributes($attributes, $settings);
-  }
-
-  /**
-   * Alias for BlazyFile::transformRelative() for sub-modules.
-   */
-  public static function transformRelative($uri, $style = NULL, array $options = []): string {
-    return BlazyFile::transformRelative($uri, $style, $options);
-  }
-
-  /**
-   * Alias for BlazyFile::normalizeUri() for sub-modules.
+   * Alias for BlazyFile::normalizeUri().
    */
   public static function normalizeUri($path): string {
     return BlazyFile::normalizeUri($path);
   }
 
   /**
-   * Alias for BlazyFile::uri() for sub-modules.
+   * Alias for Sanitize::attribute().
+   */
+  public static function sanitize(array $attributes, $escaped = TRUE, $lowercase = FALSE): array {
+    return Sanitize::attribute($attributes, $escaped, $lowercase);
+  }
+
+  /**
+   * Sanitize media input URL.
+   */
+  public static function sanitizeInputUrl($input): ?string {
+    return Sanitize::inputUrl($input);
+  }
+
+  /**
+   * In case we have SVG Sanitizer alternatives, provide one door check.
+   */
+  public static function svgSanitizerExists(): bool {
+    return class_exists('\enshrined\svgSanitize\Sanitizer');
+  }
+
+  /**
+   * Returns the translated entity if available.
+   */
+  public static function translated($entity, $langcode = NULL): object {
+    if ($manager = Internals::service('blazy.manager')) {
+      $entity = $manager->getTranslatedEntity($entity, $langcode);
+    }
+    return $entity;
+  }
+
+  /**
+   * Alias for BlazyImage::transformDimensions().
+   */
+  public static function transformDimensions($style, $data, $uri = NULL): array {
+    return BlazyImage::transformDimensions($style, $data, $uri);
+  }
+
+  /**
+   * Alias for BlazyFile::transformRelative().
+   */
+  public static function transformRelative($uri, $style = NULL, array $options = []): string {
+    return BlazyFile::transformRelative($uri, $style, $options);
+  }
+
+  /**
+   * Alias for BlazyImage::toUrl().
+   */
+  public static function toUrl(array $settings, $style = NULL, $uri = NULL): string {
+    return BlazyImage::toUrl($settings, $style, $uri);
+  }
+
+  /**
+   * Alias for BlazyImage::url().
+   */
+  public static function url($uri, $style = NULL, array $options = []): string {
+    return BlazyImage::url($uri, $style, $options);
+  }
+
+  /**
+   * Alias for BlazyFile::isValidUri().
+   */
+  public static function isValidUri($uri): bool {
+    return BlazyFile::isValidUri($uri);
+  }
+
+  /**
+   * Alias for BlazyFile::uri().
    */
   public static function uri($item, array $settings = []): string {
     return BlazyFile::uri($item, $settings);
   }
 
   /**
-   * Alias for CheckItem::which() for sub-modules.
+   * Returns a module installed version based on `hook_update_VERSION`.
+   *
+   * @requires drupal:9.3.0, no need a fallback.
    */
-  public static function which(array &$settings, $lazy, $class, $attribute): void {
-    CheckItem::which($settings, $lazy, $class, $attribute);
+  public static function version($module): int {
+    if ($service = Internals::service('update.update_hook_registry')) {
+      return (int) $service->getInstalledVersion((string) $module);
+    }
+    return 0;
   }
 
 }

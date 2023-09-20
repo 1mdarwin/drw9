@@ -2,8 +2,8 @@
 
 namespace Drupal\Tests\blazy\Kernel\Views;
 
-use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
 use Drupal\Tests\blazy\Traits\BlazyKernelTestTrait;
+use Drupal\Tests\views\Kernel\ViewsKernelTestBase;
 
 /**
  * Defines base class for Blazy Views integration.

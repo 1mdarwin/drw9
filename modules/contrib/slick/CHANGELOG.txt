@@ -1,4 +1,81 @@
 
+Slick 8.x-2.0-dev, 2023-09-14
+-----------------------------
+- Fixed for slide__content when enabling Use theme_blazy() option.
+
+Slick 8.x-2.0-dev, 2023-09-04
+-----------------------------
+- Deprecated sliders lazy loads to avoid complication for just Blazy.
+
+Slick 8.x-2.0-dev, 2023-08-30
+-----------------------------
+- Update slick.api.php for blazy:2.17.
+
+Slick 8.x-2.0-dev, 2023-08-02
+-----------------------------
+- Fixed for Native Grid with grid chunks ala sliders.
+
+Slick 8.x-2.0-dev, 2023-08-01
+-----------------------------
+- Removed Slick UI option `Use theme_blazy()` into Blazy UI.
+
+Slick 8.x-2.0-dev, 2023-07-31
+-----------------------------
+- Simplified the notorious ID, only useful for machines, not themers.
+
+Slick 8.x-2.0-dev, 2023-07-29
+-----------------------------
+- Updated theme_slick_slide() to be replaced by theme_blazy() at 3.x to DRY.
+
+Slick 8.x-2.0-dev, 2023-07-29
+-----------------------------
+- Reduced more boilerplates.
+- Updated deprecated admin service parameter.
+- Added supports for SVG Image Field module.
+- Re-purposed Slick Image with VEF (deprecated) formatter for SVG (WIP).
+
+Slick 8.x-2.0-dev, 2023-07-26
+-----------------------------
+- Added image title for thumbnail captions.
+
+Slick 8.x-2.0-dev, 2023-07-20
+-----------------------------
+- Updated to Blazy:2.17.
+
+Slick 8.x-2.0-dev, 2023-07-18
+-----------------------------
+- Changed settings key to #settings, etc. to avoid leaks/ render errors, see CR:
+  https://www.drupal.org/node/3375158.
+
+Slick 8.x-2.0-dev, 2023-07-14
+-----------------------------
+- Update to blazy:2.17 admin form with Native Grid.
+- Removed and cleaned out stone-age admin CSS for modern nativegrid.
+
+Slick 8.x-2.0-dev, 2023-07-11
+-----------------------------
+- Fixed for poorly-informed thumbnails.
+- Changed grid loops to generators.
+
+Slick 8.x-2.0-dev, 2023-07-02
+-----------------------------
+- Deprecated variables.js for variables.options as per slick:2.10.
+- Added more variables to template_preprocess_slick.
+
+Slick 8.x-2.0-dev, 2023-06-29
+-----------------------------
+- Fixed for thumbnail navigation regression post 2.9.
+- Removed unused SlickFormatterViewTrait.
+
+Slick 8.x-2.0-dev, 2023-06-20
+-----------------------------
+- Issue #3367674 by paucala: Using http protocol is insecure. Use https instead.
+
+Slick 8.x-2.0-dev, 2023-06-07
+-----------------------------
+- Fixed for phpstan issues, etc.
+- Updated to and required a minimum Blazy:2.16.
+
 Slick 8.x-2.0-dev, 2023-05-15
 -----------------------------
 - Issue #3340509 by Anybody, gausarts, ericdsd, arnoldbird, ivnish:
@@ -230,7 +307,7 @@ Slick 8.x-2.0-dev, 2019-03-19
 
 Slick 8.x-2.0-dev, 2019-03-15
 -----------------------------
-- Added Slick::loadWithFallback(), and minor fixes.
+- Added Slick::loadSafely(), and minor fixes.
 
 Slick 8.x-2.0-dev, 2019-03-11
 -----------------------------

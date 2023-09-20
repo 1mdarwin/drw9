@@ -5,54 +5,54 @@
 
 /* The main thumbnail container is slick-dots modifier */
 .slick .slick-dots--thumbnail-hover {
-  list-style: none;
-  overflow: visible;
   position: relative;
-  text-align: center;
-  width: 100%;
   z-index: 3;
+  overflow: visible;
+  width: 100%;
+  list-style: none;
+  text-align: center;
 }
 
 .slick .slick-dots--thumbnail-hover::after {
-  content: "";
   display: table;
   clear: both;
+  content: "";
 }
 
 .slick .slick-dots--thumbnail-hover li {
-  overflow: hidden;
   position: relative;
+  overflow: hidden;
   vertical-align: top;
   /* Individual thumbnail, adjust accordingly to actual thumbnail size */
 }
 
 .slick .slick-dots--thumbnail-hover li img {
-  background: #fff;
-  border: 2px solid transparent;
   display: block;
   margin: auto;
-  opacity: .6;
   -webkit-transition: 0.3s;
   transition: 0.3s;
   /* Overrides core > 1.3.11, otherwise thumbnails are non-clickable */
   pointer-events: auto;
+  opacity: 0.6;
+  border: 2px solid transparent;
+  background: #fff;
 }
 
 .slick .slick-dots--thumbnail-hover li .slick-dots__thumbnail {
+  position: absolute;
+  z-index: -1;
   bottom: 140%;
   left: 50%;
-  margin: 0;
-  min-width: 120px;
-  opacity: 0;
-  overflow: visible;
-  position: absolute;
   visibility: hidden;
+  overflow: visible;
   width: 120px;
-  z-index: -1;
+  min-width: 120px;
+  margin: 0;
   -webkit-transition: 0.3s;
   transition: 0.3s;
   -webkit-transform: translate(-50%, 0);
   transform: translate(-50%, 0);
+  opacity: 0;
 }
 
 .slick .slick-dots--thumbnail-hover li .slick-dots__thumbnail img {
@@ -60,17 +60,17 @@
 }
 
 .slick .slick-dots--thumbnail-hover li .slick-dots__thumbnail::after {
-  border: 7px solid transparent;
-  border-bottom: 0;
-  border-top-color: #ff6d2c;
-  bottom: -7px;
-  content: '';
-  display: block;
-  height: 0;
-  left: 50%;
-  margin: 0 0 0 -7px;
   position: absolute;
+  bottom: -7px;
+  left: 50%;
+  display: block;
   width: 0;
+  height: 0;
+  margin: 0 0 0 -7px;
+  content: "";
+  border: 7px solid transparent;
+  border-top-color: #ff6d2c;
+  border-bottom: 0;
 }
 
 .slick .slick-dots--thumbnail-hover li:hover {
@@ -78,21 +78,21 @@
 }
 
 .slick .slick-dots--thumbnail-hover li:hover .slick-dots__thumbnail {
+  z-index: 3;
   bottom: 120%;
-  margin-top: -20px;
-  opacity: 1;
   visibility: visible;
+  margin-top: -20px;
   -webkit-transition-delay: 0s;
   transition-delay: 0s;
-  z-index: 3;
+  opacity: 1;
 }
 
 .slick .slick-dots--thumbnail-hover li:hover img,
 .slick .slick-dots--thumbnail-hover .slick-active img {
-  border: 2px solid #ff6d2c;
-  opacity: 1;
   -webkit-transition-delay: 0s;
   transition-delay: 0s;
+  opacity: 1;
+  border: 2px solid #ff6d2c;
 }
 
 /**

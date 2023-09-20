@@ -1,4 +1,14 @@
 
+Slick Views 8.x-2.0-dev, 2022-07-17
+-----------------------------------
+- Changed settings key to #settings, etc. to avoid leaks/ render errors, see CR:
+  https://www.drupal.org/node/3375158.
+
+Slick Views 8.x-2.0-dev, 2022-07-14
+-----------------------------------
+- Update to blazy:2.17 admin form with Native Grid.
+- Removed and cleaned out stone-age admin CSS for modern nativegrid.
+
 Slick Views 8.x-2.0-dev, 2022-05-28
 -----------------------------------
 - Updated to Slick:2.7 and Blazy:2.10+.

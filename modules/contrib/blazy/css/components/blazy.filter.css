@@ -13,9 +13,9 @@
 
 /** Without this, media--ratio will be collapsed. Adjust accordingly. */
 .media-wrapper--blazy {
-  max-width: 100%;
-  min-width: 50%;
   position: relative;
+  min-width: 50%;
+  max-width: 100%;
 }
 
 .grid .media-wrapper--blazy {
@@ -31,8 +31,8 @@
 }
 
 .blazy--filter .media-wrapper--blazy {
-  min-width: 0;
   overflow: hidden;
+  min-width: 0;
 }
 
 .media-wrapper--blazy.align-center img {

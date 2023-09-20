@@ -6,8 +6,6 @@
  */
 
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\BlazyAlter;
-use Drupal\blazy_test\BlazyTestAlter;
 
 /**
  * Implements hook_theme().
@@ -50,18 +48,9 @@ function blazy_test_blazy_lightboxes_alter(array &$lightboxes) {
 }
 
 /**
- * Implements hook_blazy_alter().
- */
-function blazy_test_blazy_alter(array &$image, array $settings = []) {
-  if (!empty($settings['media_switch']) && $settings['media_switch'] == 'blazy_test') {
-    $image['#pre_render'][] = [BlazyTestAlter::class, 'preRender'];
-  }
-}
-
-/**
  * Implements hook_config_schema_info_alter().
  */
 function blazy_test_config_schema_info_alter(array &$definitions) {
   $extra = ['thumbnail' => ''] + BlazyDefault::gridSettings();
-  BlazyAlter::configSchemaInfoAlter($definitions, 'blazy_base', BlazyDefault::extendedSettings() + $extra);
+  blazy()->configSchemaInfoAlter($definitions, 'blazy_base', BlazyDefault::extendedSettings() + $extra);
 }

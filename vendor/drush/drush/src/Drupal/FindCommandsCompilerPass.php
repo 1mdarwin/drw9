@@ -5,7 +5,6 @@ namespace Drush\Drupal;
 use Drush\Drush;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
@@ -65,7 +64,7 @@ class FindCommandsCompilerPass implements CompilerPassInterface
             Drush::logger()->debug(dt("Found tagged service !id", ['!id' => $id]));
             $definition->addMethodCall(
                 'addCommandReference',
-                [new Reference($id, ContainerInterface::IGNORE_ON_INVALID_REFERENCE)]
+                [new Reference($id)]
             );
         }
     }

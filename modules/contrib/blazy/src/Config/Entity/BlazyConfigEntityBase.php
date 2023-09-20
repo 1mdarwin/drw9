@@ -2,6 +2,7 @@
 
 namespace Drupal\blazy\Config\Entity;
 
+use Drupal\blazy\Utility\Arrays;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Config\Entity\ConfigEntityBase;
 
@@ -53,72 +54,155 @@ abstract class BlazyConfigEntityBase extends ConfigEntityBase implements BlazyCo
    * {@inheritdoc}
    */
   public function getOptions($group = NULL, $property = NULL) {
+    $default = self::load('default');
+    $default_options = $default ? $default->options : [];
+    $options = Arrays::merge($this->options ?? [], $default_options);
+
     if ($group) {
       if (is_array($group)) {
-        return NestedArray::getValue($this->options, (array) $group);
+        return NestedArray::getValue($options, (array) $group);
       }
-      elseif (isset($property) && isset($this->options[$group])) {
-        return $this->options[$group][$property] ?? NULL;
+      elseif ($property && isset($options[$group])) {
+        return $options[$group][$property] ?? NULL;
       }
-      return $this->options[$group] ?? NULL;
+      return $options[$group] ?? NULL;
     }
 
-    return $this->options;
+    return $options;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSettings($ansich = FALSE) {
-    if ($ansich && isset($this->options['settings'])) {
-      return $this->options['settings'];
-    }
-
-    // With the Optimized options, all defaults are cleaned out, merge em.
-    return isset($this->options['settings']) ? array_merge(self::defaultSettings(), $this->options['settings']) : self::defaultSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function setSettings(array $settings = []) {
-    $this->options['settings'] = $settings;
+  public function setOptions(array $options, $merged = TRUE): self {
+    $this->options = $merged ? Arrays::merge($options, $this->options ?? []) : $options;
     return $this;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getSetting($name) {
-    return $this->getSettings()[$name] ?? NULL;
+  public function getOption($group, $default = NULL) {
+    // Makes sure to not call ::getOptions($group), else everything is dumped.
+    return $this->getOptions()[$group] ?? $default;
   }
 
   /**
    * {@inheritdoc}
    */
-  public function setSetting($name, $value) {
+  public function setOption($group, $value): self {
+    if ($group == 'settings') {
+      $value = array_merge(($this->options[$group] ?? []), $value);
+    }
+
+    $this->options[$group] = $value;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSettings($ansich = FALSE): array {
+    $settings = $this->options['settings'] ?? [];
+    if ($ansich && $settings) {
+      return $settings;
+    }
+
+    // With the Optimized options, all defaults are cleaned out, merge em.
+    return $settings + self::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSettings(array $values, $merged = TRUE): self {
+    $settings = $this->options['settings'] ?? [];
+    $this->options['settings'] = $merged
+      ? array_merge($settings, $values)
+      : $values;
+    return $this;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getSetting($name, $default = NULL) {
+    return $this->getSettings()[$name] ?? $default;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function setSetting($name, $value): self {
     $this->options['settings'][$name] = $value;
     return $this;
   }
 
   /**
-   * {@inheritdoc}
+   * Returns available default options under group 'settings'.
+   *
+   * @param string $group
+   *   The name of group: settings, responsives.
+   *
+   * @return array
+   *   The default settings under options.
    */
-  public static function defaultSettings($group = 'settings') {
-    return self::load('default')->options[$group];
+  public static function defaultSettings($group = 'settings'): array {
+    return self::load('default')->options[$group] ?? [];
   }
 
   /**
    * Load the optionset with a fallback.
+   *
+   * @param string $name
+   *   The optionset name.
+   *
+   * @return object
+   *   The optionset object.
    */
-  public static function loadWithFallback($id) {
-    $optionset = self::load($id);
+  public static function loadSafely($name) {
+    $optionset = self::load($name);
 
     // Ensures deleted optionset while being used doesn't screw up.
-    if (empty($optionset)) {
-      $optionset = self::load('default');
+    return $optionset ?: self::load('default');
+  }
+
+  /**
+   * If optionset does not exist, load one.
+   *
+   * @param array $build
+   *   The array containing normally settings, optionset, items, etc.
+   * @param string $name
+   *   The optionset name.
+   *
+   * @return object
+   *   The optionset object.
+   */
+  public static function verifyOptionset(array &$build, $name) {
+    // The element is normally present at template_preprocess, not builders.
+    $key = isset($build['element']) ? 'optionset' : '#optionset';
+    if (empty($build[$key])) {
+      $build[$key] = self::loadSafely($name);
     }
-    return $optionset;
+    // Also returns it for convenient.
+    return $build[$key];
+  }
+
+  /**
+   * Load the optionset with a fallback.
+   *
+   * @param string $id
+   *   The optionset name.
+   *
+   * @return object
+   *   The optionset object.
+   *
+   * @todo deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use
+   *   self::loadSafely() instead.
+   * @see https://www.drupal.org/node/3103018
+   */
+  public static function loadWithFallback($id) {
+    return self::loadSafely($id);
   }
 
 }

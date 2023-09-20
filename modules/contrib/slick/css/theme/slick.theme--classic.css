@@ -10,17 +10,22 @@
 }
 
 .slick--skin--classic .slide__caption {
-  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
-  background-color: #000;
-  background-color: rgba(0, 0, 0, 0.8);
-  color: #fff;
   left: auto;
-  margin: 0;
+  box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+  width: 100%;
   min-height: 80px;
+  margin: 0;
   padding: 15px;
   -webkit-transition: -webkit-transform 1s ease-in-out 0.2s;
   transition: transform 1s ease-in-out 0.2s;
-  width: 100%;
+  color: #fff;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* Fixed for Olivero dark title. */
+.slick--skin--classic .slide__title {
+  color: #fff;
 }
 
 .slick--skin--classic .slide__description {
@@ -28,48 +33,48 @@
 }
 
 .slick--skin--classic .slide--caption--below .slide__caption {
-  background: none;
   color: #38465c;
+  background: none;
 }
 
 .slick--skin--classic .slide--caption--center .slide__caption {
-  color: #fff;
-  opacity: 0;
   visibility: hidden;
   -webkit-transition: all 0.4s ease-in-out 0s;
   transition: all 0.4s ease-in-out 0s;
+  opacity: 0;
+  color: #fff;
   -webkit-backface-visibility: hidden;
 }
 
 .slick--skin--classic .slide--caption--center:hover .slide__caption {
-  opacity: 1;
   visibility: visible;
+  opacity: 1;
 }
 
 @media (min-width: 64em) {
   .slick--skin--classic .slide__caption {
+    top: 0;
     box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+    width: 22%;
     height: 100%;
     min-height: 100%;
     padding: 60px 30px;
-    top: 0;
-    width: 22%;
   }
 
-  .slick--skin--classic .slide__caption .slide__data {
+  .slick--skin--classic .slide__caption > .slide__data {
     box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+    width: 100%;
     margin: 0 !important; /* csslint allow: known-properties, important */
     padding: 15px;
-    width: 100%;
   }
 
   .slick--skin--classic .slide--caption--center .slide__caption {
-    height: 120px;
-    left: 50%;
-    margin: -60px 0 0 -40%;
-    min-height: 120px;
     top: 50%;
+    left: 50%;
     width: 80%;
+    height: 120px;
+    min-height: 120px;
+    margin: -60px 0 0 -40%;
   }
 
   .slick--skin--classic .slide--caption--top .slide__caption,
@@ -77,19 +82,19 @@
   .slick--skin--classic .slide--caption--bottom .slide__caption,
   .slick--skin--classic .slide--caption--below .slide__caption {
     box-sizing: border-box; /* dups due to csslint ignoring inheritance */
+    width: 100%;
     height: auto;
     min-height: 80px;
     padding: 30px;
-    width: 100%;
   }
 
   .slick--skin--classic .slide--caption--bottom .slide__caption {
+    top: auto;
     bottom: 0;
+    min-height: 120px;
     -ms-transform: translateY(210px);
     -webkit-transform: translateY(210px);
     transform: translateY(210px);
-    min-height: 120px;
-    top: auto;
   }
 
   .slick--skin--classic .slide--caption--stage-zebra .slide__title {
@@ -108,8 +113,8 @@
   .slick--skin--classic .slide--caption--stage-zebra:nth-child(even) .slide__caption,
   .slick--skin--classic .slide--caption--stage-right .slide__caption,
   .slick--skin--classic .slide--caption--right .slide__caption {
-    left: auto;
     right: 0;
+    left: auto;
     -ms-transform: translateX(320px);
     -webkit-transform: translateX(320px);
     transform: translateX(320px);
@@ -124,10 +129,10 @@
   }
 
   .slick--skin--classic .slick__slide.slick-active .slide__caption {
+    -webkit-transition-delay: 0s;
+    transition-delay: 0s;
     -ms-transform: translateY(0);
     -webkit-transform: translateY(0);
     transform: translateY(0);
-    -webkit-transition-delay: 0s;
-    transition-delay: 0s;
   }
 }
