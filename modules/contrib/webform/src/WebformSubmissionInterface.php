@@ -2,9 +2,9 @@
 
 namespace Drupal\webform;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\user\EntityOwnerInterface;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\user\UserInterface;
 
 /**
