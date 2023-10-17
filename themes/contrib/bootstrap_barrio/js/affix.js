@@ -26,8 +26,8 @@
 
       };
 
-      once('affixed', '[data-toggle="affix"]', context).forEach(function () {
-        var ele = $(this),
+      once('affixed', '[data-toggle="affix"]', context).forEach((element) => {
+        var ele = $(element),
             wrapper = $('<div></div>');
 
         ele.before(wrapper);

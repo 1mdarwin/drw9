@@ -52,7 +52,7 @@ bootstrap_barrio_bootstrap_icons: 1
 
 # Colors
 # ----------------------------
-bootstrap_barrio_enable_color: 0
+bootstrap_barrio_enable_color: false
 bootstrap_barrio_color_scheme: 'default'
 bootstrap_barrio_base_primary_color: '#2F3C7E'
 bootstrap_barrio_base_secondary_color: '#FBEAEB'

@@ -274,60 +274,62 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
         'secondary' => t('Secondary color'),
       ],
     ];
-
-    // System messages.
-    $form['colors']['alerts'] = [
-      '#type' => 'details',
-      '#title' => t('System messages'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    ];
-    $form['colors']['alerts']['bootstrap_barrio_system_messages'] = [
-      '#type' => 'select',
-      '#title' => t('System messages color scheme'),
-      '#default_value' => theme_get_setting('bootstrap_barrio_system_messages'),
-      '#empty_option' => t('Default'),
-      '#options' => [
-        'messages_white' => t('White'),
-        'messages_gray' => t('Gray'),
-        'messages_light' => t('Light color'),
-        'messages_dark' => t('Dark color'),
-      ],
-      '#description' => t('Replace the standard color scheme for system messages with a Google Material Design color scheme.'),
-    ];
-    $form['colors']['tables'] = [
-      '#type' => 'details',
-      '#title' => t('Tables'),
-      '#collapsible' => TRUE,
-      '#collapsed' => TRUE,
-    ];
-    $form['colors']['tables']['bootstrap_barrio_table_style'] = [
-      '#type' => 'select',
-      '#title' => t('Table cell style'),
-      '#default_value' => theme_get_setting('bootstrap_barrio_table_style'),
-      '#empty_option' => t('Default'),
-      '#options' => [
-        'table-striped' => t('Striped'),
-        'table-bordered' => t('Bordered'),
-        'table-striped-columns' => t('Striped Columns'),
-      ],
-    ];
-    $form['colors']['tables']['bootstrap_barrio_table_hover'] = [
-      '#type' => 'checkbox',
-      '#title' => t('Hover effect over table cells'),
-      '#default_value' => theme_get_setting('bootstrap_barrio_table_hover'),
-    ];
-    $form['colors']['tables']['bootstrap_barrio_table_head'] = [
-      '#type' => 'select',
-      '#title' => t('Table header color scheme'),
-      '#default_value' => theme_get_setting('bootstrap_barrio_table_head'),
-      '#empty_option' => t('Default'),
-      '#options' => [
-        'thead-light' => t('Light'),
-        'thead-dark' => t('Dark'),
-      ],
-    ];
   }
+
+  // System messages.
+  $form['colors']['alerts'] = [
+    '#type' => 'details',
+    '#title' => t('System messages'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  ];
+  $form['colors']['alerts']['bootstrap_barrio_system_messages'] = [
+    '#type' => 'select',
+    '#title' => t('System messages color scheme'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_system_messages'),
+    '#empty_option' => t('Default'),
+    '#options' => [
+      'messages_white' => t('White'),
+      'messages_gray' => t('Gray'),
+      'messages_light' => t('Light color'),
+      'messages_dark' => t('Dark color'),
+    ],
+    '#description' => t('Replace the standard color scheme for system messages with a Google Material Design color scheme.'),
+  ];
+
+  // Tables.
+  $form['colors']['tables'] = [
+    '#type' => 'details',
+    '#title' => t('Tables'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
+  ];
+  $form['colors']['tables']['bootstrap_barrio_table_style'] = [
+    '#type' => 'select',
+    '#title' => t('Table cell style'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_table_style'),
+    '#empty_option' => t('Default'),
+    '#options' => [
+      'table-striped' => t('Striped'),
+      'table-bordered' => t('Bordered'),
+      'table-striped-columns' => t('Striped Columns'),
+    ],
+  ];
+  $form['colors']['tables']['bootstrap_barrio_table_hover'] = [
+    '#type' => 'checkbox',
+    '#title' => t('Hover effect over table cells'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_table_hover'),
+  ];
+  $form['colors']['tables']['bootstrap_barrio_table_head'] = [
+    '#type' => 'select',
+    '#title' => t('Table header color scheme'),
+    '#default_value' => theme_get_setting('bootstrap_barrio_table_head'),
+    '#empty_option' => t('Default'),
+    '#options' => [
+      'thead-light' => t('Light'),
+      'thead-dark' => t('Dark'),
+    ],
+  ];
 
   // Layout.
   $form['layout'] = [

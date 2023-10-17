@@ -3,7 +3,7 @@
         'name' => 'drupal/legacy-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '15a293a8e2d750344fe6b1294c83b619feb0ede7',
+        'reference' => 'dbea973c7ede3d7493092ba85a704f28d0b8dd2a',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -260,9 +260,9 @@
             'dev_requirement' => false,
         ),
         'drupal/bootstrap_barrio' => array(
-            'pretty_version' => '5.5.13',
-            'version' => '5.5.13.0',
-            'reference' => '5.5.13',
+            'pretty_version' => '5.5.14',
+            'version' => '5.5.14.0',
+            'reference' => '5.5.14',
             'type' => 'drupal-theme',
             'install_path' => __DIR__ . '/../../themes/contrib/bootstrap_barrio',
             'aliases' => array(),
@@ -628,7 +628,7 @@
         'drupal/legacy-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '15a293a8e2d750344fe6b1294c83b619feb0ede7',
+            'reference' => 'dbea973c7ede3d7493092ba85a704f28d0b8dd2a',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1545,9 +1545,9 @@
             'dev_requirement' => false,
         ),
         'twbs/bootstrap' => array(
-            'pretty_version' => 'v5.3.1',
-            'version' => '5.3.1.0',
-            'reference' => '2a1bf52b73fc9a97f6fef75aa1b29b3e9f0288b3',
+            'pretty_version' => 'v5.3.2',
+            'version' => '5.3.2.0',
+            'reference' => '344e912d04b5b6a04482113eff20ab416ff01048',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twbs/bootstrap',
             'aliases' => array(),
@@ -1565,7 +1565,7 @@
         'twitter/bootstrap' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => 'v5.3.1',
+                0 => 'v5.3.2',
             ),
         ),
         'typo3/phar-stream-wrapper' => array(
