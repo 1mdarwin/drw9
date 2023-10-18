@@ -35,7 +35,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return BlazyDefault::svgSettings() + parent::defaultSettings();
+    return BlazyDefault::mediaSettings() + parent::defaultSettings();
   }
 
   /**
@@ -54,7 +54,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
     }
 
     if (isset($element['image']['#description'])) {
-      $element['image']['#description'] .= ' ' . $this->t('For (remote|local) video, this allows separate high-res or poster image. Be sure this exact same field is also used for bundle <b>Image</b> to have a mix of videos and images if this entity is Media. Leaving it empty will fallback to the video provider thumbnails, or no poster for local video. The formatter/renderer is managed by <strong>@plugin_id</strong> formatter. Meaning original formatter ignored.', ['@plugin_id' => $this->getPluginId()]);
+      $element['image']['#description'] .= ' ' . $this->t('The formatter/renderer is managed by <strong>@plugin_id</strong> formatter. Meaning original formatter ignored.', ['@plugin_id' => $this->getPluginId()]);
     }
 
     return $element;
@@ -128,11 +128,14 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
       '#settings' => $settings,
     ] = $element;
 
+    $blazies   = $settings['blazies'];
     $view_mode = $settings['view_mode'] ?? 'full';
     $captions  = $items = $weights = [];
     $fields    = $settings['caption'] ?? [];
     $fields    = array_filter($fields);
+    $_link     = $settings['link'] ?? NULL;
     $_title    = $settings['title'] ?? NULL;
+    $_switch   = $settings['media_switch'] ?? NULL;
     $output    = [];
 
     // Title can be plain text, or link field.
@@ -199,6 +202,32 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
       $captions['data'] = $items;
     }
 
+    // Link, if so configured.
+    if ($_link && isset($entity->{$_link})) {
+      $links = $this->viewField($entity, $_link, $view_mode);
+      $formatter = $links['#formatter'] ?? 'x';
+
+      // Only simplify markups for known formatters registered by link.module.
+      if ($links && in_array($formatter, ['link'])) {
+        $links = [];
+        foreach ($entity->{$_link} as $link) {
+          $links[] = $link->view($view_mode);
+        }
+      }
+
+      $blazies->set('field.values.link', $links);
+
+      // If linkable element is plain text, it is not worth a caption.
+      if ($_switch == 'link') {
+        if (isset($links[0]['#plain_text'])
+          || isset($links[0]['#context']['value'])) {
+          $links = [];
+        }
+      }
+
+      $captions['link'] = $links;
+    }
+
     return array_filter($captions);
   }
 
@@ -209,6 +238,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
     $bundles  = $this->getAvailableBundles();
     $captions = $this->getFieldOptions();
     $_texts   = ['text', 'text_long', 'string', 'string_long', 'link'];
+    $_links   = ['text', 'string', 'link'];
     $titles   = $this->getFieldOptions($_texts);
     $images   = [];
     $svg_form = static::$useSvg;
@@ -222,16 +252,22 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
         $captions['title'] = $titles['title'] = $this->t('Image Title');
         $captions['alt'] = $this->t('Image Alt');
       }
-
-      // Only provides poster if media contains rich media.
-      $media = BlazyDefault::imagePosters();
-      if (count(array_intersect($keys, $media)) > 0) {
-        $images['images'] = $this->getFieldOptions(['image']);
-      }
     }
 
+    // Only provides poster if media contains rich media.
+    // @todo recheck without Image, Media loses image attribute association
+    // due to core Media thumbnail returning NULL title value.
+    // See https://www.drupal.org/project/blazy/issues/3390399
+    // $media = BlazyDefault::imagePosters();
+    // if (count(array_intersect($keys, $media)) > 0) {
+    $images['images'] = $this->getFieldOptions(['image']);
+    // }
     // @todo better way than hard-coding field name.
-    unset($captions['field_image'], $captions['field_media_image']);
+    unset(
+      $captions['field_image'],
+      $captions['field_media_image'],
+      $captions['field_media']
+    );
 
     return [
       'background'        => TRUE,
@@ -245,6 +281,7 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
       'no_image_style'    => FALSE,
       'responsive_image'  => TRUE,
       'thumbnail_style'   => TRUE,
+      'links'             => $this->getFieldOptions($_links),
       'titles'            => $titles,
     ] + $images
       + parent::getPluginScopes();

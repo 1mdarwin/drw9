@@ -63,21 +63,23 @@ abstract class BlazyStylePluginBase extends BlazyStyleBase implements BlazyStyle
       $rendered = $image['rendered'] ?? [];
       $element['#item'] = $image['raw'] ?? NULL;
 
-      if ($image['applicable']) {
-        if ($content = $rendered['#build']['content'] ?? []) {
-          // Fixed for missing data-thumb thumbnail with local video, needed
-          // by option static grid/ hoverable thumbnail.
-          if ($blazies->get('thumbnail.uri') && $blazies->is('local_media')) {
-            $blazies->set('is.multicontent', TRUE);
-          }
+      if ($rendered) {
+        if (!empty($image['applicable'])) {
+          if ($content = $rendered['#build']['content'] ?? []) {
+            // Fixed for missing data-thumb thumbnail with local video, needed
+            // by option static grid/ hoverable thumbnail.
+            if ($blazies->get('thumbnail.uri') && $blazies->is('local_media')) {
+              $blazies->set('is.multicontent', TRUE);
+            }
 
-          $element['content'] = $content;
+            $element['content'] = $content;
+          }
         }
-      }
-      else {
-        // VEF can be iframed as long as having URI, even from a thumbnail.
-        if (!$this->mediaManager->iframeable($rendered, $settings)) {
-          $element['content'][] = $rendered;
+        else {
+          // VEF can be iframed as long as having URI, even from a thumbnail.
+          if (!$this->mediaManager->iframeable($rendered, $settings)) {
+            $element['content'][] = $rendered;
+          }
         }
       }
 

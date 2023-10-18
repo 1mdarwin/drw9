@@ -99,15 +99,17 @@ trait TraitAdminBase {
     if ($scopes->was('scoped')) {
       return;
     }
+
+    $definition['plugin_id'] = $definition['plugin_id'] ?? 'x';
     $settings = $definition['settings'] ?? [];
     $blazies = $definition['blazies'];
     $lightboxes = $this->blazyManager->getLightboxes();
     $is_responsive = function_exists('responsive_image_get_image_dimensions');
-    $namespace = $blazies->get('namespace') ?: ($definition['namespace'] ?? NULL);
-    $plugin_id = $blazies->get('field.plugin_id') ?: ($definition['plugin_id'] ?? NULL);
-    $target_type = $blazies->get('field.target_type') ?: ($definition['target_type'] ?? NULL);
-    $entity_type = $blazies->get('field.entity_type') ?: ($definition['entity_type'] ?? NULL);
-    $view_mode = $blazies->get('field.view_mode') ?: ($definition['view_mode'] ?? NULL);
+    $namespace = $blazies->get('namespace') ?: ($definition['namespace'] ?? '');
+    $plugin_id = $blazies->get('field.plugin_id') ?: $definition['plugin_id'];
+    $target_type = $blazies->get('field.target_type') ?: ($definition['target_type'] ?? '');
+    $entity_type = $blazies->get('field.entity_type') ?: ($definition['entity_type'] ?? '');
+    $view_mode = $blazies->get('field.view_mode') ?: ($definition['view_mode'] ?? '');
     $switch = !$scopes->is('no_lightboxes') && isset($settings['media_switch']);
 
     $bools = [

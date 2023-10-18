@@ -1,6 +1,6 @@
 uuid: 2246781d-365a-4bbc-a66f-aa18d2088a49
 langcode: es
-status: true
+status: false
 dependencies:
   config:
     - system.menu.main
@@ -13,7 +13,7 @@ _core:
 id: drw2020_main_menu
 theme: drw2020
 region: navigation_collapsible
-weight: -11
+weight: -9
 provider: null
 plugin: 'system_menu_block:main'
 settings:

@@ -4,7 +4,6 @@ namespace Drupal\blazy;
 
 use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Theme\Lightbox;
-use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Url;
 
@@ -83,24 +82,21 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     // Fetch the newly modified settings with hashed key.
     $settings = &$element['#settings'];
     $blazies = $settings['blazies'];
+    $switch = $blazies->get('switch');
 
     // Bail out if no URI is provided.
-    if (!$blazies->get('image.uri')) {
-      return $element;
-    }
+    if ($blazies->get('image.uri')) {
+      // Disables linkable Pinterest, Twitter, etc.
+      // @todo refine or excludes other providers that should not be linked.
+      $linked = in_array($switch, ['link', 'content']) && Internals::linkable($blazies);
 
-    $url = $blazies->get('media.link') ?: $blazies->get('entity.url');
-    if ($url instanceof Url) {
-      $url = $url->toString();
-    }
-
-    // Requires a string to strip, image_formatter has a Url object.
-    if ($blazies->get('switch') == 'content' && $url && is_string($url)) {
-      $element['#url'] = UrlHelper::stripDangerousProtocols($url);
-      $element['#url_attributes']['class'][] = 'b-link';
-    }
-    elseif ($blazies->is('lightbox')) {
-      Lightbox::build($element);
+      // Requires a string to strip, image_formatter has a Url object.
+      if ($linked) {
+        $this->toLink($element, $blazies);
+      }
+      elseif ($blazies->is('lightbox')) {
+        Lightbox::build($element);
+      }
     }
 
     unset($build);
@@ -194,12 +190,13 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     $keys   = array_combine($keys, $keys);
     $keys   = array_filter($keys, fn($k) => strpos($k, 'title') === FALSE, ARRAY_FILTER_USE_KEY);
     $single = count($keys) == 1;
+    $ttag   = $blazies->get('item.title_tag', 'h2');
 
     // Supports multiple description fields.
     foreach ($captions as $key => $caption) {
       $css = $prefix . $key;
       if (strpos($key, 'title') !== FALSE) {
-        $inline[$key] = $this->toHtml($caption, 'h2', $prefix . 'title');
+        $inline[$key] = $this->toHtml($caption, $ttag, $prefix . 'title');
       }
       elseif ($key == 'overlay') {
         $overlays[$key] = $this->toHtml($caption, 'div', $css);
@@ -317,11 +314,12 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
         $media    = $blazies->get('lazy.html') && $blazies->get('media.id');
         $switch   = $blazies->get('switch');
         $provider = $blazies->get('media.provider');
+        $disabled = in_array($switch, ['content', 'link', 'media']);
 
         // @todo recheck.
         // Disable media player for Twitter, Instagram, Pinterest, etc.
         // Some providers have dynamic and anti-mainstream iframe sizes.
-        if ($switch == 'media' && Internals::irrational($provider)) {
+        if ($disabled && Internals::irrational($provider)) {
           $settings['media_switch'] = '';
           $blazies->set('switch', '')
             ->set('is.player', FALSE)
@@ -409,7 +407,7 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     $item       = $build['#item'];
     $settings   = &$build['#settings'];
     $blazies    = $settings['blazies'];
-    $attributes = &$build['#attributes'];
+    $attributes = $build['#attributes'];
     $captions   = Internals::toContent($build, TRUE, ['captions', 'caption']);
     $captions   = array_filter($captions);
 
@@ -445,6 +443,15 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     // Allows altering the settings for individual items.
     // Such as disabling lightbox for inline media player.
     $this->moduleHandler->alter('blazy_item', $settings, $attributes, $item_attributes);
+
+    // Update media switcher based on the hook_blazy_item_alter.
+    $blazies    = $settings['blazies'];
+    $api_switch = $blazies->get('switch');
+    if ($api_switch && $switch = $settings['media_switch'] ?? NULL) {
+      if ($switch != $api_switch) {
+        $settings['media_switch'] = $api_switch;
+      }
+    }
 
     // Only process (Responsive) image/ video if no rich-media are provided.
     // @todo recheck move it above before prepare if any needs or better.
@@ -485,19 +492,19 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     }
 
     // Fixed for media switch and lightboxes with Pinterest and Instagram API.
-    $lightbox = $blazies->is('lightbox');
-    foreach (array_keys(BlazyDefault::dyComponents()) as $key) {
-      if ($blazies->is($key)) {
-        $element['#attached']['library'][] = 'blazy/' . $key;
-        $applicable = !$lightbox;
+    $providers = array_keys(BlazyDefault::dyComponents());
+    if ($provider = $blazies->get('media.provider')) {
+      if (in_array($provider, $providers) && $blazies->is($provider)) {
+        $element['#attached']['library'][] = 'blazy/' . $provider;
+        $applicable = !$blazies->is('lightbox');
 
         // VEF does not need API initializer.
-        if ($key == 'instagram') {
+        if ($provider == 'instagram') {
           $applicable = $applicable && $blazies->use('instagram_api');
         }
 
         if ($applicable) {
-          $attributes['class'][] = 'b-' . $key;
+          $attributes['class'][] = 'b-' . $provider;
         }
       }
     }
@@ -507,7 +514,7 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     if (!$blazies->is('cache_deferred')) {
       if ($caches = $blazies->get('cache.metadata', [])) {
         if (isset($caches['tags'])) {
-          $caches['tags'] = array_unique($caches['tags']);
+          $caches['tags'] = array_unique($caches['tags'], SORT_REGULAR);
         }
         $element['#cache'] = $caches;
       }
@@ -618,6 +625,38 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
     );
 
     return $build;
+  }
+
+  /**
+   * Provides linkable content.
+   */
+  private function toLink(array &$element, $blazies): void {
+    $url = $blazies->get('media.link') ?: $blazies->get('entity.url');
+    $switch = $blazies->get('switch');
+
+    if ($switch == 'link') {
+      $url = $blazies->get('field.values.link', []);
+      if (is_array($url)) {
+        $url = reset($url);
+      }
+    }
+
+    if ($url) {
+      // If formatted link with title and value, extract its URL only.
+      if (is_array($url) && isset($url['#url'])) {
+        $url = $url['#url'];
+      }
+
+      if ($url instanceof Url) {
+        $url = $url->toString();
+      }
+
+      // Plain text field, link field w/o plain text URL, core linked Image.
+      if ($url) {
+        $element['#url'] = $url;
+        $element['#url_attributes']['class'][] = 'b-link';
+      }
+    }
   }
 
 }

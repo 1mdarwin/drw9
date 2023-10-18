@@ -103,7 +103,7 @@
      */
     function playNow(e) {
       var target = e.target;
-      var player = target.parentNode;
+      var player = $.closest(target, S_PLAYER);
       var iframe = $.find(player, IFRAME);
 
       url = $.attr(target, DATA_URL);

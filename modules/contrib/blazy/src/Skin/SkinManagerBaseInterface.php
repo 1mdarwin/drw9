@@ -2,6 +2,7 @@
 
 namespace Drupal\blazy\Skin;
 
+use Drupal\blazy\Plugin\SkinPluginInterface;
 use Drupal\Component\Plugin\Mapper\MapperInterface;
 
 /**
@@ -28,10 +29,10 @@ interface SkinManagerBaseInterface extends MapperInterface {
    * @param string $id
    *   The plugin id.
    *
-   * @return object
+   * @return \Drupal\blazy\Plugin\SkinPluginInterface
    *   Return instance of BlazySkin.
    */
-  public function load($id);
+  public function load($id): SkinPluginInterface;
 
   /**
    * Returns all plugins.

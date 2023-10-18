@@ -33,6 +33,7 @@ function bootstrap_barrio_preprocess_html(&$variables) {
     $pc = theme_get_setting('bootstrap_barrio_base_primary_color') ?? '#2F3C7E';
     $pcrgb = _hex2rgb( $pc );
     $pcd = _color_luminance($pc, -0.15);
+    $bc = '#000';
     $pct = _getContrastColor($pc, $white, $bc);
     $sc = theme_get_setting('bootstrap_barrio_base_secondary_color') ?? '#FBEAEB';
     $scrgb = _hex2rgb( $sc );
@@ -42,7 +43,7 @@ function bootstrap_barrio_preprocess_html(&$variables) {
       'white' => $white,
       'black' => '#000',
       'gray-200' => $gray200,
-      'gray-800' => $gray800, 
+      'gray-800' => $gray800,
       'primary' => $pc,
       'secondary' => $sc,
     ];
@@ -261,7 +262,7 @@ function bootstrap_barrio_preprocess_page(&$variables) {
       $variables['navbar_collapse_btn_data'] = "offcanvas";
       break;
     default:
-      $variables['navbar_offcanvas'] = FALSE; 
+      $variables['navbar_offcanvas'] = FALSE;
       $variables['navbar_collapse_class'] = 'collapse navbar-collapse justify-content-end';
       $variables['navbar_collapse_btn_data'] = "collapse";
   }
@@ -482,7 +483,7 @@ function bootstrap_barrio_preprocess_form_element(&$variables) {
     }
   }
 
-  if (theme_get_setting('bootstrap_barrio_float_label') && 
+  if (theme_get_setting('bootstrap_barrio_float_label') &&
         $variables['element']['#type'] != 'radio' &&
         $variables['element']['#type'] != 'checkbox' &&
         $variables['element']['#type'] != 'date' &&
@@ -824,7 +825,7 @@ function bootstrap_barrio_preprocess_input(&$variables) {
     }
     $variables['safe_value_label'] = Xss::filter($variables['attributes']['value']);
   }
-  if ($variables['element']['#type'] != 'radio' && 
+  if ($variables['element']['#type'] != 'radio' &&
     $variables['element']['#type'] != 'checkbox' &&
     $variables['element']['#type'] != 'date' &&
     $variables['element']['#type'] != 'time' &&
@@ -832,7 +833,7 @@ function bootstrap_barrio_preprocess_input(&$variables) {
     $variables['element']['#type'] != 'select' &&
     $variables['element']['#type'] != 'search' &&
     $variables['element']['#type'] != 'textarea' &&
-    theme_get_setting('bootstrap_barrio_float_label') && 
+    theme_get_setting('bootstrap_barrio_float_label') &&
     !isset($variables['attributes']['placeholder'])) {
       $variables['attributes']['placeholder'] = isset($variables['element']['#title']) ? $variables['element']['#title'] : '';
   }
@@ -882,17 +883,17 @@ function _hex2rgba( $color, $opacity ) {
  * https://gist.github.com/stephenharris/5532899
  */
 function _color_luminance( $hex, $percent ) {
-	$hex = preg_replace( '/[^0-9a-f]/i', '', $hex );
-	$new_hex = '#';
-	if ( strlen( $hex ) < 6 ) {
-		$hex = $hex[0] + $hex[0] + $hex[1] + $hex[1] + $hex[2] + $hex[2];
-	}
-	for ($i = 0; $i < 3; $i++) {
-		$dec = hexdec( substr( $hex, $i*2, 2 ) );
-		$dec = min( max( 0, $dec + $dec * $percent ), 255 ); 
-		$new_hex .= str_pad( dechex( $dec ) , 2, 0, STR_PAD_LEFT );
-	}		
-	return $new_hex;
+  $hex = preg_replace( '/[^0-9a-f]/i', '', $hex );
+  $new_hex = '#';
+  if ( strlen( $hex ) < 6 ) {
+    $hex = $hex[0] + $hex[0] + $hex[1] + $hex[1] + $hex[2] + $hex[2];
+  }
+  for ($i = 0; $i < 3; $i++) {
+    $dec = hexdec( substr( $hex, $i*2, 2 ) );
+    $dec = min( max( 0, $dec + intval($dec * $percent) ), 255 );
+    $new_hex .= str_pad( dechex( intval($dec) ) , 2, 0, STR_PAD_LEFT );
+  }
+  return $new_hex;
 }
 
 function _getContrastColor($hexColor, $white = '#fff', $dark = '#000') {
@@ -926,7 +927,7 @@ function _getContrastColor($hexColor, $white = '#fff', $dark = '#000') {
   // If contrast is more than 5, return black color
   if ($contrastRatio > 5) {
      return $dark;
-  } else { 
+  } else {
     // if not, return white color.
     return $white;
   }

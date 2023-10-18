@@ -3,6 +3,12 @@
 ## <a name="changes"></a>NOTABLE CHANGES  
 Always check out release notes, if any issues with the latest changes.
 
+* _Blazy 2.18_, 2023/09/30:
+  + Warm fixes for 2.18 regressions.
+  + Added **Media switcher > Image linked by Link field** option.
+  + Added a dedicated **Link** field option to Blazy Media formatter.
+* _Blazy 2.18_, 2023/09/24:
+  + Mildly hot fixes for 2.17 regressions.
 * _Blazy 2.17_, 2023/09/18:
    + Updated blazy.api.php.
    + Cold fixes for few minor regressions and self organizations.

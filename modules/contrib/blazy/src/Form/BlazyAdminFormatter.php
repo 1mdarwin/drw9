@@ -118,14 +118,7 @@ class BlazyAdminFormatter extends BlazyAdminFormatterBase {
       ];
     }
 
-    if (isset($data['links'])) {
-      $form['link'] = [
-        '#type'        => 'select',
-        '#title'       => $this->t('Link'),
-        '#options'     => $this->toOptions($data['links']),
-        '#description' => $descriptions['link'],
-      ];
-    }
+    $this->linkForm($form, $definition, $scopes);
 
     // Allows empty options to raise awareness of this option.
     if (isset($data['classes'])) {
@@ -192,11 +185,12 @@ class BlazyAdminFormatter extends BlazyAdminFormatterBase {
       'cache' => $cache,
       'caption' => $caption,
       'class' => $this->t('If provided, individual item will have this class, e.g.: to have different background with transparent images. Be sure its formatter is Key or Label. Accepted field types: list text, string (e.g.: node title), term/entity reference label.'),
-      'link' => $this->t('Link to content: Read more, View Case Study, etc. If an entity, be sure its formatter is linkable strings like ID or Label.'),
       'optionset' => $this->t('Enable the optionset UI module to manage the optionsets.'),
       'overlay' => $overlay,
       'thumbnail' => $this->t('Leave empty to not use thumbnail/ pager.'),
-      'title' => $this->t('If provided, it will be wrapped with H2. Also supported the basic non-field Image title. If an entity, be sure its formatter is strings like ID or Label.'),
+      'title' => $this->t('<strong>Supported types</strong>: basic Image title, and fields like a dedicated field Title, Link, etc. If an entity, be sure its formatter is strings like ID or Label. As opposed to <strong>Caption fields</strong>, it will be positioned and wrapped with H2 (overriden by <code>hook_blazy_item_alter() with blazies.item.title_tag</code>) and a dedicated class: <strong>@class</strong>.', [
+        '@class' => $namespace == 'blazy' ? 'blazy__caption--title' : $namespace . '__title',
+      ]),
       'vanilla' => $this->t('<strong>Check</strong>:<ul><li>To render individual item as is as without extra logic.</li><li>To disable 99% @module features, and most of the mentioned options here, such as layouts, et al.</li><li>When the @module features can not satisfy the need.</li><li>Things may be broken! You are on your own.</li></ul><strong>Uncheck</strong>:<ul><li>To get consistent markups and its advanced features -- relevant for the provided options as @module needs to know what to style/work with.</li></ul>', ['@module' => $namespace]),
     ];
   }

@@ -60,12 +60,12 @@ class Svg implements SvgInterface {
    */
   public function __construct(
     FileSystemInterface $file_system,
-    FileRepository $file_repository,
+    // @todo FileRepository $file_repository,
     ImageFactory $image_factory,
     LoggerChannelFactoryInterface $logger
   ) {
     $this->fileSystem = $file_system;
-    $this->fileRepository = $file_repository;
+    // @todo $this->fileRepository = $file_repository;
     $this->imageFactory = $image_factory;
     $this->logger = $logger->get('image');
   }
@@ -76,7 +76,7 @@ class Svg implements SvgInterface {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('file_system'),
-      $container->get('file.repository'),
+      // @todo $container->get('file.repository'),
       $container->get('image.factory'),
       $container->get('logger.factory')
     );
@@ -93,6 +93,10 @@ class Svg implements SvgInterface {
    * {@inheritdoc}
    */
   public function fileRepository(): FileRepository {
+    // @todo remove when min D9.3.
+    if (!isset($this->fileRepository)) {
+      $this->fileRepository = Internals::service('file.repository');
+    }
     return $this->fileRepository;
   }
 

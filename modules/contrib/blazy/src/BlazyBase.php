@@ -15,7 +15,7 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Language\LanguageManager;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -81,7 +81,7 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * The language manager.
    *
-   * @var \Drupal\Core\Language\LanguageManager
+   * @var \Drupal\Core\Language\LanguageManagerInterface
    */
   protected $languageManager;
 
@@ -129,7 +129,7 @@ abstract class BlazyBase implements BlazyInterface {
     RendererInterface $renderer,
     ConfigFactoryInterface $config_factory,
     CacheBackendInterface $cache,
-    LanguageManager $language_manager
+    LanguageManagerInterface $language_manager
   ) {
     // @todo enable at 3.x:
     // $this->libraries = $libraries;
@@ -284,8 +284,8 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * {@inheritdoc}
    */
-  public function entityQuery($type, $conjunction = 'AND') {
-    return $this->getStorage($type)->getQuery($conjunction);
+  public function entityQuery($type, $conjunction = 'AND', $access = TRUE) {
+    return $this->getStorage($type)->getQuery($conjunction)->accessCheck($access);
   }
 
   /**
@@ -328,7 +328,7 @@ abstract class BlazyBase implements BlazyInterface {
         // Only if we have data, cache them.
         if ($data && is_array($data)) {
           if (isset($data[1])) {
-            $data = array_unique($data);
+            $data = array_unique($data, SORT_REGULAR);
           }
 
           if ($as_options) {

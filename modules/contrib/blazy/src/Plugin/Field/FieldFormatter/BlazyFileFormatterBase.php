@@ -236,54 +236,83 @@ abstract class BlazyFileFormatterBase extends FileFormatterBase {
       '#item'     => $item,
     ] = $data;
 
-    $blazies  = $settings['blazies'];
-    $options  = $settings['caption'] ?? [];
-    $options  = array_filter($options);
-    $display  = empty($settings['svg_hide_caption']);
-    $type     = $blazies->get('field.type');
-    $captions = [];
+    // At most cases, unless file entity is installed, the parent is the entity.
+    $entity    = $data['#parent'] ?? NULL;
+    $blazies   = $settings['blazies'];
+    $options   = $settings['caption'] ?? [];
+    $options   = array_filter($options);
+    $display   = empty($settings['svg_hide_caption']);
+    $type      = $blazies->get('field.type');
+    $_link     = $settings['link'] ?? NULL;
+    $_switch   = $settings['media_switch'] ?? NULL;
+    $view_mode = $settings['view_mode'] ?? 'default';
+    $captions  = [];
 
-    if (!$options) {
-      return $captions;
-    }
+    if ($options) {
+      // Provides default image captions.
+      if ($item) {
+        foreach ($options as $name) {
+          if ($content = ($item->{$name} ?? NULL)) {
+            $caption = Sanitize::caption($content);
 
-    // Provides default image captions.
-    if ($item) {
-      foreach ($options as $name) {
-        if ($content = ($item->{$name} ?? NULL)) {
-          $caption = Sanitize::caption($content);
+            // SVG image field, or plain old image:
+            // if ($name == 'alt' || $name == 'title') {
+            // Conflict with sub-modules' markups, not blazy's.
+            // @todo enable at 3.x when they use theme_blazy().
+            // if ($caption  && $name == 'alt') {
+            // $caption = '<p>' . $caption . '</p>';
+            // }
+            // }
+            // File with description_field enabled, have description.
+            // SVG image field, or plain old image have title and alt.
+            if (in_array($name, ['alt', 'description', 'title'])) {
+              $blazies->set('image.' . $name, $caption);
+            }
 
-          // SVG image field, or plain old image:
-          // if ($name == 'alt' || $name == 'title') {
-          // Conflict with sub-modules' markups, not blazy's.
-          // @todo enable at 3.x when they use theme_blazy().
-          // if ($caption  && $name == 'alt') {
-          // $caption = '<p>' . $caption . '</p>';
-          // }
-          // }
-          // File with description_field enabled, have description.
-          // SVG image field, or plain old image have title and alt.
-          if (in_array($name, ['alt', 'description', 'title'])) {
-            $blazies->set('image.' . $name, $caption);
+            if ($display) {
+              $captions[$name] = ['#markup' => $caption];
+            }
           }
+        }
+      }
 
-          if ($display) {
-            $captions[$name] = ['#markup' => $caption];
+      // Provides fieldable captions.
+      if ($type == 'entity_reference' && $entity) {
+        foreach ($options as $name) {
+          if ($markup = $this->viewField($entity, $name, [])) {
+            $captions[$name] = $markup;
           }
         }
       }
     }
 
-    // Provides fieldable captions.
-    if ($type == 'entity_reference' && $entity = $data['#parent'] ?? NULL) {
-      foreach ($options as $name) {
-        if ($markup = $this->viewField($entity, $name, [])) {
-          $captions[$name] = $markup;
+    // Link, if so configured.
+    if ($_link && $entity && isset($entity->{$_link})) {
+      $links = $this->viewField($entity, $_link, []);
+      $formatter = $links['#formatter'] ?? 'x';
+
+      // Only simplify markups for known formatters registered by link.module.
+      if ($links && in_array($formatter, ['link'])) {
+        $links = [];
+        foreach ($entity->{$_link} as $link) {
+          $links[] = $link->view($view_mode);
         }
       }
+
+      $blazies->set('field.values.link', $links);
+
+      // If linkable element is plain text, it is not worth a caption.
+      if ($_switch == 'link') {
+        if (isset($links[0]['#plain_text'])
+          || isset($links[0]['#context']['value'])) {
+          $links = [];
+        }
+      }
+
+      $captions['link'] = $links;
     }
 
-    return array_filter($captions);
+    return $captions ? array_filter($captions) : [];
   }
 
   /**
@@ -305,9 +334,16 @@ abstract class BlazyFileFormatterBase extends FileFormatterBase {
    * {@inheritdoc}
    */
   protected function getPluginScopes(): array {
+    $field    = $this->fieldDefinition;
     $multiple = $this->isMultiple();
-    $type     = $this->fieldDefinition->getType();
+    $type     = $field->getType();
     $is_image = $type == 'image' || $type == 'svg_image_field';
+    $_links   = ['text', 'string', 'link'];
+    $links    = [];
+
+    if (method_exists($field, 'get')) {
+      $links = $this->getFieldOptions($_links, $field->get('entity_type'));
+    }
 
     return [
       'background'        => TRUE,
@@ -323,6 +359,7 @@ abstract class BlazyFileFormatterBase extends FileFormatterBase {
       'multiple'          => $multiple,
       'view_mode'         => $is_image ? NULL : $this->viewMode,
       'no_view_mode'      => $is_image,
+      'links'             => $links,
     ];
   }
 

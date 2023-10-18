@@ -149,11 +149,13 @@ interface BlazyInterface {
    *   The entity type.
    * @param string $conjunction
    *   The operator for the query.
+   * @param bool $access
+   *   Whether checked with access, or not.
    *
    * @return object
    *   The entity query object.
    */
-  public function entityQuery($type, $conjunction = 'AND');
+  public function entityQuery($type, $conjunction = 'AND', $access = TRUE);
 
   /**
    * Returns cached data identified by its cache ID, normally alterable data.

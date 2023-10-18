@@ -4,6 +4,7 @@ global-styling:
     js/barrio.js: {}
   css:
     component:
+      css/components/variables: { weight: -20 }
       css/components/affix.css: {}
       css/components/book.css: {}
       css/components/contextual.css: {}
@@ -91,7 +92,7 @@ colors:
   version: VERSION
   css:
     component:
-      css/colors/colors.css: {}
+      css/colors/colors.css: { weight: 10 }
 
 comments:
   css:

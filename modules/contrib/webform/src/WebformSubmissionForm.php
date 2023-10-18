@@ -7,8 +7,8 @@ use Drupal\Component\Utility\Bytes;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\Cache;
-use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\FieldableEntityInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\Core\Form\FormStateInterface;
@@ -2652,13 +2652,10 @@ class WebformSubmissionForm extends ContentEntityForm {
       $prepopulate_data = $this->getRequest()->query->all();
     }
     else {
-      $prepopulate_data = [];
-      $elements = $this->getWebform()->getElementsPrepopulate();
-      foreach ($elements as $element_key) {
-        if ($this->getRequest()->query->has($element_key)) {
-          $prepopulate_data[$element_key] = $this->getRequest()->query->get($element_key);
-        }
-      }
+      $prepopulate_data = array_intersect_key(
+        $this->getRequest()->query->all(),
+        $this->getWebform()->getElementsPrepopulate()
+      );
     }
 
     // Validate prepopulate data.

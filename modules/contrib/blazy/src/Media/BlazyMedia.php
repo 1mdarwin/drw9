@@ -131,7 +131,7 @@ class BlazyMedia implements BlazyMediaInterface {
    * {@inheritdoc}
    */
   public function view(array $build): array {
-    $entity   = $build['#entity'];
+    $entity   = $build['#media'] ?? $build['#entity'];
     $settings = &$build['#settings'];
     $item     = $build['#item'] ?? NULL;
 
@@ -361,7 +361,7 @@ class BlazyMedia implements BlazyMediaInterface {
    * {@inheritdoc}
    */
   public function prepare(array &$data): MediaInterface {
-    $media     = $data['#entity'];
+    $media     = $data['#media'] ?? $data['#entity'];
     $settings  = &$data['#settings'];
     $blazies   = $settings['blazies'];
     $view_mode = $settings['view_mode'] ?? 'default';
@@ -407,6 +407,8 @@ class BlazyMedia implements BlazyMediaInterface {
     $blazies->set('is.local_audio', $source == 'audio_file')
       ->set('is.local_video', $source == 'video_file');
 
+    // Just to be sure in case called anywhere else.
+    $data['#media'] = $media;
     return $media;
   }
 

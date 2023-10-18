@@ -287,12 +287,14 @@ class BlazyAlter {
       // $field = $blazies->get('field', []);
       // $field['count'] = $blazies->get('count');
       // Only eat what we can chew:
+      $data = Internals::getViewFieldData($view);
       $current = [
         'count'       => count($view->result),
         'display'     => $display,
         'embedded'    => TRUE,
         'instance_id' => str_replace('_', '-', "{$name}-{$display}-{$view_mode}"),
-        'data'        => Internals::getViewFieldData($view),
+        'data'        => $data,
+        'multifield'  => count($data['fields']) > 1,
         'name'        => $name,
         'plugin_id'   => $plugin_id,
         'view_mode'   => $view_mode,

@@ -154,24 +154,21 @@
       // Makes sure to have media loaded beforehand.
       me.lazyLoad(el, WINDATA);
 
+      // If not extending/ overriding, at least provide the option.
+      if ($.isFun(opts.intersecting)) {
+        opts.intersecting(el, opts);
+      }
+
+      // If not extending/ overriding, also allows to listen to.
+      $.trigger(el, E_INTERSECTING, {
+        options: opts
+      });
+
       HITTICK++;
 
       // Marks it hit/ requested, not necessarily loaded.
       el.bhit = true;
     }
-
-    // If not extending/ overriding, at least provide the option.
-    // Currenty IO.module wants to keep watching for infinite pager since it
-    // only has a single button/ link to observe so should not be locked.
-    // @todo move it back right after ::lazyLoad once IO.module smarter.
-    if ($.isFun(opts.intersecting)) {
-      opts.intersecting(el, opts);
-    }
-
-    // If not extending/ overriding, also allows to listen to.
-    $.trigger(el, E_INTERSECTING, {
-      options: opts
-    });
   }
 
   // This function is called by two observers: IO and RO.
@@ -284,7 +281,8 @@
     // Native lazy markup is triggered by enabling `No JavaScript` lazy option.
     me.prepare();
 
-    var elms = me.elms = $.findAll(ROOT, $.selector(me.options));
+    var elms = $.findAll(ROOT, $.selector(me.options));
+    me.elms = elms;
     me.count = elms.length;
     me._raf = [];
     me._queue = [];
@@ -404,15 +402,16 @@
     var me = this;
     var elms = me.elms;
 
-    // Only initialize the observer if destroyed, and IO.
-    if ($.isIo && (me.destroyed || reobserve)) {
-      WINDATA = FN_OBSERVER.init(me, interact, elms, true);
-
-      me.destroyed = false;
-    }
+    reobserve = reobserve || me.destroyed;
 
     // Observe as IO, or initialize old bLazy as fallback.
     if (!INITIALIZED || reobserve) {
+      if ($.isIo) {
+        WINDATA = FN_OBSERVER.init(me, interact, elms, true);
+
+        me.destroyed = false;
+      }
+
       FN_OBSERVER.observe(me, elms, true);
 
       INITIALIZED = true;
@@ -422,6 +421,7 @@
   FN.reinit = function () {
     var me = this;
     me.destroyed = true;
+    BIOTICK = 0;
 
     init(me);
   };

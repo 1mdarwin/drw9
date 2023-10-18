@@ -120,8 +120,10 @@ class BlazyDefault {
   public static function imageSettings() {
     return [
       'layout'    => '',
+      'link'      => '',
       'view_mode' => '',
-    ] + self::baseSettings() + self::baseImageSettings();
+    ] + self::baseSettings()
+      + self::baseImageSettings();
   }
 
   /**
@@ -136,6 +138,15 @@ class BlazyDefault {
       'svg_hide_caption' => FALSE,
       'svg_attributes' => '',
     ];
+  }
+
+  /**
+   * Returns media-related field formatter settings.
+   */
+  public static function mediaSettings() {
+    return [
+      'link' => '',
+    ] + self::svgSettings();
   }
 
   /**

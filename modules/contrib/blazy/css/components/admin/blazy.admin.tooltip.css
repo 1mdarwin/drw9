@@ -111,6 +111,7 @@
   visibility: visible;
   overflow: visible !important; /* csslint allow: known-properties, important */
   opacity: 1 !important; /* csslint allow: known-properties, important */
+  box-shadow: 0 0 4px 1px #fff;
 }
 
 .b-tooltip .form-item.is-selected > .description {

@@ -166,3 +166,10 @@ function blazy_post_update_added_formatter_blazy_entity() {
 function blazy_post_update_added_blazy_media_service() {
   // Empty hook to clear caches.
 }
+
+/**
+ * Removed file.repository service from blazy.svg for D9.3, see #3393539.
+ */
+function blazy_post_update_remove_file_repository_service() {
+  // Empty hook to clear caches.
+}

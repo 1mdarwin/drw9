@@ -165,7 +165,6 @@
       }
     }
 
-
     me.erCount = ER_COUNTED;
   };
 

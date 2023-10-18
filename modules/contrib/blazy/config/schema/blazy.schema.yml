@@ -178,6 +178,20 @@ field.formatter.settings.blazy_file:
   type: blazy_base
   label: 'Blazy File/SVG display format settings'
 
+field.formatter.settings.blazy_title:
+  type: mapping
+  label: 'Blazy Title format settings'
+  mapping:
+    delimiter:
+      type: string
+      label: Delimiter
+    tag:
+      type: string
+      label: Tag
+    break:
+      type: boolean
+      label: 'Add Linebreak'
+
 # @todo remove at 3.x anything below this line:
 field.formatter.settings.blazy_video:
   type: blazy_base

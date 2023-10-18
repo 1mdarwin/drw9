@@ -3,6 +3,14 @@
  * This file extends blazy/nativegrid specific for form usages.
  */
 
+:root {
+  /* RGBA to be cross-compat with dark mode without relying on different classes. */
+  --ba-bg: rgba(240, 240, 240, 0.4);
+  --ba-shadow: rgba(200, 200, 200, 0.8);
+  --ba-border: rgba(155, 155, 155, 0.4);
+}
+
+.b-nativegrid--form *,
 .b-nativegrid--form *::before,
 .b-nativegrid--form *::after {
   box-sizing: border-box;
@@ -10,14 +18,15 @@
 
 .b-nativegrid--form {
   align-items: center;
-  border: 1px solid #dbe1e9;
   gap: 0;
 }
 
 .form--blazy.b-nativegrid--form {
+  grid-auto-flow: row;
   margin: 30px auto;
-  background-color: #f9f9f9;
-  box-shadow: 0 0 0 4px #dadada;
+  border: 1px solid var(--ba-border);
+  background-color: var(--ba-bg);
+  box-shadow: 0 0 0 4px var(--ba-shadow);
 }
 
 .b-nativegrid--form.b-tooltip,
@@ -27,7 +36,6 @@
 
 .b-nativegrid--form fieldset > div {
   width: inherit;
-  border-bottom: 1px solid #dbe1e9;
 }
 
 .b-nativegrid--form fieldset:last-child > div {
@@ -54,20 +62,23 @@
   position: relative;
   margin: 0 auto -2px;
   padding: 0;
-  border-bottom: 1px solid #dadada;
+  border-bottom: 1px solid var(--ba-border);
 }
 
+/*
+Unreliable given hidden states.
 .b-odd .form-item:last-child {
   border-bottom: 0;
 }
+*/
 
 .b-nativegrid--auto,
 .b-nativegrid--form .form-checkboxes {
   clear: both;
   width: 100%;
   margin: 0;
-  border-top: 2px solid #dadada;
-  border-bottom: 1px solid #dadada;
+  border-top: 2px solid var(--ba-border);
+  border-bottom: 1px solid var(--ba-border);
 }
 
 .b-nativegrid--form .grid.form-item > select {
@@ -130,7 +141,9 @@
   }
 
   .b-nativegrid--form .form-item .form-item__suffix {
-    margin-top: 2px;
+    margin-right: -14px;
+    margin-left: 0;
+    transform: rotate(90deg);
   }
 
   .b-nativegrid--form .grid .form-textarea-wrapper {
@@ -154,8 +167,13 @@
   .b-nativegrid--form fieldset > legend {
     box-sizing: border-box;
     padding: 8px;
+    background-color: var(--ba-border);
+  }
+
+  .b-nativegrid--form .form__title,
+  .b-nativegrid--form fieldset > legend,
+  .b-nativegrid--form fieldset > legend span {
     text-align: center;
-    background-color: #dadada;
     font-size: 1.602rem;
     font-weight: bold;
     line-height: 1.3;
@@ -220,6 +238,7 @@
 
   .b-nativegrid--form fieldset .fieldset__description,
   .b-nativegrid--form .fieldset-wrapper > .description {
+    max-width: 100%;
     text-align: center;
   }
 }

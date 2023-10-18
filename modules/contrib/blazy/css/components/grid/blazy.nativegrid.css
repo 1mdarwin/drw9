@@ -37,9 +37,14 @@
   display: block;
   width: 100%;
   min-height: 40px;
-  /* margin: 0 0 var(--bn-col-gap) 0; */
-  margin: 0;
+  margin: 0 0 var(--bn-col-gap);
   padding: 0;
+}
+
+/** Without margin. */
+.is-b-gapless > .grid,
+.item-list > .is-b-gapless > .grid {
+  margin: 0;
 }
 
 .b-nativegrid .grid__content {
@@ -76,6 +81,7 @@
   .blazy.b-nativegrid,
   .item-list > .b-nativegrid {
     display: grid;
+    grid-auto-flow: dense;
   }
 
   /** Without margin. */
@@ -91,7 +97,7 @@
   }
 
   /** Adjust the minimum accordingly like everything else. */
-  .b-nativegrid.is-b-native > .grid {
+  .is-b-native > .grid {
     -ms-grid-row-span: 2;
     grid-row: span 2;
     -ms-grid-column: auto;
@@ -105,16 +111,16 @@
 
   /* Add more relevant selectors accordingly to make gapless grids.
   Remove .is-b-native to make it fit height-width for Masonry as well, if needed. */
-  .b-nativegrid.is-b-native .grid .b-cover,
-  .b-nativegrid.is-b-native .grid .b-link,
-  .b-nativegrid.is-b-native .grid .litebox,
-  .b-nativegrid.is-b-native .grid .b-bg,
-  .b-nativegrid.is-b-native .grid iframe,
-  .b-nativegrid.is-b-native .grid picture,
-  .b-nativegrid.is-b-native .grid video,
-  .b-nativegrid.is-b-native .grid .media,
-  .b-nativegrid.is-b-native .grid img.media__element,
-  .b-nativegrid.is-b-native .grid .slide__media {
+  .b-nativegrid.is-b-native .b-cover,
+  .b-nativegrid.is-b-native .b-link,
+  .b-nativegrid.is-b-native .litebox,
+  .b-nativegrid.is-b-native .b-bg,
+  .b-nativegrid.is-b-native iframe,
+  .b-nativegrid.is-b-native picture,
+  .b-nativegrid.is-b-native video,
+  .b-nativegrid.is-b-native .media,
+  .b-nativegrid.is-b-native img.media__element,
+  .b-nativegrid.is-b-native .slide__media {
     position: static; /* To keep lightbox/ video icon centered. */
     width: 100%;
     height: inherit;
@@ -123,7 +129,7 @@
     object-fit: cover;
   }
 
-  .is-b-native .grid .b-html.b-loaded > img {
+  .is-b-native .b-html.b-loaded > img {
     position: absolute;
     z-index: -1;
     width: 0;
@@ -257,6 +263,7 @@
 
   /* Dimensions for two-dimensional layout. */
   /** grid-row == height */
+  /* @todo remove .grid and -ms- stuffs at 3.x. */
   .b-nativegrid > .grid[data-b-h="1"] {
     -ms-grid-row-span: 1;
     grid-row: span 1;

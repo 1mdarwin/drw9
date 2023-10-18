@@ -10,7 +10,7 @@
  * fixes this type of issue when min D9.2.
  */
 
-(function ($, Drupal) {
+(function ($, Drupal, _doc) {
 
   'use strict';
 
@@ -36,15 +36,12 @@
 
         // DOM ready fix. Be sure Views "Use field template" is disabled.
         REV_TIMER = setTimeout(function () {
-          var elms = $.findAll(document, $.selector(opts, true));
-          if (elms.length) {
-            // ::load() means forcing them to load at once, great for small
-            // amount of items, bad for large amount.
-            // ::revalidate() means re-observe newly loaded AJAX contents
-            // without forcing all images to load at once, great for large, bad
-            // for small.
-            // Unfortunately revalidate() not always work, likely layout reflow.
-            me.load(elms, true, opts);
+          var el = $.find(_doc, $.selector(opts, true));
+          if (el) {
+            // See blazy.load.js.
+            $.once.removeSafely('b-root', 'body', _doc);
+
+            Drupal.attachBehaviors(_doc.body);
           }
         }, 100);
       }
@@ -53,4 +50,4 @@
     };
   })(PROTO.success);
 
-})(dBlazy, Drupal);
+})(dBlazy, Drupal, this.document);

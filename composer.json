@@ -49,6 +49,7 @@
         "drupal/panels": "^4.7",
         "drupal/pathauto": "^1.9",
         "drupal/profile": "^1.7",
+        "drupal/responsive_menu": "^4.4",
         "drupal/simple_sitemap": "^4.1.1",
         "drupal/slick": "^2.7",
         "drupal/slick_extras": "^1.0@RC",

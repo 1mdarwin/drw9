@@ -90,23 +90,7 @@ abstract class BlazyEntityReferenceBase extends BlazyEntityMediaBase {
     ] = $element;
 
     $view_mode = $settings['view_mode'] ?? 'full';
-    $_link     = $settings['link'] ?? NULL;
     $_overlay  = $settings['overlay'] ?? NULL;
-
-    // Link, if so configured.
-    if ($_link && isset($entity->{$_link})) {
-      $links = $this->viewField($entity, $_link, $view_mode);
-      $formatter = $links['#formatter'] ?? 'x';
-
-      // Only simplify markups for known formatters registered by link.module.
-      if ($links && in_array($formatter, ['link'])) {
-        $links = [];
-        foreach ($entity->{$_link} as $link) {
-          $links[] = $link->view($view_mode);
-        }
-      }
-      $captions['link'] = $links;
-    }
 
     // Overlay, like slider or video over slider, if so configured.
     if ($_overlay && isset($entity->{$_overlay})) {
@@ -123,13 +107,11 @@ abstract class BlazyEntityReferenceBase extends BlazyEntityMediaBase {
     $parent   = parent::getPluginScopes();
     $_strings = ['text', 'string', 'list_string'];
     $strings  = $this->getFieldOptions($_strings);
-    $_links   = ['text', 'string', 'link'];
 
     return [
       'classes' => $strings,
       'images'  => $this->getFieldOptions(['image']),
       'layouts' => $strings,
-      'links'   => $this->getFieldOptions($_links),
       'vanilla' => TRUE,
     ] + $parent;
   }

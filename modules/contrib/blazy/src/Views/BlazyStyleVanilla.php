@@ -337,7 +337,7 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
   protected function getFieldRendered($index, $name, $restricted = FALSE, $row = NULL): array {
     if ($name && $output = $this->getField($index, $name)) {
       // Linked title has weird value: ….
-      if ($row && $output == "…") {
+      if ($row && ($output == "…" || !$output)) {
         if ($check = $this->getFieldRenderable($row, $index, $name)) {
           $output = $check['rendered'] ?? [];
         }

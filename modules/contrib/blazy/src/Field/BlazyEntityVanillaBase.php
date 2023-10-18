@@ -195,11 +195,16 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
    * @return array
    *   The available fields as options.
    */
-  protected function getFieldOptions(array $names = [], $target_type = NULL): array {
-    $target_type = $target_type ?: $this->getFieldSetting('target_type');
+  protected function getFieldOptions(
+    array $names = [],
+    $entity_type = NULL,
+    $target_type = NULL,
+    $exclude = TRUE
+  ): array {
+    $entity_type = $entity_type ?: $this->getFieldSetting('target_type');
     $bundles     = $this->getAvailableBundles();
 
-    return $this->getFieldOptionsWithBundles($bundles, $names, $target_type);
+    return $this->getFieldOptionsWithBundles($bundles, $names, $entity_type, $target_type, $exclude);
   }
 
   /**

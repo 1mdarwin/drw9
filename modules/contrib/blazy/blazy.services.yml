@@ -50,7 +50,8 @@ services:
 
   blazy.svg:
     class: Drupal\blazy\Media\Svg\Svg
-    arguments: ['@file_system', '@file.repository', '@image.factory', '@logger.factory']
+    # @todo arguments: ['@file_system', '@file.repository', '@image.factory', '@logger.factory']
+    arguments: ['@file_system', '@image.factory', '@logger.factory']
 
   blazy.admin.base:
     abstract: true

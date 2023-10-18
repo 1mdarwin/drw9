@@ -289,7 +289,7 @@ class Libraries implements LibrariesInterface {
         // Only if we have data, cache them.
         if ($data && is_array($data)) {
           if (isset($data[1])) {
-            $data = array_unique($data);
+            $data = array_unique($data, SORT_REGULAR);
           }
 
           if ($as_options) {

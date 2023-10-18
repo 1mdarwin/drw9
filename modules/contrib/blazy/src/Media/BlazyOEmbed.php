@@ -340,6 +340,16 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
       }
     }
 
+    // Required early by BlazyImage::fromAny() below to get media metadata.
+    if ($valid) {
+      $build['#media'] = $media;
+      // Prepare Media needed settings, extract Media thumbnail, except type.
+      $media = $this->blazyMedia->prepare($build);
+
+      // Overrides media with the translated version.
+      $build['#media'] = $media;
+    }
+
     // Provides image url earlier for file_video at ::fromMedia to have posters.
     if (!BlazyImage::isValidItem($build)) {
       $entity = $valid ? $media : $entity;
@@ -372,9 +382,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
 
     /** @var \Drupal\media\Entity\Media $entity */
     if ($valid) {
-      $build['#entity'] = $media;
       $this->fromMedia($build);
-
     }
     else {
       // Attempts to get image data directly from oEmbed resource.
@@ -393,15 +401,10 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
    *   The modified array containing: settings, and candidate video thumbnail.
    */
   private function fromMedia(array &$build): void {
-    // Prepare Media needed settings, and extract Media thumbnail, except type.
-    $media    = $this->blazyMedia->prepare($build);
     $settings = &$build['#settings'];
     $blazies  = $settings['blazies'];
     $input    = $blazies->get('media.value');
     $source   = $blazies->get('media.source');
-
-    // Overrides entity with the translated version.
-    $build['#entity'] = $media;
 
     // Local video/ audio file were fully supported since 2.17.
     // @todo support other media sources: Resource::TYPE_PHOTO,
