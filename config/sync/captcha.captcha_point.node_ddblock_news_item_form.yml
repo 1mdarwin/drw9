@@ -1,0 +1,7 @@
+uuid: 515f52d5-fed9-4af2-b627-12534f46da94
+langcode: en
+status: false
+dependencies: {  }
+formId: node_ddblock_news_item_form
+captchaType: default
+label: node_ddblock_news_item_form

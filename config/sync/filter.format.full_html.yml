@@ -2,9 +2,12 @@ uuid: 32d96bbb-793f-49aa-8f86-46a3e3540c7a
 langcode: es
 status: true
 dependencies:
+  config:
+    - core.entity_view_mode.media.media_library
   module:
     - blazy
     - editor
+    - media
     - slick
 _core:
   default_config_hash: WNeK5FbcY8pXgEpbD_KgRzlF1-5PL3BJXwqaBctPTqw
@@ -91,3 +94,21 @@ filters:
       thumbnail_effect: ''
       thumbnail_position: ''
       override: false
+  filter_url:
+    id: filter_url
+    provider: filter
+    status: true
+    weight: 0
+    settings:
+      filter_url_length: 72
+  media_embed:
+    id: media_embed
+    provider: media
+    status: true
+    weight: 100
+    settings:
+      default_view_mode: media_library
+      allowed_view_modes: {  }
+      allowed_media_types:
+        file: file
+        image: image

@@ -1,0 +1,7 @@
+uuid: 64b6e0f8-5528-42b0-b71c-f1c6049df386
+langcode: en
+status: false
+dependencies: {  }
+formId: node_simplenews_form
+captchaType: default
+label: node_simplenews_form

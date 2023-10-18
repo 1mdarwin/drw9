@@ -11,7 +11,7 @@ _core:
 id: drw2020_breadcrumbs
 theme: drw2020
 region: navigation_collapsible
-weight: -10
+weight: -8
 provider: null
 plugin: system_breadcrumb_block
 settings:
