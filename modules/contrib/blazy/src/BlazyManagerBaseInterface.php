@@ -3,24 +3,38 @@
 namespace Drupal\blazy;
 
 /**
- * Defines re-usable services and functions for blazy plugins.
+ * Defines re-usable media-related methods across Blazy ecosystem to DRY.
  *
- * @todo move some non-media methods into BlazyInterface at 3.x, or before.
- * @todo sub-modules should implement BlazyManagerBaseInterface, not
+ * Sub-modules should implement/ extend BlazyManagerBaseInterface, not
  * BlazyManagerInterface to have their own unique render methods.
  */
 interface BlazyManagerBaseInterface extends BlazyInterface {
 
   /**
+   * Warning! Do not override this method, use self::attachments() instead.
+   *
+   * So we can add return type at/ by 3.x without breaking your codes.
    * Returns array of needed assets suitable for #attached property.
    *
    * @param array $attach
-   *   The settings which determine what library to attach.
+   *   The settings which determine what library to attach, empty to defaults.
    *
    * @return array
    *   The supported libraries.
+   *
+   * @todo add return type hint :array at/by 3.x after sub-modules.
    */
   public function attach(array $attach = []);
+
+  /**
+   * Alias for Blazy::containerAttributes().
+   *
+   * @param array $attributes
+   *   The container attributes being modified.
+   * @param array $settings
+   *   The given settings.
+   */
+  public function containerAttributes(array &$attributes, array $settings): void;
 
   /**
    * Returns the supported image effects.
@@ -47,17 +61,41 @@ interface BlazyManagerBaseInterface extends BlazyInterface {
   public function getStyles(): array;
 
   /**
-   * Alias for BlazyImage::thumbnail() to forget looking up unknown classes.
+   * Alias for Thumbnail::view() to forget looking up unknown classes.
    *
    * @param array $settings
    *   The given settings.
    * @param object $item
    *   The optional image item.
+   * @param array $captions
+   *   The optional thumbnail captions.
    *
    * @return array
    *   The thumbnail image style, or empty.
    */
-  public function getThumbnail(array $settings, $item = NULL): array;
+  public function getThumbnail(array $settings, $item = NULL, array $captions = []): array;
+
+  /**
+   * Checks for Image styles at container level once, except for multi-styles.
+   *
+   * Specific for lightbox, it can also be Responsive image, but not here.
+   * The output is stored in blazies under each key of the provided styles
+   * defined by the respective key under $settings, e.g.: image_style to
+   * blazies.image.style, etc. Nothing is loaded if no setting is provided.
+   *
+   * @param array $settings
+   *   The modified settings.
+   * @param bool $multiple
+   *   A flag for various Image styles: Blazy Filter, etc., old GridStack.
+   *   While most field formatters can only have one image style per field.
+   * @param array $styles
+   *   The image styles, default to BlazyDefault::imageStyles().
+   *   If more to be added, the convention is to not suffix it with _style,
+   *   e.g.: image will be auto-suffixed as image_style, etc.
+   *
+   * @see \Drupal\blazy\BlazyDefault::imageStyles()
+   */
+  public function imageStyles(array &$settings, $multiple = FALSE, array $styles = []): void;
 
   /**
    * Checks for Blazy formatter such as from within a Views style plugin.
@@ -83,13 +121,37 @@ interface BlazyManagerBaseInterface extends BlazyInterface {
    *
    * @param array $settings
    *   The settings being modified.
-   * @param array $item
-   *   The first item containing settings or item keys.
+   * @param array $data
+   *   The first data containing settings or item keys.
    *
    * @see \Drupal\blazy\BlazyManager::prepareBuild()
    * @see \Drupal\blazy\Field\BlazyEntityVanillaBase::buildElements()
+   * @todo change the second param back to array at 3.x when BVEF is dropped.
    */
-  public function isBlazy(array &$settings, array $item = []): void;
+  public function isBlazy(array &$settings, array $data = []): void;
+
+  /**
+   * Checks for essential blazy features.
+   *
+   * @param array $build
+   *   The build array being modified.
+   * @param object $item
+   *   The optional image item.
+   *
+   * @return \Drupal\blazy\BlazySettings
+   *   The BlazySettings object.
+   */
+  public function preBlazy(array &$build, $item = NULL): BlazySettings;
+
+  /**
+   * Thumbnails are poorly-informed, provide relevant information.
+   *
+   * @param array $build
+   *   The build array being modified.
+   * @param array $blazy
+   *   The blazy renderable array available after ::getBlazy() called.
+   */
+  public function postBlazy(array &$build, array $blazy): void;
 
   /**
    * Prepares shared data common between field formatter and views field.
@@ -97,11 +159,9 @@ interface BlazyManagerBaseInterface extends BlazyInterface {
    * This is to overcome the limitation of self::postSettings().
    *
    * @param array $build
-   *   The build data containing settings, etc.
-   * @param object $entity
-   *   The entity related to the formatter, or views field.
+   *   The build data containing settings, entity, etc.
    */
-  public function prepareData(array &$build, $entity = NULL): void;
+  public function prepareData(array &$build): void;
 
   /**
    * Prepare base preliminary settings.
@@ -135,79 +195,41 @@ interface BlazyManagerBaseInterface extends BlazyInterface {
   public function postSettingsAlter(array &$settings, $entity = NULL): void;
 
   /**
-   * Returns cached data identified by its cache ID, normally alterable data.
+   * Provides the third party formatters where full blown Blazy is not worthy.
    *
-   * @param string $cid
-   *   The cache ID, als used for the hook_alter.
+   * The module doesn't automatically convert the relevant theme to use Blazy,
+   * however two attributes are provided: `data-b-lazy` and `data-b-preview`
+   * which can be used to override a particular theme to use Blazy.
+   *
+   * The `data-b-lazy`is a flag indicating Blazy is enabled.
+   * The `data-b-preview` is a flag indicating Blazy in CKEditor preview mode
+   * via Entity/Media Embed which normally means Blazy should be disabled
+   * due to CKEditor not supporting JS assets.
+   *
+   * @see \Drupal\blazy\Theme\BlazyTheme::blazy()
+   * @see \Drupal\blazy\Theme\BlazyTheme::field()
+   * @see \Drupal\blazy\Theme\BlazyTheme::fileVideo()
+   * @see blazy_preprocess_file_video()
+   */
+  public function thirdPartyFormatters(): array;
+
+  /**
+   * Provides relevant attributes to feed into theme_blazy().
+   *
+   * To replace all sub-modules theme_ITEM() contents with theme_blazy() at 3.x.
+   *
    * @param array $data
-   *   The given data to cache.
-   * @param bool $reset
-   *   Whether to re-fetch in case not cached yet.
-   * @param string $alter
-   *   The specific alter for the hook_alter, otherwise $cid.
-   * @param array $context
-   *   The optional context or info for the hook_alter.
-   *
-   * @return array
-   *   The cache data.
-   *
-   * @todo remove after BlazyInterface at/ before 3.x.
+   *   The data being modified containing: #settings, #item, #entity, etc.
+   *   What is needed is only to pass BlazyDefault::themeAttributes() to convert
+   *   sub-modules' theme_ITEM() contents, e.g.: theme_splide_slide(),
+   *   theme_slick_slide(), theme_gridstack_box(), etc. with theme_blazy() to
+   *   minimize dups and have improvement at one go. Normally image/ media
+   *   related. Repeat, only replace their contents, not their theme_ITEM().
+   * @param array $captions
+   *   The captions being modified.
+   * @param int $delta
+   *   The current delta for convenience.
    */
-  public function getCachedData(
-    $cid,
-    array $data = [],
-    $reset = FALSE,
-    $alter = NULL,
-    array $context = []
-  ): array;
-
-  /**
-   * Alias for Blazy::getLibrariesPath() to get libraries path.
-   *
-   * @param string $name
-   *   The library name.
-   * @param bool $base_path
-   *   Whether to prefix it with an a base path, deprecated.
-   *
-   * @return string
-   *   The path to library or NULL if not found.
-   *
-   * @todo remove after BlazyInterface at/ before 3.x.
-   */
-  public function getLibrariesPath($name, $base_path = FALSE): ?string;
-
-  /**
-   * Alias for Blazy::getPath() to get module or theme path.
-   *
-   * @param string $type
-   *   The object type, can be module or theme.
-   * @param string $name
-   *   The object name.
-   * @param bool $absolute
-   *   Whether to return an absolute path.
-   *
-   * @return string
-   *   The path to object or NULL if not found.
-   *
-   * @todo remove after BlazyInterface at/ before 3.x.
-   */
-  public function getPath($type, $name, $absolute = FALSE): ?string;
-
-  /**
-   * Returns items wrapped by theme_item_list(), can be a grid, or plain list.
-   *
-   * Alias for Blazy::grid() for sub-modules and easy organization later.
-   *
-   * @param array $items
-   *   The grid items.
-   * @param array $settings
-   *   The given settings.
-   *
-   * @return array
-   *   The modified array of grid items.
-   *
-   * @todo remove after BlazyInterface at/ before 3.x.
-   */
-  public function toGrid(array $items, array $settings): array;
+  public function toBlazy(array &$data, array &$captions, $delta): void;
 
 }

@@ -231,7 +231,7 @@ To create Slick grid or multiple rows carousel, there are 3 options:
    slidesToShow, Rows and slidesPerRow = 1.
 
 The first 2 are supported by core library using pure JS approach.
-The last is the Module feature using pure CSS Foundation block-grid. The key is:
+The last is the Module feature using pure CSS Foundation b-grid. The key is:
 the total amount of Views results must be bigger than Visible slides, otherwise
 broken Grid, see skin Grid above for more details.
 
@@ -263,12 +263,12 @@ at production if you forget to uninstall though.
 
 See the project page at drupal.org:
 
-[Slick Extras](http://drupal.org/project/slick_extras)
+[Slick Extras](https://drupal.org/project/slick_extras)
 
 More info relevant to each option is available at their form display by hovering
 over them, and click a dark question mark.
 
 See the Slick docs at:
 
-* [Slick website](http://kenwheeler.github.io/slick/)
+* [Slick website](https://kenwheeler.github.io/slick/)
 * [Slick at Github](https://github.com/kenwheeler/slick/)

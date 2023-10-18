@@ -2,6 +2,8 @@
 
 namespace Drupal\blazy\Field;
 
+use Drupal\blazy\BlazyDefault;
+
 /**
  * A Trait common for file, image or media to handle dependencies.
  */
@@ -13,7 +15,7 @@ trait BlazyDependenciesTrait {
   public function calculateDependencies() {
     $dependencies = parent::calculateDependencies();
     $style_ids = [];
-    foreach (['box', 'box_media', 'image', 'thumbnail'] as $key) {
+    foreach (BlazyDefault::imageStyles() as $key) {
       if (!empty($this->getSetting($key . '_style'))) {
         $style_ids[] = $this->getSetting($key . '_style');
       }
@@ -31,7 +33,7 @@ trait BlazyDependenciesTrait {
       }
     }
 
-    if ($this->formatter->moduleHandler()->moduleExists('responsive_image')) {
+    if ($this->formatter->moduleExists('responsive_image')) {
       foreach (['box', 'responsive_image'] as $key) {
         $style_id = $this->getSetting($key . '_style');
 
@@ -52,7 +54,7 @@ trait BlazyDependenciesTrait {
   public function onDependencyRemoval(array $dependencies) {
     $changed = parent::onDependencyRemoval($dependencies);
     $style_ids = [];
-    foreach (['box', 'box_media', 'image', 'thumbnail'] as $key) {
+    foreach (BlazyDefault::imageStyles() as $key) {
       $name = $key . '_style';
       if (!empty($this->getSetting($name))) {
         $style_ids[$name] = $this->getSetting($name);

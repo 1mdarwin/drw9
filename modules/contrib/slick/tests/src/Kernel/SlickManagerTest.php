@@ -2,12 +2,12 @@
 
 namespace Drupal\Tests\slick\Kernel;
 
-use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
-use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
-use Drupal\Tests\slick\Traits\SlickKernelTrait;
-use Drupal\slick\SlickDefault;
 use Drupal\slick\Entity\Slick;
+use Drupal\slick\SlickDefault;
 use Drupal\slick_ui\Form\SlickForm;
+use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
+use Drupal\Tests\slick\Traits\SlickKernelTrait;
+use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
 
 /**
  * Tests the Slick manager methods.
@@ -123,7 +123,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
    * @dataProvider providerTestSlickBuild
    */
   public function testBuild($items, array $settings, array $options, $expected) {
-    $manager = $this->slickManager;
+    $manager  = $this->slickManager;
     $defaults = $this->getFormatterSettings() + SlickDefault::htmlSettings();
     $settings = array_merge($defaults, $settings);
 
@@ -132,19 +132,18 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $build = $this->display->build($this->entity);
 
     $items = !$items ? [] : $build[$this->testFieldName]['#build']['items'];
+    $optionset = Slick::loadSafely($settings['optionset']);
     $build = [
       'items'     => $items,
-      'settings'  => $settings,
-      'options'   => $options,
-      'optionset' => Slick::load($settings['optionset']),
+      '#settings'  => $settings,
+      '#options'   => $options,
+      '#optionset' => $optionset,
     ];
 
-    $slick = $manager->slick($build);
-    $this->assertEquals($expected, !empty($slick));
-
-    $slick['#build']['settings'] = $settings;
     $slick['#build']['items'] = $items;
-    $slick['#build']['options'] = [];
+    $slick['#build']['#settings'] = $settings;
+    $slick['#build']['#options'] = [];
+    $slick['#build']['#optionset'] = $optionset;
 
     $element = $manager->preRenderSlick($slick);
     $this->assertEquals($expected, !empty($element));
@@ -152,8 +151,8 @@ class SlickManagerTest extends BlazyKernelTestBase {
     if (!empty($settings['optionset_thumbnail'])) {
       $build['thumb'] = [
         'items'    => $items,
-        'settings' => $settings,
-        'options'  => $options,
+        '#settings' => $settings,
+        '#options'  => $options,
       ];
     }
 
@@ -161,11 +160,11 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $this->assertEquals($expected, !empty($slicks));
 
     $slicks['#build']['items'] = $items;
-    $slicks['#build']['settings'] = $settings;
+    $slicks['#build']['#settings'] = $settings;
 
     if (!empty($settings['optionset_thumbnail'])) {
       $slicks['#build']['thumb']['items'] = $build['thumb']['items'];
-      $slicks['#build']['thumb']['settings'] = $build['thumb']['settings'];
+      $slicks['#build']['thumb']['#settings'] = $build['thumb']['#settings'];
     }
 
     $elements = $manager->preRenderSlickWrapper($slicks);
@@ -224,29 +223,9 @@ class SlickManagerTest extends BlazyKernelTestBase {
   /**
    * Tests for \Drupal\slick_ui\Form\SlickForm.
    *
-   * @covers \Drupal\slick_ui\Form\SlickForm::getFormElements
-   * @covers \Drupal\slick_ui\Form\SlickForm::cleanFormElements
-   * @covers \Drupal\slick_ui\Form\SlickForm::getResponsiveFormElements
-   * @covers \Drupal\slick_ui\Form\SlickForm::getLazyloadOptions
    * @covers \Drupal\slick_ui\Form\SlickForm::typecastOptionset
-   * @covers \Drupal\slick_ui\Form\SlickForm::getJsEasingOptions
-   * @covers \Drupal\slick_ui\Form\SlickForm::getCssEasingOptions
-   * @covers \Drupal\slick_ui\Form\SlickForm::getOptionsRequiredByTemplate
-   * @covers \Drupal\slick_ui\Form\SlickForm::getBezier
    */
   public function testSlickForm() {
-    $elements = $this->slickForm->getFormElements();
-    $this->assertArrayHasKey('mobileFirst', $elements);
-
-    $elements = $this->slickForm->cleanFormElements();
-    $this->assertArrayNotHasKey('appendArrows', $elements);
-
-    $elements = $this->slickForm->getResponsiveFormElements(2);
-    $this->assertArrayHasKey('breakpoint', $elements[0]);
-
-    $options = $this->slickForm->getLazyloadOptions();
-    $this->assertArrayHasKey('ondemand', $options);
-
     $settings = [];
     $this->slickForm->typecastOptionset($settings);
     $this->assertEmpty($settings);
@@ -255,18 +234,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
     $settings['edgeFriction'] = 0.27;
     $this->slickForm->typecastOptionset($settings);
     $this->assertEquals(TRUE, $settings['mobileFirst']);
-
-    $options = $this->slickForm->getJsEasingOptions();
-    $this->assertArrayHasKey('easeInQuad', $options);
-
-    $options = $this->slickForm->getCssEasingOptions();
-    $this->assertArrayHasKey('easeInQuad', $options);
-
-    $options = $this->slickForm->getOptionsRequiredByTemplate();
-    $this->assertArrayHasKey('lazyLoad', $options);
-
-    $bezier = $this->slickForm->getBezier('easeInQuad');
-    $this->assertEquals('cubic-bezier(0.550, 0.085, 0.680, 0.530)', $bezier);
   }
 
 }

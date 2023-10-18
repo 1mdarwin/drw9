@@ -49,6 +49,7 @@
         "drupal/panels": "^4.7",
         "drupal/pathauto": "^1.9",
         "drupal/profile": "^1.7",
+        "drupal/responsive_menu": "^4.4",
         "drupal/simple_sitemap": "^4.1.1",
         "drupal/slick": "^2.7",
         "drupal/slick_extras": "^1.0@RC",
@@ -59,11 +60,12 @@
         "drupal/views_infinite_scroll": "^2.0.0",
         "drupal/webform": "^6.2",
         "drupal/widget": "^1.",
-        "drush/drush": "^11",
+        "drush/drush": "11.0.1",
         "kint-php/kint": "^4.1",
         "npm-asset/blazy": "^1.8",
         "npm-asset/dropzone": "^5.7.4",
-        "oomphinc/composer-installers-extender": "^1.1 || ^2"
+        "oomphinc/composer-installers-extender": "^1.1 || ^2",
+        "symfony/finder": "^4.0"
     },
     "conflict": {
         "drupal/drupal": "*"
@@ -136,5 +138,8 @@
                 "      composer remove drupal/core-project-message"
             ]
         }
+    },
+    "require-dev": {
+        "palantirnet/drupal-rector": "^0.15.1"
     }
 }

@@ -22,9 +22,11 @@ class BlazyIoJavaScriptTest extends BlazyJavaScriptTestBase {
    * Test the Blazy element from loading to loaded states.
    */
   public function testFormatterDisplay() {
-    $data['settings']['blazy'] = TRUE;
-    $data['settings']['ratio'] = 'fluid';
-    $data['settings']['image_style'] = '';
+    $settings['blazy'] = TRUE;
+    $settings['ratio'] = 'fluid';
+    $settings['image_style'] = '';
+
+    $data['settings'] = $settings;
 
     $this->setUpContentTypeTest($this->bundle);
     $this->setUpFormatterDisplay($this->bundle, $data);
@@ -36,6 +38,7 @@ class BlazyIoJavaScriptTest extends BlazyJavaScriptTestBase {
     // @todo with Native lazyload, b-loaded is enforced on page load. And
     // since the testing browser Chrome support it, it is irrelevant.
     // @todo $this->assertSession()->elementNotExists('css', '.b-loaded');
+    /* @phpstan-ignore-next-line */
     $result = $this->assertSession()->waitForElement('css', '.b-lazy');
     $this->assertNotEmpty($result);
     $this->doTestFormatterDisplay();

@@ -2,14 +2,14 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFileFormatterBase;
+use Drupal\Component\Utility\Xss;
 use Drupal\slick\SlickDefault;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for slick image and file ER formatters.
+ *
+ * @todo extends BlazyFileSvgFormatterBase post blazy:2.17, or split.
  */
 abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
 
@@ -18,88 +18,79 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'image');
-  }
+  protected static $namespace = 'slick';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $navId = 'thumb';
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return SlickDefault::imageSettings();
+    return SlickDefault::imageSettings() + parent::defaultSettings();
   }
 
   /**
    * {@inheritdoc}
-   */
-  public function viewElements(FieldItemListInterface $items, $langcode) {
-    $entities = $this->getEntitiesToView($items, $langcode);
-
-    // Early opt-out if the field is empty.
-    if (empty($entities)) {
-      return [];
-    }
-
-    return $this->commonViewElements($items, $langcode, $entities);
-  }
-
-  /**
-   * Build the slick carousel elements.
+   *
+   * @todo remove it into self::withElementOverride() post blazy:2.17.
    */
   public function buildElements(array &$build, $files, $langcode) {
-    $settings   = &$build['settings'];
-    $item_id    = $settings['item_id'];
-    $tn_caption = empty($settings['thumbnail_caption']) ? NULL : $settings['thumbnail_caption'];
+    foreach ($this->getElements($build, $files) as $element) {
+      if ($element) {
+        // Build individual item.
+        $build['items'][] = $element;
 
-    foreach ($files as $delta => $file) {
-      $settings['delta'] = $delta;
-      $settings['type'] = 'image';
-
-      /** @var Drupal\image\Plugin\Field\FieldType\ImageItem $item */
-      $item = $file->_referringItem;
-
-      $settings['file_tags'] = $file->getCacheTags();
-      $settings['uri']       = $file->getFileUri();
-
-      $element = ['item' => $item, 'settings' => $settings];
-
-      // @todo remove, no longer file entity/VEF/M for pure Media.
-      $this->buildElement($element, $file);
-      $settings = $element['settings'];
-
-      // Image with responsive image, lazyLoad, and lightbox supports.
-      $element[$item_id] = $this->formatter->getBlazy($element);
-
-      if (!empty($settings['caption'])) {
-        foreach ($settings['caption'] as $caption) {
-          $element['caption'][$caption] = empty($element['item']->{$caption}) ? [] : ['#markup' => Xss::filterAdmin($element['item']->{$caption})];
-        }
+        // Build individual thumbnail.
+        $this->withElementThumbnail($build, $element);
       }
-
-      // Build individual slick item.
-      $build['items'][$delta] = $element;
-
-      // Build individual slick thumbnail.
-      if (!empty($settings['nav'])) {
-        $thumb = ['settings' => $settings];
-
-        // Thumbnail usages: asNavFor pagers, dot, arrows, photobox thumbnails.
-        $thumb[$item_id] = empty($settings['thumbnail_style']) ? [] : $this->formatter->getThumbnail($settings, $element['item']);
-        $thumb['caption'] = empty($element['item']->{$tn_caption}) ? [] : ['#markup' => Xss::filterAdmin($element['item']->{$tn_caption})];
-
-        $build['thumb']['items'][$delta] = $thumb;
-        unset($thumb);
-      }
-
-      unset($element);
     }
   }
 
   /**
    * {@inheritdoc}
    */
-  public function getScopedFormElements() {
+  protected function withElementThumbnail(array &$build, array $element): void {
+    if (!$build['#asnavor']) {
+      return;
+    }
+
+    // The settings in $element has updated metadata extracted from media.
+    $settings = $this->formatter->toHashtag($element);
+    $item     = $this->formatter->toHashtag($element, 'item', NULL);
+    $_caption = $settings['thumbnail_caption'] ?? NULL;
+    $caption  = [];
+
+    if ($_caption && $item && $text = $item->{$_caption} ?? NULL) {
+      $caption = ['#markup' => Xss::filterAdmin($text)];
+    }
+
+    // Thumbnail usages: asNavFor pagers, dot, arrows thumbnails.
+    $tn = $this->formatter->getThumbnail($settings, $item, $caption);
+    $build[static::$navId]['items'][] = $tn;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getPluginScopes(): array {
     $captions = ['title' => $this->t('Title'), 'alt' => $this->t('Alt')];
 
     return [
@@ -107,7 +98,7 @@ abstract class SlickFileFormatterBase extends BlazyFileFormatterBase {
       'nav'             => TRUE,
       'thumb_captions'  => $captions,
       'thumb_positions' => TRUE,
-    ] + parent::getScopedFormElements();
+    ] + parent::getPluginScopes();
   }
 
 }

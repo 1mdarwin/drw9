@@ -25,6 +25,12 @@
  * Use Kint: {{ kint(variable) }}
  * Dump all available variables and their contents: {{ dump() }}
  * Dump only the available variable keys: {{ dump(_context|keys) }}
+ *
+ * Note!
+ * - Unlike Splide, Slick changed markups when being unslick since it doesn't
+ *   use HTML list (UL > LI) to worry about, and it behaves with 1 slide.
+ * - If you see blazies, it is used to interop with Splide, such as required by
+ *   ElevateZoomPlus.
  */
 #}
 {%
@@ -39,7 +45,7 @@
     arrow_down_attributes is defined ? 'slick--has-arrow-down',
     settings.asNavFor ? 'slick--' ~ display|clean_class,
     settings.slidesToShow > 1 ? 'slick--multiple-view',
-    settings.count <= settings.slidesToShow ? 'slick--less',
+    blazies.count <= settings.slidesToShow ? 'slick--less',
     display == 'main' and settings.media_switch ? 'slick--' ~ settings.media_switch|clean_class,
     display == 'thumbnail' and settings.thumbnail_caption ? 'slick--has-caption'
   ]
@@ -52,15 +58,15 @@
   ]
 %}
 <div{{ attributes.addClass(classes) }}>
-  {% if not settings.unslick %}
+  {%- if not settings.unslick -%}
     <div{{ content_attributes.addClass('slick__slider') }}>
-  {% endif %}
+  {%- endif -%}
 
   {% block slick_content %}
-    {{ items }}
+    {{- items -}}
   {% endblock %}
 
-  {% if not settings.unslick %}
+  {%- if not settings.unslick -%}
     </div>
     {% block slick_arrow %}
       <nav{{ arrow_attributes.addClass(arrow_classes) }}>
@@ -75,5 +81,5 @@
         <button type="button" data-role="none" class="slick-next" aria-label="{{ settings.nextArrow|t|striptags }}" tabindex="0">{{ settings.nextArrow|t }}</button>
       </nav>
     {% endblock %}
-  {% endif %}
+  {%- endif -%}
 </div>

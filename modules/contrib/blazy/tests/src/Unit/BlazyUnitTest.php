@@ -2,12 +2,13 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
-use Drupal\Tests\UnitTestCase;
+use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\Theme\BlazyAttribute;
+use Drupal\blazy\Theme\Attributes;
 use Drupal\blazy\Theme\BlazyTheme;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\blazy\Blazy
@@ -32,7 +33,7 @@ class BlazyUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests \Drupal\blazy\Theme\BlazyAttribute::buildIframe.
+   * Tests \Drupal\blazy\Theme\Attributes::buildIframe.
    *
    * @param array $data
    *   The input data which can be string, or integer.
@@ -40,26 +41,25 @@ class BlazyUnitTest extends UnitTestCase {
    *   The expected output.
    *
    * @covers ::buildIframe
+   * @covers \Drupal\blazy\Blazy::init
    * @covers \Drupal\blazy\BlazyDefault::entitySettings
    * @dataProvider providerTestBuildIframe
    */
   public function testBuildIframe(array $data, $expected) {
-    $variables          = ['attributes' => [], 'image' => []];
-    $settings           = BlazyDefault::htmlSettings();
-    $settings['type']   = 'video';
-    $settings['bundle'] = 'remote_video';
-    $settings['uri']    = 'public://example.jpg';
-    $embed_url          = '//www.youtube.com/watch?v=E03HFA923kw';
+    $variables = ['attributes' => [], 'image' => []];
+    $settings  = Blazy::init();
+    $uri       = 'public://example.jpg';
+    $embed_url = '//www.youtube.com/watch?v=E03HFA923kw';
 
     $blazies = $settings['blazies'];
-
     $blazies->set('media.embed_url', $embed_url)
       ->set('media.bundle', 'remote_video')
-      ->set('media.type', 'video');
+      ->set('media.type', 'video')
+      ->set('image.uri', $uri);
 
     $variables['settings'] = array_merge($settings, $data);
     $variables['image'] = 'x';
-    BlazyAttribute::buildIframe($variables);
+    Attributes::buildIframe($variables);
 
     $this->assertNotEmpty($variables[$expected]);
   }
@@ -100,6 +100,7 @@ class BlazyUnitTest extends UnitTestCase {
    * @param bool $expected_iframe
    *   Whether to expect an iframe, or not.
    *
+   * @covers \Drupal\blazy\Blazy::init
    * @covers \Drupal\blazy\Theme\BlazyTheme::blazy
    * @covers \Drupal\blazy\Media\BlazyImage::prepare
    * @covers \Drupal\blazy\BlazyDefault::entitySettings
@@ -108,8 +109,8 @@ class BlazyUnitTest extends UnitTestCase {
   public function testPreprocessBlazy(array $settings, $item, $expected_image, $expected_iframe) {
     $variables = ['attributes' => []];
     $build     = $this->data;
-    $settings  = array_merge($build['settings'], $settings);
-    $settings += BlazyDefault::itemSettings();
+    $settings  = array_merge($build['#settings'], $settings);
+    $settings += Blazy::init();
     $blazies   = $settings['blazies'];
     $embed_url = $settings['embed_url'] ?? '';
 
@@ -119,7 +120,8 @@ class BlazyUnitTest extends UnitTestCase {
     $blazies->set('is.blazy', TRUE)
       ->set('lazy.id', 'blazy')
       ->set('media.embed_url', $embed_url)
-      ->set('media.type', $settings['type'] ?? '');
+      ->set('media.type', $settings['type'] ?? '')
+      ->set('image.uri', $settings['uri'] ?? '');
 
     if ($embed_url) {
       $settings = array_merge(BlazyDefault::entitySettings(), $settings);
@@ -214,27 +216,27 @@ class BlazyUnitTest extends UnitTestCase {
    */
   public function todoTestPreRenderImageLightbox(array $settings = []) {
     $build                       = $this->data;
-    $settings                   += BlazyDefault::itemSettings();
-    $blazies                     = &$settings['blazies'];
-    $settings['count']           = $this->maxItems;
-    $settings['uri']             = $this->uri;
+    $settings                   += Blazy::init();
+    $blazies                     = $settings['blazies'];
     $settings['box_style']       = '';
     $settings['box_media_style'] = '';
 
-    $blazies->set('entity.url', $settings['content_url'] ?? '');
-    $blazies->set('media.embed_url', $settings['embed_url'] ?? '');
-    $blazies->set('media.type', $settings['type'] ?? '');
+    $blazies->set('entity.url', $settings['content_url'] ?? '')
+      ->set('media.embed_url', $settings['embed_url'] ?? '')
+      ->set('media.type', $settings['type'] ?? '')
+      ->set('image.uri', $this->uri)
+      ->set('count', $this->maxItems);
 
-    $build['settings'] = array_merge($build['settings'], $settings);
+    $build['#settings'] = array_merge($build['#settings'], $settings);
     $switch_css = str_replace('_', '-', $settings['media_switch']);
 
     foreach (['caption', 'media', 'wrapper'] as $key) {
-      $build['settings'][$key . '_attributes']['class'][] = $key . '-test';
+      $build[$key . '_attributes']['class'][] = $key . '-test';
     }
 
     $element = $this->doPreRenderImage($build);
 
-    $blazies = $build['settings']['blazies'];
+    $blazies = $build['#settings']['blazies'];
     if ($settings['media_switch'] == 'content') {
       $this->assertEquals($blazies->get('entity.url'), $element['#url']);
       $this->assertArrayHasKey('#url', $element);

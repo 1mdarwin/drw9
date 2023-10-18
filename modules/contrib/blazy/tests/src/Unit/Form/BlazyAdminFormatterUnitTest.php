@@ -2,12 +2,12 @@
 
 namespace Drupal\Tests\blazy\Unit\Form;
 
-use Drupal\Core\DependencyInjection\ContainerBuilder;
-use Drupal\blazy\Form\BlazyAdminFormatter;
 use Drupal\blazy\BlazyDefault;
-use Drupal\Tests\UnitTestCase;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\blazy\Form\BlazyAdminFormatter;
+use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\Tests\UnitTestCase;
 
 /**
  * Tests the Blazy admin formatter form.
@@ -52,22 +52,37 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
   }
 
   /**
+   * Provide test cases for ::testBuildSettingsForm.
+   */
+  public function providerTestBuildSettingsForm() {
+    return [
+      [FALSE],
+      [TRUE],
+    ];
+  }
+
+  /**
    * @covers ::buildSettingsForm
    * @covers ::openingForm
+   * @covers ::fieldableForm
    * @covers ::imageStyleForm
    * @covers ::mediaSwitchForm
    * @covers ::gridForm
    * @covers ::closingForm
    * @covers ::finalizeForm
+   * @dataProvider providerTestBuildSettingsForm
    */
-  public function testBuildSettingsForm() {
+  public function testBuildSettingsForm($vanilla) {
     $form = [];
     $definition = $this->getDefaulEntityFormatterDefinition()
       + $this->getScopedFormElements();
 
     $definition['settings'] += $this->getDefaultFields(TRUE);
+    $definition['vanilla'] = $vanilla;
+    $definition['_views'] = TRUE;
 
-    $this->assertArrayHasKey('scopes', $definition);
+    $this->blazyAdminFormatter->openingForm($form, $definition);
+    $this->assertEquals($vanilla, !empty($form['vanilla']));
 
     $this->blazyAdminFormatter->buildSettingsForm($form, $definition);
     $this->assertArrayHasKey('scopes', $definition);
@@ -93,7 +108,7 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
    */
   public function testGetSettingsSummary($use_settings, $vanilla, $override, $responsive_image_style, $expected) {
     $definition = $this->getFormatterDefinition();
-    $settings = array_merge(BlazyDefault::gridSettings(), $definition['settings']);
+    $settings = array_merge(BlazyDefault::gridSettings(), $definition['settings'] ?? []);
 
     $settings['vanilla']                = $vanilla;
     $settings['image_syle']             = 'large';
@@ -112,6 +127,19 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
     $check_summary = !$expected ? empty($summary) : !empty($summary);
 
     $this->assertTrue($check_summary);
+  }
+
+}
+
+namespace Drupal\blazy\Form;
+
+if (!function_exists('responsive_image_get_image_dimensions')) {
+
+  /**
+   * Dummy function.
+   */
+  function responsive_image_get_image_dimensions() {
+    // Empty block to satisfy coder.
   }
 
 }

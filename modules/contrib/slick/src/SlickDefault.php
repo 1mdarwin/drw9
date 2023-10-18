@@ -2,7 +2,6 @@
 
 namespace Drupal\slick;
 
-use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 
 /**
@@ -12,6 +11,11 @@ use Drupal\blazy\BlazyDefault;
  * @see StylePluginBase::defineOptions()
  */
 class SlickDefault extends BlazyDefault {
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $id = 'slicks';
 
   /**
    * {@inheritdoc}
@@ -48,7 +52,9 @@ class SlickDefault extends BlazyDefault {
       'thumbnail_caption'   => '',
       'thumbnail_effect'    => '',
       'thumbnail_position'  => '',
-    ] + self::baseSettings() + parent::imageSettings() + self::gridSettings();
+    ] + self::baseSettings()
+      + self::gridSettings()
+      + parent::imageSettings();
   }
 
   /**
@@ -57,7 +63,8 @@ class SlickDefault extends BlazyDefault {
   public static function extendedSettings() {
     return [
       'thumbnail' => '',
-    ] + self::imageSettings() + parent::extendedSettings();
+    ] + self::imageSettings()
+      + parent::extendedSettings();
   }
 
   /**
@@ -65,7 +72,7 @@ class SlickDefault extends BlazyDefault {
    */
   public static function filterSettings() {
     $settings = self::imageSettings();
-    $unused = self::gridSettings() + [
+    $unused = [
       'breakpoints' => [],
       'sizes'       => '',
       'grid_header' => '',
@@ -75,7 +82,7 @@ class SlickDefault extends BlazyDefault {
         unset($settings[$key]);
       }
     }
-    return $settings;
+    return $settings + self::gridSettings();
   }
 
   /**
@@ -103,18 +110,10 @@ class SlickDefault extends BlazyDefault {
    *   The default settings.
    */
   public static function htmlSettings() {
-    $items = [];
-    foreach (self::slicks() as $key => $value) {
-      if (is_bool($value)) {
-        $items['is'][$key] = $value;
-      }
-      else {
-        $items[$key] = $value;
-      }
-    }
-
     return [
-      'slicks'    => Blazy::settings($items),
+      // @todo remove post 2.17:
+      // 'slicks' => \blazy()->settings(self::values()),
+      // @todo remove after migrations.
       'item_id'   => 'slide',
       'namespace' => 'slick',
       // @todo remove `+ self::slicks()`.
@@ -149,22 +148,36 @@ class SlickDefault extends BlazyDefault {
    */
   public static function themeProperties() {
     return [
-      'attached',
-      'attributes',
-      'items',
-      'options',
-      'optionset',
-      'settings',
+      'attached' => [],
+      'attributes' => [],
+      'items' => [],
+      'options' => [],
+      'optionset' => NULL,
+      'settings' => [],
     ];
   }
 
   /**
-   * Returns the commonly used path, or just the base path.
-   *
-   * @todo remove for Blazy::getPath().
+   * Verify the settings.
    */
-  public static function getPath($type, $name, $absolute = FALSE): string {
-    return Blazy::getPath($type, $name, $absolute);
+  public static function verify(array &$settings, $manager): void {
+    $config = $settings['slicks'] ?? NULL;
+    if (!$config) {
+      $settings += self::htmlSettings();
+      $config = $settings['slicks'];
+    }
+
+    if (!$config->get('ui')) {
+      $ui = $manager->configMultiple('slick.settings');
+      $config->set('ui', $ui);
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function values(): array {
+    return self::slicks();
   }
 
 }

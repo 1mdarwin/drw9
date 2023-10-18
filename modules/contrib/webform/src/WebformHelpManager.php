@@ -6,15 +6,15 @@
 namespace Drupal\webform;
 
 use Drupal\Component\Utility\Xss;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Render\Markup;
+use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Serialization\Yaml;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\State\StateInterface;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Url;
 use Drupal\webform\Element\WebformMessage;
 use Drupal\webform\Plugin\WebformElementManagerInterface;
@@ -1177,7 +1177,7 @@ class WebformHelpManager implements WebformHelpManagerInterface {
           ],
           [
             'title' => $this->t('Display forms in a modal dialog with Drupal 8 | Agaric'),
-            'url' => 'http://agaric.com/blogs/display-forms-modal-dialog-drupal-8',
+            'url' => 'https://agaric.com/blogs/display-forms-modal-dialog-drupal-8',
           ],
           [
             'title' => $this->t('jQueryUI Dialog Documentation'),

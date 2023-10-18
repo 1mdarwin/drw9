@@ -2,10 +2,12 @@
 
 namespace Drupal\blazy\Field;
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
-use Drupal\blazy\Blazy;
+use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterEntityTrait;
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterTrait;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
+use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for entity reference formatters without field details.
@@ -20,55 +22,65 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
     pluginSettings as traitPluginSettings;
   }
 
-  /**
-   * Returns media contents.
-   */
-  public function buildElements(array &$build, $entities, $langcode) {
-    foreach ($entities as $delta => $entity) {
-      // Protect ourselves from recursive rendering.
-      static $depth = 0;
-      $depth++;
-      if ($depth > 20) {
-        $this->loggerFactory->get('entity')
-          ->error('Recursive rendering detected when rendering entity @entity_type @entity_id. Aborting rendering.', [
-            '@entity_type' => $entity->getEntityTypeId(),
-            '@entity_id' => $entity->id(),
-          ]);
-        return $build;
-      }
-
-      $this->prepareElement($build, $entity, $langcode, $delta);
-
-      // Add the entity to cache dependencies so to clear when it is updated.
-      if (!empty($build['items'][$delta])) {
-        $this->formatter
-          ->renderer()
-          ->addCacheableDependency($build['items'][$delta], $entity);
-      }
-
-      $depth = 0;
-    }
-  }
+  use BlazyFormatterEntityTrait;
+  use BlazyElementTrait;
 
   /**
-   * Build item contents.
+   * The module namespace.
+   *
+   * @var string
+   * @see https://www.php.net/manual/en/reserved.keywords.php
    */
-  public function buildElement(array &$build, $entity, $langcode) {
-    $settings  = $build['settings'];
-    $view_mode = $settings['view_mode'] ?? 'full';
+  protected static $namespace = 'blazy';
 
-    // Sub-modules always flag `vanilla` as required, -- configurable, or not.
-    // The "paragraphs_type" entity type did not specify a view_builder handler.
-    if (!empty($settings['vanilla'])) {
-      $manager = $this->formatter->entityTypeManager();
-      $type = $entity->getEntityTypeId();
+  /**
+   * The item property to store image or media: content, slide, box, etc.
+   *
+   * @var string
+   */
+  protected static $itemId = 'slide';
 
-      if ($manager->hasHandler($type, 'view_builder')) {
-        $build['items'][] = $manager
-          ->getViewBuilder($type)
-          ->view($entity, $view_mode, $langcode);
-      }
-    }
+  /**
+   * The item prefix for captions, e.g.: blazy__caption, slide__caption, etc.
+   *
+   * @var string
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * The caption property to store captions.
+   *
+   * @var string
+   */
+  protected static $captionId = 'caption';
+
+  /**
+   * Tne navigation ID.
+   *
+   * @var string
+   */
+  protected static $navId = 'thumb';
+
+  /**
+   * The fake field type identifier for service DI, e.g: entity, image, text.
+   *
+   * @var string
+   */
+  protected static $fieldType = 'entity';
+
+  /**
+   * Whether using the SVG.
+   *
+   * @var bool
+   */
+  protected static $useSvg = FALSE;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
+    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
+    return static::injectServices($instance, $container, static::$fieldType);
   }
 
   /**
@@ -90,69 +102,116 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function viewElements(FieldItemListInterface $items, $langcode) {
+    $entities = $this->getEntitiesToView($items, $langcode);
+
+    // Early opt-out if the field is empty.
+    if (empty($entities)) {
+      return [];
+    }
+
+    return $this->commonViewElements($items, $langcode, $entities);
+  }
+
+  /**
+   * Provides any entity contents.
+   */
+  protected function buildElements(array &$build, array $entities, $langcode): void {
+    foreach ($this->getElements($build, $entities, $langcode) as $element) {
+      if ($element) {
+        $build['items'][] = $element;
+
+        $this->withOverride($build, $element);
+      }
+    }
+  }
+
+  /**
+   * Generates elements.
+   */
+  private function getElements(array $data, array $entities, $langcode): \Generator {
+    // @todo remove the helper at/ by 3.x post migrations:
+    $this->formatter->hashtag($data);
+
+    $settings = $data['#settings'];
+    $limit    = $this->getViewLimit($settings);
+
+    foreach ($entities as $delta => $entity) {
+      static $depth = 0;
+      $depth++;
+      $element = [];
+
+      // Protect ourselves from recursive rendering.
+      if ($depth > 20) {
+        $this->loggerFactory->get('entity')
+          ->error('Recursive rendering detected when rendering entity @entity_type @entity_id. Aborting rendering.', [
+            '@entity_type' => $entity->getEntityTypeId(),
+            '@entity_id' => $entity->id(),
+          ]);
+        yield $element;
+      }
+      else {
+        // If a Views display, bail out if more than Views delta_limit.
+        // @todo figure out why Views delta_limit doesn't stop us here.
+        if ($limit > 0 && $delta > $limit - 1) {
+          yield $element;
+        }
+        else {
+          $current            = $data;
+          $current['#delta']  = $delta;
+          $current['#entity'] = $entity;
+          $current['#parent'] = $data['#entity'] ?? NULL;
+
+          // @todo refine yield item here at 3.x.
+          if ($element = $this->withElement($current)) {
+            $item = $element[$delta] ?? $element;
+
+            // Add the entity to cache dependencies so to clear when updated.
+            $this->formatter->renderer()
+              ->addCacheableDependency($item, $entity);
+          }
+
+          yield $element;
+        }
+      }
+
+      $depth = 0;
+    }
+  }
+
+  /**
    * Returns available bundles.
    */
   protected function getAvailableBundles(): array {
-    $target_type = $this->getFieldSetting('target_type');
-    $views_ui    = $this->getFieldSetting('handler') == 'default';
-    $handlers    = $this->getFieldSetting('handler_settings');
-    $targets     = $handlers ? $handlers['target_bundles'] : [];
-    $bundles     = $views_ui ? [] : $targets;
-
-    // Fix for Views UI not recognizing Media bundles, unlike Formatters.
-    if (empty($bundles)
-      && $service = Blazy::service('entity_type.bundle.info')) {
-      $bundles = $service->getBundleInfo($target_type);
-    }
-
-    return $bundles;
+    $field = $this->fieldDefinition;
+    return BlazyField::getAvailableBundles($field);
   }
 
   /**
    * Returns fields as options. Passing empty array will return them all.
+   *
+   * @return array
+   *   The available fields as options.
    */
-  protected function getFieldOptions(array $names = [], $target_type = NULL): array {
-    $target_type = $target_type ?: $this->getFieldSetting('target_type');
+  protected function getFieldOptions(
+    array $names = [],
+    $entity_type = NULL,
+    $target_type = NULL,
+    $exclude = TRUE
+  ): array {
+    $entity_type = $entity_type ?: $this->getFieldSetting('target_type');
     $bundles     = $this->getAvailableBundles();
 
-    return $this->admin()->getFieldOptions($bundles, $names, $target_type);
-  }
-
-  /**
-   * Returns TRUE if a multi-value field.
-   */
-  protected function isMultiple(): bool {
-    return $this->fieldDefinition
-      ->getFieldStorageDefinition()
-      ->isMultiple();
-  }
-
-  /**
-   * Prepare item contents.
-   *
-   * Alternative for self::buildElement() with extra params for convenient.
-   */
-  protected function prepareElement(array &$build, $entity, $langcode, $delta): void {
-    $settings = $build['settings'];
-    $blazies  = $settings['blazies']->reset($settings);
-    $bundle   = $entity->bundle();
-
-    // @todo remove after sub-modules.
-    $settings['delta'] = $delta;
-    $settings['langcode'] = $langcode;
-
-    $blazies->set('bundles.' . $bundle, $bundle, TRUE)
-      ->set('language.code', $langcode)
-      ->set('delta', $delta);
-
-    $build['settings'] = $settings;
-    $this->buildElement($build, $entity, $langcode);
+    return $this->getFieldOptionsWithBundles($bundles, $names, $entity_type, $target_type, $exclude);
   }
 
   /**
    * {@inheritdoc}
    */
   protected function getPluginScopes(): array {
+    $multiple = $this->isMultiple();
     return [
       'no_layouts'       => TRUE,
       'no_image_style'   => TRUE,
@@ -160,6 +219,9 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
       'target_bundles'   => $this->getAvailableBundles(),
       'vanilla'          => TRUE,
       'view_mode'        => $this->viewMode,
+      'multiple'         => $this->isMultiple(),
+      'grid_form'        => $multiple,
+      'style'            => $multiple,
     ];
   }
 
@@ -168,10 +230,110 @@ abstract class BlazyEntityVanillaBase extends EntityReferenceFormatterBase {
    */
   protected function pluginSettings(&$blazies, array &$settings): void {
     $this->traitPluginSettings($blazies, $settings);
-    $blazies->set('is.blazy', TRUE);
+  }
 
-    // @todo remove.
-    $settings['blazy'] = TRUE;
+  /**
+   * Provides detailed elements.
+   */
+  protected function withElementDetail(array $build): array {
+    return [];
+  }
+
+  /**
+   * Provides vanilla elements.
+   */
+  protected function withElementVanilla(array $build): array {
+    if ($element = $this->blazyEntity->view($build)) {
+      return $this->withHashtag($build, $element);
+    }
+    return [];
+  }
+
+  /**
+   * Provides item elements.
+   */
+  private function withElement(array $build): array {
+    // @todo remove the helper at/ by 3.x post migrations:
+    $this->formatter->hashtag($build);
+
+    $settings = &$build['#settings'];
+    $langcode = $build['#langcode'];
+    $blazies  = $settings['blazies']->reset($settings);
+    $delta    = $build['#delta'];
+    $entity   = $build['#entity'];
+    $bundle   = $entity->bundle();
+
+    $current = $delta . '-' . $entity->id();
+    $blazies->set('bundles.' . $bundle, $bundle, TRUE)
+      ->set('language.code', $langcode)
+      ->set('delta', $delta)
+      ->set('item.current', $current);
+
+    // @todo remove at 3.x, not used by any sub-modules:
+    $this->prepareElement($build, $entity, $langcode, $delta);
+
+    // Sub-modules always flag `vanilla` as required, -- configurable, or not.
+    if (empty($settings['vanilla'])) {
+      return $this->withElementDetail($build);
+    }
+
+    return $this->withElementVanilla($build);
+  }
+
+  /**
+   * Provides overrides for BC.
+   */
+  private function withOverride(array &$build, array $element): void {
+    foreach (['delta', 'entity', 'settings'] as $key) {
+      $default = $key == 'settings' ? [] : NULL;
+      $build["#$key"] = $element["#$key"] ?? $build["#$key"] ?? $default;
+    }
+
+    $delta    = $build['#delta'];
+    $entity   = $build['#entity'];
+    $langcode = $build['#langcode'];
+    $settings = $build['#settings'];
+
+    if (method_exists($this, 'withElementOverride')) {
+      $this->withElementOverride($build, $element);
+    }
+    else {
+      // @todo remove at 3.x for self::withElementOverride().
+      $this->buildElement($build, $entity, $langcode);
+
+      $blazies = $settings['blazies'];
+      if ($blazies->is('nav')) {
+        if (method_exists($this, 'withElementThumbnail')) {
+          $this->withElementThumbnail($build, $element);
+        }
+        // @todo remove at/ by 3.x only after sub-modules:
+        elseif (method_exists($this, 'buildElementThumbnail')) {
+          $this->buildElementThumbnail($build, $element, $entity, $delta);
+        }
+      }
+    }
+  }
+
+  /**
+   * Deprecated in blazy:8.x-2.17, and is removed from blazy:3.0.0.
+   *
+   * @todo deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use
+   *   self::withElement[Detail|Vanilla]() instead.
+   * @see https://www.drupal.org/node/3367291
+   */
+  protected function buildElement(array &$build, $entity, $langcode) {
+    // @todo @trigger_error('buildElement is deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use self::withElement[Detail|Vanilla]() instead. See https://www.drupal.org/node/3367291', E_USER_DEPRECATED);
+  }
+
+  /**
+   * Deprecated in blazy:8.x-2.17, and is removed from blazy:3.0.0.
+   *
+   * @todo deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use
+   *   self::withElemen[Detail|Vanilla]() instead.
+   * @see https://www.drupal.org/node/3367291
+   */
+  protected function prepareElement(array &$build, $entity, $langcode, $delta): void {
+    @trigger_error('prepareElement is deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use self::withElement[Detail|Vanilla]() instead. See https://www.drupal.org/node/3367291', E_USER_DEPRECATED);
   }
 
 }

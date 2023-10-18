@@ -1,10 +1,60 @@
 
 ***
-## <a name="changes"></a>NOTABLE CHANGES
+## <a name="changes"></a>NOTABLE CHANGES  
+Always check out release notes, if any issues with the latest changes.
+
+* _Blazy 2.18_, 2023/09/30:
+  + Warm fixes for 2.18 regressions.
+  + Added **Media switcher > Image linked by Link field** option.
+  + Added a dedicated **Link** field option to Blazy Media formatter.
+* _Blazy 2.18_, 2023/09/24:
+  + Mildly hot fixes for 2.17 regressions.
+* _Blazy 2.17_, 2023/09/18:
+   + Updated blazy.api.php.
+   + Cold fixes for few minor regressions and self organizations.
+   + **Breaking change**: changed `settings` to `#settings`, etc. Check out CR:
+     [Blazy ecosystem breaking change](https://www.drupal.org/node/3375158).
+   + **Deprecated**:
+     * Colorbox body classes for local classes in `#colorbox` selector, e.g.:
+       `body.colorbox-on--media` becomes `#colorbox.b-colorbox--iframe`, etc.
+     * `blazy.done` event for colonized `blazy:done` to allow namespacing.
+     * `bio.intersecting` event for colonized `bio:intersecting`.
+   + **Removed**:
+     * Sliders' lazy loads are no longer supported for just Blazy. Reasons: They
+       are far more inferior than Blazy at so many levels, and brought more
+       complications aka insanity for very minimal benefit.
+     * Removed duplicated `blazy.resizing` event for `bio:resizing`.
+   + **New features**:  
+     * On your permissions at Blazy UI, `theme_blazy()` is now capable to
+       replace sub-modules theme_ITEM() content, e.g.: theme_slick_slide(), etc.
+     * Added a Flybox, a non-disruptive lightbox.
+     * audio with BG cover, soundcloud, smarter Fluid ratio.
+     * Added supports for local audio with background cover via settings.image.
+     * Added supports for `SVG Image Field` module.
+     * Added image ALT and TITLE for VEF which has none.
+     * Re-purposed `Blazy Image with VEF (deprecated)` formatter for SVG (WIP).
+     * Removed stone-aged admin CSS for modern Native Grid.
+     * Added new events: `bio:done` for entire collections, `bio:resizing`,
+       `bio:resized`, `blazy:mediaPlaying`, `blazy:mediaStopped`.
+   + **New options**: Added additional config options at Blazy UI. Be sure to
+     check out for `visible_class`, `wrapper_class`, `deprecated_class`,
+     `use_oembed`, `lazy_html`, `use_encodedbox`, etc. options if using them.
+   + Renamed legacy Foundation grid CSS classes to avoid conflicts with core
+    `block` CSS classes:
+     * `block-GRIDSTYLE` to `b-GRIDSTYLE`, e.g.: `block-nativegrid` to
+       `b-nativegrid`, `block-grid` to `b-grid`, etc.
+     * `block-count-N` to `b-count-N`
+     * `LONGSIZE-block-GRIDSTYLE-N` to `b-GRIDSTYLE--SHORTSIZE-N`, e.g.:
+       `small-block-nativegrid-2` to `b-nativegrid--sm-2`, etc.  
+
+      Your CSS overrides, if any, will continue working till 3.x, no rushes.
+      If broken for a reason, please copy them from previous releases into
+      your theme till you have time to update them.
+
 * _Blazy 2.16_, 2023/06/02:
-   Hotdamn fix for D10 breaking changes with formatter lightboxes.
+   + Hotdamn fix for D10 breaking changes with formatter lightboxes.
 * _Blazy 2.13_, 2022/05/31:
-   [#3282785](https://drupal.org/node/3282785), hotdamn fix.
+   + [#3282785](https://drupal.org/node/3282785), hotdamn fix.
 * _Blazy 2.12_, 2022/05/28:
   + Regression fixes for [Optimization](https://drupal.org/node/3257511).
 * _Blazy 2.11_, 2022/05/07:

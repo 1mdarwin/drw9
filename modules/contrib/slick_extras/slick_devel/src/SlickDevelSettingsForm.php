@@ -16,7 +16,7 @@ class SlickDevelSettingsForm extends ConfigFormBase {
   /**
    * Drupal\Core\Asset\LibraryDiscoveryInterface definition.
    *
-   * @var Drupal\Core\Asset\LibraryDiscoveryInterface
+   * @var \Drupal\Core\Asset\LibraryDiscoveryInterface
    */
   protected $libraryDiscovery;
 
@@ -61,7 +61,7 @@ class SlickDevelSettingsForm extends ConfigFormBase {
     $form['slick_devel'] = [
       '#type' => 'details',
       '#title' => 'Slick development',
-      '#description' => $this->t("Unless you are helping to develop the Slick module, all these are not needed to run Slick. Requires slick > 1.6.0"),
+      '#description' => $this->t("Unless you are helping to develop the Slick module, all these are not needed to run Slick. Requires slick library 1.6.0 - 1.8.0 at most and slick module 2.10+."),
       '#open' => TRUE,
       '#collapsible' => FALSE,
     ];

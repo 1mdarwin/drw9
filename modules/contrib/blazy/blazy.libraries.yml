@@ -5,6 +5,20 @@
 dblazy:
   js:
     js/dblazy.min.js: { minified: true, weight: -6 }
+    # The integrated basic plugins, separated for readability:
+    js/plugin/blazy.once.min.js: { minified: true, weight: -5.9 }
+    js/plugin/blazy.sanitizer.min.js: { minified: true, weight: -5.9 }
+    # Can be ditched for Cash, or core DOM library, if any.
+    js/plugin/blazy.dom.min.js: { minified: true, weight: -5.9 }
+
+dompurify:
+  remote: https://github.com/cure53/DOMPurify
+  version: VERSION
+  license:
+    name: MPL
+    gpl-compatible: false
+  js:
+    /libraries/dompurify/dist/purify.min.js: { minified: true, weight: -16 }
 
 # This library appears to be unmaintained, yet it is great and stable for 2KB.
 # Forked it as a module asset to expose private function/methods and minimize
@@ -25,6 +39,7 @@ bio:
   js:
     js/base/io/bio.min.js: { minified: true, weight: -5.01 }
   dependencies:
+    - blazy/dblazy
     - blazy/dataset
     - blazy/observer
 
@@ -44,7 +59,7 @@ base:
 # Shared drupal-related methods normally driven by Drupal UI options.
 drupal:
   js:
-    js/base/blazy.base.min.js: { minified: true, weight: -5.4 }
+    js/base/blazy.base.min.js: { minified: true, weight: -5.8 }
     js/base/blazy.drupal.min.js: { minified: true, weight: -1.7 }
   dependencies:
     - core/drupal
@@ -106,8 +121,10 @@ blur:
   css:
     component:
       css/components/blazy.blur.css: {}
+  js:
+    js/components/blazy.blur.min.js: { minified: true, weight: -1.8 }
   dependencies:
-    - blazy/base
+    - blazy/animate
 
 media:
   css:
@@ -117,8 +134,8 @@ media:
     js/components/blazy.media.min.js: { minified: true }
   dependencies:
     - blazy/drupal
-    - blazy/dom
     - blazy/ratio
+    # - blazy/multimedia
 
 oembed:
   css:
@@ -194,8 +211,18 @@ blazybox:
     js/components/box/blazy.blazybox.min.js: { minified: true }
   dependencies:
     - blazy/drupal
-    - blazy/dom
     - blazy/lightbox
+    # - blazy/multimedia
+    - blazy/ratio
+
+flybox:
+  css:
+    component:
+      css/components/box/blazy.flybox.css: {}
+  js:
+    js/components/box/blazy.flybox.min.js: { minified: true }
+  dependencies:
+    - blazy/blazybox
 
 colorbox:
   css:
@@ -211,7 +238,7 @@ colorbox:
 # A decent altenative for the deprecated photobox, and too old colorbox.
 # Cannot depend on its module due to libraries and loader are not separated.
 magnific_popup:
-  remote: http://dimsemenov.com/plugins/magnific-popup/
+  remote: https://dimsemenov.com/plugins/magnific-popup/
   version: 1.0
   license:
     name: MIT
@@ -237,18 +264,31 @@ mfp:
     - blazy/lightbox
     - blazy/media
 
+admin.grid:
+  css:
+    theme:
+      css/components/admin/blazy.admin-grid.css: {}
+  dependencies:
+    - blazy/nativegrid
+
+admin.optionset:
+  css:
+    theme:
+      css/components/admin/blazy.admin-optionset.css: {}
+
 admin:
   css:
     theme:
       css/components/admin/blazy.admin.css: {}
-      css/components/admin/blazy.admin--fixes.css: {}
+      css/components/admin/blazy.admin-modal.css: {}
+      css/components/admin/blazy.admin.tooltip.css: {}
   js:
     js/components/jquery/blazy.admin.min.js: { minified: true }
   dependencies:
     - core/jquery
     - blazy/drupal
     - blazy/dblazy
-    - blazy/dom
+    - blazy/admin.grid
 
 # deprecated at 2.5 and removed at 3.+, unmaintained. Use PhotoSwipe, etc.
 photobox:
@@ -267,5 +307,4 @@ photobox:
   dependencies:
     - core/jquery
     - blazy/drupal
-    # use photobox when available instead.
-    # - photobox/photobox
+  deprecated: The %library_id% is deprecated in blazy:2.5 and is removed in blazy:3.0.0.

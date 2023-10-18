@@ -2,44 +2,27 @@
 
 namespace Drupal\blazy\Cache;
 
+use Drupal\blazy\internals\Internals;
 use Drupal\Core\Cache\Cache;
-use Drupal\blazy\Blazy;
 
 /**
  * Provides common cache utility static methods.
+ *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module.
+ *
+ * @todo remove for \Drupal\blazy\Asset\Libraries methods at 3.x.
  */
 class BlazyCache {
 
   /**
-   * Build out image, or anything related, including cache, CSS background, etc.
-   */
-  public static function file(array &$settings): array {
-    $blazies = $settings['blazies'];
-
-    if ($blazies->get('cache.disabled', FALSE)) {
-      return [];
-    }
-
-    $caches   = [];
-    $fallback = $settings['file_tags'] ?? [];
-    $tags     = $blazies->get('cache.file.tags', $fallback);
-
-    foreach (['contexts', 'keys', 'tags'] as $key) {
-      if ($cache = $blazies->get('cache.' . $key)) {
-        if ($key == 'tags' && $tags) {
-          $cache = Cache::mergeTags($cache, $tags);
-        }
-        $caches[$key] = $cache;
-      }
-    }
-    return $caches;
-  }
-
-  /**
    * Return the available lightboxes, to be cached to avoid disk lookups.
+   *
+   * @todo remove for \Drupal\blazy\Asset\Libraries::getLightboxes() at 3.x.
    */
   public static function lightboxes($root): array {
-    $lightboxes = [];
+    $lightboxes = ['flybox'];
     if (function_exists('colorbox_theme')) {
       $lightboxes[] = 'colorbox';
     }
@@ -61,32 +44,30 @@ class BlazyCache {
 
   /**
    * Return the cache metadata common for all blazy-related modules.
+   *
+   * @todo remove for \Drupal\blazy\Asset\Libraries::getCacheMetadata() at 3.x.
    */
   public static function metadata(array $build = []): array {
-    $manager  = Blazy::service('blazy.manager');
-    $settings = $build['settings'] ?? $build;
-
-    // @todo renove after sub-modules, including some fallback settings.
-    Blazy::verify($settings);
-
-    $blazies   = $settings['blazies'];
-    $namespace = $settings['namespace'] ?? $blazies->get('namespace', 'blazy');
+    $manager   = Internals::service('blazy.manager');
+    $settings  = Internals::toHashtag($build) ?: $build;
+    $blazies   = Internals::verify($settings);
+    $namespace = $blazies->get('namespace', 'blazy');
+    $count     = $blazies->total() ?: $blazies->get('count', count($settings));
     $max_age   = $manager->config('cache.page.max_age', 'system.performance');
     $max_age   = empty($settings['cache']) ? $max_age : $settings['cache'];
-    $id        = $settings['id'] ?? Blazy::getHtmlId($namespace);
+    $id        = Internals::getHtmlId($namespace . $count);
     $id        = $blazies->get('css.id', $id);
-    $count     = $settings['count'] ?? count($settings);
-    $count     = $blazies->get('count', $count);
+    $id        = substr(md5($id), 0, 11);
 
     // Put them into cxahe.
     $cache             = [];
     $suffixes[]        = $count;
     $cache['tags']     = Cache::buildTags($namespace . ':' . $id, $suffixes, '.');
-    $cache['contexts'] = ['languages'];
+    $cache['contexts'] = ['languages', 'url.site'];
     $cache['max-age']  = $max_age;
-    $cache['keys']     = $blazies->get('cache.keys', [$id]);
+    $cache['keys']     = $blazies->get('cache.metadata.keys', [$id]);
 
-    if ($tags = $blazies->get('cache.tags', [])) {
+    if ($tags = $blazies->get('cache.metadata.tags', [])) {
       $cache['tags'] = Cache::mergeTags($cache['tags'], $tags);
     }
 

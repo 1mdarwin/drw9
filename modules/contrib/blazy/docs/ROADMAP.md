@@ -16,14 +16,14 @@
   Added IFRAME (Blazy Video), apart from existing IMG/ DIV (CSS background).
 
 * [x] Core Media integration.  
-  01/03/2019
+  01/03/2019 (basic) - 15/08/2023 (full-fledged)
 
 * [x] Core Responsive Image integration.  
   05/02/2020   
 
   Added multi-breakpoint CSS background and Aspect ratio Fluid supports.
 
-* [?] Optimization and solidification.
+* [?] Optimization and solidification aka maturity.
 
   Why is it the last plan? It should make sense, if you have heard **premature
   optimization** in software developments.

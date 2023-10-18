@@ -2,10 +2,12 @@
 
 namespace Drupal\blazy\Form;
 
+use Drupal\blazy\BlazySettings;
+
 /**
  * Defines re-usable services and functions for blazy plugins.
  */
-interface BlazyAdminInterface {
+interface BlazyAdminInterface extends BlazyAdminInteropInterface {
 
   /**
    * Returns the entity display repository.
@@ -23,34 +25,9 @@ interface BlazyAdminInterface {
   public function blazyManager();
 
   /**
-   * Returns shared form elements across field formatter and Views.
-   */
-  public function openingForm(array &$form, array &$definition): void;
-
-  /**
-   * Returns re-usable grid elements across field formatter and Views.
-   */
-  public function gridForm(array &$form, array $definition): void;
-
-  /**
-   * Returns shared ending form elements across field formatter and Views.
-   */
-  public function closingForm(array &$form, array $definition): void;
-
-  /**
    * Returns simple form elements common for Views field, EB widget, formatters.
    */
-  public function baseForm(array $definition = []): array;
-
-  /**
-   * Returns re-usable media switch form elements.
-   */
-  public function mediaSwitchForm(array &$form, array $definition): void;
-
-  /**
-   * Returns re-usable logic, styling and assets across fields and Views.
-   */
-  public function finalizeForm(array &$form, array $definition): void;
+  public function baseForm(array &$definition): array;
 
   /**
    * Returns time in interval for select options.
@@ -64,41 +41,72 @@ interface BlazyAdminInterface {
 
   /**
    * Returns available entities for select options.
+   *
+   * @param string $entity_type
+   *   The entity type.
+   *
+   * @return array
+   *   The entity types
    */
-  public function getEntityAsOptions($entity_type = ''): array;
+  public function getEntityAsOptions($entity_type): array;
 
   /**
    * Returns available optionsets for select options.
+   *
+   * Might be removed, duplicate for self::getEntityAsOptions() for easy words.
+   *
+   * @param string $entity_type
+   *   The entity type.
+   *
+   * @return array
+   *   The entity types
    */
-  public function getOptionsetOptions($entity_type = ''): array;
+  public function getOptionsetOptions($entity_type): array;
 
   /**
    * Returns available view modes for select options.
+   *
+   * @param string $target_type
+   *   The target entity type.
+   *
+   * @return array
+   *   The target entity types
    */
   public function getViewModeOptions($target_type): array;
 
   /**
    * Returns Responsive image for select options.
+   *
+   * @return array
+   *   The responsive images as options.
    */
   public function getResponsiveImageOptions(): array;
 
   /**
-   * Returns re-usable fieldable formatter form elements.
-   */
-  public function fieldableForm(array &$form, array $definition): void;
-
-  /**
-   * Modifies the image formatter form elements.
-   */
-  public function imageStyleForm(array &$form, array $definition): void;
-
-  /**
    * Return the field formatter settings summary.
+   *
+   * @param array $definition
+   *   The setting definition.
+   *
+   * @return array
+   *   The settings summary.
    */
   public function getSettingsSummary(array $definition): array;
 
   /**
    * Returns available fields for select options.
+   *
+   * @param array $target_bundles
+   *   The optional target bundles, might be empty from View UI.
+   * @param array $allowed_field_types
+   *   The optional field types to query for.
+   * @param string $entity_type
+   *   The optional entity type.
+   * @param string $target_type
+   *   The optional target type.
+   *
+   * @return array
+   *   The available fields as options.
    */
   public function getFieldOptions(
     array $target_bundles = [],
@@ -106,5 +114,63 @@ interface BlazyAdminInterface {
     $entity_type = 'media',
     $target_type = ''
   ): array;
+
+  /**
+   * Returns common form item title or header classes.
+   *
+   * @param array $options
+   *   The optional additional classes.
+   * @param bool $flatten
+   *   Whether to flatten the array.
+   *
+   * @return string|array
+   *   The title classes.
+   */
+  public function getTitleClasses(array $options = [], $flatten = FALSE);
+
+  /**
+   * Returns common tooltip classes, normally when bottom position is needed.
+   *
+   * @param array $options
+   *   The optional additional classes.
+   * @param bool $flatten
+   *   Whether to flatten the array.
+   *
+   * @return string|array
+   *   The tooltip classes.
+   */
+  public function getTooltipClasses(array $options = [], $flatten = FALSE);
+
+  /**
+   * Modifies the grid only form elements.
+   */
+  public function gridOnlyForm(array &$form, array &$definition): void;
+
+  /**
+   * Returns TRUE if admin_css option enabled, else FALSE.
+   *
+   * @return bool
+   *   TRUE if admin CSS is enabled.
+   */
+  public function isAdminCss(): bool;
+
+  /**
+   * Returns escaped options.
+   *
+   * @return array
+   *   The escaped options.
+   */
+  public function toOptions(array $data): array;
+
+  /**
+   * Verify the plugin scopes is initialized downstream.
+   *
+   * @param array $definition
+   *   The setting definition.
+   *
+   * @return \Drupal\blazy\BlazySettings
+   *   The BlazySettings object.
+   */
+  public function toScopes(array &$definition): BlazySettings;
 
 }

@@ -2,19 +2,23 @@
 
 namespace Drupal\blazy\Media;
 
+use Drupal\blazy\internals\Internals;
+use Drupal\blazy\Utility\Path;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Site\Settings;
 use Drupal\file\FileInterface;
-use Drupal\blazy\Blazy;
-use Drupal\blazy\Utility\Path;
 
 /**
  * Provides file_BLAH BC for D8 - D10+ till D11 rules.
  *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module.
+ *
  * @todo recap similiraties and make them plugins.
- * @todo remove deprecated functions post D11, not D10, and when D8 is dropped.
+ * @todo remove deprecated functions post D11, not D10, or when D8 is dropped.
  */
 class BlazyFile {
 
@@ -63,7 +67,9 @@ class BlazyFile {
     if ($gen = Path::fileUrlGenerator()) {
       // @todo recheck ::generateAbsoluteString doesn't return web-accessible
       // protocol as expected, required by getimagesize to work correctly.
-      return $relative ? $gen->generateString($uri) : $gen->generateAbsoluteString($uri);
+      return $relative
+        ? $gen->generateString($uri)
+        : $gen->generateAbsoluteString($uri);
     }
 
     $function = 'file_create_url';
@@ -80,53 +86,41 @@ class BlazyFile {
    * @param object $style
    *   The optional image style instance.
    * @param array $options
-   *   The options: default url, sanitize.
+   *   The options: default url.
    *
    * @return string
    *   Returns an absolute URL of a local file to a relative one.
    *
-   * @see BlazyOEmbed::getExternalImageItem()
+   * @see BlazyOEmbed::getThumbnail()
    * @see BlazyFilter::getImageItemFromImageSrc()
    */
   public static function transformRelative($uri, $style = NULL, array $options = []): string {
     $url = $options['url'] ?? '';
-    $sanitize = $options['sanitize'] ?? FALSE;
 
     if (empty($uri)) {
       return $url;
     }
 
-    $data_uri = $url && mb_substr($url, 0, 10) === 'data:image';
-
     // Returns as is if an external URL: UCG or external OEmbed image URL.
     if (self::isExternal($uri)) {
       $url = $uri;
     }
-    else {
-      // @todo re-check this based on the need.
-      if (($data_uri || empty($url) || $style) && self::isValidUri($uri)) {
-        $url = $style ? $style->buildUrl($uri) : self::createUrl($uri);
+    elseif (self::isValidUri($uri)) {
+      $stylable = $style && !self::isSvg($uri);
+      $url = $stylable ? $style->buildUrl($uri) : self::createUrl($uri);
 
-        if ($gen = Path::fileUrlGenerator()) {
-          $url = $gen->transformRelative($url);
-        }
-        else {
-          $function = 'file_url_transform_relative';
-          $url = is_callable($function) ? $function($url) : $url;
-        }
+      if ($gen = Path::fileUrlGenerator()) {
+        $url = $gen->transformRelative($url);
+      }
+      else {
+        // @todo remove when D8 is dropped at 3.x.
+        $function = 'file_url_transform_relative';
+        $url = is_callable($function) ? $function($url) : $url;
       }
     }
 
     // If transform failed, returns default URL, or URI as is.
-    $url = $url ?: $uri;
-
-    // Just in case, an attempted kidding gets in the way, relevant for UGC.
-    // @todo re-check to completely remove data URI.
-    if ($sanitize && !$data_uri) {
-      $url = UrlHelper::stripDangerousProtocols($url);
-    }
-
-    return $url ?: '';
+    return $url ?: $uri;
   }
 
   /**
@@ -159,6 +153,26 @@ class BlazyFile {
   }
 
   /**
+   * Returns a file object from an URI.
+   */
+  public static function fromUri($uri, $manager = NULL): ?object {
+    return Internals::loadByProperty('uri', $uri, 'file', $manager);
+  }
+
+  /**
+   * Returns TRUE if an SVG URI.
+   */
+  public static function isSvg($uri): bool {
+    // Some guy uploaded images without extensions, seen at wildlife.
+    if ($ext = pathinfo($uri, PATHINFO_EXTENSION)) {
+      // Some other guy put CAPITALIZED image extensions for real.
+      $ext = strtolower($ext);
+      return $ext == 'svg';
+    }
+    return FALSE;
+  }
+
+  /**
    * Normalizes URI for sub-modules.
    */
   public static function normalizeUri($path): string {
@@ -175,28 +189,39 @@ class BlazyFile {
   }
 
   /**
+   * Returns web-accessible URI if an invalid is given.
+   */
+  public static function toAccessibleUri($uri): string {
+    $abs = $uri;
+    // Must be valid URI, or web-accessible url, not: /modules|themes/...
+    if (!self::isValidUri($abs) && mb_substr($abs, 0, 1) == '/') {
+      if ($request = Path::requestStack()) {
+        $abs = $request->getCurrentRequest()->getSchemeAndHttpHost() . $abs;
+      }
+    }
+    return $abs;
+  }
+
+  /**
    * Returns URI from image item, fake or valid one, no problem.
    */
   public static function uri($item, array $settings = []): ?string {
     $uri = NULL;
-    if ($item) {
+    if ($item && BlazyImage::isValidItem($item)) {
       $file = $item->entity ?? NULL;
-      $uri = self::isFile($file) ? $file->getFileUri() : ($item->uri ?? NULL);
+      $uri = $item->uri ?? NULL;
+      // The ::getFileUri() may point to local video, not image URI.
+      $uri = $uri ?: (self::isFile($file) ? $file->getFileUri() : NULL);
     }
 
     // No file API with unmanaged files here: hard-coded UGC, legacy VEF.
-    if (empty($uri) && $settings) {
-      // Respects first.uri without image_url such as colorbox/zoom-like.
-      if ($blazies = ($settings['blazies'] ?? NULL)) {
-        $uri = $blazies->get('image.uri') ?: $blazies->get('first.uri');
+    if (!$uri && $settings) {
+      if ($blazies = $settings['blazies'] ?? NULL) {
+        $uri = $blazies->get('image.uri');
       }
-
-      // @todo remove settings once done migration, and after sub-modules.
-      $_uri = $settings['uri'] ?? $settings['_uri'] ?? NULL;
-      $uri = $_uri ?: $uri;
     }
 
-    return $uri ?: '';
+    return $uri ?: $settings['uri'] ?? NULL;
   }
 
   /**
@@ -204,14 +229,23 @@ class BlazyFile {
    *
    * Should be named entity, but for consistency with BlazyImage:item().
    */
-  public static function item($object = NULL, array $settings = []): ?object {
+  public static function item($object = NULL, array $settings = [], $uri = NULL): ?object {
     $file = $object;
-    Blazy::verify($settings);
+    Internals::verify($settings);
 
     // Bail out early if we are given what we want.
     /** @var \Drupal\file\Entity\File $file */
     if (self::isFile($file)) {
       return $file;
+    }
+
+    // Fake, or real image item. Might also be VEF.
+    /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $object */
+    if (BlazyImage::isValidItem($object) && $file = $object->entity ?? NULL) {
+      // Ensures not locked here, in case VEF put its VEF, etc.
+      if (self::isFile($file)) {
+        return $file;
+      }
     }
 
     /** @var \Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem $object */
@@ -221,8 +255,10 @@ class BlazyFile {
     }
     /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $object */
     elseif ($object instanceof EntityReferenceFieldItemListInterface) {
+      // @phpstan Variable $image in PHPDoc tag @ var does not exist.
       /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $image */
-      if ($image = $object->first()) {
+      $image = $object->first();
+      if ($image) {
         /** @var \Drupal\file\Entity\File $file */
         $file = $image->entity;
       }
@@ -240,7 +276,7 @@ class BlazyFile {
       // BlazyFilter without any entity/ formatters associated with.
       // Or legacy VEF with hard-coded image URL without file API.
       if (!self::isFile($file)) {
-        $file = self::fromSettings($settings);
+        $file = self::fromSettings($settings, $uri);
       }
     }
 
@@ -255,31 +291,33 @@ class BlazyFile {
    * be for non-media File Entity Reference at 1.x, things changed since then.
    * Some core methods during Blazy 1.x are now gone at 2.x.
    * Re-purposed for Paragraphs, Node, etc. which embeds Media or File.
-   *
-   * @see BlazyImage::fromField()
-   *  The deprecated/ previous approach on this.
    */
   private static function fromField($entity, $name, array $settings): ?object {
     $file = NULL;
+
+    if (!isset($entity->{$name})) {
+      return NULL;
+    }
+
+    // @phpstan Variable $field in PHPDoc tag @ var does not exist.
     /** @var \Drupal\file\Plugin\Field\FieldType\FileFieldItemList $field */
-    if (isset($entity->{$name}) && $field = $entity->get($name)) {
-      if (method_exists($field, 'referencedEntities')) {
-        // Two designated types: MediaInterface and FileInterface.
-        $reference = $field->referencedEntities()[0] ?? NULL;
-        // The first is FileInterface.
-        if (self::isFile($reference)) {
-          $file = $reference;
-        }
-        else {
-          // The last is MediaInterface, but let the dogs out for now.
-          $options = [
-            'entity' => $reference,
-            'source' => $entity,
-            'settings' => $settings,
-          ];
-          if ($image = BlazyImage::fromContent($options, $name)) {
-            $file = $image->entity;
-          }
+    $field = $entity->get($name);
+    if ($field && method_exists($field, 'referencedEntities')) {
+      // Two designated types: MediaInterface and FileInterface.
+      $reference = $field->referencedEntities()[0] ?? NULL;
+      // The first is FileInterface.
+      if (self::isFile($reference)) {
+        $file = $reference;
+      }
+      else {
+        // The last is MediaInterface, but let the dogs out for now.
+        $options = [
+          'entity' => $reference,
+          'source' => $entity,
+          'settings' => $settings,
+        ];
+        if ($image = BlazyImage::fromContent($options, $name)) {
+          $file = $image->entity;
         }
       }
     }
@@ -289,20 +327,14 @@ class BlazyFile {
   /**
    * Returns the File entity from settings, if applicable, relevant for Filter.
    */
-  private static function fromSettings(array $settings): ?object {
-    $file = NULL;
+  private static function fromSettings(array $settings, $uri = NULL): ?object {
     $blazies = $settings['blazies'] ?? NULL;
+    $uri     = $uri ?: self::uri(NULL, $settings);
+    $uuid    = $blazies ? $blazies->get('entity.uuid') : NULL;
+    $file    = $uuid ? Internals::loadByUuid($uuid, 'file') : NULL;
 
-    if ($manager = Blazy::service('blazy.manager')) {
-      $uri = self::uri(NULL, $settings);
-      $uuid = $blazies ? $blazies->get('entity.uuid') : NULL;
-      $file = $uuid ? $manager->loadByUuid($uuid, 'file') : NULL;
-
-      if (!$file && self::isValidUri($uri)) {
-        if ($files = $manager->loadByProperties(['uri' => $uri], 'file', TRUE)) {
-          $file = reset($files);
-        }
-      }
+    if (!$file && $uri) {
+      $file = self::fromUri($uri);
     }
     return $file;
   }

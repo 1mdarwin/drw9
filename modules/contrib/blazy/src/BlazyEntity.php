@@ -2,15 +2,20 @@
 
 namespace Drupal\blazy;
 
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\blazy\Field\BlazyField;
+use Drupal\blazy\Deprecated\BlazyEntityDeprecatedTrait;
+use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Media\BlazyOEmbedInterface;
+use Drupal\blazy\Utility\CheckItem;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\media\MediaInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Provides common entity utilities to work with field details.
+ * Provides common entity utilities to work with field details or vanilla.
  */
 class BlazyEntity implements BlazyEntityInterface {
+
+  use BlazyEntityDeprecatedTrait;
 
   /**
    * The blazy oembed service.
@@ -27,11 +32,19 @@ class BlazyEntity implements BlazyEntityInterface {
   protected $blazyManager;
 
   /**
-   * Constructs a BlazyFormatter instance.
+   * The blazy media service.
+   *
+   * @var \Drupal\blazy\Media\BlazyMediaInterface
+   */
+  protected $blazyMedia;
+
+  /**
+   * Constructs a BlazyEntity instance.
    */
   public function __construct(BlazyOEmbedInterface $oembed) {
     $this->oembed = $oembed;
     $this->blazyManager = $oembed->blazyManager();
+    $this->blazyMedia = $oembed->blazyMedia();
   }
 
   /**
@@ -59,58 +72,60 @@ class BlazyEntity implements BlazyEntityInterface {
 
   /**
    * {@inheritdoc}
-   *
-   * @todo make it single param after sub-modules for easy updates.
    */
-  public function build(array &$data, $entity = NULL, $fallback = ''): array {
-    $entity = $data['entity'] ?? $entity;
-    $fallback = $data['fallback'] ?? $fallback;
+  public function blazyMedia() {
+    return $this->blazyMedia;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function build(array $data): array {
+    $manager = $this->blazyManager;
+    $manager->hashtag($data);
+
+    $access   = $data['#access'] ?? FALSE;
+    $entity   = $data['#entity'] ?? NULL;
+    $settings = &$data['#settings'];
 
     if (!$entity instanceof EntityInterface) {
       return [];
     }
 
-    unset($data['entity'], $data['fallback']);
+    if (!$access && $denied = $manager->denied($entity)) {
+      return $denied;
+    }
 
-    // Supports core Media via Drupal\blazy\Media\BlazyOEmbed::build().
-    $manager = $this->blazyManager;
-    $settings = &$data['settings'];
-    $delta = $settings['delta'] ?? -1;
+    // @todo remove $settings after sub-modules: gridstack, slick_browser.
+    $data['#access'] = TRUE;
+    $data['#delta']  = $delta = $data['#delta'] ?? ($settings['delta'] ?? -1);
 
-    // Common settings.
-    $manager->preSettings($settings);
-    $manager->prepareData($data, $entity);
-    $manager->postSettings($settings);
+    // Extract media data with translated one, dup required by self::prepare().
+    if ($entity instanceof MediaInterface) {
+      $entity = $this->blazyMedia->prepare($data);
+    }
 
-    // Entity settings.
+    // Prepare container settings.
+    // @todo re-arrange, this needs media metadata from ::oembed() below.
+    // Temporary, extracted separately via BlazyMedia::prepare() above.
+    $this->prepare($data);
+
+    // Individual entity settings.
     self::settings($settings, $entity);
-
+    // $manager->toSettings($settings, $info);
     $manager->postSettingsAlter($settings, $entity);
 
     // Build the Media item.
-    $this->oembed->build($data, $entity);
-
-    $settings = &$data['settings'];
+    $this->oembed->build($data);
 
     // Only pass to Blazy for known entities related to File or Media.
     if (in_array($entity->getEntityTypeId(), ['file', 'media'])) {
-      /** @var \Drupal\image\Plugin\Field\FieldType\ImageItem $data['item'] */
-      if (empty($data['item'])) {
-        $data['content'][] = $this->view($entity, $settings, $fallback);
-      }
-
-      // Pass it to Blazy for consistent markups.
-      $build = $manager->getBlazy($data, $delta);
-
-      // Allows top level elements to load Blazy once rather than per field.
-      // This is still here for non-supported Views style plugins, etc.
-      if (empty($settings['_detached'])) {
-        $load = $manager->attach($settings);
-        $build['#attached'] = Blazy::merge($load, $build, '#attached');
-      }
+      unset($data['fallback']);
+      $build = $this->blazyMedia->build($data);
     }
     else {
-      $build = $this->view($entity, $settings, $fallback);
+      // Else entity.get.view or view builder aka vanilla.
+      $build = $this->view($data);
     }
 
     $manager->moduleHandler()->alter('blazy_build_entity', $build, $entity, $settings);
@@ -120,48 +135,60 @@ class BlazyEntity implements BlazyEntityInterface {
   /**
    * {@inheritdoc}
    */
-  public function view($entity, array $settings = [], $fallback = ''): array {
-    if ($fallback && is_string($fallback)) {
-      $fallback = ['#markup' => '<div class="is-fallback">' . $fallback . '</div>'];
+  public function prepare(array &$data): void {
+    $manager = $this->blazyManager;
+    $manager->hashtag($data);
+
+    $settings = &$data['#settings'];
+    $blazies = $manager->verifySafely($settings);
+
+    if ($blazies->was('entity_prepared')) {
+      return;
     }
-    $fallback = $fallback ?: [];
 
-    if ($entity instanceof EntityInterface) {
-      $manager        = $this->blazyManager;
-      $entity_type_id = $entity->getEntityTypeId();
-      $view_mode      = $settings['view_mode'] = empty($settings['view_mode'])
-        ? 'default' : $settings['view_mode'];
-      $langcode       = $entity->language()->getId();
+    $manager->preSettings($settings);
+    $manager->prepareData($data);
+    $manager->postSettings($settings);
 
-      // If entity has view_builder handler.
-      if ($manager->entityTypeManager()
-        ->hasHandler($entity_type_id, 'view_builder')) {
-        $build = $manager->entityTypeManager()
-          ->getViewBuilder($entity_type_id)
-          ->view($entity, $view_mode, $langcode);
+    // Reset in case locked too early before enough data, yet lock it locally.
+    // Seen the problem with GridStack Media player at LB, initialized was
+    // flagged at ::preSettings() above.
+    $blazies->set('was.initialized', FALSE)
+      ->set('was.entity_prepared', TRUE);
+  }
 
-        // @todo figure out why video_file empty, this is blatant assumption.
-        if ($entity_type_id == 'file') {
-          try {
-            $build = BlazyField::getOrViewMedia($entity, $settings, TRUE) ?: $build;
-          }
-          catch (\Exception $ignore) {
-            // Do nothing, no need to be chatty in mischievous deeds.
-          }
-        }
-        return $build ?: $fallback;
+  /**
+   * {@inheritdoc}
+   */
+  public function view(array $data): array {
+    $manager  = $this->blazyManager;
+    $settings = $manager->toHashtag($data);
+    $entity   = $data['#entity'] ?? NULL;
+    $build    = [];
+
+    // Might be called independently from self::build().
+    if (!$entity instanceof EntityInterface) {
+      return [];
+    }
+
+    // Re-defined, needed downstream by local video, etc.
+    $data['#settings']['view_mode'] = $settings['view_mode'] ?? 'default';
+
+    // Provides a convenient one view call for any entities, mostly guess works,
+    // if accessed outside self::build() which already took care of this.
+    if (in_array($entity->getEntityTypeId(), ['file', 'media'])) {
+      try {
+        // @todo recheck if doable with BlazyMedia::build().
+        unset($data['fallback']);
+        $build = $this->blazyMedia->view($data);
       }
-      else {
-        // If module implements own {entity_type}_view.
-        // @todo remove due to being deprecated at D8.7.
-        // See https://www.drupal.org/node/3033656
-        $view_hook = $entity_type_id . '_view';
-        if (is_callable($view_hook)) {
-          return $view_hook($entity, $view_mode, $langcode);
-        }
+      catch (\Exception $ignore) {
+        // Do nothing, no need to be chatty in mischievous deeds.
       }
     }
-    return $fallback;
+
+    // Provides an entity.get.view or view builder aka vanilla.
+    return $build ?: $manager->view($data);
   }
 
   /**
@@ -169,125 +196,17 @@ class BlazyEntity implements BlazyEntityInterface {
    */
   public static function settings(array &$settings, $entity): void {
     // Might be accessed by tests, or anywhere outside the workflow.
-    Blazy::verify($settings);
-
-    $blazies = $settings['blazies'];
-    $internal_path = $absolute_path = NULL;
+    $blazies  = Internals::verify($settings);
     $langcode = $blazies->get('language.current');
 
-    // @todo remove after test updates.
-    if (!$entity) {
-      return;
+    if ($info = CheckItem::entity($entity, $langcode)) {
+      $data = $info['data'];
+      $id   = $data['id'];
+      $rid  = $data['rid'];
+
+      $blazies->set('cache.metadata.keys', [$id, $rid], TRUE)
+        ->set('entity', $data, TRUE);
     }
-
-    // Deals with UndefinedLinkTemplateException such as paragraphs type.
-    // @see #2596385, or fetch the host entity.
-    if (!$entity->isNew()) {
-      try {
-        // Provides translated $entity, if any.
-        $entity = Blazy::translated($entity, $langcode);
-        $url = $entity->toUrl();
-
-        $internal_path = $url->getInternalPath();
-        $absolute_path = $url->setAbsolute()->toString();
-      }
-      catch (\Exception $ignore) {
-        // Do nothing.
-      }
-    }
-
-    $id = $entity->id();
-    $rid = $entity->getRevisionID();
-    $blazies->set('cache.keys', [$id, $rid], TRUE);
-
-    $info = [
-      'bundle' => $entity->bundle(),
-      'id' => $id,
-      'rid' => $rid,
-      'type_id' => $entity->getEntityTypeId(),
-      'url' => $absolute_path,
-      'path' => $internal_path,
-    ];
-
-    $blazies->set('entity', $info, TRUE);
-
-    // @todo remove.
-    $settings['bundle'] = $entity->bundle();
-
-    // @todo remove after migration and sub-modules. After tests updated.
-    // foreach ($info as $key => $value) {
-    // $key = $key == 'url' ? 'content_' . $key : $key;
-    // $key = in_array($key, ['id', 'type_id']) ? 'entity_' . $key : $key;
-    // $settings[$key] = $value;
-    // }
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   self::view() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getEntityView($entity, array $settings = [], $fallback = '') {
-    return $this->view($entity, $settings, $fallback);
-  }
-
-  /**
-   * Returns the formatted renderable array of the field, called by sub-modules.
-   *
-   * @todo deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   BlazyField::view() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getFieldRenderable($entity, $field_name, $view_mode, $multiple = TRUE) {
-    return BlazyField::view($entity, $field_name, $view_mode, $multiple);
-  }
-
-  /**
-   * Returns the string value of link, or text, called by sub-modules.
-   *
-   * @todo deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   BlazyField::getString() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getFieldString($entity, $field_name, $langcode, $clean = TRUE) {
-    return BlazyField::getString($entity, $field_name, $langcode, $clean);
-  }
-
-  /**
-   * Returns the text or link value of the fields: link, or text.
-   *
-   * @deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   BlazyField::getTextOrLink() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getFieldTextOrLink($entity, $field_name, $settings, $multiple = TRUE) {
-    $langcode  = $settings['langcode'] ?? '';
-    $view_mode = $settings['view_mode'] ?? 'default';
-    return BlazyField::getTextOrLink($entity, $field_name, $view_mode, $langcode, $multiple);
-  }
-
-  /**
-   * Returns the string value of the fields: link, or text.
-   *
-   * @deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   BlazyField::getValue() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getFieldValue($entity, $field_name, $langcode) {
-    return BlazyField::getValue($entity, $field_name, $langcode);
-  }
-
-  /**
-   * Returns file view or media due to being empty returned by view builder.
-   *
-   * @deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   BlazyField::getOrViewMedia() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getFileOrMedia($file, array $settings, $rendered = TRUE) {
-    return BlazyField::getOrViewMedia($file, $settings, $rendered);
   }
 
 }

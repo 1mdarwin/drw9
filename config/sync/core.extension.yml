@@ -8,12 +8,14 @@ module:
   automated_cron: 0
   big_pipe: 0
   blazy: 0
+  blazy_ui: 0
   block: 0
   block_class: 0
   block_content: 0
   bootstrap_layouts: 0
   bootstrap_library: 0
   breakpoint: 0
+  captcha: 0
   ckeditor5: 0
   comment: 0
   config: 0
@@ -39,6 +41,7 @@ module:
   help: 0
   history: 0
   image: 0
+  image_captcha: 0
   jquery_ui: 0
   jquery_ui_autocomplete: 0
   jquery_ui_menu: 0

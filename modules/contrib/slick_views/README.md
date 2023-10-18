@@ -13,6 +13,12 @@ This module doesn't require Views UI to be enabled but it is required if you
 want to configure your Views display using Slick carousel through the web
 interface. This ensures you can leave Views UI off once everything is setup.
 
+***
+## <a name="first"> </a>FIRST THINGS FIRST!
+Read more at:
+* [Github](https://git.drupalcode.org/project/blazy/-/blob/8.x-2.x/docs/README.md#first-things-first)
+* [Blazy UI](/admin/help/blazy_ui#first)
+
 
 ## REQUIREMENTS
 * Views (in core)
@@ -120,12 +126,12 @@ over them, and click a dark question mark.
 ## READ MORE
 See the project page at drupal.org:
 
-[Slick Views](http://drupal.org/project/slick_views)
+[Slick Views](https://drupal.org/project/slick_views)
 
 More info relevant to each option is available at their form display by hovering
 over them, and click a dark question mark.
 
 See the Slick docs at:
 
-* [Slick website](http://kenwheeler.github.io/slick/)
+* [Slick website](https://kenwheeler.github.io/slick/)
 * [Slick at Github](https://github.com/kenwheeler/slick/)

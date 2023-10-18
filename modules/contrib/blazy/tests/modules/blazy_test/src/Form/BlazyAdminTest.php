@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy_test\Form;
 
+use Drupal\blazy\BlazyManagerInterface;
+use Drupal\blazy\Form\BlazyAdminInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\blazy\Form\BlazyAdminInterface;
-use Drupal\blazy\BlazyManagerInterface;
 
 /**
  * Provides resusable admin functions or form elements.
@@ -40,7 +40,10 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('blazy.admin.extended'), $container->get('blazy.manager'));
+    return new static(
+      $container->get('blazy.admin.formatter'),
+      $container->get('blazy.manager')
+    );
   }
 
   /**

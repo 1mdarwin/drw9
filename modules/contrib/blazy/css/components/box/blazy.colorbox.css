@@ -1,56 +1,70 @@
 /**
  * @file
- * Provides colorbox integration.
+ * Provides colorbox integration, adjust like everything else.
  *
  * @requires coder shutup
  * phpcs:ignoreFile -- Colorbox has no classes, just IDs, with inline styles.
+ * Since 2.17, body classes is deprecated for local classes in the #colorbox,
+ * and is removed in 3.x.
  */
 
-/* csslint ignore:start */
-.colorbox-on--media #colorbox,
-.colorbox-on--media #colorbox * {
+.b-colorbox--iframe,
+.b-colorbox--iframe * {
   box-sizing: border-box;
   max-width: 100%;
 }
 
-.colorbox-on--media #cboxBottomCenter,
-.colorbox-on--media #cboxBottomRight,
-.colorbox-on--media #cboxBottomLeft,
-.colorbox-on--media #cboxTopCenter,
-.colorbox-on--media #cboxTopRight,
-.colorbox-on--media #cboxTopLeft,
-.colorbox-on--media #cboxMiddleLeft,
-.colorbox-on--media #cboxMiddleRight {
-  display: none !important; /* csslint allow: known-properties, important */
+/* stylelint-disable */
+.b-colorbox--iframe #cboxBottomCenter,
+.b-colorbox--iframe #cboxBottomRight,
+.b-colorbox--iframe #cboxBottomLeft,
+.b-colorbox--iframe #cboxTopCenter,
+.b-colorbox--iframe #cboxTopRight,
+.b-colorbox--iframe #cboxTopLeft,
+.b-colorbox--iframe #cboxMiddleLeft,
+.b-colorbox--iframe #cboxMiddleRight {
+  display: none !important;
 }
 
-.colorbox-on--media #cboxWrapper,
-.colorbox-on--media #cboxContent {
-  background: none;
+.b-colorbox--iframe #cboxWrapper,
+.b-colorbox--iframe #cboxContent {
   border-radius: 0;
+  background: none;
 }
 
-.colorbox-on--media #cboxWrapper,
-.colorbox-on--media #cboxContent,
-.colorbox-on--media #cboxLoadedContent {
-  overflow: visible !important; /* csslint allow: known-properties, important */
+.b-colorbox--iframe #cboxWrapper,
+.b-colorbox--iframe #cboxContent,
+.b-colorbox--iframe #cboxLoadedContent {
+  overflow: visible !important;
 }
 
-#cboxLoadedContent.media--ratio {
-  height: 0 !important; /* csslint allow: known-properties, important */
+.b-colorbox .media--ratio {
+  height: 0 !important;
   padding-bottom: 56%;
 }
+/* stylelint-enable */
 
-#cboxLoadedContent.media--ratio .cboxIframe {
-  background-clip: padding-box;
-  border-radius: 0;
+.b-colorbox iframe {
   border: 8px solid #37465b;
+  border-radius: 0;
+  background-clip: padding-box;
 }
 
-#cboxLoadedContent img[srcset],
-#cboxLoadedContent picture img {
+.b-colorbox img[srcset],
+.b-colorbox picture img {
   display: block;
-  margin: auto;
+  width: auto;
+  max-width: none;
   max-height: 100%;
+  margin: auto;
 }
-/* csslint ignore:end */
+
+.b-colorbox .media--instagram {
+  min-width: 320px;
+}
+
+/* VEF Instagram to avoid being cropped due to anti-mainstream iframe ratio.
+Be sure to not affect dynamic Instagram oEmbed. They are different beasts. */
+.b-colorbox .media--instagram .cboxIframe {
+  max-width: 320px;
+}

@@ -2,12 +2,16 @@
 
 namespace Drupal\blazy\Media;
 
+use Drupal\blazy\internals\Internals;
+use Drupal\blazy\Theme\Attributes;
 use Drupal\Core\Cache\Cache;
-use Drupal\blazy\Blazy;
-use Drupal\blazy\Theme\BlazyAttribute;
 
 /**
  * Provides responsive image utilities.
+ *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module.
  *
  * @todo recap similiraties and make them plugins.
  */
@@ -27,7 +31,35 @@ class BlazyResponsiveImage {
    *   The breakpoint manager.
    */
   public static function breakpointManager() {
-    return Blazy::service('breakpoint.manager');
+    return Internals::service('breakpoint.manager');
+  }
+
+  /**
+   * Initialize the Responsive image definition.
+   *
+   * ResponsiveImage is the most temperamental module. Unlike plain old Image,
+   * it explodes when the image is missing as much as when fed wrong URI, etc.
+   * Do not let SVG alike mess up with ResponsiveImage, else fatal.
+   */
+  public static function transformed(array &$settings): void {
+    $blazies  = $settings['blazies'];
+    $unstyled = $blazies->is('unstyled');
+
+    // Only if not transformed.
+    if (!$blazies->get('resimage.transformed')
+      && $style = self::toStyle($settings, $unstyled)) {
+      $blazies->set('resimage.style', $style);
+
+      // Might be set via BlazyFilter, but not enough data passed.
+      $multiple = $blazies->is('multistyle');
+      if (!$blazies->get('resimage.id') || $multiple) {
+        self::define($blazies, $style);
+      }
+
+      // We'll bail out internally if already set once at container level.
+      self::dimensions($settings, $style, FALSE);
+      $blazies->set('resimage.transformed', TRUE);
+    }
   }
 
   /**
@@ -39,49 +71,54 @@ class BlazyResponsiveImage {
    * and Picture are checked with its multiple dimensions aka art direction.
    */
   public static function background(array &$attributes, array &$settings): void {
-    $blazies = $settings['blazies'];
-    $resimage = $blazies->get('resimage.style');
+    $blazies    = $settings['blazies'];
+    $resimage   = $blazies->get('resimage.style');
+    $background = $blazies->use('bg');
 
-    if (empty($settings['background']) || !$resimage) {
+    if (!$background || !$resimage) {
       return;
     }
 
     if ($styles = self::styles($resimage)) {
       $srcset = $ratios = [];
-      $ratios = $blazies->get('ratios', []);
-
       foreach (array_values($styles['styles']) as $style) {
-        $styled = array_merge($settings, BlazyImage::transformDimensions($style, $settings, FALSE));
+        $dims = BlazyImage::transformDimensions($style, $blazies);
+        $width = $dims['width'];
+
+        if (!$width) {
+          continue;
+        }
 
         // Sort image URLs based on width.
-        $data = BlazyImage::background($styled, $style);
-        $srcset[$styled['width']] = $data;
-        $ratios[$styled['width']] = $data['ratio'];
+        $sets = $dims + $settings;
+        $data = BlazyImage::background($sets, $style);
+        $srcset[$width] = $data;
+        $ratios[$width] = $data['ratio'];
       }
 
-      // Sort the srcset from small to large image width or multiplier.
-      ksort($srcset);
-      ksort($ratios);
+      if ($srcset) {
+        // Sort the srcset from small to large image width or multiplier.
+        ksort($srcset);
+        ksort($ratios);
 
-      // Prevents NestedArray from making these indices.
-      $blazies->set('bgs', (object) $srcset)
-        ->set('ratios', $ratios)
-        ->set('image.ratio', end($ratios));
+        // Prevents NestedArray from making these indices.
+        $blazies->set('bgs', (object) $srcset)
+          ->set('ratios', (object) $ratios)
+          ->set('image.ratio', end($ratios));
 
-      // To make compatible with old bLazy (not Bio) which expects no 1px
-      // for [data-src], else error, provide a real smallest image. Bio will
-      // map it to the current breakpoint later.
-      $bg = reset($srcset);
-      $unlazy = $blazies->is('undata');
-      $old_url = $blazies->get('image.url', $settings['image_url'] ?? '');
-      $new_url = $unlazy ? $old_url : $bg['src'];
+        // To make compatible with old bLazy (not Bio) which expects no 1px
+        // for [data-src], else error, provide a real smallest image. Bio will
+        // map it to the current breakpoint later.
+        $bg      = reset($srcset);
+        $unlazy  = $blazies->is('undata');
+        $old_url = $blazies->get('image.url');
+        $new_url = $unlazy ? $old_url : $bg['src'];
 
-      // @todo remove.
-      // $settings['image_url'] = $new_url;
-      $blazies->set('is.unlazy', $unlazy)
-        ->set('image.url', $new_url);
+        $blazies->set('is.unlazy', $unlazy)
+          ->set('image.url', $new_url);
 
-      BlazyAttribute::lazy($attributes, $settings);
+        Attributes::lazy($attributes, $blazies, TRUE);
+      }
     }
   }
 
@@ -95,11 +132,11 @@ class BlazyResponsiveImage {
   public static function dimensions(
     array &$settings,
     $resimage = NULL,
-    $initial = TRUE
+    $initial = FALSE
   ): void {
-    $blazies = $settings['blazies'];
+    $blazies    = $settings['blazies'];
     $dimensions = $blazies->get('resimage.dimensions', []);
-    $resimage = $resimage ?: $blazies->get('resimage.style');
+    $resimage   = $resimage ?: $blazies->get('resimage.style');
 
     if ($dimensions || !$resimage) {
       return;
@@ -107,22 +144,20 @@ class BlazyResponsiveImage {
 
     $styles = self::styles($resimage);
     $names = $ratios = [];
-
     foreach (array_values($styles['styles']) as $style) {
-      $styled = BlazyImage::transformDimensions($style, $settings, $initial);
-
       // In order to avoid layout reflow, we get dimensions beforehand.
-      $width = $styled['width'];
-      $height = $styled['height'];
+      // @fixme $initial.
+      $data = BlazyImage::transformDimensions($style, $blazies);
+      $width = $data['width'];
 
-      // @todo merge ratios into dimensions elsewhere.
+      if (!$width) {
+        continue;
+      }
+
+      // Collect data.
       $names[$width] = $style->id();
-      $ratios[$width] = $ratio = BlazyImage::ratio($styled);
-      $dimensions[$width] = [
-        'width' => $width,
-        'height' => $height,
-        'ratio' => $ratio,
-      ];
+      $ratios[$width] = $data['ratio'];
+      $dimensions[$width] = $data;
     }
 
     // Sort the srcset from small to large image width or multiplier.
@@ -135,28 +170,17 @@ class BlazyResponsiveImage {
     $blazies->set('resimage.dimensions', $dimensions)
       ->set('is.dimensions', TRUE)
       ->set('image.ratio', end($ratios))
-      ->set('ratios', $ratios)
+      ->set('ratios', (object) $ratios)
       ->set('resimage.ids', array_values($names));
 
-    if (!$blazies->get('image.width')) {
-      $blazies->set('image', end($dimensions), TRUE);
-    }
+    // Only needed the last one.
+    // Overrides plain old image dimensions.
+    $blazies->set('image', end($dimensions), TRUE);
 
     // Currently only needed by Preload.
     if ($initial && $resimage && !empty($settings['preload'])) {
       self::sources($settings, $resimage);
     }
-  }
-
-  /**
-   * Defines the Responsive image id, styles and caches tags.
-   */
-  public static function define(&$blazies, $resimage) {
-    $id = $resimage->id();
-    $styles = self::styles($resimage);
-
-    $blazies->set('resimage.id', $id)
-      ->set('resimage.caches', $styles['caches'] ?? []);
   }
 
   /**
@@ -174,7 +198,7 @@ class BlazyResponsiveImage {
     if (!isset(self::$styles[$id])) {
       $cache_tags = $resimage->getCacheTags();
       $image_styles = [];
-      if ($manager = Blazy::service('blazy.manager')) {
+      if ($manager = Internals::service('blazy.manager')) {
         $image_styles = $manager->loadMultiple('image_style', $resimage->getImageStyleIds());
       }
 
@@ -203,16 +227,17 @@ class BlazyResponsiveImage {
    * to reduce complication at Blazy UI, and here.
    */
   public static function fallback(array &$settings, $placeholder): void {
-    $blazies = $settings['blazies'];
-    $id = '_empty image_';
-    $width = $height = 1;
+    $blazies  = $settings['blazies'];
+    $id       = '_empty image_';
+    $width    = $height = 1;
+    $ratio    = NULL;
     $data_src = $placeholder;
 
     // If not enabled via UI, by default, always 1px, or the custom Placeholder.
     // Image style will be prioritized as fallback to have different fallbacks
     // per field relevant for various aspect ratios rather than the one and only
     // fallback for the entire site via Responsive image UI.
-    if ($blazies->get('ui.one_pixel') || !empty($settings['image_style'])) {
+    if ($blazies->ui('one_pixel') || !empty($settings['image_style'])) {
       return;
     }
 
@@ -225,18 +250,19 @@ class BlazyResponsiveImage {
       }
       else {
         $id = $fallback;
-        if ($blazy = Blazy::service('blazy.manager')) {
+        if ($blazy = Internals::service('blazy.manager')) {
           $uri = $blazies->get('image.uri');
 
           // @todo use dimensions based on the chosen fallback.
           if ($uri && $style = $blazy->load($id, 'image_style')) {
-            $data_src = BlazyFile::transformRelative($uri, $style);
+            $data_src = BlazyImage::toUrl($settings, $style, $uri);
             $tn_uri = $style->buildUri($uri);
 
             [
-              'width' => $width,
+              'width'  => $width,
               'height' => $height,
-            ] = BlazyImage::transformDimensions($style, $settings);
+              'ratio'  => $ratio,
+            ] = BlazyImage::transformDimensions($style, $blazies, $tn_uri);
 
             $blazies->set('resimage.fallback.style', $style);
             $blazies->set('resimage.fallback.uri', $tn_uri);
@@ -255,12 +281,14 @@ class BlazyResponsiveImage {
 
     if ($data_src) {
       // The controller `data-src` attribute, might be valid image thumbnail.
-      $blazies->set('image.url', $data_src);
-      $blazies->set('placeholder.id', $id);
       // The controller `src` attribute, the placeholder: 1px or thumbnail.
-      $blazies->set('placeholder.url', $placeholder);
-      $blazies->set('placeholder.width', $width);
-      $blazies->set('placeholder.height', $height);
+      // @todo recheck image.url, too risky override for various usages.
+      $blazies->set('image.url', $data_src)
+        ->set('placeholder.id', $id)
+        ->set('placeholder.url', $placeholder)
+        ->set('placeholder.width', $width)
+        ->set('placeholder.height', $height)
+        ->set('placeholder.ratio', $ratio);
     }
   }
 
@@ -276,23 +304,33 @@ class BlazyResponsiveImage {
    * @requires `unstyled` defined
    */
   public static function toStyle(array $settings, $unstyled = FALSE): ?object {
-    $blazies    = $settings['blazies'];
-    $exist      = $blazies->is('resimage');
-    $_style     = $settings['responsive_image_style'] ?? NULL;
-    $multiple   = $blazies->is('multistyle');
-    $applicable = $exist && $_style;
-    $style      = $blazies->get('resimage.style');
+    $blazies  = $settings['blazies'];
+    $exist    = $blazies->is('resimage');
+    $_style   = $settings['responsive_image_style'] ?? NULL;
+    $multiple = $blazies->is('multistyle');
+    $valid    = $exist && $_style;
+    $style    = $blazies->get('resimage.style');
 
     // Multiple is a flag for various styles: Blazy Filter, GridStack, etc.
     // While fields can only have one image style per field.
-    if ($applicable && $blazy = Blazy::service('blazy.manager')) {
+    if ($valid && $manager = Internals::service('blazy.manager')) {
       if (!$unstyled && (!$style || $multiple)) {
-        $style = $blazy->load($_style, 'responsive_image_style');
+        $style = $manager->load($_style, 'responsive_image_style');
       }
     }
 
-    // @todo remove settings after migration and sub-modules.
-    return $style ?: ($settings['resimage'] ?? NULL);
+    return $style;
+  }
+
+  /**
+   * Defines the Responsive image id, styles and caches tags.
+   */
+  private static function define(&$blazies, $resimage) {
+    $id = $resimage->id();
+    $styles = self::styles($resimage);
+
+    $blazies->set('resimage.id', $id)
+      ->set('cache.metadata.tags', $styles['caches'] ?? [], TRUE);
   }
 
   /**
@@ -315,26 +353,34 @@ class BlazyResponsiveImage {
       return [];
     }
 
-    $func = function ($uri) use ($manager, $settings, $blazies, $style) {
-      $fallback = NULL;
-      $sources = $variables = [];
+    $func = function ($image) use ($manager, $blazies, $style) {
+      $uri        = $image['uri'];
+      $fallback   = NULL;
+      $sources    = $variables = [];
       $dimensions = $blazies->get('resimage.dimensions', []);
-      $end = end($dimensions);
+      $end        = end($dimensions);
 
       $variables['uri'] = $uri;
       foreach (['width', 'height'] as $key) {
-        $variables[$key] = $end[$key] ?? $settings[$key] ?? NULL;
+        $variables[$key] = $end[$key] ?? $blazies->get('image.' . $key);
       }
 
       $id = $style->getFallbackImageStyle();
       $breakpoints = array_reverse($manager
         ->getBreakpointsByGroup($style->getBreakpointGroup()));
-      $function = '_responsive_image_build_source_attributes';
-      if (is_callable($function)) {
-        $fallback = \_responsive_image_image_style_url($id, $variables['uri']);
+
+      // @todo recheck if any converted to services, bad if also private.
+      $func1 = '_responsive_image_build_source_attributes';
+      $func2 = '_responsive_image_image_style_url';
+
+      if (is_callable($func1)) {
+        if (is_callable($func2)) {
+          $fallback = $func2($id, $uri);
+        }
+
         foreach ($style->getKeyedImageStyleMappings() as $bid => $multipliers) {
           if (isset($breakpoints[$bid])) {
-            $sources[] = $function($variables, $breakpoints[$bid], $multipliers);
+            $sources[] = $func1($variables, $breakpoints[$bid], $multipliers);
           }
         }
       }
@@ -343,18 +389,19 @@ class BlazyResponsiveImage {
         ->set('resimage.fallback.url', $fallback);
 
       return empty($sources) ? [] : [
-        'items' => $sources,
         'fallback' => $fallback,
-      ];
+        'items'    => $sources,
+      ] + $image;
     };
 
     $output = [];
     // The URIs are extracted by Preloader::prepare().
-    if ($images = $blazies->get('images')) {
+    if ($images = $blazies->get('images', [])) {
       // Preserves indices even if empty to have correct mixed media elsewhere.
       foreach ($images as $image) {
-        $uri = $image['uri'] ?? NULL;
-        $output[] = empty($uri) ? [] : $func($uri);
+        $uri      = $image['uri'] ?? NULL;
+        $url      = $image['url'] ?? NULL;
+        $output[] = $uri && $url ? $func($image) : [];
       }
     }
 

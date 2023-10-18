@@ -2,14 +2,15 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Field\FieldDefinitionInterface;
-use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\Core\Field\FormatterBase;
-use Drupal\media\Entity\MediaType;
-use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\Field\BlazyDependenciesTrait;
+use Drupal\Core\Field\FieldDefinitionInterface;
+use Drupal\Core\Field\FieldItemInterface;
+use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\Core\Field\FormatterBase;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\media\Entity\MediaType;
+use Drupal\media\Plugin\media\Source\OEmbedInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -17,7 +18,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *
  * @FieldFormatter(
  *   id = "blazy_oembed",
- *   label = @Translation("Blazy"),
+ *   label = @Translation("Blazy OEmbed"),
  *   field_types = {
  *     "link",
  *     "string",
@@ -34,11 +35,43 @@ class BlazyOEmbedFormatter extends FormatterBase {
   use BlazyFormatterTrait;
 
   /**
+   * The module namespace.
+   *
+   * @var string
+   * @see https://www.php.net/manual/en/reserved.keywords.php
+   */
+  protected static $namespace = 'blazy';
+
+  /**
+   * The item id: blazy, slide, box, etc.
+   *
+   * @var string
+   */
+  protected static $itemId = 'content';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'blazy';
+
+  /**
+   * The caption id.
+   *
+   * @var string
+   */
+  protected static $captionId = 'captions';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $fieldType = 'entity';
+
+  /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'entity');
+    return static::injectServices($instance, $container, static::$fieldType);
   }
 
   /**
@@ -56,55 +89,6 @@ class BlazyOEmbedFormatter extends FormatterBase {
   }
 
   /**
-   * Build the blazy elements.
-   */
-  public function buildElements(array &$build, $items, $langcode) {
-    $settings   = &$build['settings'];
-    $field_name = $this->fieldDefinition->getName();
-    $entity     = $items->getParent()->getEntity();
-
-    foreach ($items as $delta => $item) {
-      $main_property = $item->getFieldDefinition()
-        ->getFieldStorageDefinition()
-        ->getMainPropertyName();
-
-      $value = $item->{$main_property};
-
-      if (empty($value)) {
-        continue;
-      }
-
-      $blazies = $settings['blazies']->reset($settings);
-      $blazies->set('delta', $delta)
-        ->set('media.input_url', $value);
-
-      $data = ['item' => NULL, 'settings' => $settings];
-
-      if ($entity->getEntityTypeId() == 'media'
-            && $entity->hasField($field_name)
-            && $entity->get($field_name)->getString() == $value) {
-        // We are on the right media entity.
-        $media = $entity;
-      }
-      else {
-        // Attempts to fetch media entity.
-        $media = $this->formatter
-          ->loadByProperties([
-            $field_name => $value,
-          ], 'media', TRUE);
-        $media = reset($media);
-      }
-
-      if ($media) {
-        $this->blazyOembed->build($data, $media);
-      }
-
-      // Media OEmbed with lazyLoad and lightbox supports.
-      $build[$delta] = $this->formatter->getBlazy($data, $delta);
-    }
-  }
-
-  /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
@@ -118,19 +102,7 @@ class BlazyOEmbedFormatter extends FormatterBase {
     if (isset($element['background'])) {
       $element['background']['#weight'] = -99;
     }
-    return $element;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  protected function getPluginScopes(): array {
-    return [
-      'background'        => TRUE,
-      'media_switch_form' => TRUE,
-      'multimedia'        => TRUE,
-      'responsive_image'  => TRUE,
-    ];
+    return $element + parent::settingsForm($form, $form_state);
   }
 
   /**
@@ -147,6 +119,99 @@ class BlazyOEmbedFormatter extends FormatterBase {
     }
 
     return FALSE;
+  }
+
+  /**
+   * Provides the blazy elements.
+   */
+  protected function buildElements(array &$build, $items, $langcode) {
+    $settings = $build['#settings'];
+    $limit    = $this->getViewLimit($settings);
+
+    foreach ($this->getElements($build, $items) as $delta => $element) {
+      // If a Views display, bail out if more than Views delta_limit.
+      // @todo figure out why Views delta_limit doesn't stop us here.
+      if ($limit > 0 && $delta > $limit - 1) {
+        break;
+      }
+
+      $build['items'][] = $element;
+    }
+  }
+
+  /**
+   * Generates the Blazy elements.
+   */
+  protected function getElements(array &$build, $items): \Generator {
+    $settings   = &$build['#settings'];
+    $field_name = $this->fieldDefinition->getName();
+    $entity     = $items->getParent()->getEntity();
+
+    foreach ($items as $delta => $item) {
+      $element = [];
+
+      if ($item instanceof FieldItemInterface) {
+        $class    = get_class($item);
+        $property = $class::mainPropertyName();
+        $sets     = $settings;
+
+        if ($value = $item->{$property}) {
+          $media = $this->blazyMedia->fromField($entity, $field_name, $value);
+
+          $info = [
+            'delta' => $delta,
+            'media.input_url' => $value,
+          ];
+
+          $data = [
+            '#delta'    => $delta,
+            '#item'     => NULL,
+            '#settings' => $this->formatter->toSettings($sets, $info),
+          ];
+
+          if ($media) {
+            $data['#entity'] = $media;
+            $data['#parent'] = $entity;
+
+            $this->blazyOembed->build($data);
+          }
+
+          // Media OEmbed with lazyLoad and lightbox supports.
+          $element = $this->formatter->getBlazy($data);
+        }
+      }
+
+      yield $element;
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function getPluginScopes(): array {
+    return [
+      'image_style_form'  => TRUE,
+      'background'        => TRUE,
+      'media_switch_form' => TRUE,
+      'multimedia'        => TRUE,
+      'no_preload'        => TRUE,
+      'responsive_image'  => TRUE,
+    ];
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function postSettings(array &$settings, $langcode): void {
+    $blazies = $settings['blazies'];
+    $blazies->set('language.code', $langcode);
+    // The form is not loaded at views UI, provides the minimum.
+    // @todo remove when the form is loaded at Views UI.
+    if ($blazies->get('view.embedded')
+      && $defaults = $blazies->get('media.defaults', [])) {
+      $settings = array_merge($settings, $defaults);
+      $blazies->set('libs.media', TRUE);
+    }
   }
 
 }

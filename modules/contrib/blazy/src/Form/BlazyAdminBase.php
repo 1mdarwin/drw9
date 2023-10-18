@@ -2,19 +2,15 @@
 
 namespace Drupal\blazy\Form;
 
-use Drupal\Core\Url;
-use Drupal\Core\Cache\Cache;
-use Drupal\Core\Datetime\DateFormatterInterface;
-use Drupal\Core\Render\Element;
-use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
-use Drupal\Core\Config\TypedConfigManagerInterface;
-use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\Unicode;
-use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\BlazyManagerInterface;
-use Drupal\blazy\Utility\Path;
+use Drupal\Component\Utility\Unicode;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Datetime\DateFormatterInterface;
+use Drupal\Core\Entity\EntityDisplayRepositoryInterface;
+use Drupal\Core\Render\Element;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * A base for blazy admin integration to have re-usable methods in one place.
@@ -26,7 +22,7 @@ use Drupal\blazy\Utility\Path;
  */
 abstract class BlazyAdminBase implements BlazyAdminInterface {
 
-  use StringTranslationTrait;
+  use TraitAdminBase;
 
   /**
    * A state that represents the responsive image style is disabled.
@@ -59,34 +55,6 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   const STATE_IMAGE_RENDERED_ENABLED = 5;
 
   /**
-   * The entity type manager service.
-   *
-   * @var \Drupal\Core\Entity\EntityDisplayRepositoryInterface
-   */
-  protected $entityDisplayRepository;
-
-  /**
-   * The typed config manager service.
-   *
-   * @var \Drupal\Core\Config\TypedConfigManagerInterface
-   */
-  protected $typedConfig;
-
-  /**
-   * The date formatter service.
-   *
-   * @var \Drupal\Core\Datetime\DateFormatterInterface
-   */
-  protected $dateFormatter;
-
-  /**
-   * The blazy manager service.
-   *
-   * @var \Drupal\blazy\BlazyManagerInterface
-   */
-  protected $blazyManager;
-
-  /**
    * Constructs a BlazyAdminBase object.
    *
    * @param \Drupal\Core\Entity\EntityDisplayRepositoryInterface $entity_display_repository
@@ -114,108 +82,89 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static($container->get('entity_display.repository'), $container->get('config.typed'), $container->get('date.formatter'), $container->get('blazy.manager'));
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getEntityDisplayRepository() {
-    return $this->entityDisplayRepository;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getTypedConfig() {
-    return $this->typedConfig;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function blazyManager() {
-    return $this->blazyManager;
+    return new static(
+      $container->get('entity_display.repository'),
+      $container->get('config.typed'),
+      $container->get('date.formatter'),
+      $container->get('blazy.manager')
+    );
   }
 
   /**
    * {@inheritdoc}
    */
   public function openingForm(array &$form, array &$definition): void {
+    $scopes = $this->toScopes($definition);
+
+    // @todo remove this failsafe after sub-module migrations done.
+    $this->checkScopes($scopes, $definition);
+
     $this->blazyManager
       ->moduleHandler()
-      ->alter('blazy_form_element_definition', $definition);
+      ->alter('blazy_form_element_definition', $definition, $scopes);
+
+    $base_form = $this->baseForm($definition);
 
     // Display style: column, plain static grid, slick grid, slick carousel.
     // https://drafts.csswg.org/css-multicol
-    if (!empty($definition['style'])) {
+    if ($scopes->is('style')) {
       $form['style'] = [
         '#type'         => 'select',
         '#title'        => $this->t('Display style'),
-        '#description'  => $this->t('Unless otherwise specified, the styles require <strong>Grid</strong>. Difference: <ul><li><strong>Columns</strong> is best with irregular image sizes (scale width, empty height), affects the natural order of grid items, top-bottom, not left-right.</li><li><strong>Foundation</strong> with regular cropped ones, left-right.</li><li><strong>Flex Masonry</strong> (@deprecated due to an epic failure) uses Flexbox, supports (ir)-regular, left-right flow.</li><li><strong>Native Grid</strong> supports both one and two dimensional grid.</li></ul> Unless required, leave empty to use default formatter, or style. Save for <b>Grid Foundation</b>, the rest are experimental!'),
         '#enforced'     => TRUE,
         '#empty_option' => $this->t('- None -'),
         '#options'      => $this->blazyManager->getStyles(),
-        '#required' => !empty($definition['grid_required']),
-        '#weight'   => -112,
-        '#wrapper_attributes' => [
-          'class' => [
-            'form-item--style',
-            'form-item--tooltip-bottom',
-          ],
-        ],
+        '#required'     => $scopes->is('grid_required'),
+        '#weight'       => -112,
+        '#wrapper_attributes' => $this->getTooltipClasses(['tooltip-wide']),
       ];
     }
 
-    if (!empty($definition['skins'])) {
+    if ($skins = $scopes->data('skins')) {
       $form['skin'] = [
-        '#type'        => 'select',
-        '#title'       => $this->t('Skin'),
-        '#options'     => $definition['skins'],
-        '#enforced'    => TRUE,
-        '#description' => $this->t('Skins allow various layouts with just CSS. Some options below depend on a skin. Leave empty to DIY. Or use the provided hook_info() and implement the skin interface to register ones.'),
-        '#weight'      => -107,
+        '#type'     => 'select',
+        '#title'    => $this->t('Skin'),
+        '#options'  => $this->toOptions($skins),
+        '#enforced' => TRUE,
+        '#weight'   => -109,
       ];
     }
 
-    if (!empty($definition['background'])) {
+    if ($scopes->is('background')) {
       $form['background'] = [
-        '#type'        => 'checkbox',
-        '#title'       => $this->t('Use CSS background'),
-        '#description' => $this->t('Check this to turn the image into CSS background. This opens up the goodness of CSS, such as background cover, fixed attachment, etc. <br /><strong>Important!</strong> Requires an Aspect ratio, otherwise collapsed containers. Unless explicitly removed such as for GridStack which manages its own problem, or a min-height is added manually to <strong>.b-bg</strong> selector.'),
-        '#weight'      => -98,
+        '#type'   => 'checkbox',
+        '#title'  => $this->t('Use CSS background'),
+        '#weight' => -100,
       ];
     }
 
-    if (!empty($definition['layouts'])) {
+    if ($layouts = $scopes->data('layouts')) {
       $form['layout'] = [
-        '#type'        => 'select',
-        '#title'       => $this->t('Layout'),
-        '#options'     => $definition['layouts'],
-        '#description' => $this->t('Requires a skin. The builtin layouts affects the entire items uniformly. Leave empty to DIY.'),
-        '#weight'      => 2,
+        '#type'    => 'select',
+        '#title'   => $this->t('Layout'),
+        '#options' => $this->toOptions($layouts),
+        '#weight'  => 2,
       ];
     }
 
-    if (!empty($definition['captions'])) {
+    if ($captions = $scopes->data('captions')) {
       $form['caption'] = [
-        '#type'        => 'checkboxes',
-        '#title'       => $this->t('Caption fields'),
-        '#options'     => $definition['captions'],
-        '#description' => $this->t('Enable any of the following fields as captions. These fields are treated and wrapped as captions.'),
-        '#weight'      => 80,
-        '#attributes'  => ['class' => ['form-wrapper--caption']],
+        '#type'       => 'checkboxes',
+        '#title'      => $this->t('Caption fields'),
+        '#options'    => $this->toOptions($captions),
+        '#weight'     => 80,
+        '#attributes' => ['class' => ['form-wrapper--caption']],
       ];
     }
 
-    if (!empty($definition['target_type']) && !empty($definition['view_mode'])) {
-      $form['view_mode'] = $this->baseForm($definition)['view_mode'];
+    if ($element = $base_form['view_mode'] ?? []) {
+      $form['view_mode'] = $element;
     }
 
-    $weight = -99;
-    foreach (Element::children($form) as $key) {
-      if (!isset($form[$key]['#weight'])) {
-        $form[$key]['#weight'] = ++$weight;
+    // Add descriptions, if applicable.
+    foreach ($this->openingDescriptions($scopes) as $key => $description) {
+      if (isset($form[$key])) {
+        $form[$key]['#description'] = $description;
       }
     }
   }
@@ -224,61 +173,55 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * {@inheritdoc}
    */
   public function gridForm(array &$form, array $definition): void {
-    $required = !empty($definition['grid_required']);
+    $scopes = $this->toScopes($definition);
+    $required = $scopes->is('grid_required');
 
-    $header = $this->t('Group individual items as block grid<small>Depends on the <strong>Display style</strong>.</small>');
-    $form['grid_header'] = [
-      '#type'   => 'markup',
-      '#markup' => '<h3 class="form__title form__title--grid">' . $header . '</h3>',
-      '#access' => !$required,
-    ];
+    if (!$scopes->is('no_grid_header')) {
+      $header  = $this->t('Group individual items as block grid?');
+      $desc    = $definition['grid_header_desc'] ?? $this->gridHeaderDescription();
+      $texts[] = ['#markup' => '<h3>' . $header . '</h3>'];
+      $texts[] = ['#markup' => '<p>' . $desc . '</p>'];
 
-    if ($required) {
-      $description = $this->t('The amount of block grid columns (1 - 12, or empty) for large monitors 64.063em (1025px) up.');
-    }
-    else {
-      $description = $this->t('Empty the value first if trouble with changing form states. The amount of block grid columns (1 - 12, or empty) for large monitors 64.063em  (1025px) up. <br /><strong>Requires</strong>:<ol><li>Any grid-related Display style,</li><li>Visible items,</li><li>Skin Grid for starter,</li><li>A reasonable amount of contents.</li></ol>');
+      $form['grid_header'] = [
+        '#type'       => 'container',
+        'items'       => $texts,
+        '#access'     => !$required,
+        '#attributes' => $this->getTitleClasses(['grids']),
+      ];
     }
 
     $form['grid'] = [
-      '#type'        => 'textfield',
-      '#title'       => $this->t('Grid large'),
-      '#description' => $description,
-      '#enforced'    => TRUE,
-      '#required'    => $required,
-      '#wrapper_attributes' => [
-        'class' => [
-          'form-item--full',
-          'form-item--tooltip-bottom',
-        ],
-      ],
+      '#type'     => 'textfield',
+      '#title'    => $this->t('Grid large'),
+      '#enforced' => TRUE,
+      '#required' => $required,
+      '#weight'   => 60,
+      '#wrapper_attributes' => $this->getTooltipClasses(['full', 'tooltip-wide']),
     ];
 
     $form['grid_medium'] = [
-      '#type'        => 'textfield',
-      '#title'       => $this->t('Grid medium'),
-      '#description' => $this->t('Only accepts uniform columns (1 - 12, or empty) for medium devices 40.063em - 64em (641px - 1024px) up, even for Native Grid due to being pure CSS without JS.'),
+      '#type'  => 'textfield',
+      '#title' => $this->t('Grid medium'),
     ];
 
     $form['grid_small'] = [
-      '#type'        => 'textfield',
-      '#title'       => $this->t('Grid small'),
-      '#description' => $this->t('Only accepts uniform columns (1 - 2, or empty) for small devices 0 - 40em (640px) up due to small real estate, even for Native Grid due to being pure CSS without JS. Below this is alway one column.'),
+      '#type'  => 'textfield',
+      '#title' => $this->t('Grid small'),
     ];
 
-    $form['visible_items'] = [
-      '#type'        => 'select',
-      '#title'       => $this->t('Visible items'),
-      '#options'     => array_combine(range(1, 32), range(1, 32)),
-      '#description' => $this->t('How many items per display at a time.'),
-    ];
+    if (!$scopes->is('grid_simple')) {
+      $form['visible_items'] = [
+        '#type'    => 'select',
+        '#title'   => $this->t('Visible items'),
+        '#options' => array_combine(range(1, 32), range(1, 32)),
+      ];
 
-    $form['preserve_keys'] = [
-      '#type'        => 'checkbox',
-      '#title'       => $this->t('Preserve keys'),
-      '#description' => $this->t('If checked, keys will be preserved. Default is FALSE which will reindex the grid chunk numerically.'),
-      '#access'      => FALSE,
-    ];
+      $form['preserve_keys'] = [
+        '#type'   => 'checkbox',
+        '#title'  => $this->t('Preserve keys'),
+        '#access' => $scopes->is('grid_preserve_keys'),
+      ];
+    }
 
     $grids = [
       'grid_header',
@@ -289,13 +232,32 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     ];
 
     foreach ($grids as $key) {
-      $form[$key]['#enforced'] = TRUE;
-      $form[$key]['#states'] = [
-        'visible' => [
-          'input[name$="[grid]"]' => ['!value' => ''],
-        ],
-      ];
+      if (isset($form[$key])) {
+        $form[$key]['#enforced'] = TRUE;
+        $form[$key]['#weight'] = $key == 'grid_header' ? 50 : 61;
+        $form[$key]['#states'] = [
+          'visible' => [
+            'input[name$="[grid]"]' => ['!value' => ''],
+          ],
+        ];
+      }
     }
+
+    // Add descriptions, if applicable.
+    foreach ($this->gridDescriptions($scopes) as $key => $description) {
+      if (isset($form[$key])) {
+        $form[$key]['#description'] = $description;
+      }
+    }
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function gridOnlyForm(array &$form, array &$definition): void {
+    $this->openingForm($form, $definition);
+    $this->gridForm($form, $definition);
+    $this->finalizeForm($form, $definition);
   }
 
   /**
@@ -308,36 +270,70 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
   /**
    * {@inheritdoc}
    */
-  public function baseForm(array $definition = []): array {
-    $settings   = $definition['settings'] ?? [];
-    $lightboxes = $this->blazyManager->getLightboxes();
-    $namespace  = $definition['namespace'] ?? '';
-    $form       = [];
-    $ui_url     = '/admin/config/media/blazy';
+  public function baseForm(array &$definition): array {
+    $scopes = $this->toScopes($definition);
 
-    if ($this->blazyManager->moduleHandler()->moduleExists('blazy_ui')) {
-      $ui_url = Url::fromRoute('blazy.settings')->toString();
+    // Might be called directly without calling self::buildSettingsForm(), such
+    // as \Drupal\blazy\Plugin\views\field\BlazyViewsFieldPluginBase.
+    $this->checkScopes($scopes, $definition);
+
+    $blazies      = $definition['blazies'];
+    $form         = [];
+    $no_image     = $scopes->is('no_image_style');
+    $disabled     = $scopes->is('no_view_mode');
+    $target_type  = $scopes->get('target_type') ?: $blazies->get('field.target_type');
+    $view_mode    = $scopes->get('view_mode') ?: $blazies->get('field.view_mode');
+    $is_fieldable = $target_type && $view_mode;
+
+    $scopes->set('is.fieldable', $is_fieldable);
+
+    if ($is_fieldable && !$disabled) {
+      $form['view_mode'] = [
+        '#type'     => 'select',
+        '#options'  => $this->getViewModeOptions($target_type),
+        '#title'    => $this->t('View mode'),
+        '#weight'   => -101,
+        '#enforced' => TRUE,
+      ];
     }
 
-    if (empty($definition['no_image_style'])) {
-      $form['preload'] = [
-        '#type'        => 'checkbox',
-        '#title'       => $this->t('Preload'),
-        '#weight'      => -111,
-        '#description' => $this->t("Preload to optimize the loading of late-discovered resources. Normally large or hero images below the fold. By preloading a resource, you tell the browser to fetch it sooner than the browser would otherwise discover it before Native lazy or lazyloader JavaScript kicks in, or starts its own preload or decoding. The browser caches preloaded resources so they are available immediately when needed. Nothing is loaded or executed at preloading stage. <br>Just a friendly heads up: do not overuse this option, because not everything are critical, <a href=':url'>read more</a>.", [
-          ':url' => 'https://www.drupal.org/node/3262804',
-        ]),
-        '#wrapper_attributes' => [
-          'class' => [
-            'form-item--preload',
-            'form-item--tooltip-bottom',
-          ],
-        ],
-      ];
+    if ($scopes->form('image_style') || !$no_image) {
+      $this->baseImageForm($form, $definition, $scopes);
+    }
 
+    // Add descriptions, if applicable.
+    foreach ($this->baseDescriptions($scopes) as $key => $description) {
+      if (isset($form[$key])) {
+        $form[$key]['#description'] = $description;
+      }
+    }
+
+    $this->blazyManager->moduleHandler()->alter('blazy_base_form_element', $form, $definition, $scopes);
+
+    return $form;
+  }
+
+  /**
+   * Provides basic image options.
+   */
+  protected function baseImageForm(array &$form, array $definition, $scopes): void {
+    $data = $scopes->get('data');
+    $multimedia = $scopes->is('multimedia');
+
+    if (!$scopes->is('no_preload')) {
+      $form['preload'] = [
+        '#type'   => 'checkbox',
+        '#title'  => $this->t('Preload'),
+        '#weight' => -111,
+        '#wrapper_attributes' => $this->getTooltipClasses(),
+      ];
+    }
+
+    if (!$scopes->is('no_loading')) {
       $loadings = ['auto', 'defer', 'eager', 'unlazy'];
-      $sliders = in_array($namespace, ['slick', 'splide']);
-      if (!empty($definitions['slider']) || $sliders) {
+
+      // It is defined in sub-modules, not Blazy.
+      if ($scopes->is('slider')) {
         $loadings[] = 'slider';
       }
       $form['loading'] = [
@@ -346,242 +342,137 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
         '#options'      => array_combine($loadings, $loadings),
         '#empty_option' => $this->t('lazy'),
         '#weight'       => -111,
-        '#description'  => $this->t("Decide the `loading` attribute affected by the above fold aka onscreen critical contents. <ul><li>`lazy`, the default: defers loading below fold or offscreen images and iframes until users scroll near them.</li><li>`auto`: browser determines whether or not to lazily load. Only if uncertain about the above fold boundaries given different devices. </li><li>`eager`: loads right away. Similar effect like without `loading`, included for completeness. Good for above fold.</li><li>`defer`: trigger native lazy after the first row is loaded. Will disable global `No JavaScript: lazy` option on this particular field, <a href=':defer'>read more</a>.</li><li>`unlazy`: explicitly removes loading attribute enforced by core. Also removes old `data-[SRC|SRCSET|LAZY]` if `No JavaScript` is disabled. Best for the above fold.</li><li>`slider`, if applicable: will `unlazy` the first visible, and leave the rest lazyloaded. Best for sliders (one visible at a time), not carousels (multiple visible slides at once).</li></ul><b>Note</b>: lazy loading images/ iframes for the above fold is anti-pattern, avoid, <a href=':url' target='_blank'>read more</a>.", [
-          ':url' => 'https://www.drupal.org/node/3262724',
-          ':defer' => 'https://drupal.org/node/3120696',
-        ]),
-        '#wrapper_attributes' => [
-          'class' => [
-            'form-item--loading',
-            'form-item--tooltip-bottom',
-          ],
-        ],
-      ];
-
-      $form['image_style'] = [
-        '#type'        => 'select',
-        '#title'       => $this->t('Image style'),
-        '#options'     => $this->getEntityAsOptions('image_style'),
-        '#weight'      => -100,
-        '#description' => $this->t('The content image style. This will be treated as the fallback image to override the global option <a href=":url">Responsive image 1px placeholder</a>, which is normally smaller, if Responsive image are provided. Shortly, leave it empty to make Responsive image fallback respected. Otherwise this is the only image displayed. This image style is also used to provide dimensions not only for image/iframe but also any media entity like local video, where no images are even associated with, to have the designated dimensions in tandem with aspect ratio as otherwise no UI to customize for.', [':url' => $ui_url]),
-        '#wrapper_attributes' => [
-          'class' => [
-            'form-item--image-style',
-            'form-item--tooltip-bottom',
-          ],
-        ],
+        '#wrapper_attributes' => $this->getTooltipClasses(),
       ];
     }
 
-    if (isset($settings['media_switch'])) {
+    $form['image_style'] = [
+      '#type'    => 'select',
+      '#title'   => $this->t('Image style'),
+      '#options' => $this->getEntityAsOptions('image_style'),
+      '#weight'  => -106,
+      '#wrapper_attributes' => $this->getTooltipClasses(),
+    ];
+
+    if ($scopes->is('switch')) {
       $form['media_switch'] = [
-        '#type'         => 'select',
-        '#title'        => $this->t('Media switcher'),
-        '#options'      => [
+        '#type'    => 'select',
+        '#title'   => $this->t('Media switcher'),
+        '#weight'  => -99,
+        '#options' => [
           'content' => $this->t('Image linked to content'),
         ],
-        '#empty_option' => $this->t('- None -'),
-        '#description'  => $this->t('Clear cache if lightboxes do not appear here due to being permanently cached. <ol><li>Link to content: for aggregated small slicks.</li><li>Image to iframe: video is hidden below image until toggled, otherwise iframe is always displayed, and draggable fails. Aspect ratio applies.</li><li>(Quasi-)lightboxes: Colorbox, ElevateZoomPlus, Intense, Photobox, PhotoSwipe, Magnific Popup, Slick Lightbox, Splidebox, Zooming, etc. Depends on the enabled supported modules, or has known integration with Blazy. See docs or <em>/admin/help/blazy_ui</em> for details.</li></ol> Add <em>Thumbnail style</em> if using Photobox, Slick, or others which may need it. Try selecting "<strong>- None -</strong>" first before changing if trouble with this complex form states.'),
-        '#weight'       => -99,
       ];
 
-      // Optional lightbox integration.
-      if (!empty($lightboxes)) {
-        foreach ($lightboxes as $lightbox) {
-          $name = Unicode::ucwords(str_replace('_', ' ', $lightbox));
-          if ($lightbox == 'photobox') {
-            $name .= ' (Deprecated)';
-          }
-          if ($lightbox == 'mfp') {
-            $name = 'Magnific Popup';
-          }
-          $form['media_switch']['#options'][$lightbox] = $this->t('Image to @lightbox', ['@lightbox' => $name]);
-        }
+      if (isset($data['links'])) {
+        $form['media_switch']['#options']['link'] = $this->t('Image linked by Link field');
+      }
 
-        // Re-use the same image style for both lightboxes.
-        $form['box_style'] = [
-          '#type'        => 'select',
-          '#title'       => $this->t('Lightbox image style'),
-          '#options'     => $this->getResponsiveImageOptions() + $this->getEntityAsOptions('image_style'),
-          '#weight'      => -97,
-          '#description' => $this->t('Supports both Responsive and regular images.'),
-        ];
-
-        if (!empty($definition['multimedia'])) {
-          $form['box_media_style'] = [
-            '#type'        => 'select',
-            '#title'       => $this->t('Lightbox video style'),
-            '#options'     => $this->getEntityAsOptions('image_style'),
-            '#description' => $this->t('Allows different lightbox video dimensions. Or can be used to have a swipable video if <a href=":url1">Blazy PhotoSwipe</a>, or <a href=":url2">Slick Lightbox</a>, or <a href=":url3">Splidebox</a> installed.', [
-              ':url1' => 'https:drupal.org/project/blazy_photoswipe',
-              ':url2' => 'https:drupal.org/project/slick_lightbox',
-              ':url3' => 'https:drupal.org/project/splidebox',
-            ]),
-            '#weight'      => -96,
-          ];
-        }
-
-        if (empty($definition['box_stateless'])) {
-          foreach (['box_style', 'box_media_style'] as $key) {
-            if (isset($form[$key])) {
-              $form[$key]['#states'] = $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition);
-            }
-          }
-        }
+      if ($scopes->is('lightbox')) {
+        $this->lightboxForm($form, $definition, $scopes);
       }
 
       // Adds common supported entities for media integration.
-      if (!empty($definition['multimedia'])) {
+      if ($multimedia) {
         $form['media_switch']['#options']['media'] = $this->t('Image to iFrame');
       }
-
-      // http://en.wikipedia.org/wiki/List_of_common_resolutions
-      $ratio = ['1:1', '3:2', '4:3', '8:5', '16:9', 'fluid'];
-      if (empty($definition['no_ratio'])) {
-        $form['ratio'] = [
-          '#type'         => 'select',
-          '#title'        => $this->t('Aspect ratio'),
-          '#options'      => array_combine($ratio, $ratio),
-          '#empty_option' => $this->t('- None -'),
-          '#description'  => $this->t('Aspect ratio to get consistently responsive images and iframes. Coupled with Image style. And to fix layout reflow, excessive height issues, whitespace below images, collapsed container, no-js users, etc. <a href="@dimensions" target="_blank">Image styles and video dimensions</a> must <a href="@follow" target="_blank">follow the aspect ratio</a>. If not, images will be distorted. <a href="@link" target="_blank">Learn more</a>. <ul><li><b>Fixed ratio:</b> all images use the same aspect ratio mobile up. Use it to avoid JS works, or if it fails Responsive image. </li><li><b>Fluid:</b> aka dynamic, dimensions are calculated and JS works are attempted to fix it.</li><li><b>Leave empty:</b> to DIY (such as using CSS mediaquery), or when working with multi-image-style plugin like GridStack.</li></ul>', [
-            '@dimensions'  => '//size43.com/jqueryVideoTool.html',
-            '@follow'      => '//en.wikipedia.org/wiki/Aspect_ratio_%28image%29',
-            '@link'        => '//www.smashingmagazine.com/2014/02/27/making-embedded-content-work-in-responsive-design/',
-          ]),
-          '#weight'        => -95,
-        ];
-      }
     }
 
-    if (!empty($definition['target_type']) && !empty($definition['view_mode'])) {
-      $form['view_mode'] = [
-        '#type'        => 'select',
-        '#options'     => $this->getViewModeOptions($definition['target_type']),
-        '#title'       => $this->t('View mode'),
-        '#description' => $this->t('Required to grab the fields, or to have custom entity display as fallback display. If it has fields, be sure the selected "View mode" is enabled, and the enabled fields here are not hidden there.'),
-        '#weight'      => -94,
-        '#enforced'    => TRUE,
+    // https://en.wikipedia.org/wiki/List_of_common_resolutions
+    $ratio = array_merge(BlazyDefault::RATIO, ['fluid']);
+    if (!$scopes->is('no_ratio')) {
+      $form['ratio'] = [
+        '#type'    => 'select',
+        '#title'   => $this->t('Aspect ratio'),
+        '#options' => array_combine($ratio, $ratio),
+        '#weight'  => -101,
       ];
-
-      if ($this->blazyManager->moduleHandler()->moduleExists('field_ui')) {
-        $form['view_mode']['#description'] .= ' ' . $this->t('Manage view modes on the <a href=":view_modes">View modes page</a>.', [':view_modes' => Url::fromRoute('entity.entity_view_mode.collection')->toString()]);
-      }
     }
 
-    if (!empty($definition['thumbnail_style'])) {
+    if ($scopes->is('thumbnail_style')) {
       $form['thumbnail_style'] = [
-        '#type'        => 'select',
-        '#title'       => $this->t('Thumbnail style'),
-        '#options'     => $this->getEntityAsOptions('image_style'),
-        '#description' => $this->t('Usages: Placeholder replacement for image effects (blur, etc.), Photobox/PhotoSwipe thumbnail, or custom work with thumbnails. Be sure to have similar aspect ratio for the best blur effect. Leave empty to not use thumbnails.'),
-        '#weight'      => -96,
+        '#type'    => 'select',
+        '#title'   => $this->t('Thumbnail style'),
+        '#options' => $this->getEntityAsOptions('image_style'),
+        '#weight'  => -104,
       ];
     }
 
     // @todo this can also be used for local video poster image option.
-    if (isset($definition['images'])) {
+    if (isset($data['images'])) {
+      $classes = $this->getTitleClasses(['fields', 'hideable'], TRUE);
       $form['image'] = [
-        '#type'        => 'select',
-        '#title'       => $this->t('Main stage'),
-        '#options'     => is_array($definition['images']) ? $definition['images'] : [],
-        '#description' => $this->t('Main background/stage/poster image field with the only supported field types: <b>Image</b> or <b>Media</b> containing Image field. You may want to add a new Image field to this entity.'),
-        '#prefix'      => '<h3 class="form__title form__title--fields">' . $this->t('Fields') . '</h3>',
+        '#type'    => 'select',
+        '#title'   => $this->t('Main stage'),
+        '#options' => $this->toOptions($data['images'] ?: []),
+        '#prefix'  => '<h3 class="' . $classes . '">' . $this->t('Fields') . '</h3>',
       ];
     }
 
-    $this->blazyManager->moduleHandler()->alter('blazy_base_form_element', $form, $definition);
-
-    return $form;
+    $this->linkForm($form, $definition, $scopes);
   }
 
   /**
    * {@inheritdoc}
    */
   public function mediaSwitchForm(array &$form, array $definition): void {
-    $settings   = $definition['settings'] ?? [];
-    $lightboxes = $this->blazyManager->getLightboxes();
-    $is_token   = $this->blazyManager->moduleHandler()->moduleExists('token');
+    $scopes    = $this->toScopes($definition);
+    $base_form = $this->baseForm($definition);
+    $classes   = $this->getTitleClasses(['media-switch', 'hideable'], TRUE);
+    $options   = [
+      'media_switch',
+      'ratio',
+      'box_style',
+      'box_media_style',
+      'box_caption',
+      'box_caption_custom',
+      'link',
+    ];
 
-    if (isset($settings['media_switch'])) {
-      $form['media_switch'] = $this->baseForm($definition)['media_switch'];
-      $form['media_switch']['#prefix'] = '<h3 class="form__title form__title--media-switch">' . $this->t('Media switcher') . '</h3>';
-
-      if (empty($definition['no_ratio'])) {
-        $form['ratio'] = $this->baseForm($definition)['ratio'];
-      }
-    }
-
-    // Optional lightbox integration.
-    if (!empty($lightboxes) && isset($settings['media_switch'])) {
-      $form['box_style'] = $this->baseForm($definition)['box_style'];
-
-      if (!empty($definition['multimedia'])) {
-        $form['box_media_style'] = $this->baseForm($definition)['box_media_style'];
-      }
-
-      if (!empty($definition['box_captions'])) {
-        $form['box_caption'] = [
-          '#type'        => 'select',
-          '#title'       => $this->t('Lightbox caption'),
-          '#options'     => $this->getLightboxCaptionOptions(),
-          '#weight'      => -95,
-          '#description' => $this->t('Automatic will search for Alt text first, then Title text. Try selecting <strong>- None -</strong> first when changing if trouble with form states.'),
-        ];
-
-        if (empty($definition['box_stateless'])) {
-          $form['box_caption']['#states'] = $this->getState(static::STATE_LIGHTBOX_ENABLED, $definition);
-        }
-
-        $form['box_caption_custom'] = [
-          '#title'       => $this->t('Lightbox custom caption'),
-          '#type'        => 'textfield',
-          '#weight'      => -94,
-          '#states'      => $this->getState(static::STATE_LIGHTBOX_CUSTOM, $definition),
-          '#description' => $this->t('Multi-value rich text field will be mapped to each image by its delta.'),
-        ];
-
-        if ($is_token) {
-          $types = isset($definition['entity_type']) ? [$definition['entity_type']] : [];
-          $types = isset($definition['target_type']) ? array_merge($types, [$definition['target_type']]) : $types;
-
-          if ($types) {
-            $form['box_caption_custom']['#field_suffix'] = [
-              '#theme'       => 'token_tree_link',
-              '#text'        => $this->t('Tokens'),
-              '#token_types' => $types,
-            ];
-          }
+    foreach ($options as $key) {
+      if ($element = $base_form[$key] ?? []) {
+        $form[$key] = $element;
+        if ($key == 'media_switch') {
+          $form[$key]['#prefix'] = '<h3 class="' . $classes . '">' . $this->t('Media switcher') . '</h3>';
         }
       }
     }
 
-    $this->blazyManager->moduleHandler()->alter('blazy_media_switch_form_element', $form, $definition);
+    $this->blazyManager->moduleHandler()->alter('blazy_media_switch_form_element', $form, $definition, $scopes);
   }
 
   /**
    * {@inheritdoc}
    */
   public function finalizeForm(array &$form, array $definition): void {
-    $namespace = $definition['namespace'] ?? 'slick';
-    $settings = $definition['settings'] ?? [];
-    $vanilla = !empty($definition['vanilla']) ? ' form--vanilla' : '';
-    $grid = !empty($definition['grid_required']) ? ' form--grid-required' : '';
-    $plugind_id = !empty($definition['plugin_id']) ? ' form--plugin-' . str_replace('_', '-', $definition['plugin_id']) : '';
-    $count = empty($definition['captions']) ? 0 : count($definition['captions']);
-    $count = empty($definition['captions_count']) ? $count : $definition['captions_count'];
-    $wide = $count > 2 ? ' form--wide form--caption-' . $count : ' form--caption-' . $count;
-    $fallback = $namespace == 'slick' ? 'form--slick' : 'form--' . $namespace . ' form--slick';
-    $plugins = ' form--namespace-' . $namespace;
-    $custom = $definition['opening_class'] ?? '';
-    $classes = ($fallback . ' form--half has-tooltip' . $wide . $vanilla . $grid . $plugind_id . ' ' . $custom . $plugins);
+    $scopes    = $this->toScopes($definition);
+    $settings  = $definition['settings'] ?? [];
+    $admin_css = $this->isAdminCss();
+    $classes   = $this->getOpeningClasses($scopes);
+    $excludes  = ['details', 'fieldset', 'hidden', 'markup', 'item', 'table'];
+    $selects   = ['cache', 'optionset', 'view_mode'];
+    $fullwidth = $scopes->data('fullwidth', []);
 
-    if (!empty($definition['field_type'])) {
-      $classes .= ' form--' . str_replace('_', '-', $definition['field_type']);
-    }
+    $this->blazyManager->moduleHandler()->alter('blazy_form_element', $form, $definition, $scopes);
 
+    // Prevents non-expected overrides.
     if (isset($form['grid'], $form['grid']['#description'])) {
       $description = $form['grid']['#description'];
       $form['grid']['#description'] = $description . $this->nativeGridDescription();
+    }
+
+    // Accounts for hook_alter additions.
+    $children = Element::children($form);
+    $gridsets = [];
+    $total    = count($children);
+
+    if ($admin_css) {
+      $grids    = $this->initGrid($total, $classes);
+      $classes  = $grids['classes'];
+      $gridsets = $grids['settings'];
+    }
+    else {
+      $classes = implode(' ', $classes);
     }
 
     $form['opening'] = [
@@ -594,273 +485,267 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       '#weight' => 120,
     ];
 
-    // @todo Check if needed: 'button', 'container', 'submit'.
-    $admin_css = $definition['admin_css'] ?? FALSE;
-    $admin_css = $admin_css ?: $this->blazyManager->config('admin_css', 'blazy.settings');
-    $excludes = ['details', 'fieldset', 'hidden', 'markup', 'item', 'table'];
-    $selects = ['cache', 'optionset', 'view_mode'];
-
-    // Disable the admin css in the off canvas menu, to avoid conflicts with
-    // the active frontend theme.
-    if ($admin_css && $router = Path::requestStack()) {
-      $wrapper_format = $router->getCurrentRequest()->query->get('_wrapper_format');
-
-      if (!empty($wrapper_format) && $wrapper_format === "drupal_dialog.off_canvas") {
-        $admin_css = FALSE;
+    // Mostly babysitters to help few things out.
+    foreach ($children as $delta => $key) {
+      $type = $form[$key]['#type'] ?? NULL;
+      if (!$type || in_array($type, $excludes)) {
+        continue;
       }
-    }
 
-    $this->blazyManager->moduleHandler()->alter('blazy_form_element', $form, $definition);
+      // If no defined default values, set them from settings.
+      if (!isset($form[$key]['#default_value']) && isset($settings[$key])) {
+        $value = is_array($settings[$key])
+          ? array_values((array) $settings[$key])
+          : $settings[$key];
 
-    foreach (Element::children($form) as $key) {
-      if (isset($form[$key]['#type']) && !in_array($form[$key]['#type'], $excludes)) {
-        if (!isset($form[$key]['#default_value']) && isset($settings[$key])) {
-          $value = is_array($settings[$key]) ? array_values((array) $settings[$key]) : $settings[$key];
-
-          if (!empty($definition['grid_required']) && $key == 'grid' && empty($settings[$key])) {
-            $value = 3;
+        if (is_string($value)) {
+          if ($key == 'loading' && !$value) {
+            $value = 'lazy';
           }
-          $form[$key]['#default_value'] = $value;
-        }
-        if (!isset($form[$key]['#attributes']) && isset($form[$key]['#description'])) {
-          $form[$key]['#attributes'] = ['class' => ['is-tooltip']];
-        }
 
-        if ($admin_css) {
-          if ($form[$key]['#type'] == 'checkbox' && $form[$key]['#type'] != 'checkboxes') {
-            $form[$key]['#field_suffix'] = '&nbsp;';
-            $form[$key]['#title_display'] = 'before';
-          }
-          elseif ($form[$key]['#type'] == 'checkboxes' && !empty($form[$key]['#options'])) {
-            $form[$key]['#attributes']['class'][] = 'form-wrapper--checkboxes';
-            $form[$key]['#attributes']['class'][] = 'form-wrapper--' . str_replace('_', '-', $key);
-            $count = count($form[$key]['#options']);
-            $form[$key]['#attributes']['class'][] = 'form-wrapper--count-' . ($count > 3 ? 'max' : $count);
-
-            foreach ($form[$key]['#options'] as $i => $option) {
-              $form[$key][$i]['#field_suffix'] = '&nbsp;';
-              $form[$key][$i]['#title_display'] = 'before';
-            }
+          if ($value) {
+            $value = trim($value);
           }
         }
 
-        if ($form[$key]['#type'] == 'select' && !in_array($key, $selects)) {
-          if (!isset($form[$key]['#empty_option']) && empty($form[$key]['#required'])) {
+        $form[$key]['#default_value'] = $value;
+      }
+
+      // Trying to be nice with gazillion options.
+      foreach (['attributes', 'wrapper_attributes'] as $attribute) {
+        if (!isset($form[$key]["#$attribute"])) {
+          $form[$key]["#$attribute"] = [];
+        }
+      }
+
+      $attrs = &$form[$key]['#attributes'];
+      $wrapper_attrs = &$form[$key]['#wrapper_attributes'];
+      $content_attrs = [];
+
+      if (isset($form[$key]['#description'])) {
+        $attrs['class'][] = 'is-tooltip';
+      }
+
+      // Trying to be compact with gazillion options.
+      if ($admin_css) {
+        if ($gridsets) {
+          $blazy = $gridsets['blazies']->reset($gridsets);
+          $blazy->set('delta', $delta);
+        }
+
+        if ($type == 'checkbox') {
+          $form[$key]['#title_display'] = 'before';
+        }
+        elseif ($type == 'checkboxes' && !empty($form[$key]['#options'])) {
+          // Cannot set wrapper classes here since they leak to each input.
+          foreach ($form[$key]['#options'] as $name => $option) {
+            $form[$key][$name]['#title_display'] = 'before';
+          }
+        }
+
+        $dummies['class'] = [];
+        $this->blazyManager->gridItemAttributes($dummies, $content_attrs, $gridsets);
+        $wrapper_attrs = $this->blazyManager->merge($wrapper_attrs, $dummies);
+
+        $wide = in_array($key, ['grid', 'box_caption_custom'])
+          || ($scopes->is('grid_required') && $key == 'style');
+        if ($wide || ($fullwidth && in_array($key, $fullwidth))) {
+          $wrapper_attrs['data-b-w'] = 12;
+        }
+      }
+
+      $wrapper_attrs['class'][] = 'form-item--' . str_replace('_', '-', $key);
+
+      // Select option babysitters.
+      if ($type == 'select' && !in_array($key, $selects)) {
+        $required = $form[$key]['#required'] ?? FALSE;
+        if ($required) {
+          unset($form[$key]['#empty_option']);
+        }
+        else {
+          if (!isset($form[$key]['#empty_option'])) {
             $form[$key]['#empty_option'] = $this->t('- None -');
           }
-          if (!empty($form[$key]['#required'])) {
-            unset($form[$key]['#empty_option']);
-          }
-        }
-
-        if (!isset($form[$key]['#enforced']) && !empty($definition['vanilla']) && isset($form[$key]['#type'])) {
-          $states['visible'][':input[name*="[vanilla]"]'] = ['checked' => FALSE];
-          if (isset($form[$key]['#states'])) {
-            $form[$key]['#states']['visible'][':input[name*="[vanilla]"]'] = ['checked' => FALSE];
-          }
-          else {
-            $form[$key]['#states'] = $states;
-          }
         }
       }
 
-      $form[$key]['#wrapper_attributes']['class'][] = 'form-item--' . str_replace('_', '-', $key);
+      // Vanilla states babysitters.
+      if ($scopes->is('vanilla') && !isset($form[$key]['#enforced'])) {
+        $states['visible'][':input[name*="[vanilla]"]'] = ['checked' => FALSE];
+        if (isset($form[$key]['#states'])) {
+          $form[$key]['#states']['visible'][':input[name*="[vanilla]"]'] = ['checked' => FALSE];
+        }
+        else {
+          $form[$key]['#states'] = $states;
+        }
+      }
 
-      if (isset($form[$key]['#access']) && $form[$key]['#access'] == FALSE) {
+      // To minimize CSS rules for common lightbox items.
+      foreach (['style', 'media_style', 'caption'] as $k) {
+        $k = 'box_' . $k;
+        if (isset($form[$k]) && $k == $key) {
+          $wrapper_attrs['class'][] = 'form-item--litebox';
+        }
+      }
+
+      // Don't store values babysitters.
+      if (!empty($form[$key]['#unset']) || ($form[$key]['#access'] ?? 'x') == FALSE) {
         unset($form[$key]['#default_value']);
       }
 
-      if (in_array($key, BlazyDefault::deprecatedSettings())) {
+      if (in_array($key, $scopes->data('deprecations'))) {
         unset($form[$key]['#default_value']);
       }
     }
 
     if ($admin_css) {
       $form['closing']['#attached']['library'][] = 'blazy/admin';
-    }
 
-    $this->blazyManager->moduleHandler()->alter('blazy_complete_form_element', $form, $definition);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function fieldableForm(array &$form, array $definition): void {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function imageStyleForm(array &$form, array $definition): void {}
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getSettingsSummary(array $definition): array {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getFieldOptions(
-    array $target_bundles = [],
-    array $allowed_field_types = [],
-    $entity_type = 'media',
-    $target_type = ''
-  ): array {
-    return [];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheOptions(): array {
-    $period = [
-      0,
-      60,
-      180,
-      300,
-      600,
-      900,
-      1800,
-      2700,
-      3600,
-      10800,
-      21600,
-      32400,
-      43200,
-      86400,
-    ];
-
-    $period = array_map([$this->dateFormatter, 'formatInterval'],
-      array_combine($period, $period));
-    $period[0] = '<' . $this->t('No caching') . '>';
-    return $period + [Cache::PERMANENT => $this->t('Permanent')];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getLightboxCaptionOptions(): array {
-    return [
-      'auto'         => $this->t('Automatic'),
-      'alt'          => $this->t('Alt text'),
-      'title'        => $this->t('Title text'),
-      'alt_title'    => $this->t('Alt and Title'),
-      'title_alt'    => $this->t('Title and Alt'),
-      'entity_title' => $this->t('Content title'),
-      'custom'       => $this->t('Custom'),
-    ];
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getEntityAsOptions($entity_type = ''): array {
-    $options = [];
-    if ($entities = $this->blazyManager->loadMultiple($entity_type)) {
-      foreach ($entities as $entity) {
-        $options[$entity->id()] = Html::escape($entity->label());
+      if ($libraries = $scopes->data('libraries')) {
+        foreach ($libraries as $key) {
+          $form['closing']['#attached']['library'][] = $key;
+        }
       }
-      ksort($options);
     }
-    return $options;
+
+    $this->blazyManager->moduleHandler()->alter('blazy_complete_form_element', $form, $definition, $scopes);
+
+    if (!$scopes->is('_views')) {
+      $prefix = $form['opening']['#prefix'] ?? '';
+      $form['opening']['#prefix'] = $prefix . '<br /><small>' . $this->t("<strong>Tips!</strong> Reload the page, or save first, only when changing formatters. Some form items may not be loaded after AJAX.") . '</small>';
+    }
   }
 
   /**
-   * {@inheritdoc}
+   * Provides lightbox options.
    */
-  public function getOptionsetOptions($entity_type = ''): array {
-    return $this->getEntityAsOptions($entity_type);
-  }
+  protected function lightboxForm(array &$form, array $definition, $scopes): void {
+    $blazies    = $definition['blazies'];
+    $multimedia = $scopes->is('multimedia');
+    $is_token   = $this->blazyManager->moduleExists('token');
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getViewModeOptions($target_type): array {
-    return $this->entityDisplayRepository->getViewModeOptions($target_type) ?: [];
-  }
+    // Optional lightbox integration.
+    if ($lightboxes = $scopes->data('lightboxes')) {
+      foreach ($lightboxes as $lightbox) {
+        $name = Unicode::ucwords(str_replace('_', ' ', $lightbox));
+        if ($lightbox == 'photobox') {
+          $name .= ' (Deprecated)';
+        }
+        if ($lightbox == 'mfp') {
+          $name = 'Magnific Popup';
+        }
+        $form['media_switch']['#options'][$lightbox] = $this->t('Image to @lightbox', ['@lightbox' => $name]);
+      }
 
-  /**
-   * {@inheritdoc}
-   */
-  public function getResponsiveImageOptions(): array {
-    $options = [];
-    if ($this->blazyManager()->moduleHandler()->moduleExists('responsive_image')) {
-      $image_styles = $this->blazyManager()->loadMultiple('responsive_image_style');
-      if (!empty($image_styles)) {
-        foreach ($image_styles as $name => $image_style) {
-          if ($image_style->hasImageStyleMappings()) {
-            $options[$name] = Html::escape($image_style->label());
+      // Re-use the same image style for both lightboxes.
+      $box_styles = $this->getResponsiveImageOptions()
+        + $this->getEntityAsOptions('image_style');
+      $form['box_style'] = [
+        '#type'    => 'select',
+        '#title'   => $this->t('Lightbox image style'),
+        '#options' => $box_styles,
+        '#weight'  => -97,
+      ];
+
+      if ($multimedia) {
+        $form['box_media_style'] = [
+          '#type'    => 'select',
+          '#title'   => $this->t('Lightbox video style'),
+          '#options' => $this->getEntityAsOptions('image_style'),
+          '#weight'  => -96,
+        ];
+      }
+
+      // @todo remove check after another check.
+      // Was meant for Blazy Views fields lacking of field info needed here.
+      if (!$scopes->is('no_box_captions')) {
+        $form['box_caption'] = [
+          '#type'    => 'select',
+          '#title'   => $this->t('Lightbox caption'),
+          '#options' => $this->getLightboxCaptionOptions(),
+          '#weight'  => -95,
+        ];
+
+        $form['box_caption_custom'] = [
+          '#title'  => $this->t('Lightbox custom caption'),
+          '#type'   => 'textfield',
+          '#weight' => -94,
+          '#states' => $this->getState(static::STATE_LIGHTBOX_CUSTOM, $scopes),
+        ];
+
+        if ($is_token) {
+          $entity_type = $blazies->get('field.entity_type');
+          $target_type = $blazies->get('field.target_type');
+          $types = $entity_type ? [$entity_type] : [];
+          $types = $target_type ? array_merge($types, [$target_type]) : $types;
+
+          if ($types) {
+            $form['box_caption_custom']['#field_suffix'] = [
+              '#theme'       => 'token_tree_link',
+              '#text'        => $this->t('Tokens'),
+              '#token_types' => $types,
+            ];
+          }
+        }
+      }
+
+      if (!$scopes->is('box_stateless')) {
+        foreach (['box_caption', 'box_style', 'box_media_style'] as $key) {
+          if (isset($form[$key])) {
+            $form[$key]['#states'] = $this->getState(static::STATE_LIGHTBOX_ENABLED, $scopes);
           }
         }
       }
     }
-    return $options;
   }
 
   /**
-   * Returns native grid description.
+   * Provides link options serving plain image, fieldable and views ui.
    */
-  protected function nativeGridDescription() {
-    return $this->t('<br>Specific for <b>Native Grid</b>, two recipes: <ol><li><b>One-dimensional</b>: Input a single numeric column grid, acting as Masonry. <em>Best with</em>: scaled pictures.</li><li><b>Two-dimensional</b>: Input a space separated value with <code>WIDTHxHEIGHT</code> pair based on the amount of columns/ rows, at max 12, e.g.: <br><code>4x4 4x3 2x2 2x4 2x2 2x3 2x3 4x2 4x2</code> <br>This will resemble GridStack optionset <b>Tagore</b>. Any single value e.g.: <code>4x4</code> will repeat uniformly like one-dimesional. <br><em>Best with</em>: <ul><li><b>Use CSS background</b> ON.</li><li>Exact item amount or better more designated grids than lacking. Use a little math with the exact item amount to have gapless grids.</li><li>Disabled image aspect ratio to use grid ratio instead.</li></ul></li></ol>This requires any grid-related <b>Display style</b>. Unless required, leave empty to DIY, or to not build grids.');
-  }
+  protected function linkForm(array &$form, array $definition, $scopes): void {
+    $data = $scopes->get('data');
+    $description = $this->baseDescriptions($scopes);
 
-  /**
-   * Get one of the pre-defined states used in this form.
-   *
-   * Thanks to SAM152 at colorbox.module for the little sweet idea.
-   *
-   * @param string $state
-   *   The state to get that matches one of the state class constants.
-   * @param array $definition
-   *   The foem definitions or settings.
-   *
-   * @return array
-   *   A corresponding form API state.
-   */
-  protected function getState($state, array $definition): array {
-    $lightboxes = [];
-
-    // @fixme this appears to be broken at some point of Drupal.
-    foreach ($this->blazyManager->getLightboxes() as $key => $lightbox) {
-      $lightboxes[$key]['value'] = $lightbox;
+    if (isset($data['links'])) {
+      $form['link'] = [
+        '#type'        => 'select',
+        '#title'       => $this->t('Link'),
+        '#options'     => $this->toOptions($data['links'] ?: []),
+        '#weight'      => 9,
+        '#description' => $description['link'] ?? '',
+      ];
     }
+  }
 
-    $states = [
-      static::STATE_RESPONSIVE_IMAGE_STYLE_DISABLED => [
-        'visible' => [
-          'select[name$="[responsive_image_style]"]' => ['value' => ''],
-        ],
-      ],
-      static::STATE_LIGHTBOX_ENABLED => [
-        'visible' => [
-          'select[name*="[media_switch]"]' => $lightboxes,
-        ],
-      ],
-      static::STATE_LIGHTBOX_CUSTOM => [
-        'visible' => [
-          'select[name$="[box_caption]"]' => ['value' => 'custom'],
-          // @fixme 'select[name*="[media_switch]"]' => $lightboxes,
-        ],
-      ],
-      static::STATE_IFRAME_ENABLED => [
-        'visible' => [
-          'select[name*="[media_switch]"]' => ['value' => 'media'],
-        ],
-      ],
-      static::STATE_THUMBNAIL_STYLE_ENABLED => [
-        'visible' => [
-          'select[name$="[thumbnail_style]"]' => ['!value' => ''],
-        ],
-      ],
-      static::STATE_IMAGE_RENDERED_ENABLED => [
-        'visible' => [
-          'select[name$="[media_switch]"]' => ['!value' => 'rendered'],
-        ],
-      ],
-    ];
-    return $states[$state];
+  /**
+   * Provides SVG options.
+   */
+  protected function svgForm(array &$form, array $definition, $scopes): void {
+    foreach (BlazyDefault::svgSettings() as $key => $value) {
+      $base  = str_replace('svg_', '', $key);
+      $name  = str_replace('_', ' ', $base);
+      $title = Unicode::ucfirst($name);
+      $exist = Blazy::svgSanitizerExists();
+      $desc  = $this->svgDescriptions()[$base] ?? '';
+
+      $form[$key] = [
+        '#type'        => is_bool($value) ? 'checkbox' : 'textfield',
+        '#title'       => $this->t('@title', ['@title' => $title]),
+        // @todo recheck '#enforced' => !$scopes->is('vanilla'),
+        '#description' => $desc,
+        '#weight'      => -100,
+      ];
+
+      if ($base == 'inline') {
+        $classes = $this->getTitleClasses(['svg', 'hideable'], TRUE);
+        $form[$key]['#disabled'] = !$exist;
+        $form[$key]['#unset'] = !$exist;
+        $form[$key]['#prefix'] = '<h3 class="' . $classes . '">' . $this->t('SVG') . '</h3>';
+      }
+      if ($base == 'fill') {
+        $form[$key]['#states']['visible'][':input[name*="[svg_inline]"]'] = ['checked' => TRUE];
+      }
+    }
   }
 
 }

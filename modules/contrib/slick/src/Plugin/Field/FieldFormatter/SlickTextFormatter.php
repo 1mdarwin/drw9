@@ -2,10 +2,8 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyTextFormatter;
 use Drupal\slick\SlickDefault;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'Slick Text' formatter.
@@ -30,36 +28,28 @@ class SlickTextFormatter extends BlazyTextFormatter {
   /**
    * {@inheritdoc}
    */
-  public static function create(ContainerInterface $container, array $configuration, $plugin_id, $plugin_definition) {
-    $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
-    return self::injectServices($instance, $container, 'text');
-  }
+  protected static $namespace = 'slick';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemId = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $itemPrefix = 'slide';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static $fieldType = 'text';
 
   /**
    * {@inheritdoc}
    */
   public static function defaultSettings() {
     return SlickDefault::baseSettings() + SlickDefault::gridSettings();
-  }
-
-  /**
-   * Build the slick carousel elements.
-   */
-  public function buildElements(array &$build, $items, $langcode) {
-    foreach ($this->getElements($items) as $element) {
-      $build['items'][] = $element;
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function settingsForm(array $form, FormStateInterface $form_state) {
-    $element    = [];
-    $definition = $this->getScopedFormElements();
-
-    $this->admin()->buildSettingsForm($element, $definition);
-    return $element;
   }
 
   /**
@@ -70,16 +60,12 @@ class SlickTextFormatter extends BlazyTextFormatter {
   }
 
   /**
-   * Defines the scope for the form elements.
+   * {@inheritdoc}
    */
-  public function getScopedFormElements() {
+  public function getPluginScopes(): array {
     return [
-      'grid_form'        => TRUE,
-      'no_image_style'   => TRUE,
-      'no_layouts'       => TRUE,
-      'responsive_image' => FALSE,
-      'style'            => TRUE,
-    ] + $this->getCommonScopedFormElements();
+      'no_thumb_effects' => TRUE,
+    ] + parent::getPluginScopes();
   }
 
 }

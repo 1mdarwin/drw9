@@ -1,4 +1,12 @@
 
+Slick extras 8.x-1.0-dev, 2023-09-19
+------------------------------------
+- Removed deprecated skin hook_info for skins as plugins.
+
+Slick extras 8.x-1.0-dev, 2023-06-21
+------------------------------------
+- Updated to Slick:2.10 and Blazy:2.17.
+
 Slick extras 8.x-1.0-dev, 2021-12-29
 ------------------------------------
 - Issue #3256098 by mably: Crashes on Drupal 8.

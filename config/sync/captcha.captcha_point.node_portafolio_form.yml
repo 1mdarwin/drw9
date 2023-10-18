@@ -1,0 +1,7 @@
+uuid: 3787eb88-5e4e-45ab-ba1e-978bff3eb512
+langcode: en
+status: false
+dependencies: {  }
+formId: node_portafolio_form
+captchaType: default
+label: node_portafolio_form

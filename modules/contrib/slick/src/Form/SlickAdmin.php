@@ -2,14 +2,13 @@
 
 namespace Drupal\slick\Form;
 
-use Drupal\Core\Url;
-use Drupal\Core\Render\Element;
+use Drupal\blazy\Form\BlazyAdminInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\blazy\Dejavu\BlazyAdminExtended;
+use Drupal\Core\Url;
 use Drupal\slick\SlickManagerInterface;
-use Drupal\slick\SlickDefault;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides resusable admin functions, or form elements.
@@ -21,7 +20,7 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * The blazy admin service.
    *
-   * @var \Drupal\blazy\Dejavu\BlazyAdminExtended
+   * @var \Drupal\blazy\Form\BlazyAdminInterface
    */
   protected $blazyAdmin;
 
@@ -35,12 +34,15 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Constructs a SlickAdmin object.
    *
-   * @param \Drupal\blazy\Dejavu\BlazyAdminExtended $blazy_admin
+   * @param \Drupal\blazy\Form\BlazyAdminInterface $blazy_admin
    *   The blazy admin service.
    * @param \Drupal\slick\SlickManagerInterface $manager
    *   The slick manager service.
    */
-  public function __construct(BlazyAdminExtended $blazy_admin, SlickManagerInterface $manager) {
+  public function __construct(
+    BlazyAdminInterface $blazy_admin,
+    SlickManagerInterface $manager
+  ) {
     $this->blazyAdmin = $blazy_admin;
     $this->manager = $manager;
   }
@@ -50,20 +52,20 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('blazy.admin.extended'),
+      $container->get('blazy.admin.formatter'),
       $container->get('slick.manager')
     );
   }
 
   /**
-   * Returns the blazy admin formatter.
+   * {@inheritdoc}
    */
   public function blazyAdmin() {
     return $this->blazyAdmin;
   }
 
   /**
-   * Returns the slick manager.
+   * {@inheritdoc}
    */
   public function manager() {
     return $this->manager;
@@ -78,6 +80,17 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['optionsets']       = $definition['optionsets'] ?? $this->getOptionsetsByGroupOptions('main');
     $definition['skins']            = $definition['skins'] ?? $this->getSkinsByGroupOptions('main');
     $definition['responsive_image'] = $definition['responsive_image'] ?? TRUE;
+    $definition['grid_required']    = FALSE;
+    $definition['no_grid_header']   = FALSE;
+    $definition['slider']           = TRUE;
+    $definition['grid_header_desc'] = $this->gridHeaderDescription();
+
+    $effects = $definition['_thumbnail_effect'] ?? [];
+    $defaults = [
+      'hover' => $this->t('Hoverable'),
+      'grid'  => $this->t('Static grid'),
+    ];
+    $definition['thumbnail_effect'] = $effects = array_merge($defaults, $effects);
 
     foreach (['optionsets', 'skins'] as $key) {
       if (isset($definition[$key]['default'])) {
@@ -86,8 +99,18 @@ class SlickAdmin implements SlickAdminInterface {
       }
     }
 
+    // @todo remove post blazy:2.17.
+    if (!empty($definition['thumb_captions'])) {
+      if ($definition['thumb_captions'] == 'default') {
+        $definition['thumb_captions'] = [
+          'alt' => $this->t('Alt'),
+          'title' => $this->t('Title'),
+        ];
+      }
+    }
+
     if (empty($definition['no_layouts'])) {
-      $definition['layouts'] = isset($definition['layouts']) ? array_merge($this->getLayoutOptions(), $definition['layouts']) : $this->getLayoutOptions();
+      $definition['layouts'] = isset($definition['layouts']) ? array_merge($this->getLayoutOptions(), $definition['layouts'] ?: []) : $this->getLayoutOptions();
     }
 
     $this->openingForm($form, $definition);
@@ -119,9 +142,9 @@ class SlickAdmin implements SlickAdminInterface {
    * Modifies the opening form elements.
    */
   public function openingForm(array &$form, array &$definition): void {
-    $path         = SlickDefault::getPath('module', 'slick');
-    $is_slick_ui  = $this->manager()->getModuleHandler()->moduleExists('slick_ui');
-    $is_help      = $this->manager()->getModuleHandler()->moduleExists('help');
+    $path         = $this->manager->getPath('module', 'slick');
+    $is_slick_ui  = $this->manager->moduleExists('slick_ui');
+    $is_help      = $this->manager->moduleExists('help');
     $route_name   = ['name' => 'slick_ui'];
     $readme       = $is_slick_ui && $is_help ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/README.md')->toString();
     $readme_field = $is_slick_ui && $is_help ? Url::fromRoute('help.page', $route_name)->toString() : Url::fromUri('base:' . $path . '/docs/FORMATTER.md')->toString();
@@ -201,17 +224,12 @@ class SlickAdmin implements SlickAdminInterface {
       ];
     }
 
-    if (!empty($definition['thumb_captions'])) {
-      if ($definition['thumb_captions'] == 'default') {
-        $definition['thumb_captions'] = [
-          'alt' => $this->t('Alt'),
-          'title' => $this->t('Title'),
-        ];
-      }
+    if ($captions = $definition['thumb_captions'] ?? []) {
+      $captions += ['title' => $this->t('Image Title')];
       $form['thumbnail_caption'] = [
         '#type'        => 'select',
         '#title'       => $this->t('Thumbnail caption'),
-        '#options'     => $definition['thumb_captions'],
+        '#options'     => $captions,
         '#description' => $this->t('Thumbnail caption maybe just title/ plain text. If Thumbnail image style is not provided, the thumbnail pagers will be just text like regular tabs.'),
         '#states' => [
           'visible' => [
@@ -265,11 +283,6 @@ class SlickAdmin implements SlickAdminInterface {
     $definition['thumbnail_style'] = $definition['thumbnail_style'] ?? TRUE;
     $definition['ratios'] = $definition['ratios'] ?? TRUE;
 
-    $definition['thumbnail_effect'] = $definition['_thumbnail_effect'] ?? [
-      'hover' => $this->t('Hoverable'),
-      'grid'  => $this->t('Static grid'),
-    ];
-
     if (!isset($form['image_style'])) {
       $this->blazyAdmin->imageStyleForm($form, $definition);
 
@@ -277,11 +290,7 @@ class SlickAdmin implements SlickAdminInterface {
     }
 
     if (isset($form['thumbnail_style'])) {
-      $form['thumbnail_style']['#description'] = $this->t('Usages: <ol><li>If <em>Optionset thumbnail</em> provided, it is for asNavFor thumbnail navigation.</li><li>For <em>Thumbnail effect</em>.</li><li>Photobox thumbnail.</li><li>Custom work via the provided data-thumb attributes: arrows with thumbnails, Photoswipe thumbnail, etc.</li></ol>Leave empty to not use thumbnails.');
-    }
-
-    if (isset($form['thumbnail_effect'])) {
-      $form['thumbnail_effect']['#description'] = $this->t('Dependent on a Skin, Dots and Thumbnail style options. No asnavfor/ Optionset thumbnail is needed. <ol><li><strong>Hoverable</strong>: Dots pager are kept, and thumbnail will be hidden and only visible on dot mouseover, default to min-width 120px.</li><li><strong>Static grid</strong>: Dots are hidden, and thumbnails are displayed as a static grid acting like dots pager.</li></ol>Alternative to asNavFor aka separate thumbnails as slider.');
+      $form['thumbnail_style']['#description'] .= '<br><br>' . $this->t('Extra usages: <ol><li>If <em>Optionset thumbnail</em> provided, it is for asNavFor thumbnail navigation.</li><li>For <em>Thumbnail effect</em>.</li><li>Arrows with thumbnails, etc.</li></ol>.');
     }
 
     if (isset($form['background'])) {
@@ -296,7 +305,7 @@ class SlickAdmin implements SlickAdminInterface {
     $this->blazyAdmin->fieldableForm($form, $definition);
 
     if (isset($form['thumbnail'])) {
-      $form['thumbnail']['#description'] = $this->t("Only needed if <em>Optionset thumbnail</em> is provided. Maybe the same field as the main image, only different instance and image style. Leave empty to not use thumbnail pager.");
+      $form['thumbnail']['#description'] = $this->t("Needed if any are required/ provided: <ol><li><em>Optionset thumbnail</em>.</li><li><em>Dots thumbnail effect</em>.</li></ol> Maybe the same field as the main image, only different instance and image style. Company logos for thumbnails vs. company offices for the Main stage, author avatars for thumbnails vs. Slideshow for overlays with its Main stage, etc. Leave empty to not use thumbnail pager, or for tabs-like/ text only navigation.");
     }
 
     if (isset($form['overlay'])) {
@@ -313,11 +322,14 @@ class SlickAdmin implements SlickAdminInterface {
       $this->blazyAdmin->gridForm($form, $definition);
     }
 
-    $header = $this->t('Group individual item as block grid?<small>An older alternative to core <strong>Rows</strong> option. Only works if the total items &gt; <strong>Visible slides</strong>. <br />block grid != slidesToShow option, yet both can work in tandem.<br />block grid = Rows option, yet the first is module feature, the later core.</small>');
-
-    $form['grid_header']['#markup'] = '<h3 class="form__title form__title--grid">' . $header . '</h3>';
-
     $form['grid']['#description'] = $this->t('The amount of block grid columns for large monitors 64.063em - 90em. <br /><strong>Requires</strong>:<ol><li>Visible items,</li><li>Skin Grid for starter,</li><li>A reasonable amount of contents,</li><li>Optionset with Rows and slidesPerRow = 1.</li></ol>This is module feature, older than core Rows, and offers more flexibility. Leave empty to DIY, or to not build grids.');
+  }
+
+  /**
+   * Returns grid header description.
+   */
+  protected function gridHeaderDescription() {
+    return $this->t('An older alternative to core <strong>Rows</strong> option. Only works if the total items &gt; <strong>Visible slides</strong>. <br />block grid != slidesToShow option, yet both can work in tandem.<br />block grid = Rows option, yet the first is module feature, the later core.');
   }
 
   /**
@@ -355,6 +367,19 @@ class SlickAdmin implements SlickAdminInterface {
       ],
     ];
 
+    // Bring in dots thumbnail effect normally used by Slick Image formatter.
+    if (empty($definition['no_thumb_effects'])
+      && $effects = $definition['thumbnail_effect'] ?? []) {
+      $form['thumbnail_effect'] = [
+        '#type'         => 'select',
+        '#title'        => $this->t('Dots thumbnail effect'),
+        '#options'      => $effects,
+        '#empty_option' => $this->t('- None -'),
+        '#description'  => $this->t('Dependent on a Skin, Dots and Thumbnail image options. No asnavfor/ Optionset thumbnail is needed. <ol><li><strong>Hoverable</strong>: Dots pager are kept, and thumbnail will be hidden and only visible on dot mouseover, default to min-width 120px.</li><li><strong>Static grid</strong>: Dots are hidden, and thumbnails are displayed as a static grid acting like dots pager.</li></ol>Alternative to asNavFor aka separate thumbnails as slider.'),
+        '#weight'       => -100,
+      ];
+    }
+
     $this->blazyAdmin->closingForm($form, $definition);
   }
 
@@ -373,7 +398,7 @@ class SlickAdmin implements SlickAdminInterface {
       'variableWidth' => $this->t('Variable width'),
     ];
 
-    $this->manager->getModuleHandler()->alter('slick_overridable_options_info', $options);
+    $this->manager->moduleHandler()->alter('slick_overridable_options_info', $options);
     return $options;
   }
 
@@ -403,7 +428,7 @@ class SlickAdmin implements SlickAdminInterface {
    */
   public function getOptionsetsByGroupOptions($group = ''): array {
     $optionsets = $groups = $ungroups = [];
-    $slicks = $this->manager->entityLoadMultiple('slick');
+    $slicks = $this->manager->loadMultiple('slick');
     foreach ($slicks as $slick) {
       $name = Html::escape($slick->label());
       $id = $slick->id();
@@ -442,8 +467,13 @@ class SlickAdmin implements SlickAdminInterface {
   /**
    * Returns available fields for select options.
    */
-  public function getFieldOptions($target_bundles = [], $allowed_field_types = [], $entity_type_id = 'media', $target_type = ''): array {
-    return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type_id, $target_type);
+  public function getFieldOptions(
+    array $target_bundles = [],
+    array $allowed_field_types = [],
+    $entity_type = 'media',
+    $target_type = ''
+  ): array {
+    return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type, $target_type);
   }
 
   /**

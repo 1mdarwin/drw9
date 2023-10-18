@@ -26,8 +26,10 @@ class BlazyNativeJavaScriptTest extends BlazyJavaScriptTestBase {
    * Test the Blazy element from loading to loaded states.
    */
   public function testFormatterDisplay() {
-    $data['settings']['ratio'] = '';
-    $data['settings']['image_style'] = '';
+    $settings['ratio'] = '';
+    $settings['image_style'] = '';
+
+    $data['settings'] = $settings;
 
     $this->setUpContentTypeTest($this->bundle);
     $this->setUpFormatterDisplay($this->bundle, $data);
@@ -36,6 +38,7 @@ class BlazyNativeJavaScriptTest extends BlazyJavaScriptTestBase {
     $this->drupalGet('node/' . $this->entity->id());
 
     // Ensures no data-src is printed. Except for Blur, BG, Video.
+    /* @phpstan-ignore-next-line */
     $result = $this->assertSession()->waitForElement('css', '[data-src]');
     $this->assertEmpty($result);
   }

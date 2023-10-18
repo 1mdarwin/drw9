@@ -30,9 +30,9 @@ class DateComparator extends Comparator
         }
 
         try {
-            $date = new \DateTimeImmutable($matches[2]);
+            $date = new \DateTime($matches[2]);
             $target = $date->format('U');
-        } catch (\Exception) {
+        } catch (\Exception $e) {
             throw new \InvalidArgumentException(sprintf('"%s" is not a valid date.', $matches[2]));
         }
 
@@ -45,6 +45,7 @@ class DateComparator extends Comparator
             $operator = '<';
         }
 
-        parent::__construct($target, $operator);
+        $this->setOperator($operator);
+        $this->setTarget($target);
     }
 }

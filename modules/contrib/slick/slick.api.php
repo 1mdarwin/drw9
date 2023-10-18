@@ -8,7 +8,10 @@
 /**
  * @defgroup slick_api Slick API
  * @{
- * Information about the Slick usages.
+ * Information about the Slick usages as per blazy:2.17.
+ *
+ * Be sure to enable `Use theme_blazy()` option at /admin/config/media/blazy.
+ * It will be enforced at blazy:3.x.
  *
  * Modules may implement any of the available hooks to interact with Slick.
  *
@@ -19,61 +22,105 @@
  *
  * The expected parameters are:
  *   - items: A required array of slick contents: text, image or media.
- *   - options: An optional array of key:value pairs of custom JS options.
- *   - optionset: An optional optionset object to avoid multiple invocations.
- *   - settings: An array of key:value pairs of HTML/layout related settings
+ *   - #options: An optional array of key:value pairs of custom JS options.
+ *   - #optionset: An optional optionset object to avoid multiple invocations.
+ *   - #settings: An array of key:value pairs of HTML/layout related settings
  *     which may contain optionset ID if no optionset above is provided.
  *
  * @see \Drupal\slick\Plugin\Field\FieldFormatter\SlickImageFormatter
  * @see \Drupal\slick_views\Plugin\views\style\SlickViews
+ * @see https://www.drupal.org/node/3384419
+ * @see blazy/blazy.api.php
  *
  * @section sec_quick Quick sample #1
  *
  * Returns the renderable array of a slick instance.
  * @code
  * function my_module_render_slick() {
- *   // Invoke the plugin class, or use a DI service container accordingly.
- *   $slick = \Drupal::service('slick.manager');
+ *   // Invoke the manager service, or use a DI service container accordingly.
+ *   $manager = \Drupal::service('slick.manager');
  *
  *   // Access the formatter service for image-related methods:
  *   $formatter = \Drupal::service('slick.formatter');
  *
  *   $build = [];
  *
- *   // Caption contains: alt, data, link, overlay, title.
- *   // Each item has keys: slide, caption, settings.
- *   $items[] = [
- *     // Use $formatter->getBlazy($element) to have lazyLoad where $element
- *     // contains:
- *     // item: Drupal\image\Plugin\Field\FieldType\ImageItem.
- *     'slide'   => ['#markup' => '<img src="https://drupal.org/files/One.gif" />'],
- *     'caption' => ['title' => t('Description #1')],
+ *   // Define any global settings relevant for theme_blazy() and theme_slick().
+ *   // See \Drupal\blazy\BlazyDefault::imageSettings().
+ *   // See \Drupal\slick\SlickDefault::imageSettings().
+ *   $settings = [
+ *     'background' => TRUE,
+ *     // Assumes working with local image URI, since external URL won't apply.
+ *     'image_style' => 'large',
+ *     'ratio' => 'fluid',
  *   ];
  *
- *   $items[] = [
- *     'slide'   => ['#markup' => '<img src="https://drupal.org/files/Two.gif" />'],
- *     'caption' => ['title' => t('Description #2')],
+ *   // Captions key contains: alt, description, data, link, overlay, title.
+ *   // The image.uri is the only required by theme_blazy(). This $info is
+ *   // optional/ removable if using the second approach below.
+ *   // Option setter #1, add image.alt, image.title, etc. as needed:
+ *   $info = ['image.uri' => 'https://drupal.org/files/One.gif'];
+ *
+ *   // Option setter #2:
+ *   // $formatter::toSettings() initialize `blazies` object with added $info,
+ *   // and reset per item, be sure to repeat the call per item.
+ *   // You can move it up here to access `blazies` object for more works.
+ *   // Notice $info was left out, and use the blazies setter instead:
+ *   // $settings = $formatter->toSettings($settings);
+ *   // $blazies = $settings['blazies'];
+ *   // Now do anything with $blazies setter:
+ *   // $blazies->set('image.uri', 'BLAH')
+ *   //   ->set('image.alt', 'BLAH')
+ *   //   ->set('image.title', 'BLAH');
+ *
+ *   // Each item contains: #delta, #settings, and optional captions.
+ *   // This is the simplest way to build a slide via theme_blazy().
+ *   // If you need to modify slide attributes or classes, just split them into
+ *   // regular slide, and #settings, excluding captions which are already
+ *   // included in theme_blazy(), e.g:
+ *   // $items[] = [
+ *   // 'slide' => $formatter->getBlazy($content),
+ *   // '#attributes' => ['class' => ['slide--custom-class']],
+ *    // ];
+ *   $items[] = $formatter->getBlazy([
+ *     '#delta' => 0,
+ *     '#settings' => $formatter->toSettings($settings, $info),
+ *     'captions' =>  ['title' => ['#markup' => t('Description #1')]],
  *   ];
  *
- *   $items[] = [
- *     'slide'   => ['#markup' => '<img src="https://drupal.org/files/Three.gif" />'],
- *     'caption' => ['title' => t('Description #3')],
+ *   $info = ['image.uri' => 'https://drupal.org/files/Two.gif'];
+ *
+ *   $items[] = $formatter->getBlazy([
+ *     '#delta' => 1,
+ *     '#settings' => $formatter->toSettings($settings, $info),
+ *     'captions' =>  ['title' => ['#markup' => t('Description #2')]],
+ *   ];
+ *
+ *   $info = ['image.uri' => 'https://drupal.org/files/Three.gif'];
+ *
+ *   $items[] = $formatter->getBlazy([
+ *     '#delta' => 2,
+ *     '#settings' => $formatter->toSettings($settings, $info),
+ *     'captions' =>  ['title' => ['#markup' => t('Description #3')]],
  *   ];
  *
  *   // Pass the $items to the array.
  *   $build['items'] = $items;
  *
- *   // If no optionset name is provided via $build['settings'], slick will
+ *   // Put the global settings in.
+ *   $build['#settings'] = $settings;
+ *
+ *   // If no optionset name is provided via $build['#settings'], slick will
  *   // fallback to 'default'.
  *   // Optionally override 'default' optionset with custom JS options.
- *   $build['options'] = [
+ *   $build['#options'] = [
  *     'autoplay' => TRUE,
  *     'dots'     => TRUE,
  *     'arrows'   => FALSE,
  *   ];
  *
  *   // Build the slick.
- *   $element = $slick->build($build);
+ *   $element = $manager->build($build);
  *
  *   // Prepare $variables to pass into a .twig.html file.
  *   $variables['slick'] = $element;
@@ -93,15 +140,15 @@
  * This can go to some hook_preprocess() of a target html.twig, or any relevant
  * PHP file.
  *
- * The goal is to create a vertical newsticker, or tweets, with pure text only.
+ * The goal is to create any text, image, or media slide contents.
  * First, create an unformatted Views block, says 'Ticker' containing ~ 10
  * titles, or any data for the contents -- using EFQ, or static array will do.
  *
  * Returns the renderable array of a slick instance.
  * @code
  * function my_module_render_slick_detail() {
- *   // Invoke the plugin class, or use a DI service container accordingly.
- *   $slick = \Drupal::service('slick.manager');
+ *   // Invoke the manager service, or use a DI service container accordingly.
+ *   $manager = \Drupal::service('slick.manager');
  *
  *   // Access the formatter service for image related methods:
  *   $formatter = \Drupal::service('slick.formatter');
@@ -113,75 +160,115 @@
  *   // Provides HTML settings with optionset name and ID, none of JS related.
  *   // To add JS key:value pairs, use #options below instead.
  *   // @see \Drupal\slick\SlickDefault for most supported settings.
- *   $build['settings'] = [
+ *   $build['#settings'] = [
  *     // Optional optionset name, otherwise fallback to default.
  *     // 'optionset' => 'blog',
  *     // Optional skin name fetched from hook_slick_skins_info(), else none.
  *     // 'skin' => 'fullwidth',
- *     // Define the main ID. The rest are managed by the module.
- *     // If you provide ID, be sure unique per instance as it is cached.
- *     // Leave empty to be provided by the module.
- *     'id' => 'slick-ticker',
  *
  *     // Define cache max-age, default to -1 (Cache::PERMANENT) to permanently
  *     // cache the results. Hence a 1 hour is passed. Be sure it is an integer!
  *     'cache' => 3600,
  *   ];
  *
- *   // 3.
+ *   // 2.
  *   // Obligatory #items, as otherwise empty slick.
- *   // Prepare #items, note the 'slide' key is to hold the actual slide
- *   // which can be pure and simple text, or any image/media file.
- *   // Meaning $rows can be text only, or image/audio/video, or a combination
- *   // of both.
- *   // To add caption/overlay, use 'caption' key with the supported sub-keys:
- *   // alt, data, link, overlay, title for complex content.
+ *   // Prepare #items, $rows can be text only, image/audio/video, or a
+ *   // combination of both. Or simply a rendered entity.
+ *   // To add caption/overlay, use 'captions' key with the supported sub-keys:
+ *   // alt, description, data, link, overlay, title for complex content.
  *   // Sanitize each sub-key content accordingly.
  *   // @see template_preprocess_slick_slide() for more info.
  *   $items = [];
- *   foreach ($rows as $key => $row) {
- *     // Each item has keys: slide, caption, settings.
- *     $items[] = [
- *       'slide' => $row,
+ *   foreach ($rows as $delta => $row) {
+ *     // Since blazy:2.17, slide and captions are merged into ::getBlazy() via
+ *     // Blazy UI option named `Use theme_blazy()`, enforced at 3.x. Be sure
+ *     // to enable the Blazy UI option to work like the following:
+ *     // Each item has keys: content, captions, #delta, #settings.
+ *     $sets = $build['#settings'];
  *
- *       // Optional caption contains: alt, data, link, overlay, title.
- *       // If the above slide is an image, to add text caption, use:
- *       'caption' => ['title' => 'some-caption data'],
+ *     // Optional slide settings to manipulate layout, can be removed.
+ *     // Individual slide supports some useful settings like layout, classes,
+ *     // etc.
+ *     // Meaning each slide can have different layout, or classes.
+ *     // Optionally add a custom layout, can be a static uniform value, or
+ *     // dynamic one based on the relevant field value.
+ *     $sets['layout'] = 'bottom';
  *
- *       // Optional slide settings to manipulate layout, can be removed.
- *       // Individual slide supports some useful settings like layout, classes,
- *       // etc.
- *       // Meaning each slide can have different layout, or classes.
- *       'settings' => [
+ *     // Optionally add a custom class, can be a static uniform class, or
+ *     // dynamic one based on the relevant field value.
+ *     $sets['class'] = 'slide--custom-class--' . $delta;
  *
- *         // Optionally add a custom layout, can be a static uniform value, or
- *         // dynamic one based on the relevant field value.
- *         'layout' => 'bottom',
+ *     // If $row is a workable Media, pass to blazy.oembed service far below.
+ *     // If $row is a plain old image, extract URI from it, says $row['#item']
+ *     // is a property of Image formatter theme_image_style().
+ *     // If $row is text, or any vanilla ouput, pass them to `content`. No URI
+ *     // is required in this case.
+ *     // The first is for Views rows output, the last field formatters.
+ *     // Use Devel dpm($row) to figure out what it contains, assumptions:
+ *     $item = $row['rendered']['#item'] ?? $row['#item'] ?? NULL;
+ *     $uri = \Drupal\blazy\Blazy::uri($item);
  *
- *         // Optionally add a custom class, can be a static uniform class, or
- *         // dynamic one based on the relevant field value.
- *         'class' => 'slide--custom-class--' . $key,
+ *     // If working with Media, defer to blazy.oembed below, ignore URI.
+ *     // If working with text or vanilla, pass it to `content`, ignore URI.
+ *     // If working with images, pass URI directly to theme_blazy():
+ *     $info = [
+ *       'image' => [
+ *         // URI is the only theme_blazy() requirement, ignorable for Vanilla:
+ *         'uri' => $uri,
+ *         // Add more as needed: title, alt, etc.
  *       ],
  *     ];
+ *
+ *     $content = [
+ *       // $delta for galleries, or LCP like Loading priority: slider, etc.
+ *       '#delta' => $delta,
+ *
+ *       // If working with Media, be sure to pass the #entity for blazy.oembed.
+ *       // '#entity' => $media,
+ *
+ *       // If you have \Drupal\image\Plugin\Field\FieldType\ImageItem,
+ *       // deprecated at blazy:3.x for $info.image array above:
+ *       // '#item' => $item,
+ *
+ *       // $formatter::toSettings() initialize `blazies` object with $info.
+ *       // You can move it up to access `blazies` object if needed.
+ *       '#settings' => $formatter->toSettings($sets, $info),
+ *
+ *       // Only if non-media or media that theme_blazy() does not understand:
+ *       // texts, theme_BLAH(), etc. or vanilla output, put it into `content`.
+ *       // 'content' => $row,
+ *
+ *       // Optional captions: alt, description, data, link, overlay, title.
+ *       // If having more complex caption data, use 'data' key instead.
+ *       'captions' => ['title' => ['some caption render array']],
+ *     ];
+ *
+ *     // If working with Media/ OEmbed/ VEF, other than plain old images:
+ *     // $formatter->service('blazy.oembed')->build($content);
+ *
+ *     // Since blazy:2.17, pass slide and captions to theme_blazy() directly.
+ *     // Vanilla or non-vanilla are accepted, as long as above-done correctly.
+ *     $items[] = $formatter->getBlazy($content);
  *   }
  *
  *   // Pass the $items to the array.
  *   $build['items'] = $items;
  *
- *   // 4.
+ *   // 3.
  *   // Optional specific JS options, to re-use one optionset, can be removed.
  *   // Play with speed and options to achieve desired result.
  *   // @see config/install/slick.optionset.default.yml
- *   $build['options'] = [
+ *   $build['#options'] = [
  *     'arrows'    => FALSE,
  *     'autoplay'  => TRUE,
  *     'vertical'  => TRUE,
  *     'draggable' => FALSE,
  *   ];
  *
- *   // 5.
+ *   // 4.
  *   // Build the slick with the arguments as described above.
- *   $element = $slick->build($build);
+ *   $element = $manager->build($build);
  *
  *   // Prepare $variables to pass into a .twig.html file.
  *  $variables['slick'] = $element;
@@ -199,15 +286,15 @@
  *
  * The only requirement for asNavFor is optionset and optionset_thumbnail IDs:
  * @code
- * $build['settings']['optionset'] = 'optionset_name';
- * $build['settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
+ * $build['#settings']['optionset'] = 'optionset_name';
+ * $build['#settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
  * @endcode
  *
  * The rest are optional, and will fallback to default:
- *   - $build['settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
+ *   - $build['#settings']['optionset_thumbnail'] = 'optionset_thumbnail_name';
  *     Defined at the main settings.
  *
- *   - $build['settings']['id'] = 'slick-asnavfor';
+ *   - $build['#settings']['id'] = 'slick-asnavfor';
  *     Only main display ID is needed. The thumbnail ID will be
  *     automatically created: 'slick-asnavfor-thumbnail', including the content
  *     attributes accordingly. If none provided, will fallback to incremented
@@ -237,8 +324,8 @@
  * Returns the renderable array of slick instances.
  * @code
  * function my_module_render_slick_asnavfor() {
- *   // Invoke the plugin class, or use a DI service container accordingly.
- *   $slick = \Drupal::service('slick.manager');
+ *   // Invoke the manager service, or use a DI service container accordingly.
+ *   $manager = \Drupal::service('slick.manager');
  *
  *   // Access the formatter service for image related methods:
  *   $formatter = \Drupal::service('slick.formatter');
@@ -251,27 +338,26 @@
  *
  *   $images = [1, 2, 3, 4, 6, 7];
  *   foreach ($images as $key) {
- *     // Each item has keys: slide, caption, settings.
- *     $build['items'][] = [
  *
- *       // Use $formatter->getBlazy($element) to have lazyLoad where $element
- *       // contains:
- *       // item: Drupal\image\Plugin\Field\FieldType\ImageItem.
- *       'slide'   => '<img src="/path/to/image-0' . $key . '.jpg">',
+ *     // Each item has keys: #delta, #settings, captions.
+ *     $info = ['image.uri' => 'public://image-' . $delta . '.jpg'];
+ *     $sets = $build['#settings'];
  *
- *       // Main caption contains: alt, data, link, overlay, title keys which
- *       // serve the purpose to have consistent markups and skins without
- *       // bothering much nor remembering what HTML tags and where to place to
- *       // provide for each purpose cosnsitently. CSS will do layout regardless
- *       // HTML composition.
- *       // If having more complex caption data, use 'data' key instead.
- *       // If the common layout doesn't satisfy the need, just override twig.
- *       'caption' => ['title' => 'Description #' . $key],
+ *     $content = [
+ *       '#delta' => $delta,
+ *       '#settings' => $formatter->toSettings($sets, $info),
+ *
+ *       // Thumbnail caption accepts direct markup or custom renderable array
+ *       // without any special key to be simple as much as complex.
+ *       // Think Youtube playlist with scrolling nav: thumbnail, text, etc.
+ *       'captions' => ['title' => ['#markup' => 'Description #' . $delta]],
  *     ];
+ *
+ *     $build['items'][] = $formatter->getBlazy($content);
  *   }
  *
  *   // Optionally override the optionset.
- *   $build['options'] = [
+ *   $build['#options'] = [
  *     'arrows'        => FALSE,
  *     'centerMode'    => TRUE,
  *     'centerPadding' => '',
@@ -279,38 +365,44 @@
  *
  *   // Satisfy the asnavfor main settings.
  *   // @see \Drupal\slick\SlickDefault for most supported settings.
- *   $build['settings'] = [
+ *   $build['#settings'] = [
  *     // The only required is 'optionset_thumbnail'.
+ *     // The thumbnail_style is only required if using image, otherwise will
+ *     // use tabs-like navigation from captions. One of them is required.
  *     // Define both main and thumbnail optionset names at the main display.
  *     'optionset' => 'optionset_main_name',
  *     'optionset_thumbnail' => 'optionset_thumbnail_name',
+ *     'thumbnail_style' => 'thumbnail',
  *
  *     // The rest is optional, just FYI.
- *     'id' => 'slick-asnavfor',
  *     'skin' => 'skin-main-name',
  *     'skin_thumbnail' => 'skin-thumbnail-name',
  *   ];
  *
  *   // 2. Thumbnail slider ----------------------------------------------------
  *   // The thumbnail array is grouped by 'thumb', yet has the same structured
- *   // array as the main display: items, options, optionset, settings.
- *   $build['thumb'] = ['items' => []];
+ *   // array as the main display: items, #options, #optionset, #settings.
+ *   $build['thumb'] = [];
  *   foreach ($images as $key) {
- *     // Each item has keys: slide, caption, settings.
- *     $build['thumb']['items'][] = [
- *       // Use $formatter->getThumbnail($settings) where $settings contain:
- *       // uri, image_style, height, width, alt, title.
- *       'slide'   => '<img src="/path/to/image-0' . $key . '.jpg">',
  *
- *       // Thumbnail caption accepts direct markup or custom renderable array
- *       // without any special key to be simple as much as complex.
- *       // Think Youtube playlist with scrolling nav: thumbnail, text, etc.
- *       'caption' => ['#markup' => 'Description #' . $key],
- *     ];
+ *     // URI and thumbnail_style above are the only required for thumbnail
+ *     // navigation. If left empty, will use the captions below for tabs-like
+ *     // navigation. One of them is required.
+ *     $info = ['thumbnail.uri' => 'public://image-' . $delta . '.jpg'];
+ *     $sets = $formatter->toSettings($build['#settings'], $info);
+ *
+ *     // Only if you need to add more info here:
+ *     $blazies = $sets['blazies'];
+ *     $blazies->set('image.alt', t('Preview'));
+ *
+ *     // Only if thumbnail captions are needed:
+ *     $captions = ['#markup' => t('Slide #' .$delta)];
+ *
+ *     $build['nav']['items'][] = $formatter->getThumbnail($sets, NULL, $captions);
  *   }
  *
  *   // Optionally override 'optionset_thumbnail_name' with custom JS options.
- *   $build['thumb']['options'] = [
+ *   $build['thumb']['#options'] = [
  *     'arrows'        => TRUE,
  *     'centerMode'    => TRUE,
  *     'centerPadding' => '10px',
@@ -320,7 +412,7 @@
  *   ];
  *
  *   // Build the slick once.
- *   $element = $slick->build($build);
+ *   $element = $manager->build($build);
  *
  *   // Prepare variables to pass into a .twig.html file.
  *   $variables['slick'] = $element;
@@ -381,7 +473,7 @@
  *   // If you copy this file, be sure to add base_path() before any asset path
  *   // (css or js) as otherwise failing to load the assets. Your module can
  *   // register paths pointing to a theme. Almost similar to library.
- *   $theme_path = Blazy::getPath('theme', 'my_theme', TRUE);
+ *   $theme_path = $this->getPath('theme', 'my_theme');
  *
  *   return [
  *     'skin_name' => [
@@ -575,7 +667,13 @@ function hook_slick_options_alter(array &$options, array $settings, Slick $slick
  * @ingroup slick_api
  */
 function hook_slick_settings_alter(array &$build, $items) {
-  $settings = &$build['settings'];
+  // Since blazy:2.17, this may be replaced with just hook_blazy_settings_alter
+  // for the entire blazy ecosytem instead.
+  // Most configurable settings are put as direct key-value pairs.
+  // Before blazy:2.17, the key is plain.
+  // $settings = &$build['settings'];
+  // Since blazy:2.17, the key is hashed to avoid leaks/ render errors.
+  $settings = &$build['#settings'];
 
   // See blazy_blazy_settings_alter() at blazy.module for existing samples.
   // First check the $settings array. Slick Views may have different array.

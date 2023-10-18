@@ -2,57 +2,17 @@
 
 namespace Drupal\blazy\Utility;
 
-use Drupal\Component\Utility\Xss;
-use Michelf\MarkdownExtra;
-use League\CommonMark\CommonMarkConverter;
+@trigger_error('The ' . __NAMESPACE__ . '\BlazyMarkdown is deprecated in blazy:8.x-2.17 and is removed from blazy:8.x-3.0. Use \Drupal\blazy\BlazyInterface::markdown() instead. See https://www.drupal.org/node/3103018', E_USER_DEPRECATED);
 
 /**
- * Provides markdown utilities only useful for the help text.
+ * Deprecated in blazy:8.x-2.17.
+ *
+ * @internal
+ *   This is an internal part of the Blazy system and should only be used by
+ *   blazy-related code in Blazy module, or its sub-modules.
+ *
+ * @deprecated in blazy:8.x-2.17 and is removed from blazy:3.0.0. Use
+ *   \Drupal\blazy\BlazyInterface::markdown() instead.
+ * @see https://www.drupal.org/node/3103018
  */
-class BlazyMarkdown {
-
-  /**
-   * Checks if we have the needed classes.
-   */
-  public static function isApplicable() {
-    return class_exists('Michelf\MarkdownExtra') || class_exists('League\CommonMark\CommonMarkConverter');
-  }
-
-  /**
-   * Processes Markdown text, and convert into HTML suitable for the help text.
-   *
-   * @param string $text
-   *   The text to apply the Markdown filter to.
-   * @param bool $sanitize
-   *   True, if the text should be sanitized.
-   * @param bool $help
-   *   True, if the text will be used for Help pages.
-   *
-   * @return string
-   *   The filtered, or raw converted text.
-   */
-  public static function parse($text, $sanitize = TRUE, $help = TRUE) {
-    if (!self::isApplicable()) {
-      return $help ? '<pre>' . $text . '</pre>' : $text;
-    }
-
-    if (class_exists('Michelf\MarkdownExtra')) {
-      $text = MarkdownExtra::defaultTransform($text);
-    }
-    elseif (class_exists('League\CommonMark\CommonMarkConverter')) {
-      $converter = new CommonMarkConverter();
-      if (method_exists($converter, 'convert')) {
-        $text = $converter->convert($text);
-      }
-      else {
-        if (is_callable([$converter, 'convertToHtml'])) {
-          $text = $converter->convertToHtml($text);
-        }
-      }
-    }
-
-    // We do not pass it to FilterProcessResult, as this is meant simple.
-    return $sanitize ? Xss::filterAdmin($text) : $text;
-  }
-
-}
+class BlazyMarkdown extends Markdown {}

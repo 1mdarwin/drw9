@@ -16,87 +16,260 @@
  * Blazy may be configured using the web interface using formatters, or Views.
  * However below is a few sample coded ones.
  *
+ * Since blazy:2.6, non-configurable settings were moved into settings.blazies
+ * as the instance of \Drupal\blazy\BlazySettings. Should you need to build it
+ * from the scratch with theme_blazy(), not using the provided API, please
+ * create the object like so:
+ *
+ * @code
+ * $settings = \Drupal\blazy\Blazy::init();
+ * $blazies = $settings['blazies'];
+ * @endcode
+ *
+ * Now you can access settings.blazies, and set anything as needed.
+ *
+ * @section sec_quick Quick sample #1
  * A single image sample.
+ *
+ * If you need to work with lightbox, linkable content, media, grid, captions,
+ * and other featured, please jump from your window to sample #2. This one is
+ * more useful for individual item and basic understanding of theme_blazy().
+ *
  * @code
  * function my_module_render_blazy() {
- *   $settings = [
- *     // URI is required to use BlazyManager::getBlazy().
- *     // URI is stored in #settings property so to allow traveling around video
- *     // and lightboxes before being passed into theme_blazy().
- *     'uri' => 'public://logo.jpg',
+ *   // Old behaviors will be very minimally preserved till 3.x.
+ *   // Put the namespaces into `use` directives, e.g.: use Drupal\blazy\Blazy;
+ *   // The ::init() contains empty blazies object for convenience, and optional
+ *   // initial settings data parameter to override defaults.
+ *   $settings = \Drupal\blazy\Blazy::init();
  *
- *     // Explicitly request for Blazy.
- *     // This allows Slick lazyLoad to not load Blazy.
- *     // May be ignored by your defined options at Blazy UI since 2.6+, unless
- *     // flagged by a bool `unlazy` in tandem with `loading` option.
- *     'lazy' => 'blazy',
+ *   // Pass configurable settings directly into $settings. These can also be
+ *   // moved into ::init() method argument above instead.
+ *   // See more in \Drupal\blazy\BlazyDefault::imageSettings():
+ *   $settings['image_style'] = 'thumbnail';
  *
- *     // Optionally provide an image style. Valid URI is a must:
- *     'image_style' => 'thumbnail',
- *   ];
+ *   // Pass non-configurable ones into settings.blazies object:
+ *   $blazies = $settings['blazies'];
  *
+ *   // For multiple items, be sure to set delta in the loop accordingly:
+ *   $blazies->set('delta', $delta)
+ *     // While the invalid URI is just printed, only valid URI can have image
+ *     // styles, or at least using a normal public URL: /sites/default/files/:
+ *     ->set('image.uri', 'public://logo.png')
+ *
+ *     // ->set('image.url', '/logo.png') // <= image.url alone won't work!
+ *
+ *     // If you have no valid URI, simply change `url` to `uri` like below,
+ *     // invalid URI, including external/ sister site url, is just printed:
+ *     // ->set('image.uri', '/logo.png')
+ *     // ->set('image.uri', 'https://example.com/logo.png')
+ *
+ *     ->set('image.alt', t('Preview'))
+ *
+ *     // If you don't set `image_style`, provide a dimension in the least.
+ *     ->set('image.width', 140);
+ *
+ *   // Passing width/height/alt/title to #item_attributes was deprecated since
+ *   // 2.6 when RDF was deprecated from D9. Use settings.blazies above instead.
+ *   // The #item_attributes will be finally removed at 3.x.
+ *   // Use blazies.image.attributes or blazies.iframe.attributes for anything
+ *   // other than basic image attributes (width/height/alt/title) instead.
+ *   // It is still usable for adding minor class attributes, etc., though.
+ *   // You are on your own other than the above-mentioned supported attributes.
+ *   // Supported means, it won't mess up the provided image_style, etc.
+ *   // On your own means, you can XSS attack your own site, it's all yours.
+ *   // Since 2.6, theme_blazy() looks dead simple, yet more robust:
  *   $build = [
  *     '#theme'    => 'blazy',
  *     '#settings' => $settings,
- *
- *     // Or below for clarity:
- *     '#settings' => ['uri' => 'public://logo.jpg', 'lazy' => 'blazy'],
- *
- *     // Pass custom attributes into the same #item_attributes property as
- *     // Blazy formatters so to respect external modules like RDF, etc. without
- *     // extra property. The regular #attributes property is reserved by Blazy
- *     // container which holds either IMG, icons, or iFrame. Meaning Blazy is
- *     // not just IMG.
- *     '#item_attributes' => [
- *       'alt'   => t('Thumbnail'),
- *       'title' => t('Thumbnail title'),
- *       'width' => 120,
- *     ],
- *
- *     // Finally load the library, or include it into a parent container.
- *     '#attached' => ['library' => ['blazy/load']],
  *   ];
+ *
+ *   // Optionally attach the supported libraries, or include/ merge it into a
+ *   // parent container:
+ *   $build['#attached'] = ['library' => ['blazy/load']];
+ *
+ *   // Or more robust with BlazyManager::attach() as required:
+ *   $build['#attached'] = blazy()->attach($settings);
+ *
+ *   // Or for defaults, affected by Blazy UI, simply leave it empty.
+ *   // Or even remove this line completely, we got you covered:
+ *   $build['#attached'] = blazy()->attach();
  *
  *   return $build;
  * }
  * @endcode
  * @see \Drupal\blazy\Theme\BlazyTheme::blazy()
  * @see \Drupal\blazy\BlazyDefault::imageSettings()
+ * @see \Drupal\gridstack_ui\Controller\GridStackListBuilder::buildRow()
+ * @see template_preprocess_blazy()
+ *
+ * @section sec_detail Detailed sample #2
  *
  * A multiple image sample.
  *
  * For advanced usages with multiple images, and a few Blazy features such as
  * lightboxes, lazyloaded images, or iframes, including CSS background and
- * aspect ratio, etc.:
+ * aspect ratio, etc. depending on field types or vanilla/ rendered entity, etc:
  *   o Invoke blazy.manager, and or blazy.formatter, services.
- *   o Use \Drupal\blazy\BlazyManager::getBlazy() method to work with images and
- *     pass relevant settings which request for particular Blazy features
- *     accordingly.
+ *   o Use \Drupal\blazy\BlazyManager::getBlazy() method to work with any
+ *     content (texts, images/media, Views rows, vanilla) and pass relevant
+ *     settings which request for particular Blazy features accordingly.
  *   o Use \Drupal\blazy\BlazyManager::attach() to load relevant libraries.
  * @code
  * function my_module_render_blazy_multiple() {
- *   // Invoke the plugin class, or use a DI service container accordingly.
- *   $manager = \Drupal::service('blazy.manager');
+ *   // Invoke the manager service, or use a DI service container accordingly.
+ *   // Specific to Blazy, $manager and $formatter have straight inheritance.
+ *   // Using $formatter for Blazy specifically is the best bet.
+ *   // For sub-modules, use their $manager if calling ::build().
+ *   // However sub-modules deviate, and must call the correct servive.
+ *   // $manager = \Drupal::service('blazy.manager');
+ *   $manager = blazy();
+ *   $formatter = \Drupal::service('blazy.formatter');
  *
- *   $settings = [
- *     // Explicitly request for Blazy library.
- *     // This allows Slick lazyLoad, or text formatter, to not load Blazy.
- *     'blazy' => TRUE,
+ *   // Option init #1 at container level:
+ *   // The ::init() contains empty blazies object for convenience, and optional
+ *   // initial settings data parameter to override defaults.
+ *   $settings = \Drupal\blazy\Blazy::init();
  *
- *     // Supported media switcher options dependent on available modules:
- *     // colorbox, media (Image to iframe), photobox.
- *     'media_switch' => 'media',
+ *   // Option init #2 at item level:
+ *   // $parent_settings is the first settings setup as above, here in a loop.
+ *   // $settings = $manager->toSettings($parent_settings, $info); to have
+ *   // initial info which should be stored within blazies object initially.
+ *   // Basically 3 tasks: reset blazies object per item, merging initial parent
+ *   // $settings along with the initial values for item-level blazies object.
+ *
+ *   // Supported media switcher options dependent on available modules:
+ *   // colorbox, media (Image to iframe), etc. These can also be moved into
+ *   // ::init() method argument above instead. These settings are normally
+ *   // seen at Field formatter/ Views Style UI form items, and defined in
+ *   // Drupal\blazy\BlazyDefault, or any similar extending classes.
+ *   $settings['media_switch'] = 'media';
+ *   $settings['image_style'] = 'large';
+ *   $settings['ratio'] = 'fluid';
+ *
+ *   // If adding grid, lightbox, and other features seen at formatters:
+ *   // $formatter->preSettings($settings);
+ *   // If having FieldItemListInterface, ignore the above line, and use:
+ *   // $formatter->preElements($build, $items, $entities);
+ *
+ *   // Build contents, assumed inside a loop here.
+ *   // Captions key contains: alt, description, data, link, overlay, title.
+ *   // The image.uri is the only required by theme_blazy(). This $info is
+ *   // optional/ removable if using the second approach below.
+ *
+ *   // Option setter #1, add image.alt, image.title, etc. as needed:
+ *   $info = ['image.uri' => 'https://drupal.org/files/One.gif'];
+ *
+ *   // Option setter #2:
+ *   // $manager::toSettings() initialize `blazies` object with added $info, and
+ *   // reset per item, be sure to repeat the call per item.
+ *   // You can move it up here to access `blazies` object for more works.
+ *   // Notice $info was left out, and use the blazies setter instead:
+ *   // $settings = $manager->toSettings($settings);
+ *   // $blazies = $settings['blazies'];
+ *   // Now do anything with $blazies setter:
+ *   // $blazies->set('image.uri', 'BLAH')
+ *   //   ->set('image.alt', 'BLAH')
+ *   //   ->set('image.title', 'BLAH');
+ *
+ *   // The required are #delta and #settings. Captions, etc. is optional.
+ *   $content = [
+ *     // Delta is for galleries, or LCP like Loading priority: slider, etc.
+ *     '#delta' => 0,
+ *
+ *     // If using Option setter #1:
+ *     '#settings' => $manager->toSettings($settings, $info),
+ *
+ *     // If using Option setter #2:
+ *     // '#settings' => $settings,
+ *
+ *     'captions' => ['title' => ['#markup' => t('Description #1')]],
+ *
+ *      // Only if non-media or media that theme_blazy() does not understand:
+ *      // texts, theme_BLAH(), etc. or vanilla output, put it into `content`.
+ *      // See Options below before giving up here.
+ *      // 'content' => $rendered_entity,
+ *
+ *      // If working with Media, Paragraphs, etc, be sure to pass the #entity
+ *      // for blazy.oembed to extract relevant ImageItem, and media data.
+ *      // '#entity' => $media,
+ *
+ *      // If you have \Drupal\image\Plugin\Field\FieldType\ImageItem,
+ *      // deprecated at blazy:3.x for $info.image array above:
+ *      // '#item' => $item,
  *   ];
  *
- *   // Build images.
- *   $build = [
- *     // Load images via $manager->getBlazy().
- *     // See below ...Formatter::buildElements() for consistent samples.
- *   ];
+ *   // Options #1 with Media entity or VEF, not expecting vanilla:
+ *   // If working with Media/ OEmbed/ VEF, other than plain old images,
+ *   // do not set `content` early above, blazy.oembed will do:
+ *   // $manager->service('blazy.oembed')->build($content);
+ *
+ *   // Pass $content to theme_blazy() after working with any Media/ VEF.
+ *   $items[] = $manager->getBlazy($content);
+ *
+ *   // Options #2 with any entities, File, Media, etc., for (non-)vanilla:
+ *   // Do not set `content` early above, blazy.entity will do, including
+ *   // passing it to ::getBlazy().
+ *   // Normally outside formatters with very minimal entity field info.
+ *   // If workable, it will output like Options #1, else fallback to Vanilla.
+ *   // This is more optimistic than Options #3 below.
+ *   // See \Drupal\blazy\Plugin\views\field\BlazyViewsFieldFile
+ *   // See \Drupal\blazy\Plugin\views\field\BlazyViewsFieldMedia
+ *   // See \Drupal\io_browser\Plugin\EntityBrowser\FieldWidgetDisplay
+ *   // See \Drupal\slick_browser\Plugin\EntityBrowser\FieldWidgetDisplay
+ *   // $items[] = $manager->service('blazy.entity')->build($content);
+ *
+ *   // Options #3 with any entities, File, Media, etc., for vanilla.
+ *   // Do not set `content` early, blazy.entity will do.
+ *   // This is more pessimistic and opportunistic than Option #2, expecting
+ *   // more for vanilla aka rendered entity, but will output non-vanilla if
+ *   // workable:.
+ *   // $items[] = $manager->service('blazy.entity')->view($content);
+ *
+ *   // Options #4 with any entities, and expecting just plain vanilla aka
+ *   // rendered entity. Normally needed if rendered entities are to be
+ *   // placed inside grids. While Options #2 and #3 will work out first for
+ *   // non-vanilla before giving up to this rendered entity, this one is indeed
+ *   // expecting a rendered entity. The only reason it is called is Blazy grid.
+ *   // $items[] = $manager->view($content);
+ *
+ *   // Alternatively put it into `content` as mentioned above for non-grid:
+ *   // $content['content'] = $manager->view($content);
+ *   // $items[] = $content;
+ *
+ *   // See below ...Formatter::buildElements() for consistent samples.
+ *   // Since 2.17, items are stored in `items` key to match sub-modules.
+ *   // And extracted as needed depending on the parent themes -- theme_field()
+ *   // and theme_item_list() requirements.
+ *   // Both items and indicies will continue working till the end of the day.
+ *   // The correct one for theme_field() is indices as we did all along, but we
+ *   // gotta be trendy with sub-modules for interchangeability and easy swap.
+ *   // Some have been established before blazy, cannot argue with the ancient.
+ *   // No biggies, we do not always deal with fields, might be Views rows, etc.
+ *   $build['items'] = $items;
  *
  *   // Finally attach libraries as requested via $settings.
  *   $build['#attached'] = $manager->attach($settings);
  *
+ *   // Options return #1, expecting a Blazy grid display, or theme_field():
+ *   // return $manager->build($build);
+ *
+ *   // Options return #2, passing to any sub-modules' managers, not formatters,
+ *   // requires their relevant settings setup first as above-mentioned. See
+ *   // their BLAH.api.php if available, \Drupal\blah\BlahDefault, or go
+ *   // directly to their ::build() method if not. There might be some slight
+ *   // difference in requirements, but overall look pretty much similar:
+ *   // return slick()->build($build);
+ *   // return splide()->build($build);
+ *   // return gridstack()->build($build);
+ *   // return outlayer()->build($build);
+ *   // return mason()->build($build);
+ *
+ *   // Options return #3, passing to Twig at any template_preprocess:
+ *   // $variables['content'] = $manager->build($build);
+ *   // At Twig: {{ content }}
+ *
+ *   // Options return #4, expecting your own render array display:
  *   return $build;
  * }
  * @endcode
@@ -124,7 +297,7 @@
  *
  * @ingroup blazy_api
  */
-function hook_blazy_attach_alter(array &$load, array $settings = []) {
+function hook_blazy_attach_alter(array &$load, array $settings) {
   // Since 2.6, non-configurable settings are mostly grouped under `blazies`.
   // For pre 2.6, please use $settings['NAME'] directly.
   $blazies = $settings['blazies'];
@@ -158,6 +331,8 @@ function hook_blazy_lightboxes_alter(array &$lightboxes) {
 /**
  * Alters Blazy individual item output to support a custom lightbox.
  *
+ * Or better use hook_preprocess_blazy() for simple needs.
+ *
  * @param array $build
  *   The renderable array of image/ video iframe being modified.
  * @param array $settings
@@ -165,8 +340,9 @@ function hook_blazy_lightboxes_alter(array &$lightboxes) {
  *
  * @ingroup blazy_api
  */
-function hook_blazy_alter(array &$build, array $settings = []) {
+function hook_blazy_alter(array &$build, array $settings) {
   if (!empty($settings['media_switch']) && $settings['media_switch'] == 'photoswipe') {
+    // Full blown overrides:
     $build['#pre_render'][] = 'my_module_pre_render';
   }
 }
@@ -185,7 +361,7 @@ function hook_blazy_alter(array &$build, array $settings = []) {
  *
  * @ingroup blazy_api
  */
-function hook_blazy_build_alter(array &$build, array $settings = []) {
+function hook_blazy_build_alter(array &$build, array $settings) {
   // Since 2.6, non-configurable settings are mostly grouped under `blazies`.
   // For pre 2.6, please use $settings['NAME'] directly.
   $blazies = $settings['blazies'];
@@ -194,6 +370,7 @@ function hook_blazy_build_alter(array &$build, array $settings = []) {
   // This also allows a quasi-lightbox like ElevateZoomPlus inject its optionset
   // as its value: elevatezoomplus: responsive, etc.
   if ($blazies->get('colorbox') || $blazies->get('zooming')) {
+    // Full blown overrides:
     $build['#pre_render'][] = 'my_module_pre_render_build';
   }
 }
@@ -217,12 +394,12 @@ function hook_blazy_build_alter(array &$build, array $settings = []) {
  * @code
  * function hook_config_schema_info_alter(array &$definitions) {
  *   $settings = ['color' => '', 'arrowpos' => '', 'dotpos' => ''];
- *   BlazyAlter::configSchemaInfoAlter($definitions,
+ *   blazy()->configSchemaInfoAlter($definitions,
  *     'slick_base', SlickDefault::extendedSettings() + $settings);
  * }
  * @endcode
  *
- * In addition to the schema, implement hook_blazy_complete_form_element_alter()
+ * In addition to the schema, implement hook_blazy_form_element_alter()
  * to provide the actual extended forms, see far below. And lastly, implement
  * the options at front-end via hook_preprocess().
  *
@@ -233,12 +410,23 @@ function hook_blazy_build_alter(array &$build, array $settings = []) {
  *
  * @ingroup blazy_api
  */
-function hook_blazy_base_settings_alter(array &$settings, array $context = []) {
+function hook_blazy_base_settings_alter(array &$settings, array $context) {
   // One override for both various Slick field formatters and Slick views style.
   // SlickDefault extends BlazyDefault, hence capable to modify/ extend options.
   // These options will be available at many Slick formatters at one go.
   if ($context['class'] == 'Drupal\slick\SlickDefault') {
     $settings += ['color' => '', 'arrowpos' => '', 'dotpos' => ''];
+  }
+
+  // If you want to inject new settings into various sub-module formatters:
+  $classes = [
+    'Drupal\blazy\BlazyDefault',
+    'Drupal\gridstack\GridStackDefault',
+    'Drupal\slick\SlickDefault',
+    'Drupal\splide\SplideDefault',
+  ];
+  if (in_array($context['class'], $classes)) {
+    $settings += ['elevatezoomplus' => ''];
   }
 }
 
@@ -246,18 +434,30 @@ function hook_blazy_base_settings_alter(array &$settings, array $context = []) {
  * Alters blazy settings inherited by all child elements.
  *
  * @param array $build
- *   The array containing: settings, or potential optionset for extensions.
+ *   The array containing: #settings, or potential #optionset for sub-modules.
  * @param object $items
  *   The Drupal\Core\Field\FieldItemListInterface items.
  *
  * @ingroup blazy_api
  */
 function hook_blazy_settings_alter(array &$build, $items) {
+  // Since blazy:2.17, the settings key is hashed to avoid leaks/ render errors.
+  // Pre blazy:2.17 $build['settings'] will continue working till 3.x.
+  // @todo remove check post blazy:2.17, only needed for mismatched versions.
+  $key = 'settings';
+  if (!isset($build["#$key"]) && isset($build[$key])) {
+    $build["#$key"] = $build[$key];
+  }
+
+  $settings = &$build['#settings'];
+
   // Most configurable settings are put as direct key-value pairs.
-  $settings = &$build['settings'];
   // Since 2.6, non-configurable settings are mostly grouped under `blazies`.
   // For pre 2.6, please use $settings['NAME'] directly.
   $blazies = $settings['blazies'];
+
+  // Add more custom CSS aspect ratios, see /admin/help/blazy_ui#aspect-ratio:
+  $blazies->set('css.ratio', ['7:8', '6:5'], TRUE);
 
   // Overrides one pixel placeholder on particular pages relevant if using Views
   // rewrite results which may strip out Data URI.
@@ -269,7 +469,7 @@ function hook_blazy_settings_alter(array &$build, $items) {
 
   // Alternatively override views blocks identified by `view.view_mode` with
   // a blank SVG since 1px gif has issues with non-square sizes, see #2908861:
-  // <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'/>
+  // <svg xmlns='https://www.w3.org/2000/svg' viewBox='0 0 100 100'/>
   // Adjust plugin ID since Blazy has a few formatters, View style/ fields.
   // Since 2.6, plugin_id is put under: `field`, 'view', `filter` under blazies.
   // For pre 2.6 all plugin IDs are ignorantly put under settings.plugin_id
@@ -301,47 +501,163 @@ function hook_blazy_settings_alter(array &$build, $items) {
 }
 
 /**
+ * Alters blazy item settings, useful for mixed media contents.
+ *
+ * This is called before the mixed media elements being populated allowing you
+ * to change the item output via its specific settings.
+ *
+ * @param array $settings
+ *   The array settings being modified.
+ * @param array $attributes
+ *   The .media element attributes being modified.
+ * @param array $item_attributes
+ *   The IMG element attributes being modified.
+ *
+ * @ingroup blazy_api
+ */
+function hook_blazy_item_alter(array &$settings, array &$attributes, array &$item_attributes) {
+  $blazies = $settings['blazies'];
+
+  // If it has a media embed url and a lightbox with unwanted implementations,
+  // replace the lightbox with an inline media player, and leave the rest of
+  // images as lightboxes.
+  // Be sure to require `blazy/media` library somewhere, if not already loaded,
+  // says put $blazies->set('libs.media', TRUE); in hook_blazy_settings_alter(),
+  // conditionally to not waste libraries.
+  if ($blazies->get('colorbox') && $blazies->get('media.embed_url')) {
+    $blazies->set('switch', 'media')
+      // The is.player is deprecated in 2.17 for use.player.
+      // ->set('is.player', TRUE)
+      ->set('use.player', TRUE)
+      ->set('is.lightbox', FALSE);
+  }
+
+  // Convert Blazy image with caption to use FIGURE tag.
+  // Excluding sub-modules which may require elaborate conditions due to more
+  // complex image and caption structures such as sliders. Mason, GridStack,
+  // etc. may severely break with this if not scoped to blazy namespace.
+  // More conditions are available under blazies.is, such as
+  // $blazies->is('captioned') or $blazies->is('multimedia') in case
+  // captioned or not, or breaking multimedia or media player, etc.
+  // If any display issues with grid, media player, etc., refine or remove this.
+  // blazies.is[image|video_file|twitter, etc] is related to Media sources.
+  if ($blazies->get('namespace') == 'blazy' && $blazies->is('image')) {
+    $blazies->set('is.figcaption', TRUE)
+      ->set('item.wrapper_tag', 'figure')
+      ->set('item.wrapper_attributes.class', ['blazy__content']);
+  }
+
+  // Changed default caption title tag from H2 to H3.
+  $blazies->set('item.title_tag', 'h3');
+
+  // Since > 2.17-beta1, below is no longer needed, already merged.
+  // Modifies IMG attributes, relevant for BlazyFilter here, see
+  // https://www.drupal.org/project/blazy/issues/3374519:
+  // - item.raw_attributes should not be used as not only raw, but also cause
+  //   lazy load, aspect ratio, image style, etc. failed.
+  // - item.safe_attributes are cleaned out from most troubles, yet, not fully.
+  // $safe_attrs = $blazies->get('item.safe_attributes', []);
+  // Override $item_attributes selectively to avoid unidentified troubles,
+  // hence only when I need `usemap` badly:
+  // if (isset($safe_attrs['usemap'])) {
+  // The ::merge method reverses arguments from normal merge, be warned!
+  // Hence prioritizing the module-managed $item_attributes as the replacer.
+  // so that you can still have abused ALT and TITLE for captions, yet cleaned
+  // out for attributes, having cakes and eat them too thingies. If reversed,
+  // you can only choose one. No abuses recommended, just so well-informed.
+  // You can have fieldable captions with core Media without any abuses.
+  // $item_attributes = blazy()->merge($item_attributes, $safe_attrs);
+  // }
+  // Inline comments must end in full-stops, etc. If you forgot, BOOM!
+}
+
+/**
  * Alters blazy-related formatter form elements.
  *
  * This takes advantage of Blazy taking care of a few elements finalizations,
- * such as adding #empty_option, extras CSS classes, checkboxes, states, etc.
- * This is run before hook_blazy_complete_form_element_alter().
+ * such as adding #empty_option, extra CSS classes, checkboxes, states, grid,
+ * etc. The best place to add new form items. This is run before
+ * hook_blazy_complete_form_element_alter().
  *
  * @param array $form
  *   The $form being modified.
  * @param array $definition
  *   The array defining the scope of form elements.
+ * @param object $scopes
+ *   The scopes shortcut extracted from $definition for convenience.
  *
  * @see \Drupal\blazy\Form\BlazyAdminBase::finalizeForm()
  *
  * @ingroup blazy_api
  */
-function hook_blazy_form_element_alter(array &$form, array $definition) {
+function hook_blazy_form_element_alter(array &$form, array $definition, $scopes) {
+  // For pre 2.6, please use $definition['NAME'] directly, removed at 3.x.
+  $namespace = $definition['namespace'] ?? FALSE;
+
+  // Since 2.6, non-configurable settings are mostly grouped under `blazies`,
+  // and form scopes under `scopes`. Both are BlazySettings objects with some
+  // temporary overlaps since `blazies` are also visible at front-end.
+  // Prioritize on `blazies` if any dups as `scopes` subject to cleaning out
+  // from dups during migration process while `blazies` will always be intact
+  // as also required by front-end.
+  // $blazies = $definition['blazies'] ?? NULL;
+  // Inline comments must end in full-stops, etc. If you forgot, BOOM!
+  $namespace = $scopes->get('namespace') ?: $namespace;
+
+  // At forms, configurable settings are grouped under `settings` since 1.x.
+  $settings = $definition['settings'] ?? [];
+
   // Scope to splide formatters, blazy, gridstack, slick, etc. Or swap em all.
-  if (($definition['namespace'] ?? FALSE) == 'splide') {
-    // Extend the formatter form elements as needed.
+  if ($namespace == 'splide' && isset($settings['BLAH'])) {
+    // Skip Splide text formatter.
+    if ($scopes && !$scopes->is('no_image_style')) {
+      // Extend the formatter form elements as needed.
+    }
   }
 }
 
 /**
  * Alters blazy-related formatter form elements.
  *
- * Modify anything Blazy forms output as you wish.
+ * Modify anything Blazy forms output as you wish. If you see your added form
+ * items break the Native grid, use the previous hook_blazy_form_element_alter()
+ * instead. This is only useful for anything but adding new form items.
  * This is run after hook_blazy_form_element_alter().
  *
  * @param array $form
  *   The $form being modified.
  * @param array $definition
  *   The array defining the scope of form elements.
+ * @param object $scopes
+ *   The scopes shortcut extracted from $definition for convenience.
  *
  * @see \Drupal\blazy\Form\BlazyAdminBase::finalizeForm()
  *
  * @ingroup blazy_api
  */
-function hook_blazy_complete_form_element_alter(array &$form, array $definition) {
+function hook_blazy_complete_form_element_alter(array &$form, array $definition, $scopes) {
+  // For pre 2.6, please use $definition['NAME'] directly, removed at 3.x.
+  $namespace = $definition['namespace'] ?? FALSE;
+
+  // Since 2.6, non-configurable settings are mostly grouped under `blazies`,
+  // and form scopes under `scopes`. Both are BlazySettings objects with some
+  // temporary overlaps since `blazies` are also visible at front-end.
+  // Prioritize on `blazies` if any dups as `scopes` subject to cleaning out
+  // from dups during migration process while `blazies` will always be intact
+  // as also required by front-end.
+  // $blazies = $definition['blazies'] ?? NULL;
+  // Inline comments must end in full-stops, etc. If you forgot, BOOM!
+  $namespace = $scopes->get('namespace') ?: $namespace;
+
+  // At forms, configurable settings are grouped under `settings` since 1.x.
+  $settings = $definition['settings'] ?? [];
+
   // Scope to splide formatters, blazy, gridstack, slick, etc. Or swap em all.
-  if (($definition['namespace'] ?? FALSE) == 'splide') {
-    // Extend the formatter form elements as needed.
+  if ($namespace == 'splide' && isset($settings['BLAH'])) {
+    // Skip Splide text formatter.
+    if ($scopes && !$scopes->is('no_image_style')) {
+      // Overrides the formatter form elements as needed.
+    }
   }
 }
 

@@ -2,9 +2,8 @@
 
 namespace Drupal\blazy\Field;
 
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Form\FormStateInterface;
 use Drupal\blazy\BlazyDefault;
+use Drupal\Core\Form\FormStateInterface;
 
 /**
  * Base class for all entity reference formatters with field details.
@@ -15,6 +14,7 @@ use Drupal\blazy\BlazyDefault;
  * complication -- embedding entities within Media, although fine and possible.
  *
  * @see \Drupal\slick\Plugin\Field\FieldFormatter\SlickEntityReferenceFormatterBase
+ * @see \Drupal\splide\Plugin\Field\FieldFormatter\SplideEntityReferenceFormatterBase
  */
 abstract class BlazyEntityReferenceBase extends BlazyEntityMediaBase {
 
@@ -22,85 +22,9 @@ abstract class BlazyEntityReferenceBase extends BlazyEntityMediaBase {
    * {@inheritdoc}
    */
   public static function defaultSettings() {
-    return BlazyDefault::extendedSettings() + BlazyDefault::gridSettings();
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function buildElementExtra(array &$element, $entity, $langcode) {
-    parent::buildElementExtra($element, $entity, $langcode);
-
-    $settings = &$element['settings'];
-    $_class   = $settings['class'];
-    $_layout  = $settings['layout'];
-
-    // Layouts can be builtin, or field, if so configured.
-    if (!empty($_layout)) {
-      $layout = $_layout;
-      if (strpos($layout, 'field_') !== FALSE && isset($entity->{$layout})) {
-        $layout = BlazyField::getString($entity, $layout, $langcode);
-      }
-      $settings['layout'] = $layout;
-    }
-
-    // Classes, if so configured.
-    if (!empty($_class) && isset($entity->{$_class})) {
-      $settings['class'] = BlazyField::getString($entity, $_class, $langcode);
-    }
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCaption(array &$element, $entity, $langcode) {
-    parent::getCaption($element, $entity, $langcode);
-
-    $settings  = $element['settings'];
-    $view_mode = $settings['view_mode'] ?? 'full';
-    $_link     = $settings['link'];
-    $_overlay  = $settings['overlay'];
-    $_title    = $settings['title'];
-
-    // Title can be plain text, or link field.
-    if (!empty($_title)) {
-      $output = [];
-      // If title is available as a field.
-      if (isset($entity->{$_title})) {
-        $output = BlazyField::getTextOrLink($entity, $_title, $view_mode, $langcode);
-      }
-      // Else fallback to image title property.
-      elseif ($item = ($element['item'] ?? NULL)) {
-        if (($_title == 'title')
-          && ($caption = trim($item->get('title')->getString() ?: ''))) {
-          $markup = Xss::filter($caption, BlazyDefault::TAGS);
-          $output = ['#markup' => $markup];
-        }
-      }
-      $element['caption']['title'] = $output;
-    }
-
-    // Link, if so configured.
-    if (!empty($_link) && isset($entity->{$_link})) {
-      $links = BlazyField::view($entity, $_link, $view_mode);
-      $formatter = $links['#formatter'] ?? 'x';
-
-      // Only simplify markups for known formatters registered by link.module.
-      if ($links && in_array($formatter, ['link'])) {
-        $links = [];
-        foreach ($entity->{$_link} as $link) {
-          $links[] = $link->view($view_mode);
-        }
-      }
-      $element['caption']['link'] = $links;
-    }
-
-    // Overlay, like slider or video over slider, if so configured.
-    if (!empty($_overlay) && isset($entity->{$_overlay})) {
-      $element['caption']['overlay'] = $entity
-        ->get($_overlay)
-        ->view($view_mode);
-    }
+    return BlazyDefault::extendedSettings()
+      + BlazyDefault::gridSettings()
+      + parent::defaultSettings();
   }
 
   /**
@@ -123,40 +47,73 @@ abstract class BlazyEntityReferenceBase extends BlazyEntityMediaBase {
 
   /**
    * {@inheritdoc}
+   *
+   * This method is used but not called by sub-modules. Not used by blazy.
+   */
+  protected function withElementExtra(array &$element): void {
+    parent::withElementExtra($element);
+
+    // @todo remove helper at/ by 3.x post migrations:
+    $this->formatter->hashtag($element);
+
+    $settings = &$element['#settings'];
+    $entity   = $element['#entity'];
+    $langcode = $element['#langcode'];
+    $_class   = $settings['class'] ?? NULL;
+    $_layout  = $settings['layout'] ?? NULL;
+
+    // Anything below basically replacing useless field_NAME with its value.
+    // Layouts can be builtin, or field, if so configured.
+    if ($_layout) {
+      $layout = $_layout;
+      if (strpos($layout, 'field_') !== FALSE && isset($entity->{$layout})) {
+        $layout = $this->getString($entity, $layout, $langcode);
+      }
+      $settings['layout'] = $layout;
+    }
+
+    // Classes, if so configured.
+    if ($_class && isset($entity->{$_class})) {
+      $settings['class'] = $this->getString($entity, $_class, $langcode);
+    }
+  }
+
+  /**
+   * Builds the captions.
+   */
+  protected function getCaptions(array $element): array {
+    $captions = parent::getCaptions($element);
+
+    [
+      '#settings' => $settings,
+      '#entity'   => $entity,
+    ] = $element;
+
+    $view_mode = $settings['view_mode'] ?? 'full';
+    $_overlay  = $settings['overlay'] ?? NULL;
+
+    // Overlay, like slider or video over slider, if so configured.
+    if ($_overlay && isset($entity->{$_overlay})) {
+      $captions['overlay'] = $entity->get($_overlay)->view($view_mode);
+    }
+
+    return array_filter($captions);
+  }
+
+  /**
+   * {@inheritdoc}
    */
   protected function getPluginScopes(): array {
     $parent   = parent::getPluginScopes();
     $_strings = ['text', 'string', 'list_string'];
     $strings  = $this->getFieldOptions($_strings);
-    $_texts   = ['text', 'text_long', 'string', 'string_long', 'link'];
-    $texts    = $this->getFieldOptions($_texts);
-    $_links   = ['text', 'string', 'link'];
-    $title    = $parent['captions']['title'] ?? NULL;
-    $titles   = $texts;
-
-    if ($title) {
-      $titles['title'] = $title;
-    }
 
     return [
       'classes' => $strings,
       'images'  => $this->getFieldOptions(['image']),
       'layouts' => $strings,
-      'links'   => $this->getFieldOptions($_links),
-      'titles'  => $titles,
       'vanilla' => TRUE,
     ] + $parent;
-  }
-
-  /**
-   * Remove this method, never extended nor modified by sub-modules.
-   *
-   * @deprecated in blazy:8.x-2.9 and is removed from blazy:3.0.0. Use
-   *   self::getCaption() instead.
-   * @see https://www.drupal.org/node/3103018
-   */
-  public function getOverlay(array $settings, $entity, $langcode) {
-    return $entity->get($settings['overlay'])->view($settings['view_mode']);
   }
 
 }

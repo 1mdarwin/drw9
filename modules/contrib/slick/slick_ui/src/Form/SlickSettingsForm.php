@@ -2,31 +2,28 @@
 
 namespace Drupal\slick_ui\Form;
 
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\blazy\Form\BlazyConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Defines the Slick admin settings form.
  */
-class SlickSettingsForm extends ConfigFormBase {
+class SlickSettingsForm extends BlazyConfigFormBase {
 
   /**
-   * Drupal\Core\Asset\LibraryDiscoveryInterface definition.
+   * The slick manager.
    *
-   * @var Drupal\Core\Asset\LibraryDiscoveryInterface
+   * @var \Drupal\slick\SlickManagerInterface
    */
-  protected $libraryDiscovery;
+  protected $manager;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    /**
-     * @var \Drupal\slick_ui\Form\SlickSettingsForm
-     */
     $instance = parent::create($container);
-    $instance->libraryDiscovery = $container->get('library.discovery');
+    $instance->manager = $container->get('slick.manager');
     return $instance;
   }
 
@@ -146,7 +143,7 @@ class SlickSettingsForm extends ConfigFormBase {
       'options' => ['arrows' => TRUE, 'dots' => TRUE],
     ];
 
-    $content = \slick()->build($build);
+    $content = $this->manager->build($build);
     return $this->preview($content);
   }
 
@@ -184,7 +181,7 @@ class SlickSettingsForm extends ConfigFormBase {
   private function preview($content, $prefix = '', $suffix = '') {
     $config = $this->config('slick.settings');
     $unload = $config->get('sitewide') == 2 || $config->get('sitewide') == 3;
-    $attach = \slick()->attach([
+    $attach = $this->manager->attach([
       '_unload'  => $unload,
       '_vanilla' => $config->get('sitewide') == 2,
     ]);

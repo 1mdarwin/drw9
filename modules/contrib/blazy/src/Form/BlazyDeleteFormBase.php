@@ -29,7 +29,7 @@ abstract class BlazyDeleteFormBase extends EntityConfirmFormBase {
    */
   public function getQuestion() {
     return $this->t('Are you sure you want to delete the %name optionset %label?', [
-      '%name' => self::$niceName,
+      '%name' => static::$niceName,
       '%label' => $this->entity->label(),
     ]);
   }
@@ -48,10 +48,10 @@ abstract class BlazyDeleteFormBase extends EntityConfirmFormBase {
     $this->entity->delete();
 
     $this->messenger()->addMessage($this->t('The %name optionset %label has been deleted.', [
-      '%name' => self::$niceName,
+      '%name' => static::$niceName,
       '%label' => $this->entity->label(),
     ]));
-    $this->logger(self::$machineName)->notice('Deleted optionset %oid (%label)', [
+    $this->logger(static::$machineName)->notice('Deleted optionset %oid (%label)', [
       '%oid' => $this->entity->id(),
       '%label' => $this->entity->label(),
     ]);

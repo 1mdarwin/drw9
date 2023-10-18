@@ -28,7 +28,7 @@ function blazy_ui_help($route_name) {
       $output .= file_get_contents(dirname(dirname(__FILE__)) . "/docs/{$key}.md");
     }
 
-    return blazy_parse_markdown($output);
+    return blazy()->markdown($output);
   }
   return '';
 }

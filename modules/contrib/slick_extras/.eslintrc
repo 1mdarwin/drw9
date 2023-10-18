@@ -4,7 +4,8 @@
   // eslint . -o ../../eslint/slick_extras.html -f html
   "extends": "../../../core/.eslintrc.legacy.json",
   "globals": {
-    "Blazy": true
+    "Blazy": true,
+    "dBlazy": true
   },
   "rules": {
     "consistent-this": [0, "me"],

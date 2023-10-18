@@ -1,8 +1,10 @@
 /**
  * @file
+ * Provides loading indicator animation, not used when using blur.
  */
 
 /* Credit: https://github.com/tobiasahlin/SpinKit */
+/*
 @-webkit-keyframes rotateplane {
   0% {
     -webkit-transform: perspective(120px);
@@ -17,6 +19,7 @@
     transform: perspective(120px) rotateY(180deg) rotateX(180deg);
   }
 }
+*/
 
 @keyframes rotateplane {
   0% {
@@ -30,7 +33,7 @@
   }
 }
 
-.is-b-loading:not(.is-b-loaded) {
+.is-b-loading {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   position: relative;
@@ -38,29 +41,26 @@
 }
 
 /* Hide for non-js users. */
-.is-b-loading:not(.is-b-loaded)::before {
-  display: none;
-}
-
-/* Core drupal.init.js provides this .js class for free as long as loaded. */
-.js .is-b-loading:not(.is-b-loaded)::before {
-  display: block;
-}
-
-/* Prevents costly double animations when Blur is enabled. */
-.is-b-loading:not(.is-b-loaded):not([data-animation])::before {
-  content: '';
-  width: 30px;
-  height: 30px;
-  max-width: 30px;
-  background: #2eaae0;
+.is-b-loading::before {
   position: absolute;
-  left: 50%;
+  z-index: -1;
   top: 50%;
-  margin-left: -15px;
+  left: 50%;
+  display: none;
+  width: 30px;
+  max-width: 30px;
+  height: 30px;
   margin-top: -15px;
+  margin-left: -15px;
+  content: "";
+  background: #2eaae0;
   font-size: 0;
+}
+
+/* Only animate when being visible. */
+.is-b-loading.is-b-visible::before {
   z-index: 22;
+  display: block;
   -webkit-animation: rotateplane 1.2s infinite ease-in-out;
   animation: rotateplane 1.2s infinite ease-in-out;
 }

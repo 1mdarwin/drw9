@@ -9,8 +9,8 @@
  * Implements hook_library_info_alter().
  */
 function slick_devel_library_info_alter(&$libraries, $module) {
-  $slick_path = slick_extras_get_path('module', 'slick');
-  $path = slick_extras_get_path('module', 'slick_devel');
+  $slick_path = blazy()->getPath('module', 'slick');
+  $path = blazy()->getPath('module', 'slick_devel');
   $config = \Drupal::config('slick_devel.settings');
 
   // Tricks Upgrade status who thinks libraries is module, not folder.
@@ -20,15 +20,8 @@ function slick_devel_library_info_alter(&$libraries, $module) {
     // Switch to the un-minified version of the library.
     if ($module == 'slick' && isset($libraries['slick'])) {
       $path = $lib . '/slick';
-      if (function_exists('blazy_libraries_get_path')) {
-        if (blazy_libraries_get_path('slick') || blazy_libraries_get_path('slick-carousel')) {
-          $path = blazy_libraries_get_path('slick') ?: blazy_libraries_get_path('slick-carousel');
-        }
-      }
-      else {
-        if (!is_file(\Drupal::root() . $path . '/slick/slick.js')) {
-          $path = $lib . '/slick-carousel';
-        }
+      if ($check = blazy()->getLibrariesPath(['slick', 'slick-carousel'])) {
+        $path = $check;
       }
 
       $libraries['slick']['js'] = ['/' . $path . '/slick/slick.js' => []];
@@ -38,7 +31,7 @@ function slick_devel_library_info_alter(&$libraries, $module) {
   if ($config->get('debug')) {
     // Switch to the development version of the slick.load.js.
     if ($module == 'slick' && isset($libraries['slick.load'])) {
-      $libraries['slick.load']['js'] = ['/' . $slick_path . '/js/slick.load.js' => []];
+      $libraries['slick.load']['js'] = ['/' . $slick_path . '/js/src/slick.load.js' => []];
     }
   }
   else {

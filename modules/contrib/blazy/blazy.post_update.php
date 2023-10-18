@@ -5,10 +5,10 @@
  * Post update hooks for Blazy.
  */
 
+use Drupal\blazy\BlazyDefault;
 use Drupal\Core\Config\Entity\ConfigEntityUpdater;
 use Drupal\Core\Entity\Display\EntityViewDisplayInterface;
 use Drupal\views\ViewEntityInterface;
-use Drupal\blazy\BlazyDefault;
 
 /**
  * Clear cache to enable CSP module support.
@@ -31,7 +31,7 @@ function blazy_post_update_schema_formatter_grid_int_to_string(array &$sandbox =
         continue;
       }
 
-      foreach (BlazyDefault::gridBaseSettings() as $key => $value) {
+      foreach (BlazyDefault::gridSettings() as $key => $value) {
         if (isset($config[$key])) {
           $saved_value = $config[$key];
           $component['settings'][$key] = empty($saved_value) ? '' : (string) $saved_value;
@@ -88,7 +88,7 @@ function blazy_post_update_schema_view_grid_int_to_string(array &$sandbox = []) 
         continue;
       }
 
-      foreach (BlazyDefault::gridBaseSettings() as $key => $value) {
+      foreach (BlazyDefault::gridSettings() as $key => $value) {
         if (isset($config[$key])) {
           $saved_value = $config[$key];
           $display['display_options']['style']['options'][$key] = empty($saved_value) ? '' : (string) $saved_value;
@@ -150,5 +150,26 @@ function blazy_post_update_added_blazy_base_service() {
  * Clear cache to enable \Drupal\blazy\BlazyBase service.
  */
 function blazy_post_update_implemented_blazy_base_service() {
+  // Empty hook to clear caches.
+}
+
+/**
+ * Added a new Blazy Grid formatter for entityreferences.
+ */
+function blazy_post_update_added_formatter_blazy_entity() {
+  // Empty hook to clear caches.
+}
+
+/**
+ * Added a new Blazy Media service.
+ */
+function blazy_post_update_added_blazy_media_service() {
+  // Empty hook to clear caches.
+}
+
+/**
+ * Removed file.repository service from blazy.svg for D9.3, see #3393539.
+ */
+function blazy_post_update_remove_file_repository_service() {
   // Empty hook to clear caches.
 }

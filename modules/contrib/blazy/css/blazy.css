@@ -1,7 +1,9 @@
 /**
  * @file
+ * Basic blazy utility.
  */
 
+/* stylelint-disable selector-max-id, declaration-no-important */
 .blazy,
 .blazy *,
 .blazy *::before,
@@ -13,6 +15,7 @@
 .b-lazy,
 .b-responsive {
   display: block;
+  max-width: 100%;
   height: auto;
   min-height: 1px;
 }
@@ -24,13 +27,15 @@ html:not(.js) [data-b-blur] {
   display: none;
 }
 
+/* The .b-bg-static is to not interfere with lazyloaded .b-bg. */
 .b-bg,
+.b-bg-static,
 /* Tricking IE and other oldies to fix aspect ratio. */
 .media--ratio .is-b-ie {
-  background-size: cover;
-  background-position: center center;
-  background-repeat: no-repeat;
   display: block;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: cover;
 }
 
 /* Needed to display preloader with CSS BG image, otherwise hidden. */
@@ -44,20 +49,31 @@ html:not(.js) [data-b-blur] {
 .litebox,
 .blazy iframe,
 .media iframe {
-  border: 0;
   display: block;
   max-width: 100%;
+  border: 0;
+}
+
+/* To keep animated elements in place when not having .blazy container. */
+.media--blazy,
+/* Or BlazyFilter which has no .blazy container. */
+.media--fx {
+  position: relative;
 }
 
 .media--blazy iframe {
   position: relative;
-  width: 100%;
   z-index: 1;
+  width: 100%;
+}
+
+.blazy svg,
+.media-wrapper--inline {
+  max-width: 100%;
 }
 
 .media-wrapper--inline {
   margin: auto;
-  max-width: 100%;
 }
 
 /** Fix for conflict with Bootstrap CSS if not using aspect ratio. */
@@ -72,36 +88,39 @@ html:not(.js) [data-b-blur] {
 .media--fx {
   /* Hide extra blur edges. */
   overflow: hidden;
-  /* Dup for BlazyFilter which has no .blazy container. */
-  position: relative;
 }
 
 .media--fx img {
-  /* Prevents unwanted alt text from showing. */
-  color: transparent;
   display: block;
   /* Prevents blinking.
   opacity: 1; */
   /* Prevents collapsing thumbnail image if Aspect ratio is disabled. */
   width: 100%;
+  /* Prevents unwanted alt text from showing. */
+  color: transparent;
 }
 
 /* Aspect ratio element: IMG, IFRAME, DIV.
 The best things we can do to minimize layout/ reflows with dynamic DOM:
 absolute position and fixed dimensions. */
 .media--ratio .media__element,
+.media--ratio svg,
 .media--fx .b-blur {
-  bottom: 0;
-  height: 100%;
-  left: 0;
-  min-height: 1px;
   position: absolute;
-  right: 0;
-  top: 0;
-  width: 100%;
   z-index: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 1px;
   /** Temp fix, also to fix the VIDEO element to max width, not only IMG. */
   object-fit: cover;
+}
+
+.media--ratio audio.media__element {
+  z-index: 1;
 }
 
 .animated img,
@@ -116,6 +135,37 @@ absolute position and fixed dimensions. */
 
 /* Overrides .field--type-image img, causes confusing blur mismatched height. */
 .blazy .media--blazy img.b-blur,
-.blazy .media--blazy img.media__element {
+.blazy .media--blazy img.media__element,
+.blazy .grid figure {
   margin: 0;
+}
+
+/* Without aspect ratio will be collapsed, with ratio, cropped. Adjust. */
+.b-html,
+.media--instagram {
+  min-height: 140px;
+}
+
+.b-html iframe,
+.media--instagram iframe {
+  min-height: 420px;
+}
+
+/** Forgiven, better than being broken anyway. */
+.grid iframe,
+.blazy .twitter-tweet-rendered {
+  max-width: 100% !important; /* csslint allow: known-properties, important */
+}
+
+.grid iframe,
+.grid .media__html > span {
+  min-width: 100% !important; /* csslint allow: known-properties, important */
+}
+
+/** @todo re-check various use-cases. */
+.b-html.b-loaded > img {
+  position: absolute;
+  z-index: -1;
+  visibility: hidden;
+  opacity: 0;
 }
