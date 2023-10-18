@@ -170,7 +170,7 @@
 
         <{{ caption_tag }}{{ caption_attributes }}>
           {%- if IS_OVERLAY -%}
-            captions.overlay
+            {{ captions.overlay }}
             {%- if IS_INLINE -%}<div{{ caption_content_attributes }}>{%- endif -%}
           {%- endif -%}
 

@@ -177,7 +177,7 @@ trait TraitAdminOptions {
     // @todo remove the second after complete migrations.
     // @todo $options = $scopes->data('lightboxes')
     // ?: $this->blazyManager->getLightboxes();
-    $options = ['content', 'media', 'rendered', ''];
+    $options = ['content', 'link', 'media', 'rendered', ''];
 
     // @fixme this appears to be broken at some point of Drupal, seen
     // inconsistent between field formatters and Views field UI. Works at field
@@ -231,7 +231,8 @@ trait TraitAdminOptions {
   protected function getExcludedFieldOptions(): array {
     // @todo figure out a more efficient way than blacklisting.
     // Do not exclude field_media_image as needed for Main stage.
-    $fields = 'media media_document media_pinterest media_svg document_size media_file id media_in_library mime_type source media_twitter tweet_author tweet_id tweet_url media_video_embed_field instagram_shortcode instagram_url media_oembed_instagram media_soundcloud media_oembed_video media_audio_file media_video_file media_facebook media_flickr file_url external_thumbnail local_thumbnail local_thumbnail_uri media_unsplash';
+    // Do not exclude field_media as needed for Overlays.
+    $fields = 'media_document media_pinterest media_svg document_size media_file id media_in_library mime_type source media_twitter tweet_author tweet_id tweet_url media_video_embed_field instagram_shortcode instagram_url media_oembed_instagram media_soundcloud media_oembed_video media_audio_file media_video_file media_facebook media_flickr file_url external_thumbnail local_thumbnail local_thumbnail_uri media_unsplash';
     $fields = array_map('trim', explode(' ', $fields));
 
     $excludes = [];

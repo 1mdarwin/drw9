@@ -950,8 +950,8 @@
    *
    * @param {dBlazy|Array.<Element>|Element} els
    *   The HTML element(s), or dBlazy instance.
-   * @param {string} name
-   *   The class name, or space-delimited class names.
+   * @param {string|Array.<String>|Function} name
+   *   The class name(s), function, space-delimited or array of class names.
    * @param {string} op
    *   Whether to add or remove the class, or undefined to toggle.
    *
@@ -967,8 +967,8 @@
           name = name(_op(el, V_GET, 'class'), i);
         }
 
-        if (_list && isStr(name)) {
-          var names = toArray(name);
+        var names = toArray(name);
+        if (_list) {
           if (isUnd(op)) {
             names.map(function (value) {
               _list.toggle(value);

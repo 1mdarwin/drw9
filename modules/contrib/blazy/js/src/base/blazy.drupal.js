@@ -140,18 +140,18 @@
         });
       }
 
-      // Instagram, Pinterest, etc. with lazyloaded HTML content if configured.
-      if ($.isHtml(el)) {
-        // DOM ready fix as usual.
-        _win.setTimeout(function () {
+      // DOM ready fix as usual.
+      _win.setTimeout(function () {
+        // Instagram, Pinterest, etc. with lazyloaded HTML if configured.
+        if ($.isHtml(el)) {
           Drupal.attachBehaviors(el);
-        });
-      }
+        }
 
-      // Clear loading classes. Also supports future delayed Native loading.
-      if ($.isFun($.unloading)) {
-        $.unloading(el);
-      }
+        // Clear loading classes. Also supports future delayed Native loading.
+        if ($.isFun($.unloading)) {
+          $.unloading(el);
+        }
+      }, 300);
 
       // With `No JavaScript` on, facilitate both parties: native vs. script.
       // This is to use the same clearing approach for all parties.

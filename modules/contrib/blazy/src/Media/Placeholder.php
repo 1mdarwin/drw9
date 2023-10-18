@@ -224,9 +224,8 @@ class Placeholder {
         $blazies->set('blur.data', $blur);
       }
 
-      // Prevents double animations.
-      $blazies->set('use.loader', FALSE)
-        ->set('blur.uri', $tn_uri)
+      // Sets blur.uri.
+      $blazies->set('blur.uri', $tn_uri)
         ->set('blur.url', $tn_url);
     }
   }
@@ -251,6 +250,10 @@ class Placeholder {
   /**
    * Checks for blur settings, required Image style and dimensions setup.
    *
+   * Other usages: slider thumbnail/ navigation, thumbnailed pagination/ dots,
+   * placeholder, thumbnailed slider arrows, zoomed/ projected image like
+   * Splidebox/ PhotoSwipe, etc.
+   *
    * @see self::prepare()
    */
   private static function thumbnails(array &$settings): void {
@@ -268,16 +271,28 @@ class Placeholder {
       // $tn_url = BlazyImage::toUrl($settings, $style, $tn_uri);
       $tn_url = BlazyImage::url($tn_uri, $style);
     }
-    else {
-      // This one uses non-unique image, similar to the main stage image.
-      $style = $blazies->get('thumbnail.style');
+
+    // This one uses non-unique image, similar to the main stage image.
+    if ($style = $blazies->get('thumbnail.style')) {
       $disabled = $blazies->is('external') || $blazies->is('svg');
-      if (!$disabled && $style) {
-        $tn_uri = $style->buildUri($uri);
+      if (!$disabled) {
+        $_tn_uri = $style->buildUri($uri);
         // $tn_url = BlazyImage::toUrl($settings, $style, $uri);
-        $tn_url = BlazyImage::url($uri, $style);
+        $_tn_url = BlazyImage::url($uri, $style);
+
+        // The latter allows keeping original for [data-b-thumb], while having
+        // unique thumbnails for navigation. Not good for pagination/ dots.
+        if (!$tn_url || $blazies->use('thumbnail_original')) {
+          $tn_uri = $_tn_uri;
+          $tn_url = $_tn_url;
+        }
+
         $width  = $blazies->get('thumbnail.width');
         $height = $blazies->get('thumbnail.height');
+
+        // Keep overriden/ original thumbnail data intact for custom works.
+        $blazies->set('thumbnail.original.uri', $_tn_uri)
+          ->set('thumbnail.original.url', $_tn_url);
       }
     }
 

@@ -78,7 +78,7 @@
       }
       else {
         t.addClass('form--style-on form--style-' + value);
-        if (value === 'column' || value === 'grid' || value === 'flex' || value === 'nativegrid') {
+        if (['column', 'grid', 'flex', 'nativegrid'].includes(value)) {
           t.addClass('form--style-is-grid');
         }
       }
@@ -113,7 +113,7 @@
       t[value === '' ? REMOVECLASS : ADDCLASS]('form--media-switch-on');
       t[value === '' ? REMOVECLASS : ADDCLASS]('form--media-switch-' + value);
 
-      nobox = (value === '' || value === 'content' || value === 'media' || value === 'rendered');
+      nobox = ['', 'content', 'link', 'media', 'rendered'].includes(value);
       t[nobox ? REMOVECLASS : ADDCLASS]('form--media-switch-lightbox');
     }).change();
 

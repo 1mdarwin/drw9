@@ -54,6 +54,13 @@ html:not(.js) [data-b-blur] {
   border: 0;
 }
 
+/* To keep animated elements in place when not having .blazy container. */
+.media--blazy,
+/* Or BlazyFilter which has no .blazy container. */
+.media--fx {
+  position: relative;
+}
+
 .media--blazy iframe {
   position: relative;
   z-index: 1;
@@ -79,8 +86,6 @@ html:not(.js) [data-b-blur] {
  * Makes generic animation container, either blur, or other animate.css.
  */
 .media--fx {
-  /* Dup for BlazyFilter which has no .blazy container. */
-  position: relative;
   /* Hide extra blur edges. */
   overflow: hidden;
 }

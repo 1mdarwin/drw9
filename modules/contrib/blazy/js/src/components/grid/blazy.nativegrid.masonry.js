@@ -32,17 +32,24 @@
   function process(elm) {
     var heights = {};
     var items = $.findAll(elm, S_GRID);
+    var caption = $.find(elm, '.views-field') && $.find(elm, '.views-field p');
+
+    // @todo move it to PHP, unreliable here.
+    // It is here for Views rows not aware of captions, not formatters.
+    if (caption) {
+      $.addClass(elm, C_IS_CAPTIONED);
+    }
+
     var style = $.computeStyle(elm);
     var gap = style.getPropertyValue('row-gap');
     var rows = style.getPropertyValue('grid-auto-rows');
     var box = $.find(elm, S_GRID);
-    var caption = $.find(elm, '.views-field') && $.find(elm, '.views-field p');
     var parentWidth = $.rect(elm).width;
     var boxWidth = $.rect(box).width;
     var boxStyle = $.computeStyle(box);
     var margin = parseFloat(boxStyle.marginLeft) + parseFloat(boxStyle.marginRight);
     var itemWidth = boxWidth + margin;
-    var columnWidth = Math.round((1 / (itemWidth / parentWidth)));
+    var columnCount = Math.round((1 / (itemWidth / parentWidth)));
     var rowHeight = $.toInt(rows, 1);
 
     function processItem(el, id) {
@@ -67,7 +74,8 @@
         // Sets the grid row span based on content and gap height.
         grid.style.gridRowEnd = 'span ' + span;
 
-        curColumn = (id % columnWidth) || 0;
+        curColumn = (id % columnCount) || 0;
+
         style = $.computeStyle(grid);
 
         if ($.isUnd(heights[curColumn])) {
@@ -109,10 +117,6 @@
 
     // Process on resize.
     Drupal.blazy.checkResize(items, processItem, elm, processItem);
-
-    if (caption) {
-      $.addClass(elm, C_IS_CAPTIONED);
-    }
 
     $.addClass(elm, C_MOUNTED);
   }

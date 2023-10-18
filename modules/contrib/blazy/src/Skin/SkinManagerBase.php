@@ -3,6 +3,7 @@
 namespace Drupal\blazy\Skin;
 
 use Drupal\blazy\BlazyInterface;
+use Drupal\blazy\Plugin\SkinPluginInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
@@ -12,6 +13,20 @@ use Drupal\Core\Plugin\DefaultPluginManager;
  * Provides skin manager base service.
  */
 abstract class SkinManagerBase extends DefaultPluginManager implements SkinManagerBaseInterface {
+
+  /**
+   * The app root.
+   *
+   * @var string
+   */
+  protected $root;
+
+  /**
+   * The config factory.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $config;
 
   /**
    * The blazy service.
@@ -91,6 +106,9 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
     parent::__construct(static::$path, $namespaces, $module_handler, static::$interface, static::$annotation);
 
     $this->manager = $manager;
+    $this->root = $manager->root();
+    $this->config = $manager->configFactory();
+
     $this->alterInfo(static::$key . '_info');
     $this->setCacheBackend($cache_backend, static::$key . '_plugins');
   }
@@ -106,7 +124,7 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
   /**
    * {@inheritdoc}
    */
-  public function load($plugin_id) {
+  public function load($plugin_id): SkinPluginInterface {
     return $this->createInstance($plugin_id);
   }
 
@@ -129,12 +147,15 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
       $cid   = static::$key . 's_data';
       $skins = $this->getAvailableSkins();
 
+      $info['key'] = 'skins';
+
       $this->skinDefinition = $this->manager->getCachedData(
         $cid,
-        $skins
+        $skins,
+        $info
       );
     }
-    return $this->skinDefinition;
+    return $this->skinDefinition ?: [];
   }
 
   /**
@@ -142,29 +163,7 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
    */
   public function libraryInfoBuild(): array {
     if (!isset($this->libraryInfoBuild)) {
-      $libraries = [];
-      if ($skins = $this->getSkins()) {
-        foreach ($skins as $key => $skin) {
-          $provider = $skin['provider'] ?? static::$namespace;
-          $id = $provider . '.' . $key;
-
-          $libraries[$id]['dependencies'] = [];
-          foreach (['css', 'js', 'dependencies'] as $property) {
-            if (isset($skin[$property]) && is_array($skin[$property])) {
-              $libraries[$id][$property] = $skin[$property];
-            }
-          }
-
-          $libraries[$id]['version'] = 'VERSION';
-
-          if ($dependencies = $this->getDependencies()) {
-            $libraries[$id]['dependencies'] = array_merge(
-              $libraries[$id]['dependencies'],
-              $dependencies
-            );
-          }
-        }
-      }
+      $libraries = $this->getSkinLibraries();
 
       if ($extras = $this->getAdditionalLibraries()) {
         $libraries = $this->manager->merge($extras, $libraries);
@@ -195,6 +194,36 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
     }
 
     return $skins;
+  }
+
+  /**
+   * Returns skin libraries.
+   */
+  protected function getSkinLibraries(): array {
+    $libraries = [];
+    if ($skins = $this->getSkins()) {
+      foreach ($skins as $key => $skin) {
+        $provider = $skin['provider'] ?? static::$namespace;
+        $id = $provider . '.' . $key;
+
+        $libraries[$id]['dependencies'] = [];
+        foreach (['css', 'js', 'dependencies'] as $property) {
+          if (isset($skin[$property]) && is_array($skin[$property])) {
+            $libraries[$id][$property] = $skin[$property];
+          }
+        }
+
+        $libraries[$id]['version'] = 'VERSION';
+
+        if ($dependencies = $this->getDependencies()) {
+          $libraries[$id]['dependencies'] = array_merge(
+            $libraries[$id]['dependencies'],
+            $dependencies
+          );
+        }
+      }
+    }
+    return $libraries;
   }
 
   /**

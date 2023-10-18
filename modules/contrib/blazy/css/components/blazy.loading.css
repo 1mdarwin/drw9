@@ -33,7 +33,7 @@
   }
 }
 
-.is-b-loading:not(.is-b-loaded) {
+.is-b-loading {
   -webkit-backface-visibility: hidden;
   backface-visibility: hidden;
   position: relative;
@@ -42,20 +42,11 @@
 
 /* Hide for non-js users. */
 .is-b-loading::before {
-  z-index: -1;
-  display: none;
-}
-
-/* Prevents costly double animations when Blur is enabled.
-CSSLint vs. Stylelint complain conflicting problems at different CSS specs.
-@see https://caniuse.com/css-not-sel-list
-@todo enable after CSSLint removed:
-.is-b-loading:not(.is-b-loaded, [data-animation])::before */
-.is-b-loading:not(.is-b-loaded)::before,
-.is-b-loading:not([data-animation])::before {
   position: absolute;
+  z-index: -1;
   top: 50%;
   left: 50%;
+  display: none;
   width: 30px;
   max-width: 30px;
   height: 30px;
@@ -66,7 +57,8 @@ CSSLint vs. Stylelint complain conflicting problems at different CSS specs.
   font-size: 0;
 }
 
-.is-b-loading.is-b-visible:not(.is-b-loaded)::before {
+/* Only animate when being visible. */
+.is-b-loading.is-b-visible::before {
   z-index: 22;
   display: block;
   -webkit-animation: rotateplane 1.2s infinite ease-in-out;

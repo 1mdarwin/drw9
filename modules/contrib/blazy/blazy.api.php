@@ -527,7 +527,7 @@ function hook_blazy_item_alter(array &$settings, array &$attributes, array &$ite
   if ($blazies->get('colorbox') && $blazies->get('media.embed_url')) {
     $blazies->set('switch', 'media')
       // The is.player is deprecated in 2.17 for use.player.
-      ->set('is.player', TRUE)
+      // ->set('is.player', TRUE)
       ->set('use.player', TRUE)
       ->set('is.lightbox', FALSE);
   }
@@ -540,11 +540,15 @@ function hook_blazy_item_alter(array &$settings, array &$attributes, array &$ite
   // $blazies->is('captioned') or $blazies->is('multimedia') in case
   // captioned or not, or breaking multimedia or media player, etc.
   // If any display issues with grid, media player, etc., refine or remove this.
+  // blazies.is[image|video_file|twitter, etc] is related to Media sources.
   if ($blazies->get('namespace') == 'blazy' && $blazies->is('image')) {
     $blazies->set('is.figcaption', TRUE)
       ->set('item.wrapper_tag', 'figure')
       ->set('item.wrapper_attributes.class', ['blazy__content']);
   }
+
+  // Changed default caption title tag from H2 to H3.
+  $blazies->set('item.title_tag', 'h3');
 
   // Since > 2.17-beta1, below is no longer needed, already merged.
   // Modifies IMG attributes, relevant for BlazyFilter here, see

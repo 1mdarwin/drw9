@@ -60,7 +60,8 @@ class Thumbnail {
    */
   private static function image(array $settings, $item = NULL, $class = NULL): array {
     $blazies = $settings['blazies'];
-    $uri     = $blazies->get('thumbnail.uri') ?: $blazies->get('image.uri');
+    $tn_uri  = $blazies->get('thumbnail.uri');
+    $uri     = $tn_uri ?: $blazies->get('image.uri');
 
     if (!$uri) {
       // Only Views output, if not having image, nor blazy formatters.
@@ -77,7 +78,11 @@ class Thumbnail {
       ?: $settings['thumbnail_style'] ?? $blazies->get('thumbnail.fallback');
 
     // @todo remove if against previous convention with core thumbnail fallback.
-    if (!$style) {
+    // We are here from Views style which may set just thumbnail.uri without
+    // thumbnail_style, unlike field formatters which set thumbnail_style,
+    // hardly thumbnail URI. Shortly, Views style offers Thumbnail image,
+    // field formatters Thumbnail style.
+    if (!$style && !$tn_uri) {
       return [];
     }
 
@@ -88,6 +93,10 @@ class Thumbnail {
     $valid = $blazies->get('image.valid') ?: BlazyFile::isValidUri($uri);
     if ($valid && !$blazies->is('svg')) {
       $unstyled = FALSE;
+    }
+
+    if (!$style) {
+      $unstyled = TRUE;
     }
 
     // Alt and SRC will be auto-escaped when entering Twig, this is just to make

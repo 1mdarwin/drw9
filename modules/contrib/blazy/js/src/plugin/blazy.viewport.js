@@ -106,7 +106,7 @@
     },
 
     isResized: function (scope, e) {
-      if (!('contentRect' in e)) {
+      if (!e || !('contentRect' in e)) {
         return false;
       }
       return (!!e.contentRect || !!scope.resizeTrigger || false);
@@ -115,8 +115,12 @@
     isHidden: isHidden,
 
     isVisible: function (e, vp) {
+      if (!e) {
+        return false;
+      }
+
       var el = real(e);
-      return $.isIo ? (e.isIntersecting || e.intersectionRatio > 0) : isVisible(el, vp);
+      return $.isIo && 'isIntersecting' in e ? (e.isIntersecting || e.intersectionRatio > 0) : isVisible(el, vp);
     },
 
     onresizing: function (scope, winData) {

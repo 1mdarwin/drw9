@@ -11,8 +11,8 @@
   'use strict';
 
   var ID = 'colorbox';
-  var ID_ONCE = 'b-' + NICK;
   var NICK = 'cbox';
+  var ID_ONCE = 'b-' + NICK;
   var B_ROOT = 'b-' + ID;
   var S_ROOT = '#' + ID;
   var $BODY = $('body');

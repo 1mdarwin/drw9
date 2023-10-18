@@ -78,7 +78,7 @@ class Attributes {
       }
     }
 
-    if (!empty($settings['caption'])) {
+    if (!empty($settings['caption']) || $blazies->get('view.multifield')) {
       $classes[] = 'is-b-captioned';
     }
 
@@ -569,6 +569,12 @@ class Attributes {
     $attributes = &$variables['item_attributes'];
     $blazies    = $settings['blazies'];
 
+    // Sticks to blazy.api.php design to avoid issues with image styles, etc.
+    if ($attrs = $blazies->get('image.attributes', [])) {
+      unset($attrs['src']);
+      $attributes = Arrays::merge($attributes, $attrs);
+    }
+
     // Provides image alt and title, and also accounts for multimedia.
     $attributes['alt'] = $blazies->get('image.alt', '');
 
@@ -590,11 +596,6 @@ class Attributes {
     if (!isset($attributes['width']) && $width = $blazies->get('image.width')) {
       $image['#height'] = $blazies->get('image.height');
       $image['#width']  = $width;
-    }
-
-    if ($attrs = $blazies->get('image.attributes', [])) {
-      unset($attrs['src']);
-      $attributes = Arrays::merge($attributes, $attrs);
     }
 
     // This is the root cause for the failing lazy load: data-entity-type!

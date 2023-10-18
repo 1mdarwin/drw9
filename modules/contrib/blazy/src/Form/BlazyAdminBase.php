@@ -277,15 +277,48 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     // as \Drupal\blazy\Plugin\views\field\BlazyViewsFieldPluginBase.
     $this->checkScopes($scopes, $definition);
 
-    $blazies    = $definition['blazies'];
-    $data       = $scopes->get('data');
-    $form       = [];
-    $no_image   = $scopes->is('no_image_style');
-    $multimedia = $scopes->is('multimedia');
+    $blazies      = $definition['blazies'];
+    $form         = [];
+    $no_image     = $scopes->is('no_image_style');
+    $disabled     = $scopes->is('no_view_mode');
+    $target_type  = $scopes->get('target_type') ?: $blazies->get('field.target_type');
+    $view_mode    = $scopes->get('view_mode') ?: $blazies->get('field.view_mode');
+    $is_fieldable = $target_type && $view_mode;
 
-    if ($no_image) {
-      return [];
+    $scopes->set('is.fieldable', $is_fieldable);
+
+    if ($is_fieldable && !$disabled) {
+      $form['view_mode'] = [
+        '#type'     => 'select',
+        '#options'  => $this->getViewModeOptions($target_type),
+        '#title'    => $this->t('View mode'),
+        '#weight'   => -101,
+        '#enforced' => TRUE,
+      ];
     }
+
+    if ($scopes->form('image_style') || !$no_image) {
+      $this->baseImageForm($form, $definition, $scopes);
+    }
+
+    // Add descriptions, if applicable.
+    foreach ($this->baseDescriptions($scopes) as $key => $description) {
+      if (isset($form[$key])) {
+        $form[$key]['#description'] = $description;
+      }
+    }
+
+    $this->blazyManager->moduleHandler()->alter('blazy_base_form_element', $form, $definition, $scopes);
+
+    return $form;
+  }
+
+  /**
+   * Provides basic image options.
+   */
+  protected function baseImageForm(array &$form, array $definition, $scopes): void {
+    $data = $scopes->get('data');
+    $multimedia = $scopes->is('multimedia');
 
     if (!$scopes->is('no_preload')) {
       $form['preload'] = [
@@ -331,6 +364,10 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
         ],
       ];
 
+      if (isset($data['links'])) {
+        $form['media_switch']['#options']['link'] = $this->t('Image linked by Link field');
+      }
+
       if ($scopes->is('lightbox')) {
         $this->lightboxForm($form, $definition, $scopes);
       }
@@ -349,20 +386,6 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
         '#title'   => $this->t('Aspect ratio'),
         '#options' => array_combine($ratio, $ratio),
         '#weight'  => -101,
-      ];
-    }
-
-    $disabled = $scopes->is('no_view_mode');
-    $target_type = $blazies->get('field.target_type');
-    $is_fieldable = $target_type && $blazies->get('field.view_mode');
-
-    if ($is_fieldable && !$disabled) {
-      $form['view_mode'] = [
-        '#type'     => 'select',
-        '#options'  => $this->getViewModeOptions($target_type),
-        '#title'    => $this->t('View mode'),
-        '#weight'   => -101,
-        '#enforced' => TRUE,
       ];
     }
 
@@ -386,16 +409,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       ];
     }
 
-    // Add descriptions, if applicable.
-    foreach ($this->baseDescriptions($scopes) as $key => $description) {
-      if (isset($form[$key])) {
-        $form[$key]['#description'] = $description;
-      }
-    }
-
-    $this->blazyManager->moduleHandler()->alter('blazy_base_form_element', $form, $definition, $scopes);
-
-    return $form;
+    $this->linkForm($form, $definition, $scopes);
   }
 
   /**
@@ -412,6 +426,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       'box_media_style',
       'box_caption',
       'box_caption_custom',
+      'link',
     ];
 
     foreach ($options as $key) {
@@ -594,6 +609,11 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     }
 
     $this->blazyManager->moduleHandler()->alter('blazy_complete_form_element', $form, $definition, $scopes);
+
+    if (!$scopes->is('_views')) {
+      $prefix = $form['opening']['#prefix'] ?? '';
+      $form['opening']['#prefix'] = $prefix . '<br /><small>' . $this->t("<strong>Tips!</strong> Reload the page, or save first, only when changing formatters. Some form items may not be loaded after AJAX.") . '</small>';
+    }
   }
 
   /**
@@ -676,6 +696,24 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
           }
         }
       }
+    }
+  }
+
+  /**
+   * Provides link options serving plain image, fieldable and views ui.
+   */
+  protected function linkForm(array &$form, array $definition, $scopes): void {
+    $data = $scopes->get('data');
+    $description = $this->baseDescriptions($scopes);
+
+    if (isset($data['links'])) {
+      $form['link'] = [
+        '#type'        => 'select',
+        '#title'       => $this->t('Link'),
+        '#options'     => $this->toOptions($data['links'] ?: []),
+        '#weight'      => 9,
+        '#description' => $description['link'] ?? '',
+      ];
     }
   }
 
