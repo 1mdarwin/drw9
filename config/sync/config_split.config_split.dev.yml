@@ -37,6 +37,7 @@ blacklist:
   - block.block.bootstrap_barrio_views_block__porcategoria_block_1
   - block.block.bootstrap_barrio_views_block__portafolio_block_1
   - block.block.bootstrap_barrio_views_block__servicios_block_1
+  - block.block.bootstrap_barrio_views_block__slideshow_slick_block_1
   - block.block.bootstrap_barrio_widget
   - block.block.contactblockresponsive
   - block.block.drw2022_barrio_account_menu
@@ -62,8 +63,10 @@ blacklist:
   - block.block.drw2022_barrio_views_block__porcategoria_block_1
   - block.block.drw2022_barrio_views_block__portafolio_block_1
   - block.block.drw2022_barrio_views_block__servicios_block_1
+  - block.block.drw2022_barrio_views_block__slideshow_slick_block_1
   - block.block.drw2022_barrio_widget
   - block.block.mainnavigation
+  - block.block.quienessomos
   - block.block.responsivemenumobileicon
   - block.block.views_block__faqs_block_1_2
   - block.block.views_block__listablogs_block_1_2
@@ -73,10 +76,11 @@ blacklist:
   - responsive_menu.settings
   - system.performance
   - system.theme
-  - block.block.drwmenu
   - block.block.bootstrap_barrio_views_block__front_flexslider_es__block_1
   - block.block.drw2022_barrio_views_block__front_flexslider_es__block_1
 graylist:
-  - block.block.quienessomos
+  - block.block.bootstrap_barrio_views_block__slideshow_slick_block_1
+  - block.block.drw2022_barrio_views_block__slideshow_slick_block_1
+  - responsive_menu.settings
 graylist_dependents: true
 graylist_skip_equal: true
