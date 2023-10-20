@@ -1,6 +1,6 @@
 uuid: 6193c905-6872-4d4a-bf43-6a9a38f64f30
 langcode: en
-status: false
+status: true
 dependencies: {  }
 id: dev
 label: dev
@@ -10,6 +10,8 @@ folder: config/dev
 module: {  }
 theme: {  }
 blacklist:
+  - core.extension
+  - stage_file_proxy.settings
   - block.block.bootstrap_barrio_account_menu
   - block.block.bootstrap_barrio_acercadelblog
   - block.block.bootstrap_barrio_alternadordeidiomacontent
