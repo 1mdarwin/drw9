@@ -15,7 +15,6 @@ dependencies:
     - responsive_image.styles.portafolio
   module:
     - comment
-    - ds
     - file
     - link
     - responsive_image
@@ -48,9 +47,7 @@ content:
     settings:
       responsive_image_style: portafolio
       image_link: ''
-    third_party_settings:
-      ds:
-        ds_limit: ''
+    third_party_settings: {  }
     weight: 2
     region: content
   field_url_porta:

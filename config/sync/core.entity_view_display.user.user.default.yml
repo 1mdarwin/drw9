@@ -9,46 +9,9 @@ dependencies:
     - field.field.user.user.user_picture
     - image.style.media_library
   module:
-    - ds
     - image
     - text
     - user
-third_party_settings:
-  ds:
-    layout:
-      id: bs_2col
-      library: null
-      disable_css: false
-      entity_classes: all_classes
-      settings:
-        label: ''
-        layout:
-          wrapper: div
-          classes:
-            row: row
-          add_layout_class: 1
-          attributes: ''
-        regions:
-          left:
-            wrapper: div
-            classes:
-              col-sm-6: col-sm-6
-            add_region_classes: 1
-            attributes: ''
-          right:
-            wrapper: div
-            classes:
-              col-sm-6: col-sm-6
-            add_region_classes: 1
-            attributes: ''
-    regions:
-      left:
-        - user_picture
-        - field_rol
-      right:
-        - field_name_full
-        - field_bio
-        - member_for
 _core:
   default_config_hash: V51QPCKkgNREKtSmB9Iu2wmAMEpktVpnzklWaZV8UYo
 id: user.user.default
