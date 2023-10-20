@@ -5,6 +5,6 @@ dependencies: {  }
 _core:
   default_config_hash: Q2Ra3jfoIVk0f3SjxJX61byRQFVBAbpzYDQOiY-kno8
 id: main
-label: 'Main menu'
+label: 'Navegación principal'
 description: 'Los enlaces primarios se utilizan con frecuencia en el tema para mostrar las principales secciones de un sitio web. Una típica representación de los principales enlaces son las pestañas en la parte superior.'
 locked: true

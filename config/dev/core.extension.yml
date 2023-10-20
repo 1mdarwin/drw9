@@ -60,6 +60,7 @@ module:
   path: 0
   path_alias: 0
   responsive_image: 0
+  responsive_menu: 0
   search: 0
   shortcut: 0
   simple_sitemap: 0
@@ -69,6 +70,7 @@ module:
   slick_ui: 0
   slick_views: 0
   statistics: 0
+  superfish: 0
   system: 0
   taxonomy: 0
   text: 0
