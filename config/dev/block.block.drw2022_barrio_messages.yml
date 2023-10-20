@@ -1,0 +1,22 @@
+uuid: 093638a8-c60e-48f4-a2ea-5416e1aa0af2
+langcode: es
+status: true
+dependencies:
+  module:
+    - system
+  theme:
+    - drw2022_barrio
+_core:
+  default_config_hash: KHQIJ7Vfl25lTjzIc7qIvnuistt-Mw2O0kG4jCofmkI
+id: drw2022_barrio_messages
+theme: drw2022_barrio
+region: content
+weight: -10
+provider: null
+plugin: system_messages_block
+settings:
+  id: system_messages_block
+  label: 'Mensajes de estado'
+  label_display: '0'
+  provider: system
+visibility: {  }

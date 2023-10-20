@@ -1,4 +1,4 @@
-uuid: ebd126b6-3dd4-413a-ac7c-47a2a7ca2a45
+uuid: 479fcfab-6ce7-44ec-8e8e-b2ebcf677641
 langcode: es
 status: true
 dependencies:
@@ -7,11 +7,11 @@ dependencies:
   module:
     - system
   theme:
-    - drw2022_barrio
+    - bootstrap_barrio
 _core:
   default_config_hash: ChCx7DYNUrPTt5uiRdQAPDKJQMc-_SyAQTrZh8H0o-c
-id: drw2022_barrio_main_menu
-theme: drw2022_barrio
+id: bootstrap_barrio_main_menu
+theme: bootstrap_barrio
 region: top_header
 weight: -11
 provider: null

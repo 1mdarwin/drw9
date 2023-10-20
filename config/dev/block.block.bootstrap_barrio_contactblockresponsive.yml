@@ -1,4 +1,4 @@
-uuid: 6a01287c-f136-4755-b45d-90dd2467147b
+uuid: 077e6c09-9a46-4075-9475-c6a0ad031395
 langcode: es
 status: true
 dependencies:
@@ -8,12 +8,12 @@ dependencies:
     - block_class
     - block_content
   theme:
-    - drw2022_barrio
+    - bootstrap_barrio
 third_party_settings:
   block_class:
     classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
-id: drw2022_barrio_contactblockresponsive
-theme: drw2022_barrio
+id: bootstrap_barrio_contactblockresponsive
+theme: bootstrap_barrio
 region: top_header
 weight: -8
 provider: null

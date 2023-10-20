@@ -1,4 +1,4 @@
-uuid: dfe0252d-b58e-455c-a74c-d8a33fe9446f
+uuid: e243b331-fc4c-4144-8ad4-4915a2258fe3
 langcode: es
 status: true
 dependencies:
@@ -8,12 +8,12 @@ dependencies:
     - block_class
     - views
   theme:
-    - drw2022_barrio
+    - bootstrap_barrio
 third_party_settings:
   block_class:
     classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3 '
-id: drw2022_barrio_views_block__faqs_block_1
-theme: drw2022_barrio
+id: bootstrap_barrio_views_block__faqs_block_1
+theme: bootstrap_barrio
 region: top_header
 weight: -9
 provider: null
