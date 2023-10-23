@@ -2,7 +2,7 @@ name: DRW2022 Barrio
 type: theme
 description: 'Basic structure for a Bootstrap Barrio SubTheme.'
 core: 8.x
-core_version_requirement: ^8 || ^9 || ^10
+core_version_requirement: ">=8"
 base theme: bootstrap_barrio
 
 libraries:
