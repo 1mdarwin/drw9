@@ -67,7 +67,6 @@ blacklist:
   - block.block.drw2022_barrio_widget
   - block.block.mainnavigation
   - block.block.quienessomos
-  - block.block.responsivemenumobileicon
   - block.block.views_block__faqs_block_1_2
   - block.block.views_block__listablogs_block_1_2
   - bootstrap_barrio.settings
@@ -78,9 +77,6 @@ blacklist:
   - system.theme
   - block.block.bootstrap_barrio_views_block__front_flexslider_es__block_1
   - block.block.drw2022_barrio_views_block__front_flexslider_es__block_1
-graylist:
-  - block.block.bootstrap_barrio_views_block__slideshow_slick_block_1
-  - block.block.drw2022_barrio_views_block__slideshow_slick_block_1
-  - responsive_menu.settings
+graylist: {  }
 graylist_dependents: true
 graylist_skip_equal: true

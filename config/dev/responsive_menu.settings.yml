@@ -1,12 +1,12 @@
 _core:
   default_config_hash: 7oNO5Ci1XbGo6pXiGAo8fY7GXlxy41RhL7lGyt2OXYw
-horizontal_menu: main
+horizontal_menu: secondary-menu
 horizontal_depth: 9
 off_canvas_menus: main
 horizontal_wrapping_element: nav
 horizontal_breakpoint: wide
 horizontal_media_query: '(min-width: 960px)'
-include_css: true
+include_css: false
 off_canvas_position: left
 off_canvas_theme: theme-dark
 pagedim: pagedim
