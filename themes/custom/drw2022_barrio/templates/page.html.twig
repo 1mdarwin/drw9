@@ -97,10 +97,12 @@
             {% if container_navbar %}
             <div class="container">
             {% endif %}
+              <div class="col-xs-9 col-sm-3">
               {{ page.header }}
+              </div>
               {% if page.primary_menu or page.header_form %}
-                <button class="navbar-toggler collapsed" type="button" data-bs-toggle="{{ navbar_collapse_btn_data }}" data-bs-target="#CollapsingNavbar" aria-controls="CollapsingNavbar" aria-expanded="false" aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-                <div class="{{ navbar_collapse_class }}" id="CollapsingNavbar">
+                <div class="col-xs-3 col-sm-9">
+                <div class="{{ navbar_collapse_class }} show" id="CollapsingNavbar">
                   {% if navbar_offcanvas %}
                     <div class="offcanvas-header">
                       <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -116,6 +118,7 @@
                   {% if navbar_offcanvas %}
                     </div>
                   {% endif %}
+                </div>
                 </div>
               {% endif %}
               {% if sidebar_collapse %}

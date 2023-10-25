@@ -45,7 +45,7 @@ body{
  a.navbar-brand{
    text-shadow:1px 1px 1px rgba(0,0,0,1);
    font-weight:700;
-   font-size:1.7em;
+   font-size:1.2em;
  }
  a.navbar-brand:hover{
   color:#fff;
@@ -1028,6 +1028,9 @@ footer p{
     width: 45%;
     font-size: 2.9em;
     border-bottom: thin solid #eee;
+  }
+  a.navbar-brand{
+    font-size:1.7em;
   }
   #bodyslide{
     left: 15px;
