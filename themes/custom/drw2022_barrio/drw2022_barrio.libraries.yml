@@ -3,6 +3,7 @@ global-styling:
   js:
     js/global.js: {}
     js/drw2022.js: {}
+    js/sitewide.js: {}
   css:
     component:
       css/style.css: {}
