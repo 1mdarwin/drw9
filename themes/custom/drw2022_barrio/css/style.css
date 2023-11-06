@@ -3,6 +3,7 @@
 * Author: Darwin Betancourt
 * Description: Drupal 8 with drwsolutions migrated from d7
 * Update: 23 oct 2023 16H00
+* Ctrl +Shift + A (order alphabetic)
 */
 .colors{
   color: #404040;
@@ -10,18 +11,22 @@
   text-shadow: #AEAEAE;
   text-decoration-color: #848484;
 }
-header, .navbar-default{
-  background:#0B2A3F;
+header,
+.navbar-default{
+  /*background:#0B2A3F;*/
   border-color:#0B2A3F;
 }
-.page-header{
+h1{
+  font-size: 2.5em;
+}
+.title{
+  border-bottom: 5px solid #ff5722;
+  margin: 40px 0 20px;
   padding-bottom: 9px;
-  margin:40px 0 20px;
-  border-bottom:5px solid #ff5722;
 }
 body{
-  font-family:'Lato', arial, sans-serif;
   background:#0B2A3F;
+  font-family:'Lato', arial, sans-serif;
   font-size:1.5em;
  }
  .navbar-brand img{
@@ -816,8 +821,10 @@ transition-delay: 0s;
 * ---------------------------------------------------
 */
 .site-footer .block{
+  border:0;
   width: 100%;
  }
+
  .site-footer .content{
   font-size:1.1em;
  }
@@ -847,7 +854,7 @@ footer{
 .region-footer{
   position: relative;
 }
-footer h2{
+.site-footer__top h2{
   color: #dbdbdb;
   border-bottom: 3px solid #2D4059;
   text-transform: uppercase;
@@ -890,6 +897,8 @@ footer p{
 }
 .view-id-listablogs .media{
   border-bottom: 1px dashed #2D4059;
+  position: relative;
+  top: 7px;
 }
 /* MENU PIE */
 .menupie ul{
@@ -931,6 +940,8 @@ footer p{
     background: url('../images/icon-address.png') no-repeat scroll left 0.3em transparent;
     padding-left: 25px;
     color: #fff;
+    position: relative;
+    top: 7px;
 }
 .phone{
     background: url('../images/icon-phone.png') no-repeat scroll 0 0 transparent;
