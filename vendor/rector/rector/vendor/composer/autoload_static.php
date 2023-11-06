@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
+class ComposerStaticInitb46d2d7d8c7c3826a0e819fece997ce5
 {
     public static $files = array (
         'ad155f8f1cf0d418fe49e248db8c661b' => __DIR__ . '/..' . '/react/promise/src/functions_include.php',
@@ -255,6 +255,8 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
     public static $classMap = array (
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Normalizer' => __DIR__ . '/..' . '/symfony/polyfill-intl-normalizer/Resources/stubs/Normalizer.php',
+        'PHPStan\\PhpDocParser\\Ast\\AbstractNodeVisitor' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/AbstractNodeVisitor.php',
+        'PHPStan\\PhpDocParser\\Ast\\Attribute' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Attribute.php',
         'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\ConstExprArrayItemNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/ConstExprArrayItemNode.php',
         'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\ConstExprArrayNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/ConstExprArrayNode.php',
         'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\ConstExprFalseNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/ConstExprFalseNode.php',
@@ -265,8 +267,12 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\ConstExprStringNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/ConstExprStringNode.php',
         'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\ConstExprTrueNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/ConstExprTrueNode.php',
         'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\ConstFetchNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/ConstFetchNode.php',
+        'PHPStan\\PhpDocParser\\Ast\\ConstExpr\\QuoteAwareConstExprStringNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/ConstExpr/QuoteAwareConstExprStringNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Node' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Node.php',
         'PHPStan\\PhpDocParser\\Ast\\NodeAttributes' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/NodeAttributes.php',
+        'PHPStan\\PhpDocParser\\Ast\\NodeTraverser' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/NodeTraverser.php',
+        'PHPStan\\PhpDocParser\\Ast\\NodeVisitor' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/NodeVisitor.php',
+        'PHPStan\\PhpDocParser\\Ast\\NodeVisitor\\CloningVisitor' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/NodeVisitor/CloningVisitor.php',
         'PHPStan\\PhpDocParser\\Ast\\PhpDoc\\AssertTagMethodValueNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/PhpDoc/AssertTagMethodValueNode.php',
         'PHPStan\\PhpDocParser\\Ast\\PhpDoc\\AssertTagPropertyValueNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/PhpDoc/AssertTagPropertyValueNode.php',
         'PHPStan\\PhpDocParser\\Ast\\PhpDoc\\AssertTagValueNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/PhpDoc/AssertTagValueNode.php',
@@ -308,6 +314,8 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'PHPStan\\PhpDocParser\\Ast\\Type\\IntersectionTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/IntersectionTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\InvalidTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/InvalidTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\NullableTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/NullableTypeNode.php',
+        'PHPStan\\PhpDocParser\\Ast\\Type\\ObjectShapeItemNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ObjectShapeItemNode.php',
+        'PHPStan\\PhpDocParser\\Ast\\Type\\ObjectShapeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ObjectShapeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\OffsetAccessTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/OffsetAccessTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\ThisTypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/ThisTypeNode.php',
         'PHPStan\\PhpDocParser\\Ast\\Type\\TypeNode' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Ast/Type/TypeNode.php',
@@ -316,6 +324,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'PHPStan\\PhpDocParser\\Parser\\ConstExprParser' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Parser/ConstExprParser.php',
         'PHPStan\\PhpDocParser\\Parser\\ParserException' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Parser/ParserException.php',
         'PHPStan\\PhpDocParser\\Parser\\PhpDocParser' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Parser/PhpDocParser.php',
+        'PHPStan\\PhpDocParser\\Parser\\StringUnescaper' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Parser/StringUnescaper.php',
         'PHPStan\\PhpDocParser\\Parser\\TokenIterator' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Parser/TokenIterator.php',
         'PHPStan\\PhpDocParser\\Parser\\TypeParser' => __DIR__ . '/..' . '/phpstan/phpdoc-parser/src/Parser/TypeParser.php',
         'PHPStan\\PhpDoc\\PHPUnit\\MockObjectTypeNodeResolverExtension' => __DIR__ . '/..' . '/phpstan/phpstan-phpunit/src/PhpDoc/PHPUnit/MockObjectTypeNodeResolverExtension.php',
@@ -2425,6 +2434,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\Php54\\Rector\\Array_\\LongArrayToShortArrayRector' => __DIR__ . '/../..' . '/rules/Php54/Rector/Array_/LongArrayToShortArrayRector.php',
         'Rector\\Php54\\Rector\\Break_\\RemoveZeroBreakContinueRector' => __DIR__ . '/../..' . '/rules/Php54/Rector/Break_/RemoveZeroBreakContinueRector.php',
         'Rector\\Php54\\Rector\\FuncCall\\RemoveReferenceFromCallRector' => __DIR__ . '/../..' . '/rules/Php54/Rector/FuncCall/RemoveReferenceFromCallRector.php',
+        'Rector\\Php55\\Rector\\ClassConstFetch\\StaticToSelfOnFinalClassRector' => __DIR__ . '/../..' . '/rules/Php55/Rector/ClassConstFetch/StaticToSelfOnFinalClassRector.php',
         'Rector\\Php55\\Rector\\Class_\\ClassConstantToSelfClassRector' => __DIR__ . '/../..' . '/rules/Php55/Rector/Class_/ClassConstantToSelfClassRector.php',
         'Rector\\Php55\\Rector\\FuncCall\\GetCalledClassToSelfClassRector' => __DIR__ . '/../..' . '/rules/Php55/Rector/FuncCall/GetCalledClassToSelfClassRector.php',
         'Rector\\Php55\\Rector\\FuncCall\\GetCalledClassToStaticClassRector' => __DIR__ . '/../..' . '/rules/Php55/Rector/FuncCall/GetCalledClassToStaticClassRector.php',
@@ -2680,6 +2690,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\Removing\\Rector\\Class_\\RemoveParentRector' => __DIR__ . '/../..' . '/rules/Removing/Rector/Class_/RemoveParentRector.php',
         'Rector\\Removing\\Rector\\Class_\\RemoveTraitUseRector' => __DIR__ . '/../..' . '/rules/Removing/Rector/Class_/RemoveTraitUseRector.php',
         'Rector\\Removing\\Rector\\FuncCall\\RemoveFuncCallArgRector' => __DIR__ . '/../..' . '/rules/Removing/Rector/FuncCall/RemoveFuncCallArgRector.php',
+        'Rector\\Removing\\Rector\\FuncCall\\RemoveFuncCallRector' => __DIR__ . '/../..' . '/rules/Removing/Rector/FuncCall/RemoveFuncCallRector.php',
         'Rector\\Removing\\ValueObject\\ArgumentRemover' => __DIR__ . '/../..' . '/rules/Removing/ValueObject/ArgumentRemover.php',
         'Rector\\Removing\\ValueObject\\RemoveFuncCallArg' => __DIR__ . '/../..' . '/rules/Removing/ValueObject/RemoveFuncCallArg.php',
         'Rector\\Renaming\\Contract\\MethodCallRenameInterface' => __DIR__ . '/../..' . '/rules/Renaming/Contract/MethodCallRenameInterface.php',
@@ -2876,6 +2887,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\Symfony\\Rector\\MethodCall\\FormBuilderSetDataMapperRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/FormBuilderSetDataMapperRector.php',
         'Rector\\Symfony\\Rector\\MethodCall\\FormIsValidRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/FormIsValidRector.php',
         'Rector\\Symfony\\Rector\\MethodCall\\FormTypeInstanceToClassConstRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/FormTypeInstanceToClassConstRector.php',
+        'Rector\\Symfony\\Rector\\MethodCall\\GetCurrencyBundleMethodCallsToIntlRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/GetCurrencyBundleMethodCallsToIntlRector.php',
         'Rector\\Symfony\\Rector\\MethodCall\\GetHelperControllerToServiceRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/GetHelperControllerToServiceRector.php',
         'Rector\\Symfony\\Rector\\MethodCall\\GetToConstructorInjectionRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/GetToConstructorInjectionRector.php',
         'Rector\\Symfony\\Rector\\MethodCall\\LiteralGetToRequestClassConstantRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/MethodCall/LiteralGetToRequestClassConstantRector.php',
@@ -2907,6 +2919,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\Symfony\\Rector\\StaticCall\\ProcessBuilderInstanceRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/StaticCall/ProcessBuilderInstanceRector.php',
         'Rector\\Symfony\\Rector\\StaticPropertyFetch\\ErrorNamesPropertyToConstantRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/StaticPropertyFetch/ErrorNamesPropertyToConstantRector.php',
         'Rector\\Symfony\\Rector\\StaticPropertyFetch\\KernelTestCaseContainerPropertyDeprecationRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/StaticPropertyFetch/KernelTestCaseContainerPropertyDeprecationRector.php',
+        'Rector\\Symfony\\Rector\\StmtsAwareInterface\\TwigBundleFilesystemLoaderToTwigRector' => __DIR__ . '/..' . '/rector/rector-symfony/src/Rector/StmtsAwareInterface/TwigBundleFilesystemLoaderToTwigRector.php',
         'Rector\\Symfony\\Set\\FOSRestSetList' => __DIR__ . '/..' . '/rector/rector-symfony/src/Set/FOSRestSetList.php',
         'Rector\\Symfony\\Set\\JMSSetList' => __DIR__ . '/..' . '/rector/rector-symfony/src/Set/JMSSetList.php',
         'Rector\\Symfony\\Set\\SensiolabsSetList' => __DIR__ . '/..' . '/rector/rector-symfony/src/Set/SensiolabsSetList.php',
@@ -2928,6 +2941,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\Symfony\\ValueObject\\EventNameToClassAndConstant' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/EventNameToClassAndConstant.php',
         'Rector\\Symfony\\ValueObject\\EventReferenceToMethodName' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/EventReferenceToMethodName.php',
         'Rector\\Symfony\\ValueObject\\EventReferenceToMethodNameWithPriority' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/EventReferenceToMethodNameWithPriority.php',
+        'Rector\\Symfony\\ValueObject\\IntlBundleClassToNewClass' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/IntlBundleClassToNewClass.php',
         'Rector\\Symfony\\ValueObject\\InvokableController\\ActiveClassElements' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/InvokableController/ActiveClassElements.php',
         'Rector\\Symfony\\ValueObject\\ReplaceServiceArgument' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/ReplaceServiceArgument.php',
         'Rector\\Symfony\\ValueObject\\ServiceDefinition' => __DIR__ . '/..' . '/rector/rector-symfony/src/ValueObject/ServiceDefinition.php',
@@ -3043,6 +3057,7 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\TypeDeclaration\\PHPStan\\TypeSpecifier\\SelfStaticParentTypeSpecifier' => __DIR__ . '/../..' . '/rules/TypeDeclaration/PHPStan/TypeSpecifier/SelfStaticParentTypeSpecifier.php',
         'Rector\\TypeDeclaration\\PhpDocParser\\ParamPhpDocNodeFactory' => __DIR__ . '/../..' . '/rules/TypeDeclaration/PhpDocParser/ParamPhpDocNodeFactory.php',
         'Rector\\TypeDeclaration\\Rector\\ArrowFunction\\AddArrowFunctionReturnTypeRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/ArrowFunction/AddArrowFunctionReturnTypeRector.php',
+        'Rector\\TypeDeclaration\\Rector\\BooleanAnd\\BinaryOpNullableToInstanceofRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/BooleanAnd/BinaryOpNullableToInstanceofRector.php',
         'Rector\\TypeDeclaration\\Rector\\ClassMethod\\AddMethodCallBasedStrictParamTypeRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/ClassMethod/AddMethodCallBasedStrictParamTypeRector.php',
         'Rector\\TypeDeclaration\\Rector\\ClassMethod\\AddParamTypeBasedOnPHPUnitDataProviderRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/ClassMethod/AddParamTypeBasedOnPHPUnitDataProviderRector.php',
         'Rector\\TypeDeclaration\\Rector\\ClassMethod\\AddParamTypeDeclarationRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/ClassMethod/AddParamTypeDeclarationRector.php',
@@ -3078,6 +3093,8 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
         'Rector\\TypeDeclaration\\Rector\\Property\\TypedPropertyFromStrictGetterMethodReturnTypeRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/Property/TypedPropertyFromStrictGetterMethodReturnTypeRector.php',
         'Rector\\TypeDeclaration\\Rector\\Property\\TypedPropertyFromStrictSetUpRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/Property/TypedPropertyFromStrictSetUpRector.php',
         'Rector\\TypeDeclaration\\Rector\\Property\\VarAnnotationIncorrectNullableRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/Property/VarAnnotationIncorrectNullableRector.php',
+        'Rector\\TypeDeclaration\\Rector\\StmtsAwareInterface\\DeclareStrictTypesRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/StmtsAwareInterface/DeclareStrictTypesRector.php',
+        'Rector\\TypeDeclaration\\Rector\\Ternary\\FlipNegatedTernaryInstanceofRector' => __DIR__ . '/../..' . '/rules/TypeDeclaration/Rector/Ternary/FlipNegatedTernaryInstanceofRector.php',
         'Rector\\TypeDeclaration\\TypeAnalyzer\\AlwaysStrictBoolExprAnalyzer' => __DIR__ . '/../..' . '/rules/TypeDeclaration/TypeAnalyzer/AlwaysStrictBoolExprAnalyzer.php',
         'Rector\\TypeDeclaration\\TypeAnalyzer\\AlwaysStrictScalarExprAnalyzer' => __DIR__ . '/../..' . '/rules/TypeDeclaration/TypeAnalyzer/AlwaysStrictScalarExprAnalyzer.php',
         'Rector\\TypeDeclaration\\TypeAnalyzer\\GenericClassStringTypeNormalizer' => __DIR__ . '/../..' . '/rules/TypeDeclaration/TypeAnalyzer/GenericClassStringTypeNormalizer.php',
@@ -3132,9 +3149,9 @@ class ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInitc54d4b9c00fdd6e8e65d89d3d4469299::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInitb46d2d7d8c7c3826a0e819fece997ce5::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInitb46d2d7d8c7c3826a0e819fece997ce5::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInitb46d2d7d8c7c3826a0e819fece997ce5::$classMap;
 
         }, null, ClassLoader::class);
     }

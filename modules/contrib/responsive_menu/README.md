@@ -89,7 +89,7 @@ The mobile icon block is necessary for the mobile menu to work.
 
 This module should be compatible with most themes. One basic requirement is that
 the theme includes a wrapping 'page' div. This is so that mmenu knows which
-elements belong inside the wrapper when the off canvas menu is opened. Bartik is
+elements belong inside the wrapper when the off canvas menu is opened. Stark is
 an example of a theme with a wrapping div. Bootstrap (v3) is an example of a
 theme which doesn't have the wrapping div. There is a setting to
 automatically add a wrapping div should your theme need it.
@@ -194,7 +194,7 @@ to the machine name of your module and place this code in your custom module's
  * Implements hook_responsive_menu_off_canvas_output_alter().
  */
 function MYMODULE_responsive_menu_off_canvas_output_alter(&$output) {
-  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'bartik') {
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'stark') {
     $output = FALSE;
   }
 }

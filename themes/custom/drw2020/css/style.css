@@ -194,10 +194,10 @@ body{
 }
 .slick-dots{
   position: absolute;
-  bottom: 1em;
+  bottom: 1em !important;
 }
 .slick-dotted.slick-slider{
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 .slide__grid{
   padding:0 !important;

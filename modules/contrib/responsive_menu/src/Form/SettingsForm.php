@@ -313,7 +313,7 @@ class SettingsForm extends ConfigFormBase {
     if ($values['use_breakpoint'] && empty($values['horizontal_breakpoint'])) {
       $breakpoint_message = Link::fromTextAndUrl('breakpoint file', Url::fromUri('https://www.drupal.org/node/1803874'))->toRenderable();
       $form_state->setErrorByName('horizontal_breakpoint', $this->t("You have chosen to use a breakpoint but you have not selected one. This may happen if your @breakpoint is not properly set up.", [
-        '@breakpoint' => render($breakpoint_message),
+        '@breakpoint' => \Drupal::service('renderer')->render($breakpoint_message),
       ]));
     }
   }
@@ -393,6 +393,7 @@ class SettingsForm extends ConfigFormBase {
    *
    * @throws \Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException
    * @throws \Drupal\Component\Plugin\Exception\PluginNotFoundException
+   *
    * @noinspection PhpFullyQualifiedNameUsageInspection
    */
   protected function getMenuOptions(array $menu_names = NULL) {

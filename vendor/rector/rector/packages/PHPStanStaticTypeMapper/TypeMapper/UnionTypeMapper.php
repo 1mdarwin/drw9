@@ -38,7 +38,6 @@ use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\BoolUnionTypeAnalyzer;
 use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\UnionTypeAnalyzer;
 use Rector\PHPStanStaticTypeMapper\TypeAnalyzer\UnionTypeCommonTypeNarrower;
 use Rector\PHPStanStaticTypeMapper\ValueObject\UnionTypeAnalysis;
-use function RectorPrefix202304\Symfony\Component\String\b;
 use RectorPrefix202304\Symfony\Contracts\Service\Attribute\Required;
 use RectorPrefix202304\Webmozart\Assert\Assert;
 use RectorPrefix202304\Webmozart\Assert\InvalidArgumentException;
@@ -205,7 +204,7 @@ final class UnionTypeMapper implements TypeMapperInterface
     private function mapNullabledType(Type $nullabledType, string $typeKind) : ?Node
     {
         // void cannot be nullable
-        if ($nullabledType instanceof VoidType) {
+        if ($nullabledType->isVoid()->yes()) {
             return null;
         }
         $nullabledTypeNode = $this->phpStanStaticTypeMapper->mapToPhpParserNode($nullabledType, $typeKind);

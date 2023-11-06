@@ -143,18 +143,14 @@ function responsive_menu_requirements($phase) {
   $libraries = [
     'mmenu' => [
       'title' => 'mmenu library',
-      'version' => '8.4.0',
       'path' => '/libraries/mmenu',
-      'version_path' => '/libraries/mmenu/package.json',
       'severity' => REQUIREMENT_ERROR,
       'download_url' => 'https://github.com/FrDH/mmenu-js/releases/latest',
       'homepage_url' => 'http://mmenu.frebsite.nl',
     ],
     'superfish' => [
       'title' => 'superfish library',
-      'version' => '1.7.0',
       'path' => '/libraries/superfish',
-      'version_path' => '/libraries/superfish/package.json',
       'severity' => REQUIREMENT_WARNING,
       'download_url' => 'https://api.github.com/repos/joeldbirch/superfish/zipball',
       'homepage_url' => 'https://superfish.joelbirch.co',
@@ -162,6 +158,20 @@ function responsive_menu_requirements($phase) {
   ];
 
   foreach ($libraries as $key => $library) {
+    if (\Drupal::hasService('library.libraries_directory_file_finder')) {
+      $library_finder = \Drupal::service('library.libraries_directory_file_finder');
+      $library_path = $library_finder->find($key);
+      if (is_file($library_path . '/package.json')) {
+        if ($key == 'mmenu') {
+          $library['version'] = '8.4.0';
+          $library['version_path'] = '/libraries/mmenu/package.json';
+        }
+        if ($key == 'superfish') {
+          $library['version'] = '1.7.0';
+          $library['version_path'] = '/libraries/superfish/package.json';
+        }
+      }
+    }
     if (isset($library['version'])) {
       $version = responsive_menu_get_library_version($library['version_path']);
     }
