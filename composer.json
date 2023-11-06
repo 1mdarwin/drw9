@@ -61,12 +61,12 @@
         "drupal/views_infinite_scroll": "^2.0.0",
         "drupal/webform": "^6.2",
         "drupal/widget": "^1.",
-        "drush/drush": "11.0.1",
+        "drush/drush": "11.0.5",
         "kint-php/kint": "^4.1",
         "npm-asset/blazy": "^1.8",
         "npm-asset/dropzone": "^5.7.4",
         "oomphinc/composer-installers-extender": "^1.1 || ^2",
-        "symfony/finder": "^4.0"
+        "symfony/finder": "^6"
     },
     "conflict": {
         "drupal/drupal": "*"
