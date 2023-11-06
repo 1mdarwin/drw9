@@ -120,7 +120,7 @@ class WebformSubmission extends ContentEntityBase implements WebformSubmissionIn
    *
    * @var string
    */
-  protected $_webform_view_mode_twig;
+  protected $webformViewModeTwig;
 
   /**
    * The data hashed.

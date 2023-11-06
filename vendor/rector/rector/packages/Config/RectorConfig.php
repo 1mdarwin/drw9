@@ -47,9 +47,19 @@ final class RectorConfig extends ContainerConfigurator
     {
         $parameters = $this->parameters();
         $parameters->set(Option::PARALLEL, \true);
-        $parameters->set(Option::PARALLEL_TIMEOUT_IN_SECONDS, $seconds);
+        $parameters->set(Option::PARALLEL_JOB_TIMEOUT_IN_SECONDS, $seconds);
         $parameters->set(Option::PARALLEL_MAX_NUMBER_OF_PROCESSES, $maxNumberOfProcess);
         $parameters->set(Option::PARALLEL_JOB_SIZE, $jobSize);
+    }
+    public function noDiffs() : void
+    {
+        $parameters = $this->parameters();
+        $parameters->set(Option::NO_DIFFS, \true);
+    }
+    public function memoryLimit(string $memoryLimit) : void
+    {
+        $parameters = $this->parameters();
+        $parameters->set(Option::MEMORY_LIMIT, $memoryLimit);
     }
     /**
      * @param array<int|string, mixed> $criteria

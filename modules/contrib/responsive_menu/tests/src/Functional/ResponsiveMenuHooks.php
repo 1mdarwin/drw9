@@ -54,12 +54,12 @@ class ResponsiveMenuHooks extends BrowserTestBase {
   /**
    * Tests that hook_responsive_menu_off_canvas_output_alter works.
    *
-   * When using bartik as the theme the hook should trigger and disable the
-   * module output in page_bottom.
+   * When using starterkit_theme as the theme the hook should trigger and
+   * disable the module output in page_bottom.
    */
   public function testWarningWithNoBreakpoints() {
-    \Drupal::service('theme_installer')->install(['bartik']);
-    \Drupal::configFactory()->getEditable('system.theme')->set('default', 'bartik')->save();
+    \Drupal::service('theme_installer')->install(['starterkit_theme']);
+    \Drupal::configFactory()->getEditable('system.theme')->set('default', 'starterkit_theme')->save();
     $this->drupalGet('/node/1');
     $this->assertSession()->elementNotExists('css', '#off-canvas-wrapper');
   }

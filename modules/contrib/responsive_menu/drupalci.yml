@@ -19,7 +19,7 @@ build:
         commands:
           - cd ${SOURCE_DIR}
           - sudo -u www-data mkdir libraries
-          - sudo -u www-data curl -L $(curl -s https://api.github.com/repos/FrDH/mmenu-js/releases/latest | grep tarball_url | cut -d '"' -f4) --output mmenu.tar.gz --silent
+          - sudo -u www-data curl -L $(curl -s https://api.github.com/repos/FrDH/mmenu-js/releases/44986634 | grep tarball_url | cut -d '"' -f4) --output mmenu.tar.gz --silent
           - sudo -u www-data tar xzf mmenu.tar.gz
           - sudo -u www-data mv FrDH-mmenu* libraries/mmenu
           - sudo -u www-data curl -L https://github.com/joeldbirch/superfish/archive/v1.7.10.tar.gz --output superfish.tar.gz --silent
