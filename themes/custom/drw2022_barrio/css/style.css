@@ -152,13 +152,13 @@ body{
   display: block;
 }
 .slide__caption {
-  width: 100%;
-  text-transform: uppercase;
-  text-shadow: 1px 1px #000;
-  text-align: center;
-  margin-top: 0px;
   font-size: 2.5em;
+  margin-top: 0px;
   position: absolute;
+  text-align: center;
+  text-shadow: 1px 1px #000;
+  text-transform: uppercase;
+  width: 100%;
 }
 .slide__caption a {
   color: #ff5722;
@@ -176,10 +176,10 @@ body{
 }
 .slick-dots{
   position: absolute;
-  bottom: 1em;
+  bottom: 1em !important;
 }
 .slick-dotted.slick-slider{
-  margin-bottom: 0;
+  margin-bottom: 0 !important;
 }
 .slide__grid{
   padding:0 !important;
@@ -228,13 +228,13 @@ body{
 .blogspage .fecha{
   font-size: 0.8em;
 }
-.content img{
-  /* float:left; */
-  /* padding-right: 10px; */
+/*.content img{
+  float:left;
+  padding-right: 10px;
 }
 .content a{
-  /* font-weight: 700; */
-}
+  font-weight: 700;
+}*/
 /*
  * Slideshow
  */
@@ -344,9 +344,9 @@ ul.navbar-nav{
   margin-top: 10px;
   /* background:#263a73; */
 }
-.navbar-nav>li{
-  /*border-right: thin solid #39423d;*/
-}
+/*.navbar-nav>li{
+  border-right: thin solid #39423d;
+}*/
 .nav .open>a,
 .nav .active>a,
 .nav .open>a:focus,
