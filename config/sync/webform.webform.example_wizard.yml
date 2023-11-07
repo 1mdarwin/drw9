@@ -15,7 +15,7 @@ template: false
 archive: false
 id: example_wizard
 title: 'Example: Wizard'
-description: 'Example of a multiple step ''wizard'' webform.'
+description: "Example of a multiple step 'wizard' webform."
 categories:
   - Example
 elements: |

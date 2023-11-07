@@ -1,9 +1,6 @@
 <?php
 
-/**
- * @file
- * Contains \Drush\Psysh\DrushCommand.
- */
+declare(strict_types=1);
 
 namespace Drush\Psysh;
 
@@ -108,7 +105,7 @@ class DrushHelpCommand extends BaseCommand
                     $namespaces[$namespace] = [];
                 }
 
-                $namespaces[$namespace][] = sprintf("    <info>%-${width}s</info> %s%s", $name, $command->getDescription(), $aliases);
+                $namespaces[$namespace][] = sprintf("    <info>%-{$width}s</info> %s%s", $name, $command->getDescription(), $aliases);
             }
 
             $messages = [];

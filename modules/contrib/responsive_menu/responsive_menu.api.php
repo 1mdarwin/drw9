@@ -88,7 +88,7 @@ function hook_responsive_menu_horizontal_manipulators_alter(array &$manipulators
  * different menu for a member's area and the developer wants to disable the
  * off-canvas mmenu for that section.
  *
- * In this example the off-canvas menu is disabled when the Bartik
+ * In this example the off-canvas menu is disabled when the Stark
  * theme is active.
  *
  * @param bool $output
@@ -96,7 +96,7 @@ function hook_responsive_menu_horizontal_manipulators_alter(array &$manipulators
  *   be added to the DOM and the JavaScript libraries will not be loaded.
  */
 function hook_responsive_menu_off_canvas_output_alter(bool &$output) {
-  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'bartik') {
+  if (\Drupal::service('theme.manager')->getActiveTheme()->getName() === 'stark') {
     $output = FALSE;
   }
 }

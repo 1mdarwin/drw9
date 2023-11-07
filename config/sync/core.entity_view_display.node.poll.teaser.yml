@@ -4,6 +4,8 @@ status: true
 dependencies:
   config:
     - core.entity_view_mode.node.teaser
+    - field.field.node.poll.comment_node_poll
+    - field.field.node.poll.field_metatag
     - field.field.node.poll.upload
     - node.type.poll
   module:
@@ -19,5 +21,7 @@ content:
     weight: 100
     region: content
 hidden:
+  comment_node_poll: true
+  field_metatag: true
   langcode: true
   upload: true

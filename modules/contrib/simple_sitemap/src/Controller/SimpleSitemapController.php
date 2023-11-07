@@ -57,9 +57,9 @@ class SimpleSitemapController extends ControllerBase {
    * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
    */
   public function getSitemap(Request $request, ?string $variant = NULL): Response {
-    $variant = $variant ?? $this->generator->getDefaultVariant();
+    $variant = $variant ?? $this->generator->getDefaultSitemap()?->id();
     $page = $request->query->get('page') ? (int) $request->query->get('page') : NULL;
-    $output = $this->generator->setVariants($variant)->getContent($page);
+    $output = $this->generator->setSitemaps($variant)->getContent($page);
     if ($output === NULL) {
       throw new NotFoundHttpException();
     }

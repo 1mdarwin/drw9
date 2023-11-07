@@ -11,7 +11,7 @@ dependencies:
     - slick
 _core:
   default_config_hash: WNeK5FbcY8pXgEpbD_KgRzlF1-5PL3BJXwqaBctPTqw
-name: 'HTML completo'
+name: 'Full HTML'
 format: full_html
 weight: 2
 filters:
@@ -57,6 +57,7 @@ filters:
       media_switch: ''
       hybrid_style: ''
       box_style: ''
+      box_media_style: ''
       box_caption: ''
       filter_tags:
         img: img
@@ -112,3 +113,9 @@ filters:
       allowed_media_types:
         file: file
         image: image
+  filter_image_lazy_load:
+    id: filter_image_lazy_load
+    provider: filter
+    status: true
+    weight: 12
+    settings: {  }

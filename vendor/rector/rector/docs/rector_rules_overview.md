@@ -1,4 +1,4 @@
-# 414 Rules Overview
+# 419 Rules Overview
 
 <br>
 
@@ -30,7 +30,7 @@
 
 - [Php54](#php54) (3)
 
-- [Php55](#php55) (5)
+- [Php55](#php55) (6)
 
 - [Php56](#php56) (2)
 
@@ -52,7 +52,7 @@
 
 - [Privatization](#privatization) (7)
 
-- [Removing](#removing) (5)
+- [Removing](#removing) (6)
 
 - [RemovingStatic](#removingstatic) (1)
 
@@ -64,7 +64,7 @@
 
 - [Transform](#transform) (34)
 
-- [TypeDeclaration](#typedeclaration) (36)
+- [TypeDeclaration](#typedeclaration) (39)
 
 - [Visibility](#visibility) (3)
 
@@ -4703,6 +4703,25 @@ The /e modifier is no longer supported, use preg_replace_callback instead
 
 <br>
 
+### StaticToSelfOnFinalClassRector
+
+Change `static::class` to `self::class` on final class
+
+- class: [`Rector\Php55\Rector\ClassConstFetch\StaticToSelfOnFinalClassRector`](../rules/Php55/Rector/ClassConstFetch/StaticToSelfOnFinalClassRector.php)
+
+```diff
+ final class SomeClass
+ {
+    public function callOnMe()
+    {
+-       var_dump(static::class);
++       var_dump(self::class);
+    }
+ }
+```
+
+<br>
+
 ### StringClassNameToClassConstantRector
 
 Replace string class names by <class>::class constant
@@ -6938,6 +6957,39 @@ return static function (RectorConfig $rectorConfig): void {
 ```diff
 -remove_last_arg(1, 2);
 +remove_last_arg(1);
+```
+
+<br>
+
+### RemoveFuncCallRector
+
+Remove function
+
+:wrench: **configure it!**
+
+- class: [`Rector\Removing\Rector\FuncCall\RemoveFuncCallRector`](../rules/Removing/Rector/FuncCall/RemoveFuncCallRector.php)
+
+```php
+<?php
+
+declare(strict_types=1);
+
+use Rector\Config\RectorConfig;
+use Rector\Removing\Rector\FuncCall\RemoveFuncCallRector;
+
+return static function (RectorConfig $rectorConfig): void {
+    $rectorConfig->ruleWithConfiguration(RemoveFuncCallRector::class, [
+        'var_dump',
+    ]);
+};
+```
+
+↓
+
+```diff
+-$x = 'something';
+-var_dump($x);
++$x = 'something';
 ```
 
 <br>
@@ -9481,6 +9533,42 @@ Add array shape exact types based on constant keys of array
 
 <br>
 
+### BinaryOpNullableToInstanceofRector
+
+Change && and || between nullable objects to instanceof compares
+
+- class: [`Rector\TypeDeclaration\Rector\BooleanAnd\BinaryOpNullableToInstanceofRector`](../rules/TypeDeclaration/Rector/BooleanAnd/BinaryOpNullableToInstanceofRector.php)
+
+```diff
+ function someFunction(?SomeClass $someClass)
+ {
+-    if ($someClass && $someClass->someMethod()) {
++    if ($someClass instanceof SomeClass && $someClass->someMethod()) {
+         return 'yes';
+     }
+
+     return 'no';
+ }
+```
+
+<br>
+
+### DeclareStrictTypesRector
+
+Add declare(strict_types=1) if missing
+
+- class: [`Rector\TypeDeclaration\Rector\StmtsAwareInterface\DeclareStrictTypesRector`](../rules/TypeDeclaration/Rector/StmtsAwareInterface/DeclareStrictTypesRector.php)
+
+```diff
++declare(strict_types=1);
++
+ function someFunction()
+ {
+ }
+```
+
+<br>
+
 ### EmptyOnNullableObjectToInstanceOfRector
 
 Change `empty()` on nullable object to instanceof check
@@ -9527,6 +9615,19 @@ Change class method that returns false as invalid state, to nullable
          return $number;
      }
  }
+```
+
+<br>
+
+### FlipNegatedTernaryInstanceofRector
+
+Flip negated ternary of instanceof to direct use of object
+
+- class: [`Rector\TypeDeclaration\Rector\Ternary\FlipNegatedTernaryInstanceofRector`](../rules/TypeDeclaration/Rector/Ternary/FlipNegatedTernaryInstanceofRector.php)
+
+```diff
+-echo ! $object instanceof Product ? null : $object->getPrice();
++echo $object instanceof Product ? $object->getPrice() : null;
 ```
 
 <br>

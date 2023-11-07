@@ -7,11 +7,12 @@ _core:
 id: front
 label: 'Front page'
 tags:
-  title: DrwSoluciones
-  geo_placename: 'Loja - Ecuador'
-  shortlink: '[site:url]'
   abstract: 'Agencia Drupal en Ecuador'
+  author: 'Darwin Betancourt C.'
   canonical_url: '[site:url]'
   description: 'Agencia Drupal en Ecuador con soluciones web para pequeñas y grandes empresas, integración de sistemas a través de servicios web'
-  keywords: 'Drupal, PHP, Linux, HTML, CSS3, ReactJs'
+  geo_placename: 'Loja - Ecuador'
   geo_region: es_EC
+  keywords: 'Drupal, PHP, Linux, HTML, CSS3, ReactJs'
+  shortlink: '[site:url]'
+  title: DrwSoluciones
