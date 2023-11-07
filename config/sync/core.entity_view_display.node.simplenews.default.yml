@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.simplenews.body
     - field.field.node.simplenews.comment_node_simplenews
     - field.field.node.simplenews.field_blog_sn
+    - field.field.node.simplenews.field_metatag
     - field.field.node.simplenews.field_simplenews_term
     - node.type.simplenews
   module:
@@ -57,4 +58,5 @@ content:
     weight: 100
     region: content
 hidden:
+  field_metatag: true
   langcode: true

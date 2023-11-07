@@ -5,6 +5,8 @@ dependencies:
   config:
     - core.entity_view_mode.node.rss
     - field.field.node.page.body
+    - field.field.node.page.comment_node_page
+    - field.field.node.page.field_metatag
     - field.field.node.page.taxonomy_vocabulary_5
     - field.field.node.page.taxonomyextra
     - field.field.node.page.upload
@@ -32,6 +34,8 @@ content:
     region: content
 hidden:
   body: true
+  comment_node_page: true
+  field_metatag: true
   langcode: true
   taxonomy_vocabulary_5: true
   taxonomyextra: true

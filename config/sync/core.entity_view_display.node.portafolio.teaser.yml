@@ -5,7 +5,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.portafolio.body
+    - field.field.node.portafolio.comment_node_portafolio
     - field.field.node.portafolio.field_imagen_porta
+    - field.field.node.portafolio.field_metatag
     - field.field.node.portafolio.field_tipo_porta
     - field.field.node.portafolio.field_url_porta
     - field.field.node.portafolio.upload
@@ -32,7 +34,9 @@ content:
     weight: 100
     region: content
 hidden:
+  comment_node_portafolio: true
   field_imagen_porta: true
+  field_metatag: true
   field_tipo_porta: true
   field_url_porta: true
   langcode: true

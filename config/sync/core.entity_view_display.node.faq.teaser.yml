@@ -5,7 +5,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.faq.body
+    - field.field.node.faq.comment_node_faq
     - field.field.node.faq.field_detailed_question
+    - field.field.node.faq.field_metatag
     - node.type.faq
   module:
     - text
@@ -36,4 +38,6 @@ content:
     weight: 100
     region: content
 hidden:
+  comment_node_faq: true
+  field_metatag: true
   langcode: true

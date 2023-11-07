@@ -10,9 +10,9 @@ dependencies:
 _core:
   default_config_hash: _12Vkw1VGBz_s0_W_LLVCrBPpioNSnB6zcd1lUAQubM
 id: glossary
-label: Glosario
+label: Glossary
 module: node
-description: 'Todo el contenido, alfabéticamente.'
+description: 'All content, by letter.'
 tag: default
 base_table: node_field_data
 base_field: nid
@@ -34,7 +34,7 @@ display:
           entity_type: node
           entity_field: title
           plugin_id: field
-          label: Título
+          label: Title
           exclude: false
           alter:
             alter_text: false
@@ -137,7 +137,7 @@ display:
           entity_type: node
           entity_field: changed
           plugin_id: field
-          label: 'Última actualización'
+          label: 'Last update'
           exclude: false
           alter:
             alter_text: false
@@ -183,6 +183,15 @@ display:
             date_format: long
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
       pager:
         type: mini
         options:
@@ -378,7 +387,7 @@ display:
       tags: {  }
   attachment_1:
     id: attachment_1
-    display_title: Adjunto
+    display_title: Attachment
     display_plugin: attachment
     position: 2
     display_options:
@@ -457,7 +466,7 @@ display:
       path: glossary
       menu:
         type: normal
-        title: Glosario
+        title: Glossary
         weight: 0
         menu_name: main
         parent: ''

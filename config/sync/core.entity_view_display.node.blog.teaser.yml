@@ -5,7 +5,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.teaser
     - field.field.node.blog.body
+    - field.field.node.blog.comment_node_blog
     - field.field.node.blog.field_image
+    - field.field.node.blog.field_metatag
     - field.field.node.blog.taxonomy_vocabulary_2
     - field.field.node.blog.taxonomy_vocabulary_3
     - field.field.node.blog.upload
@@ -48,6 +50,8 @@ content:
     weight: 10
     region: content
 hidden:
+  comment_node_blog: true
   field_image: true
+  field_metatag: true
   langcode: true
   upload: true

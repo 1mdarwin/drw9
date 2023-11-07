@@ -8,9 +8,9 @@ dependencies:
 _core:
   default_config_hash: rRWxAX-IQkJ5viACQRovRkC784EyCl9493GU_G23n2Q
 id: files
-label: Archivos
+label: Files
 module: file
-description: 'Buscar y administrar archivos.'
+description: 'Find and manage files.'
 tag: default
 base_table: file_managed
 base_field: fid
@@ -21,7 +21,7 @@ display:
     display_plugin: default
     position: 0
     display_options:
-      title: Archivos
+      title: Files
       fields:
         fid:
           id: fid
@@ -129,7 +129,7 @@ display:
           entity_type: file
           entity_field: filemime
           plugin_id: field
-          label: 'Tipo MIME'
+          label: 'MIME type'
           exclude: false
           alter:
             alter_text: false
@@ -181,7 +181,7 @@ display:
           entity_type: file
           entity_field: filesize
           plugin_id: field
-          label: Tamaño
+          label: Size
           exclude: false
           alter:
             alter_text: false
@@ -277,8 +277,8 @@ display:
           type: boolean
           settings:
             format: custom
-            format_custom_false: Temporal
-            format_custom_true: Permanente
+            format_custom_false: Temporary
+            format_custom_true: Permanent
         created:
           id: created
           table: file_managed
@@ -289,7 +289,7 @@ display:
           entity_type: file
           entity_field: created
           plugin_id: field
-          label: 'Fecha de subida'
+          label: 'Upload date'
           exclude: false
           alter:
             alter_text: false
@@ -335,6 +335,15 @@ display:
             date_format: medium
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
         changed:
           id: changed
           table: file_managed
@@ -345,7 +354,7 @@ display:
           entity_type: file
           entity_field: changed
           plugin_id: field
-          label: 'Fecha de modificación'
+          label: 'Changed date'
           exclude: false
           alter:
             alter_text: false
@@ -391,6 +400,15 @@ display:
             date_format: medium
             custom_date_format: ''
             timezone: ''
+            tooltip:
+              date_format: ''
+              custom_date_format: ''
+            time_diff:
+              enabled: false
+              future_format: '@interval hence'
+              past_format: '@interval ago'
+              granularity: 2
+              refresh: 60
         count:
           id: count
           table: file_usage
@@ -399,7 +417,7 @@ display:
           group_type: sum
           admin_label: ''
           plugin_id: numeric
-          label: 'Usado en'
+          label: 'Used in'
           exclude: false
           alter:
             alter_text: false
@@ -490,7 +508,7 @@ display:
           field: area_text_custom
           plugin_id: text_custom
           empty: true
-          content: 'No hay archivos disponibles.'
+          content: 'No files available.'
       sorts: {  }
       arguments: {  }
       filters:
@@ -510,7 +528,7 @@ display:
           exposed: true
           expose:
             operator_id: filemime_op
-            label: 'Nombre de archivo'
+            label: Filename
             description: ''
             use_operator: false
             operator: filename_op
@@ -552,7 +570,7 @@ display:
           exposed: true
           expose:
             operator_id: filemime_op
-            label: 'Tipo MIME'
+            label: 'MIME type'
             description: ''
             use_operator: false
             operator: filemime_op
@@ -735,7 +753,7 @@ display:
       tags: {  }
   page_1:
     id: page_1
-    display_title: 'Resumen de ficheros'
+    display_title: 'Files overview'
     display_plugin: page
     position: 1
     display_options:
@@ -756,7 +774,7 @@ display:
       path: admin/content/files
       menu:
         type: tab
-        title: Archivos
+        title: Files
         description: ''
         weight: 0
         menu_name: admin
@@ -772,11 +790,11 @@ display:
       tags: {  }
   page_2:
     id: page_2
-    display_title: 'Usos del archivo'
+    display_title: 'File usage'
     display_plugin: page
     position: 2
     display_options:
-      title: 'Usos del archivo'
+      title: 'File usage'
       fields:
         entity_label:
           id: entity_label
@@ -786,7 +804,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: entity_label
-          label: Entidad
+          label: Entity
           exclude: false
           alter:
             alter_text: false
@@ -836,7 +854,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: standard
-          label: 'Tipo de entidad'
+          label: 'Entity type'
           exclude: false
           alter:
             alter_text: false
@@ -885,7 +903,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: standard
-          label: 'Módulo de registro'
+          label: 'Registering module'
           exclude: false
           alter:
             alter_text: false
@@ -934,7 +952,7 @@ display:
           group_type: group
           admin_label: ''
           plugin_id: numeric
-          label: 'Recuento de uso'
+          label: 'Use count'
           exclude: false
           alter:
             alter_text: false
@@ -1019,7 +1037,7 @@ display:
             title_enable: false
             title: All
           title_enable: true
-          title: 'Información de uso de archivos para {{ arguments.fid }}'
+          title: 'File usage information for {{ arguments.fid }}'
           default_argument_type: fixed
           default_argument_options:
             argument: ''

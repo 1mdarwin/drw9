@@ -6,6 +6,7 @@ dependencies:
     - core.entity_view_display.comment.comment_node_story.default
     - field.field.node.story.body
     - field.field.node.story.comment_node_story
+    - field.field.node.story.field_metatag
     - field.field.node.story.upload
     - node.type.story
   module:
@@ -48,4 +49,5 @@ content:
     weight: 0
     region: content
 hidden:
+  field_metatag: true
   langcode: true

@@ -7,6 +7,7 @@ dependencies:
     - field.field.node.event.body
     - field.field.node.event.comment_node_event
     - field.field.node.event.field_fecevento
+    - field.field.node.event.field_metatag
     - node.type.event
   module:
     - comment
@@ -49,4 +50,5 @@ content:
     weight: 100
     region: content
 hidden:
+  field_metatag: true
   langcode: true

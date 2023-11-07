@@ -5,7 +5,9 @@ dependencies:
   config:
     - core.entity_view_mode.node.search_result
     - field.field.node.ddblock_news_item.body
+    - field.field.node.ddblock_news_item.comment_node_ddblock_news_item
     - field.field.node.ddblock_news_item.field_image
+    - field.field.node.ddblock_news_item.field_metatag
     - field.field.node.ddblock_news_item.field_pager_item_text
     - field.field.node.ddblock_news_item.field_slide_text
     - field.field.node.ddblock_news_item.field_url
@@ -33,7 +35,9 @@ content:
     region: content
 hidden:
   body: true
+  comment_node_ddblock_news_item: true
   field_image: true
+  field_metatag: true
   field_pager_item_text: true
   field_slide_text: true
   langcode: true
