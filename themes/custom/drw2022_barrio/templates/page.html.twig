@@ -148,6 +148,7 @@
       {% endblock %}
     {% endif %}
     <div id="main-wrapper" class="layout-main-wrapper clearfix">
+    {% if not is_front %}
       {% block content %}
         <div id="main" class="{{ container }}">
           {{ page.breadcrumb }}
@@ -175,6 +176,7 @@
           </div>
         </div>
       {% endblock %}
+    {% endif %}
     </div>
     {% if page.featured_bottom_first or page.featured_bottom_second or page.featured_bottom_third %}
       <div class="featured-bottom">
@@ -204,5 +206,6 @@
         </div>
       {% endblock %}
     </footer>
+    <div class="col-sm-12 col-lg-12 col-md-12 copyright"> -- DrwSoluciones --<br>&copy; {{ "now"|date("Y") }}</div>
   </div>
 </div>
