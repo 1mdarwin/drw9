@@ -26,7 +26,7 @@ h1{
 body{
   background:#0B2A3F;
   font-family:'Lato', arial, sans-serif;
-  font-size:1.5em;
+  font-size:1em;
  }
  .navbar-brand img{
     width: 40px;
@@ -49,7 +49,6 @@ body{
  a.name{
   padding: 0px !important;
   position: relative;
-  top: 15px;
  }
  a.navbar-brand{
    text-shadow:1px 1px 1px rgba(0,0,0,1);
@@ -77,6 +76,7 @@ body{
 /* Main menu */
 .navbar{
   margin-bottom: 0;
+  padding-left: 20px;
 }
 #navbar-top{
   display: none;
@@ -195,7 +195,7 @@ body{
 * Image inside the content (blogs, pages)
 */
 .blogspage h3{
-  font-size: 1.1em;
+  font-size: 1em;
   margin: 0;
 }
 .blogspage .fecha{
@@ -232,7 +232,15 @@ body{
 .team .thumbnail{
   background: none;
   border:0;
+  text-align: center;
 }
+.clientes img,
+.servicios img,
+.team img {
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .servicios h3{
   color:#FFF;
   font-weight: 700;
@@ -665,13 +673,16 @@ transition-delay: 0s;
 * FOOTER
 * ---------------------------------------------------
 */
+.site-footer {
+  padding: 0;
+}
 .site-footer .block{
   border:0;
   width: 100%;
  }
 
  .site-footer .content{
-  font-size:1.1em;
+  font-size:1em;
  }
  ul.clearfix.nav.navbar-nav{
   display: inline;
@@ -740,10 +751,10 @@ footer .more-link a:hover{
 footer p{
   font-size: 1.1em;
 }
-.view-id-listablogs .media{
+.view-listablogs .d-flex{
   border-bottom: 1px dashed #2D4059;
   position: relative;
-  top: 7px;
+  top: 10px;
 }
 /* MENU PIE */
 .menupie ul{
@@ -792,6 +803,7 @@ footer p{
     background: url('../images/icon-phone.png') no-repeat scroll 0 0 transparent;
     color: #fff;
     padding-left: 25px;
+    margin-top: 10px;
 }
 .fax{
     background: url('../images/icon-fax.png') no-repeat scroll 0 0 transparent;
