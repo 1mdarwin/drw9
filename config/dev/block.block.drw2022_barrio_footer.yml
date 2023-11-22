@@ -16,8 +16,8 @@ _core:
   default_config_hash: 8zRjTNbfNAJ94lQpZDu6MkyD87GYJ2zpH9VQPVmRbcM
 id: drw2022_barrio_footer
 theme: drw2022_barrio
-region: top_header
-weight: -6
+region: footer_fifth
+weight: -14
 provider: null
 plugin: 'system_menu_block:footer'
 settings:

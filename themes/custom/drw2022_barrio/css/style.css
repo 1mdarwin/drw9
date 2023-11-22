@@ -2,7 +2,7 @@
 * Date: 08 dic 2020 16H00
 * Author: Darwin Betancourt
 * Description: Drupal 8 with drwsolutions migrated from d7
-* Update: 23 oct 2023 16H00
+* Update: 22 nov 2023 16H30
 * Ctrl +Shift + A (order alphabetic)
 */
 .colors{
@@ -187,6 +187,7 @@ body{
 /* IMAGES */
 .img-izq{
   float:left;
+  margin-right: 10px;
 }
 .img-der{
   float: right;
@@ -352,6 +353,7 @@ body{
   top: 0;
   left: 0;
   color: #FFF;
+  text-decoration: none;
 }
 .masinfo1{
   text-align: center;
@@ -447,17 +449,17 @@ Services animation
 *----------------------------------------------------------------
 */
 .vista {
-  width: 100%;
-  height: auto;
-  /*margin: 10px;*/
-  float: left;
   /*border: 10px solid #fff;*/
+  border-radius: 20px;
+  box-shadow: 1px 1px 2px #0B2A3F;
+  cursor: default;
+  float: left;
+  height: auto;
+  margin: 10px;
   overflow: hidden;
   position: relative;
   text-align: center;
-  box-shadow: 1px 1px 2px #e6e6e6;
-  cursor: default;
-  border-radius: 20px;
+  width: 100%;
 }
 .vista .mask, .vista .content {
   border-radius: 20px;
@@ -562,6 +564,8 @@ transition-delay: 0.3s;
 .vista-fourth img {
 transition: all 0.4s ease-in-out 0.2s;
   opacity: 1;
+  margin-left: auto;
+  margin-right: auto;
 }
 .vista-fourth .mask {
 background-color: rgba(0,0,0,0.8);
@@ -571,11 +575,11 @@ transition: all 0.4s ease-in;
   border-radius: 0px;
 }
 .vista-fourth h2{
-  opacity: 0;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
   background: transparent;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.3);
   margin: 20px 40px 0px 40px;
-transition: all 0.5s ease-in-out;
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
 }
 .vista-fourth p {
 opacity: 0;
@@ -612,9 +616,9 @@ transition-delay: 0s;
   display: inline-block;
   height: 26px;
   line-height: 26px;
+  margin: 0 10px 10px 0;
   padding: 0 20px 0 23px;
   position: relative;
-  margin: 0 10px 10px 0;
   text-decoration: none;
   transition: width 0.2s;
 
@@ -629,8 +633,8 @@ transition-delay: 0s;
   height: 6px;
   left: 10px;
   position: absolute;
-  width: 6px;
   top: 10px;
+  width: 6px;
 }
 .field--name-taxonomy-vocabulary-5 a::after,
 .field--name-taxonomy-vocabulary-3 a::after,
@@ -664,10 +668,10 @@ transition-delay: 0s;
 }
 .list-inline{
   clear:both;
+  color: #ccc;
   display:table;
   float: right;
   font-weight: 700;
-  color: #ccc;
 }
 /**
 * FOOTER
@@ -711,11 +715,11 @@ footer{
   position: relative;
 }
 .site-footer__top h2{
-  color: #dbdbdb;
   border-bottom: 3px solid #2D4059;
-  text-transform: uppercase;
-  text-shadow: 2px 1px #848484;
+  color: #dbdbdb;
   font-size: 1.9em;
+  text-shadow: 2px 1px #848484;
+  text-transform: uppercase;
 }
 footer .piemenu{
   margin-top: 30px;
@@ -736,17 +740,17 @@ footer li a{
 }
 footer .more-link a{
   background: #ff5722;
+  border-radius: 5px;
   float: right;
   padding:0 5px;
-  border-radius: 5px;
 }
 footer .more-link a:hover{
   background: #2D4059;
-  float: right;
-  padding:0 5px;
   border-radius: 5px;
   border: thin solid #ff5722;
   color: #eee;
+  float: right;
+  padding:0 5px;
 }
 footer p{
   font-size: 1.1em;
@@ -780,8 +784,8 @@ footer p{
 /* contact footer */
 .contactblk{
   background:#ff5722;
-  color:#fff;
   border-radius: 10px;
+  color:#fff;
   margin-top: 10px;
 }
 .contactblk h2{
@@ -793,38 +797,38 @@ footer p{
   padding-left: 25px;
 }
 .address{
-    background: url('../images/icon-address.png') no-repeat scroll left 0.3em transparent;
-    padding-left: 25px;
-    color: #fff;
-    position: relative;
-    top: 7px;
+  background: url('../images/icon-address.png') no-repeat scroll left 0.3em transparent;
+  padding-left: 25px;
+  color: #fff;
+  position: relative;
+  top: 7px;
 }
 .phone{
-    background: url('../images/icon-phone.png') no-repeat scroll 0 0 transparent;
-    color: #fff;
-    padding-left: 25px;
-    margin-top: 10px;
+  background: url('../images/icon-phone.png') no-repeat scroll 0 0 transparent;
+  color: #fff;
+  padding-left: 25px;
+  margin-top: 10px;
 }
 .fax{
-    background: url('../images/icon-fax.png') no-repeat scroll 0 0 transparent;
-    padding-left: 25px;
+  background: url('../images/icon-fax.png') no-repeat scroll 0 0 transparent;
+  padding-left: 25px;
 }
 .mail{
-    background: url('../images/icon-mail.png') no-repeat scroll left 0.3em transparent;
-    padding-left: 25px;
-    color: #fff;
+  background: url('../images/icon-mail.png') no-repeat scroll left 0.3em transparent;
+  padding-left: 25px;
+  color: #fff;
 }
 .casilla{
-    background: url('../images/icon-casilla.png') no-repeat scroll left 0.3em transparent;
-    padding-left: 25px;
-    color: #fff;
+  background: url('../images/icon-casilla.png') no-repeat scroll left 0.3em transparent;
+  padding-left: 25px;
+  color: #fff;
   }
 .twitter,
 .facebook,
 .linkedin{
-  padding-left: 25px;
   color: #fff;
   float: left;
+  padding-left: 25px;
   text-indent: -10000px
 }
 .social-network{
@@ -844,18 +848,18 @@ footer p{
 }
 .webform-contactus-block{
   background: #FFF;
+  border: 2px solid #dbdbdb;
+  left:0%;
   padding:10px;
   top: 0%;
-  left:0%;
-  border: 2px solid #dbdbdb;
 }
 .webform-contactus-block .closebutton{
-  width: 20px;
-  height: 20px;
-  top: 15px;
-  right: 15px;
-  position: absolute;
   background: url('../images/button_close.png');
+  height: 20px;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  width: 20px;
 }
 .contactus{
   display: none;
@@ -897,9 +901,9 @@ footer p{
 **************************************************************************************************************/
 @media(min-width:767px){
   #bodyslide h2{
-    width: 45%;
-    font-size: 2.9em;
     border-bottom: thin solid #eee;
+    font-size: 2.9em;
+    width: 45%;
   }
   a.navbar-brand{
     font-size:1.7em;
@@ -1098,6 +1102,5 @@ footer p{
 /**************************************************************************************************************
 * CSS FOR TABLET
 **************************************************************************************************************/
-
 @media(width:600px){
 }
