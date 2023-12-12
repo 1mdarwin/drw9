@@ -35,11 +35,10 @@ class Preloader {
       return;
     }
 
-    if ($links = self::generate($images, $sources, $blazies)) {
-      foreach ($links as $key => $value) {
-        if ($value) {
-          $load['html_head'][$key] = $value;
-        }
+    $links = self::generate($images, $sources, $blazies);
+    foreach ($links as $key => $value) {
+      if ($value) {
+        $load['html_head'][$key] = $value;
       }
     }
   }

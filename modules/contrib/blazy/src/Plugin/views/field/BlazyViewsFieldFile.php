@@ -29,9 +29,11 @@ class BlazyViewsFieldFile extends BlazyViewsFieldPluginBase {
       $data['fallback']  = $entity->getFilename();
 
       // Pass results to \Drupal\blazy\BlazyEntity.
+      // @todo phpstan bug only undestands the doc return types, not dynamic.
+      /* @phpstan-ignore-next-line */
       return $this->blazyEntity->build($data);
     }
-    return [];
+    return '';
   }
 
   /**

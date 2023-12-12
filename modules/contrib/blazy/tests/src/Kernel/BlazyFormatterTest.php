@@ -60,7 +60,6 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $this->assertInstanceOf('\Drupal\blazy\BlazyManagerInterface', $this->formatterInstance->blazyManager(), 'BlazyManager implements interface.');
 
     // Tests cache tags matching entity ::getCacheTags().
-    /* @phpstan-ignore-next-line */
     $item = $entity->get($this->testFieldName);
     $field = $build[$this->testFieldName];
 
@@ -133,7 +132,6 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     // 1. Tests formatter settings.
     $build = $this->display->build($this->entity);
 
-    /* @phpstan-ignore-next-line */
     $result = $this->entity->get($this->testFieldName)
       ->view(['type' => 'blazy']);
 

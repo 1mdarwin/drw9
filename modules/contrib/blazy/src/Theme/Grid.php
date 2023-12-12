@@ -283,6 +283,8 @@ class Grid {
     }
 
     $blazies = $settings['blazies'];
+    // Phpstan wants multiple lines, not-efficient for simple re-assignment.
+    /* @phpstan-ignore-next-line */
     if ($settings['grid_large'] = $settings['grid']) {
       if (self::isNativeGridAsMasonry($settings)) {
         $blazies->set('libs.nativegrid__masonry', TRUE);
@@ -441,7 +443,7 @@ class Grid {
   /**
    * Returns field label via Field UI, unless use.theme_field takes place.
    */
-  private static function label($blazies): ?string {
+  private static function label($blazies): string {
     if (!$blazies->use('theme_field')
       && $blazies->get('field.label_display') != 'hidden') {
       return $blazies->get('field.label') ?: '';

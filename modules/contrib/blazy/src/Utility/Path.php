@@ -17,28 +17,28 @@ class Path {
   /**
    * The AMP page.
    *
-   * @var bool
+   * @var bool|null
    */
   protected static $isAmp;
 
   /**
    * The preview mode to disable Blazy where JS is not available, or useless.
    *
-   * @var bool
+   * @var bool|null
    */
   protected static $isPreview;
 
   /**
    * The preview mode to disable interactive elements.
    *
-   * @var bool
+   * @var bool|null
    */
   protected static $isSandboxed;
 
   /**
    * Retrieves the file url generator service.
    *
-   * @return \Drupal\Core\File\FileUrlGenerator
+   * @return \Drupal\Core\File\FileUrlGenerator|null
    *   The file url generator.
    *
    * @see https://www.drupal.org/node/2940031
@@ -50,7 +50,7 @@ class Path {
   /**
    * Retrieves the path resolver.
    *
-   * @return \Drupal\Core\Extension\ExtensionPathResolver
+   * @return \Drupal\Core\Extension\ExtensionPathResolver|null
    *   The path resolver.
    */
   public static function pathResolver() {
@@ -60,7 +60,7 @@ class Path {
   /**
    * Retrieves the request stack.
    *
-   * @return \Symfony\Component\HttpFoundation\RequestStack
+   * @return \Symfony\Component\HttpFoundation\RequestStack|null
    *   The request stack.
    */
   public static function requestStack() {
@@ -70,7 +70,7 @@ class Path {
   /**
    * Retrieves the currently active route match object.
    *
-   * @return \Drupal\Core\Routing\RouteMatchInterface
+   * @return \Drupal\Core\Routing\RouteMatchInterface|null
    *   The currently active route match object.
    */
   public static function routeMatch() {
@@ -80,7 +80,7 @@ class Path {
   /**
    * Retrieves the stream wrapper manager service.
    *
-   * @return \Drupal\Core\StreamWrapper\StreamWrapperManager
+   * @return \Drupal\Core\StreamWrapper\StreamWrapperManager|null
    *   The stream wrapper manager.
    */
   public static function streamWrapperManager() {
@@ -90,7 +90,7 @@ class Path {
   /**
    * Retrieves the request.
    *
-   * @return \Symfony\Component\HttpFoundation\Request
+   * @return \Symfony\Component\HttpFoundation\Request|null
    *   The request.
    *
    * @see https://github.com/symfony/symfony/blob/6.0/src/Symfony/Component/HttpFoundation/Request.php
@@ -113,6 +113,7 @@ class Path {
     }
     else {
       $function = 'drupal_get_path';
+      /* @phpstan-ignore-next-line */
       $path = is_callable($function) ? $function($type, $name) : '';
     }
     return $absolute ? \base_path() . $path : $path;
@@ -134,7 +135,7 @@ class Path {
   public static function isAmp(): bool {
     if (!isset(static::$isAmp)) {
       $request = self::request();
-      static::$isAmp = $request && $request->query->get('amp');
+      static::$isAmp = $request && $request->query->get('amp') !== NULL;
     }
     return static::$isAmp;
   }
@@ -215,6 +216,8 @@ class Path {
       // @todo remove when min D9.2, and make libraries a service at 3.x.
       $dep = 'libraries_get_path';
       foreach ($libraries as $library) {
+        // @todo phpstan bug, given different Drupal branches outside tests.
+        /* @phpstan-ignore-next-line */
         $result = is_callable($dep) ? $dep($library) : '';
         if ($keyed) {
           yield $library => $result;

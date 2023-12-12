@@ -38,7 +38,6 @@ class BlazyIoJavaScriptTest extends BlazyJavaScriptTestBase {
     // @todo with Native lazyload, b-loaded is enforced on page load. And
     // since the testing browser Chrome support it, it is irrelevant.
     // @todo $this->assertSession()->elementNotExists('css', '.b-loaded');
-    /* @phpstan-ignore-next-line */
     $result = $this->assertSession()->waitForElement('css', '.b-lazy');
     $this->assertNotEmpty($result);
     $this->doTestFormatterDisplay();

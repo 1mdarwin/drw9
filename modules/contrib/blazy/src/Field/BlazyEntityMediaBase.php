@@ -217,10 +217,9 @@ abstract class BlazyEntityMediaBase extends BlazyEntityVanillaBase {
 
       $blazies->set('field.values.link', $links);
 
-      // If linkable element is plain text, it is not worth a caption.
-      if ($_switch == 'link') {
-        if (isset($links[0]['#plain_text'])
-          || isset($links[0]['#context']['value'])) {
+      // If plain text or has no title, it is not worth a caption.
+      if ($_switch == 'link' && $link = $links[0] ?? []) {
+        if (Internals::emptyOrPlainTextLink($link)) {
           $links = [];
         }
       }

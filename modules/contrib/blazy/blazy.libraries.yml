@@ -16,6 +16,7 @@ dompurify:
   version: VERSION
   license:
     name: MPL
+    url: https://raw.githubusercontent.com/cure53/DOMPurify/main/LICENSE
     gpl-compatible: false
   js:
     /libraries/dompurify/dist/purify.min.js: { minified: true, weight: -16 }

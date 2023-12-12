@@ -86,15 +86,15 @@ class BlazyTitleFormatter extends FormatterBase {
       '#title' => $this->t('Delimiter'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('delimiter'),
-      '#description' => $this->t('When provided the text will be separated by this delimiter. Use comma to have multiple delimiters.'),
-      '#prefix' => '<br />' . $this->t('Blazy Title will format delimited plain text or string as HTML title with a sub-title.'),
+      '#description' => $this->t('When provided, the text will be separated by this delimiter. Use comma to have multiple delimiters.'),
+      '#prefix' => '<br />' . $this->t('Blazy Title will format delimited plain text or string as HTML title with a sub-title. Minor CSS is required. <br>Input: <code>Title | Sub-title; Title: Sub-title</code> <br>Output: TITLE <strong>SUB-TITLE</strong>; <strong>TITLE</strong> SUB-TITLE; TITLE <small>SUB-TITLE</small>'),
     ];
 
     $element['tag'] = [
       '#title' => $this->t('Sub-title tag'),
       '#type' => 'textfield',
       '#default_value' => $this->getSetting('tag'),
-      '#description' => $this->t('The tag for the second/ last split as sub-title. Only one tag can exist.'),
+      '#description' => $this->t('The tag for the second/ last split as sub-title. Only one tag can exist: em, small, span, strong, etc.'),
     ];
 
     $element['break'] = [

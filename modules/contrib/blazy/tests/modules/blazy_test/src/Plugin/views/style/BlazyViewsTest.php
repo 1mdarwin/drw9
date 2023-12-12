@@ -3,6 +3,7 @@
 namespace Drupal\blazy_test\Plugin\views\style;
 
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Views\BlazyStylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -46,7 +47,7 @@ class BlazyViewsTest extends BlazyStylePluginBase {
    * Returns the blazy admin.
    */
   public function admin() {
-    return \Drupal::service('blazy_test.admin');
+    return Internals::service('blazy_test.admin');
   }
 
   /**

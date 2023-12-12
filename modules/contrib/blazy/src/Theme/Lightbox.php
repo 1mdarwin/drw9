@@ -419,6 +419,8 @@ class Lightbox {
 
     // Do not show icon for local video file unless supported.
     $is_local = $blazies->is('local_media');
+    // @todo phpstan bug, misleading with multiple conditions.
+    /* @phpstan-ignore-next-line */
     $show_icon = !$is_local || $is_local && $blazies->is('richbox');
     if ($show_icon) {
       $icon = '<span class="media__icon media__icon--litebox"></span>';

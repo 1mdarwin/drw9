@@ -134,12 +134,12 @@ trait BlazyFormatterTrait {
 
     // Since 2.17, the item array was to replace all sub-modules theme_ITEM() by
     // theme_blazy() for easy improvements at 3.x, optional via Blazy UI.
-    $namespace = static::$namespace ?? 'blazy';
+    $namespace = static::$namespace;
     $blazies->set('is.grid', $is_grid && $multiple)
       ->set('is.multiple', $multiple)
-      ->set('item.id', static::$itemId ?? 'slide')
-      ->set('item.prefix', static::$itemPrefix ?? 'slide')
-      ->set('item.caption', static::$captionId ?? 'caption')
+      ->set('item.id', static::$itemId)
+      ->set('item.prefix', static::$itemPrefix)
+      ->set('item.caption', static::$captionId)
       ->set('namespace', $blazies->get('namespace', $namespace));
 
     $this->pluginSettings($blazies, $settings);
@@ -191,7 +191,7 @@ trait BlazyFormatterTrait {
   protected function getCommonFieldDefinition() {
     $field = $this->fieldDefinition;
     $settings = [
-      'namespace' => static::$namespace ?? 'blazy',
+      'namespace' => static::$namespace,
     ];
 
     // Exposes few basic formatter settings w/o use_field.

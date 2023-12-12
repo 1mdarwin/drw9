@@ -46,7 +46,6 @@ class BlazyManagerBaseUnitTest extends UnitTestCase {
       ['language_manager', $exception, $this->languageManager],
     ];
 
-    /* @phpstan-ignore-next-line */
     $container->expects($this->any())
       ->method('get')
       ->willReturnMap($map);

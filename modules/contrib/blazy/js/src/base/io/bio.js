@@ -230,6 +230,12 @@
 
       // The element is being intersected.
       if (visible) {
+        // Triggers loading indicator animation before being loaded.
+        if (!me.isLoaded(el)) {
+          $[ADDCLASS](cn, C_IS_VISIBLE);
+        }
+
+        // The function hooks into browsers' lazy-loading.
         intersecting.call(me, el);
 
         // The intersecting does the loading, the check must be afterwards.
