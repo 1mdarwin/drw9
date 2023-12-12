@@ -418,6 +418,11 @@ function bootstrap_barrio_form_system_theme_settings_alter(&$form, FormStateInte
       '#title' => t('Clean wrapper for @description region', ['@description' => $description]),
       '#default_value' => $region_clean,
     ];
+    $form['layout']['region'][$name]['bootstrap_barrio_region_width_' . $name] = [
+      '#type' => 'checkbox',
+      '#title' => t('Full width wrapper for @description region', ['@description' => $description]),
+      '#default_value' => theme_get_setting('bootstrap_barrio_region_width_' . $name),
+    ];
     $form['layout']['region'][$name]['bootstrap_barrio_region_class_' . $name] = [
       '#type' => 'textfield',
       '#title' => t('Classes for @description region', ['@description' => $description]),

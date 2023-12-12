@@ -2,6 +2,8 @@ uuid: 7487a7d9-cc5b-4dd8-b589-f0a7180da720
 langcode: es
 status: true
 dependencies:
+  module:
+    - block_class
   theme:
     - drw2020
 _core:
