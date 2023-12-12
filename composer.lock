@@ -4211,17 +4211,17 @@
         },
         {
             "name": "drupal/webform",
-            "version": "6.2.0",
+            "version": "6.2.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/webform.git",
-                "reference": "6.2.0"
+                "reference": "6.2.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/webform-6.2.0.zip",
-                "reference": "6.2.0",
-                "shasum": "7a8292fb86fa60c88377279769fd6f1b1fad05c2"
+                "url": "https://ftp.drupal.org/files/projects/webform-6.2.2.zip",
+                "reference": "6.2.2",
+                "shasum": "cfd766802232dfdf39edd5a1acf7c738d14dc6eb"
             },
             "require": {
                 "drupal/core": "^9.4 || ^10",
@@ -4270,8 +4270,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "6.2.0",
-                    "datestamp": "1698674300",
+                    "version": "6.2.2",
+                    "datestamp": "1701948363",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
