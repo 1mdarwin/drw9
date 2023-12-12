@@ -38,7 +38,6 @@ class BlazyNativeJavaScriptTest extends BlazyJavaScriptTestBase {
     $this->drupalGet('node/' . $this->entity->id());
 
     // Ensures no data-src is printed. Except for Blur, BG, Video.
-    /* @phpstan-ignore-next-line */
     $result = $this->assertSession()->waitForElement('css', '[data-src]');
     $this->assertEmpty($result);
   }

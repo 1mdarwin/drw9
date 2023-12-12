@@ -30,14 +30,14 @@ class Svg implements SvgInterface {
   /**
    * The file repository service.
    *
-   * @var \Drupal\file\FileRepository
+   * @var \Drupal\file\FileRepository|null
    */
   protected $fileRepository;
 
   /**
    * The image object.
    *
-   * @var \Drupal\Core\Image\ImageInterface
+   * @var \Drupal\Core\Image\ImageInterface|null
    */
   protected $image;
 

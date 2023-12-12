@@ -103,7 +103,7 @@ abstract class TextFilterBase extends FilterBase implements ContainerFactoryPlug
   /**
    * The filter HTML plugin.
    *
-   * @var \Drupal\filter\Plugin\Filter\FilterHtml
+   * @var \Drupal\filter\Plugin\Filter\FilterHtml|null
    */
   protected $htmlFilter;
 
@@ -117,7 +117,7 @@ abstract class TextFilterBase extends FilterBase implements ContainerFactoryPlug
   /**
    * The result.
    *
-   * @var \Drupal\filter\FilterProcessResult
+   * @var \Drupal\filter\FilterProcessResult|null
    */
   protected $result;
 

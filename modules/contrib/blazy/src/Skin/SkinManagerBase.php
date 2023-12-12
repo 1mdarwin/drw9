@@ -38,14 +38,14 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
   /**
    * The library info definition.
    *
-   * @var array
+   * @var array|null
    */
   protected $libraryInfoBuild;
 
   /**
    * Static cache for the skin definition.
    *
-   * @var array
+   * @var array|null
    */
   protected $skinDefinition;
 

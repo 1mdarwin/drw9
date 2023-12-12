@@ -178,7 +178,9 @@ class BlazyResponsiveImage {
     $blazies->set('image', end($dimensions), TRUE);
 
     // Currently only needed by Preload.
-    if ($initial && $resimage && !empty($settings['preload'])) {
+    // @todo phpstan bug, misleading with multiple conditions.
+    /* @phpstan-ignore-next-line */
+    if ($initial && ($resimage && !empty($settings['preload']))) {
       self::sources($settings, $resimage);
     }
   }

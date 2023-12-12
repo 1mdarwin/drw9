@@ -65,23 +65,19 @@ class BlazyMediaUnitTest extends UnitTestCase {
     // Since 2.17.
     $this->blazyMedia = $this->createMock('\Drupal\blazy\Media\BlazyMediaInterface');
 
-    /* @phpstan-ignore-next-line */
     $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
 
-    /* @phpstan-ignore-next-line */
     $items->expects($this->any())
       ->method('view')
       ->with($view_mode)
       ->willReturn($markup);
 
-    /* @phpstan-ignore-next-line */
     $items->expects($this->any())
       ->method('getEntity')
       ->willReturn($entity);
 
-    /* @phpstan-ignore-next-line */
     $entity->expects($this->any())
       ->method('get')
       ->with($source_field)
@@ -92,7 +88,6 @@ class BlazyMediaUnitTest extends UnitTestCase {
       '#settings' => $settings,
     ];
 
-    /* @phpstan-ignore-next-line */
     $this->blazyMedia->expects($this->any())
       ->method('view')
       ->with($data)

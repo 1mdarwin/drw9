@@ -3,6 +3,7 @@
 namespace Drupal\blazy\Plugin\views\style;
 
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Views\BlazyStyleVanilla;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -45,7 +46,7 @@ class BlazyViews extends BlazyStyleVanilla implements BlazyViewsInterface {
    * {@inheritdoc}
    */
   public function admin() {
-    return \Drupal::service('blazy.admin');
+    return Internals::service('blazy.admin');
   }
 
   /**

@@ -90,7 +90,7 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
       // @todo refine or excludes other providers that should not be linked.
       $linked = in_array($switch, ['link', 'content']) && Internals::linkable($blazies);
 
-      // Requires a string to strip, image_formatter has a Url object.
+      // If Image linked to Content, or Link/ Plain text URL field.
       if ($linked) {
         $this->toLink($element, $blazies);
       }

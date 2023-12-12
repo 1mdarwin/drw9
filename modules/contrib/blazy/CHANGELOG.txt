@@ -1,4 +1,15 @@
 
+Blazy 8.x-2.0-dev, 2023-11-06
+------------------------------
+- Issue #3399304 by gausarts, Corn696: Loading indicator no longer working.
+
+Blazy 8.x-2.0-dev, 2023-11-04
+------------------------------
+- Issue #3397750 by shalini_jha, R_H-L: XML Namespace incorrect in placeholder
+  SVG.
+- Issue #3397716 by YazanMajadba: Images not loaded on AMP pages.
+- Issue #3396231 by joelpittet: DOMpurify library missing license URL.
+
 Blazy 8.x-2.0-dev, 2023-10-17
 ------------------------------
 - Added Media switcher > Image linked by Link field option for plain images.

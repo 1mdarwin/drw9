@@ -109,6 +109,7 @@ class BlazySvg {
     if (!$width && isset($svg['viewBox'])) {
       [,, $_width, $_height] = array_map('trim', explode(' ', $svg['viewBox']));
       $width = ceil($_width);
+      /* @phpstan-ignore-next-line */
       $height = ceil($_height);
     }
 

@@ -99,6 +99,8 @@ class BlazyOEmbedFormatter extends FormatterBase {
     $this->admin()->buildSettingsForm($element, $definition);
 
     // Makes options look compact.
+    // @todo phpstan bug doesn't catch altered $element:
+    /* @phpstan-ignore-next-line */
     if (isset($element['background'])) {
       $element['background']['#weight'] = -99;
     }

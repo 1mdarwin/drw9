@@ -147,7 +147,6 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
     $this->assertSession()->elementNotContains('css', '.media-wrapper--blazy', 'data-unblazy');
 
     // Verifies that one of the images is there once loaded.
-    /* @phpstan-ignore-next-line */
     $loaded = $this->assertSession()->waitForElement('css', '.b-loaded');
     $this->assertNotEmpty($loaded);
 
