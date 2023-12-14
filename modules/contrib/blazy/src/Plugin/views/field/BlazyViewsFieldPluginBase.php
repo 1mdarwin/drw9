@@ -6,6 +6,7 @@ use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\BlazyEntityInterface;
 use Drupal\blazy\BlazyManager;
+use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Theme\BlazyViews;
 use Drupal\blazy\Traits\PluginScopesTrait;
 use Drupal\blazy\Utility\Arrays;
@@ -107,7 +108,7 @@ abstract class BlazyViewsFieldPluginBase extends FieldPluginBase {
    * Returns the blazy admin.
    */
   public function blazyAdmin() {
-    return \Drupal::service('blazy.admin');
+    return Internals::service('blazy.admin');
   }
 
   /**
@@ -159,7 +160,7 @@ abstract class BlazyViewsFieldPluginBase extends FieldPluginBase {
    * {@inheritdoc}
    */
   public function render(ResultRow $values) {
-    return [];
+    return '';
   }
 
   /**

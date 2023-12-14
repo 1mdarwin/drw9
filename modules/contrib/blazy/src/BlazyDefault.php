@@ -57,7 +57,7 @@ class BlazyDefault {
   /**
    * Provides the object ID to initialize BlazySettings. slicks, masons, etc.
    *
-   * @var string
+   * @var string|null
    */
   protected static $id = NULL;
 

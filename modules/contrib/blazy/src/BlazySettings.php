@@ -329,7 +329,7 @@ class BlazySettings implements \Countable {
    * @param string $key
    *   The key identifying this reset object.
    *
-   * @return $this
+   * @return \Drupal\blazy\BlazySettings
    *   The new BlazySettings instance.
    */
   public function reset(array &$settings, $key = 'blazies'): self {
@@ -400,6 +400,8 @@ class BlazySettings implements \Countable {
 
   /**
    * Sorts recursively.
+   *
+   * @phpstan-ignore-next-line
    */
   private function rksort(&$a): bool {
     if (!is_array($a)) {

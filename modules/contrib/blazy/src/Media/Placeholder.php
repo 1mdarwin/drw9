@@ -24,9 +24,9 @@ class Placeholder {
   /**
    * Defines constant placeholder Data URI image.
    *
-   * <svg xmlns="https://www.w3.org/2000/svg" viewBox="0 0 1 1"/>
+   * <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1"/>
    */
-  const DATA = "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'https%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201%201'%2F%3E";
+  const DATA = "data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg'%20viewBox%3D'0%200%201%201'%2F%3E";
 
   /**
    * Defines constant placeholder Data URI image.
@@ -118,7 +118,7 @@ class Placeholder {
   public static function generate($width = 100, $height = 100): string {
     $width = $width ?: 100;
     $height = $height ?: 100;
-    return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D\'https%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20' . $width . '%20' . $height . '\'%2F%3E';
+    return 'data:image/svg+xml;charset=utf-8,%3Csvg%20xmlns%3D\'http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg\'%20viewBox%3D\'0%200%20' . $width . '%20' . $height . '\'%2F%3E';
   }
 
   /**

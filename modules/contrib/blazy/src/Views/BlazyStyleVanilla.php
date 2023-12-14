@@ -80,7 +80,7 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
   /**
    * The first Blazy formatter found to get data from for lightbox gallery, etc.
    *
-   * @var array
+   * @var array|null
    */
   protected $firstImage;
 
@@ -256,15 +256,18 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
       $view = $this->view;
       // Fixed for Undefined property: Drupal\views\ViewExecutable::$row_index
       // by Drupal\views\Plugin\views\field\EntityField->prepareItemsByDelta.
+      /* @phpstan-ignore-next-line */
       if (!isset($view->row_index)) {
         $view->row_index = 0;
       }
 
       $rendered = [];
       if ($row && $view->rowPlugin->render($row)) {
-        if ($fields = $view->field ?? []) {
+        // @todo re-add ?? [] if phpstan misled this.
+        if ($fields = $view->field) {
           foreach ($fields as $field) {
-            $options = $field->options ?? [];
+            // @todo re-add ?? [] if phpstan misled this.
+            $options = $field->options;
             $id = $options['plugin_id'] ?? '';
             $type = $options['type'] ?? $id;
 
@@ -298,7 +301,7 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
               // D10/9.5.10 moves it into indices only if theme_field required
               // with group rows. The chaos of blazy:2.15 with lightboxes.
               $rendered = $result['rendered'][0]['#build']
-                ?? $result['rendered']['#build'] ?? $result['rendered'] ?? [];
+                ?? $result['rendered']['#build'] ?? $result['rendered'];
             }
           }
         }
@@ -335,7 +338,9 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
    * Returns the rendered field, either string or array.
    */
   protected function getFieldRendered($index, $name, $restricted = FALSE, $row = NULL): array {
-    if ($name && $output = $this->getField($index, $name)) {
+    if ($name) {
+      $output = $this->getField($index, $name);
+
       // Linked title has weird value: ….
       if ($row && ($output == "…" || !$output)) {
         if ($check = $this->getFieldRenderable($row, $index, $name)) {
@@ -343,9 +348,11 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
         }
       }
 
-      return is_array($output) ? $output : [
-        '#markup' => ($restricted ? Xss::filterAdmin($output) : $output),
-      ];
+      if ($output) {
+        return is_array($output) ? $output : [
+          '#markup' => ($restricted ? Xss::filterAdmin($output) : $output),
+        ];
+      }
     }
     return [];
   }

@@ -35,7 +35,7 @@ class Internals {
   /**
    * The blazy HTML ID.
    *
-   * @var int
+   * @var int|null
    */
   protected static $blazyId;
 
@@ -82,6 +82,25 @@ class Internals {
       $input = str_replace('//instagram', '//www.instagram', $input);
     }
     return $input;
+  }
+
+  /**
+   * Returns TRUE if the link has empty title, or just plain URL or text.
+   */
+  public static function emptyOrPlainTextLink(array $link): bool {
+    $empty = FALSE;
+    if ($title = $link['#title'] ?? NULL) {
+      // @todo php 8: str_starts_with($title, '/');
+      $length = strlen('/');
+      $empty = substr($title, 0, $length) === '/' || strpos($title, 'http') !== FALSE;
+    }
+
+    if ($empty ||
+      isset($link['#plain_text']) ||
+      isset($link['#context']['value'])) {
+      return TRUE;
+    }
+    return FALSE;
   }
 
   /**

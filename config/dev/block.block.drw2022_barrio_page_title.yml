@@ -2,6 +2,8 @@ uuid: 426aa778-d4f7-471b-9602-93c5291fb335
 langcode: es
 status: true
 dependencies:
+  module:
+    - block_class
   theme:
     - drw2022_barrio
 _core:

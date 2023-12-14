@@ -37,6 +37,8 @@ class AttributeParser {
         $data_uri = Blazy::isDataUri($check);
         // @todo recheck against sub-modules priority order in Filter admin.
         // The SRC might be 1px, but DATA-SRC is the real data URI.
+        // @todo phpstan bug doesn't catch multiple conditions:
+        /* @phpstan-ignore-next-line */
         if (!$data_uri || ($data_uri && $use_data_uri)) {
           return $check;
         }

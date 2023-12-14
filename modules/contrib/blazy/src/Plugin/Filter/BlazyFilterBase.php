@@ -46,8 +46,8 @@ abstract class BlazyFilterBase extends TextFilterBase implements BlazyFilterInte
   ) {
     $instance = parent::create($container, $configuration, $plugin_id, $plugin_definition);
 
-    $instance->blazyAdmin = $instance->blazyAdmin ?? $container->get('blazy.admin');
-    $instance->blazyOembed = $instance->blazyOembed ?? $container->get('blazy.oembed');
+    $instance->blazyAdmin = $container->get('blazy.admin');
+    $instance->blazyOembed = $container->get('blazy.oembed');
     $instance->svgManager = $container->get('blazy.svg');
 
     return $instance;

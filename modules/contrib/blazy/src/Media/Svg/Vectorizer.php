@@ -21,7 +21,7 @@ class Vectorizer implements VectorizerInterface {
   /**
    * GDImageIdentifier.
    *
-   * @var resource
+   * @var object|bool|null
    */
   protected $image;
 
@@ -53,7 +53,7 @@ class Vectorizer implements VectorizerInterface {
    * dimensions. e.g.: RGB( 0, 0, 255 ) and RGB( 0, 0, 0 ) would be merged
    * with a threshold greater than 255.
    *
-   * @var float
+   * @var int
    */
   protected $threshold = 0;
 

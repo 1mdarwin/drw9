@@ -56,7 +56,7 @@ function bootstrap_barrio_preprocess_html(&$variables) {
     $styles = [
       "--bs-primary:$pc;",
       "--bb-primary-dark:$pcd;",
-      "--bb-primary-text:$pct;",
+      "--bb-primary-light:$pct;",
       "--bs-primary-rgb:$pcrgb;",
       "--bs-secondary:$sc;",
       "--bb-secondary-dark:$scd;",
@@ -451,6 +451,14 @@ function bootstrap_barrio_preprocess_region(&$variables) {
   elseif (!in_array($variables['elements']['#region'], $nowrap)) {
     $variables['attributes']['class'][] = 'row';
   }
+  if (theme_get_setting('bootstrap_barrio_region_clean_' . $variables['elements']['#region']) !== NULL) {
+    $variables['clean'] = theme_get_setting('bootstrap_barrio_region_clean_' . $variables['elements']['#region']);
+  }
+  else {
+    $variables['clean'] = FALSE;
+  }
+  $variables['container'] = theme_get_setting('bootstrap_barrio_container') ??
+    (theme_get_setting('bootstrap_barrio_fluid_container') ? 'container-fluid' : 'container');
 
 }
 
@@ -464,6 +472,14 @@ function bootstrap_barrio_preprocess_block(&$variables) {
   // Add a clearfix class to system branding blocks.
   if ($variables['plugin_id'] == 'system_branding_block') {
     $variables['attributes']['class'][] = 'clearfix';
+  }
+  $block = $variables['elements'];
+  $blockType = $block['#configuration']['provider'];
+  if ($blockType == "block_content") {
+    if (isset($block['content']['#block_content']) && ($block['content']['#block_content'] !== null)) {
+      $bundle = $block['content']['#block_content']->bundle();
+      $variables['attributes']['class'][] = 'block-content-' . $bundle;
+    }
   }
 }
 
@@ -619,8 +635,27 @@ function bootstrap_barrio_theme_suggestions_region_alter(array &$suggestions, ar
   else {
     $region_clean = in_array($variables['elements']['#region'], $nowrap);
   }
-  if ($region_clean) {
+  $region_width = theme_get_setting('bootstrap_barrio_region_width_' . $variables['elements']['#region']);
+
+  if ($region_width) {
+    $suggestions[] = 'region__full_width';
+  }
+  elseif ($region_clean) {
     $suggestions[] = 'region__nowrap';
+  }
+}
+
+/**
+ * Implements hook_theme_suggestions_HOOK_alter().
+ */
+function bootstrap_barrio_theme_suggestions_block_alter(array &$suggestions, array $variables) {
+  $block = $variables['elements'];
+  $blockType = $block['#configuration']['provider'];
+  if ($blockType == "block_content") {
+    if (isset($block['content']['#block_content']) && ($block['content']['#block_content'] !== null)) {
+      $bundle = $block['content']['#block_content']->bundle();
+      array_splice($suggestions, 2, 0, 'block__block_' . $bundle);
+    }
   }
 }
 
@@ -823,7 +858,7 @@ function bootstrap_barrio_preprocess_input(&$variables) {
       }
       $variables['attributes'] = new Attribute($variables['attributes']);
     }
-    $variables['safe_value_label'] = Xss::filter($variables['attributes']['value']);
+    $variables['safe_value_label'] = Xss::filter($variables['attributes']['value'] ?? '');
   }
   if ($variables['element']['#type'] != 'radio' &&
     $variables['element']['#type'] != 'checkbox' &&
@@ -885,8 +920,8 @@ function _hex2rgba( $color, $opacity ) {
 function _color_luminance( $hex, $percent ) {
   $hex = preg_replace( '/[^0-9a-f]/i', '', $hex );
   $new_hex = '#';
-  if ( strlen( $hex ) < 6 ) {
-    $hex = $hex[0] + $hex[0] + $hex[1] + $hex[1] + $hex[2] + $hex[2];
+  if ($hex !== null && strlen($hex) < 6) {
+    $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
   }
   for ($i = 0; $i < 3; $i++) {
     $dec = hexdec( substr( $hex, $i*2, 2 ) );
@@ -934,5 +969,8 @@ function _getContrastColor($hexColor, $white = '#fff', $dark = '#000') {
 }
 
 function _get_color($color, $colors) {
-  return $colors[$color];
+  if (in_array($color, $colors)) {
+    return $colors[$color];
+  }
+  return $color;
 }

@@ -294,30 +294,28 @@ abstract class BlazyStyleBase extends BlazyStyleVanilla implements BlazyStyleBas
 
       // This allows a thumbnail different from the main stage, such as logos
       // thumbnails, and company buildings for the main stage.
-      if ($tn_uri) {
-        $style = NULL;
+      $style = NULL;
 
-        if ($tn_style && !Internals::isSvg($tn_uri)) {
-          if ($style = $this->manager->load($tn_style, 'image_style')) {
-            $sets['thumbnail_style'] = $tn_style;
-            $tn_uri = $style->buildUri($tn_uri);
-          }
+      if ($tn_style && !Internals::isSvg($tn_uri)) {
+        if ($style = $this->manager->load($tn_style, 'image_style')) {
+          $sets['thumbnail_style'] = $tn_style;
+          $tn_uri = $style->buildUri($tn_uri);
         }
-
-        $tn_url = Blazy::url($tn_uri, $style);
-
-        // @todo remove the first here.
-        $sets['thumbnail_uri'] = $tn_uri;
-        $blazies->set('thumbnail.id', $tn_style)
-          ->set('thumbnail.uri', $tn_uri)
-          ->set('thumbnail.url', $tn_url)
-          ->set('thumbnail.item', $item);
-
-        $doable = TRUE;
       }
-      else {
-        $doable = $blazies->get('image.uri') != NULL;
-      }
+
+      $tn_url = Blazy::url($tn_uri, $style);
+
+      // @todo remove the first here.
+      $sets['thumbnail_uri'] = $tn_uri;
+      $blazies->set('thumbnail.id', $tn_style)
+        ->set('thumbnail.uri', $tn_uri)
+        ->set('thumbnail.url', $tn_url)
+        ->set('thumbnail.item', $item);
+
+      $doable = TRUE;
+    }
+    else {
+      $doable = $blazies->get('image.uri') != NULL;
     }
     return ['doable' => $doable, 'item' => $item];
   }
