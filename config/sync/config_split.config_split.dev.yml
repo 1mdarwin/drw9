@@ -1,6 +1,6 @@
 uuid: 6193c905-6872-4d4a-bf43-6a9a38f64f30
 langcode: en
-status: true
+status: false
 dependencies: {  }
 id: dev
 label: dev
@@ -26,20 +26,15 @@ blacklist:
   - block.block.bootstrap_barrio_messages
   - block.block.bootstrap_barrio_page_title
   - block.block.bootstrap_barrio_powered
-  - block.block.bootstrap_barrio_primary_admin_actions
-  - block.block.bootstrap_barrio_primary_local_tasks
   - block.block.bootstrap_barrio_search
-  - block.block.bootstrap_barrio_secondary_local_tasks
-  - block.block.bootstrap_barrio_site_branding
   - block.block.bootstrap_barrio_tools
   - block.block.bootstrap_barrio_views_block__faqs_block_1
+  - block.block.bootstrap_barrio_views_block__front_flexslider_es__block_1
   - block.block.bootstrap_barrio_views_block__listablogs_block_1
   - block.block.bootstrap_barrio_views_block__porcategoria_block_1
   - block.block.bootstrap_barrio_views_block__portafolio_block_1
   - block.block.bootstrap_barrio_views_block__servicios_block_1
-  - block.block.bootstrap_barrio_views_block__slideshow_slick_block_1
   - block.block.bootstrap_barrio_widget
-  - block.block.contactblockresponsive
   - block.block.drw2022_barrio_account_menu
   - block.block.drw2022_barrio_acercadelblog
   - block.block.drw2022_barrio_alternadordeidiomacontent
@@ -59,24 +54,14 @@ blacklist:
   - block.block.drw2022_barrio_search
   - block.block.drw2022_barrio_tools
   - block.block.drw2022_barrio_views_block__faqs_block_1
+  - block.block.drw2022_barrio_views_block__front_flexslider_es__block_1
   - block.block.drw2022_barrio_views_block__listablogs_block_1
   - block.block.drw2022_barrio_views_block__porcategoria_block_1
   - block.block.drw2022_barrio_views_block__portafolio_block_1
   - block.block.drw2022_barrio_views_block__servicios_block_1
-  - block.block.drw2022_barrio_views_block__slideshow_slick_block_1
   - block.block.drw2022_barrio_widget
-  - block.block.mainnavigation
-  - block.block.quienessomos
-  - block.block.views_block__faqs_block_1_2
-  - block.block.views_block__listablogs_block_1_2
   - bootstrap_barrio.settings
-  - core.extension
   - drw2022_barrio.settings
-  - responsive_menu.settings
-  - system.performance
-  - system.theme
-  - block.block.bootstrap_barrio_views_block__front_flexslider_es__block_1
-  - block.block.drw2022_barrio_views_block__front_flexslider_es__block_1
 graylist: {  }
 graylist_dependents: true
 graylist_skip_equal: true

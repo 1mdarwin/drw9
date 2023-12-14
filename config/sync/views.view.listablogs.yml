@@ -320,11 +320,6 @@ display:
         type: default
       row:
         type: fields
-        options:
-          default_field_elements: true
-          inline: {  }
-          separator: ''
-          hide_empty: false
       query:
         type: views_query
         options:
@@ -497,7 +492,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: "<div class=\"d-flex\">\r\n  <div class=\"flex-shrink-0\">\r\n   {{field_image}}\r\n  </div>\r\n  <div class=\"flex-grow-1 ms-3\">\r\n    {{title}}\r\n  </div>\r\n</div>"
+            text: "<div class=\"media\">\r\n  <div class=\"media-left media-middle\">\r\n   {{field_image}}\r\n  </div>\r\n  <div class=\"media-body\">\r\n    {{title}}\r\n  </div>\r\n</div>"
             make_link: false
             path: ''
             absolute: false
