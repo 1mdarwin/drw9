@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\BuildTests\Framework\Tests;
 
 use Drupal\BuildTests\Framework\BuildTestBase;
@@ -71,13 +73,6 @@ class BuildTestTest extends BuildTestBase {
         'simpletest' => [
           'simpletest_hash' => [
             'some_results.xml' => '<xml/>',
-          ],
-        ],
-      ],
-      'vendor' => [
-        'composer' => [
-          'composer' => [
-            'installed.json' => '"items": {"things"}',
           ],
         ],
       ],
