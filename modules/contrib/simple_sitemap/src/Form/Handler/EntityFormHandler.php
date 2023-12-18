@@ -36,7 +36,7 @@ class EntityFormHandler extends EntityFormHandlerBase {
     $bundle_label = $this->entityHelper
       ->getBundleLabel($this->entityTypeId, $this->bundleName);
 
-    foreach ($this->generator->entityManager()->getSitemaps() as $variant => $sitemap) {
+    foreach ($this->generator->entityManager()->setSitemaps()->getSitemaps() as $variant => $sitemap) {
       $variant_form = &$form[$variant];
 
       $variant_form['index']['#options'] = [
@@ -112,7 +112,7 @@ class EntityFormHandler extends EntityFormHandlerBase {
     }
 
     $entity_manager = $this->generator->entityManager();
-    foreach ($entity_manager->getSitemaps() as $variant => $sitemap) {
+    foreach ($entity_manager->setSitemaps()->getSitemaps() as $variant => $sitemap) {
       $settings = $form_state->getValue(['simple_sitemap', $variant]);
 
       // Variants may have changed since form load.
