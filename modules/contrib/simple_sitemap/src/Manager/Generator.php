@@ -113,7 +113,7 @@ class Generator implements SitemapGetterInterface {
    * @see https://www.drupal.org/project/simple_sitemap/issues/3375932
    */
   public function getDefaultVariant(): ?string {
-    return $this->getDefaultSitemap()?->id();
+    return ($defaultSitemap = $this->getDefaultSitemap()) ? $defaultSitemap->id() : NULL;
   }
 
   /**

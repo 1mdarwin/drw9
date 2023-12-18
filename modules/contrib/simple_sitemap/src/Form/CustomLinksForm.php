@@ -3,11 +3,11 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\Manager\Generator;
-use Drupal\Core\Path\PathValidatorInterface;
 
 /**
  * Provides form to manage custom links.
@@ -111,7 +111,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
    * {@inheritdoc}
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
-    $sitemaps = $this->generator->customLinkManager()->getSitemaps();
+    $sitemaps = $this->generator->customLinkManager()->setSitemaps()->getSitemaps();
     foreach ($form_state->getValue('variants') as $variant => $values) {
       foreach ($this->stringToCustomLinks($values['custom_links']) as $i => $link_config) {
         $placeholders = [
