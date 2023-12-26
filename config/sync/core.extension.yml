@@ -12,6 +12,8 @@ module:
   block: 0
   block_class: 0
   block_content: 0
+  bootstrap_layouts: 0
+  bootstrap_library: 0
   breakpoint: 0
   captcha: 0
   ckeditor5: 0
@@ -57,8 +59,8 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  phpass: 0
   responsive_image: 0
-  responsive_menu: 0
   search: 0
   shortcut: 0
   simple_sitemap: 0
@@ -68,7 +70,6 @@ module:
   slick_ui: 0
   slick_views: 0
   statistics: 0
-  superfish: 0
   system: 0
   taxonomy: 0
   text: 0
@@ -77,6 +78,7 @@ module:
   tour: 0
   update: 0
   user: 0
+  views_bootstrap: 0
   views_infinite_scroll: 0
   views_ui: 0
   webform: 0
@@ -93,5 +95,7 @@ module:
   views: 10
   standard: 1000
 theme:
+  bootstrap: 0
+  drw2020: 0
   claro: 0
 profile: standard

@@ -6,5 +6,6 @@ dependencies:
     - node
 id: node.email_plain
 label: email_plain
+description: ''
 targetEntityType: node
 cache: true
