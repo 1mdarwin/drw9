@@ -6,5 +6,6 @@ dependencies:
     - node
 id: node.email_html
 label: email_html
+description: ''
 targetEntityType: node
 cache: true

@@ -1,5 +1,3 @@
-_core:
-  default_config_hash: 5iMAg55zVSTNmFTLPWW1HnFz4EepAhiWQDLes2K9iFI
 langcode: en
 settings:
   default_status: open
@@ -326,9 +324,21 @@ ui:
 libraries:
   excluded_libraries:
     - choices
+    - codemirror
     - jquery.chosen
+    - jquery.inputmask
+    - jquery.intl-tel-input
+    - jquery.rateit
+    - jquery.select2
+    - jquery.textcounter
+    - jquery.timepicker
+    - popperjs
+    - progress-tracker
+    - signature_pad
+    - tabby
+    - tippyjs
 requirements:
-  cdn: true
+  cdn: false
   clientside_validation: true
   bootstrap: true
   spam: true

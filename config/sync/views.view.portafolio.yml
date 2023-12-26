@@ -22,7 +22,7 @@ dependencies:
     - text
     - user
 id: portafolio
-label: Portafolio
+label: Portfolio
 module: views
 description: ''
 tag: ''
@@ -223,7 +223,6 @@ display:
       contexts:
         - 'languages:language_content'
         - 'languages:language_interface'
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags: {  }
@@ -791,7 +790,6 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
-        - user
         - 'user.node_grants:view'
         - user.permissions
       tags:
@@ -1281,7 +1279,6 @@ display:
       max-age: -1
       contexts:
         - 'languages:language_interface'
-        - user
         - 'user.node_grants:view'
       tags:
         - 'config:field.storage.node.body'
