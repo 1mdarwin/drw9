@@ -1,13 +1,15 @@
-uuid: 426aa778-d4f7-471b-9602-93c5291fb335
+uuid: 7487a7d9-cc5b-4dd8-b589-f0a7180da720
 langcode: es
 status: true
 dependencies:
+  module:
+    - block_class
   theme:
-    - drw2022_barrio
+    - drw2020
 _core:
   default_config_hash: 7rR9chwXvdM2H8OYMAYx9Zj3GGlPMrZp_M3ZA4thYTk
-id: drw2022_barrio_page_title
-theme: drw2022_barrio
+id: drw2020_page_title
+theme: drw2020
 region: content
 weight: -11
 provider: null

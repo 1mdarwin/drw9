@@ -1,0 +1,35 @@
+uuid: 9f5e6557-f23d-47a4-a487-9402aaaa3104
+langcode: es
+status: true
+dependencies:
+  config:
+    - views.view.servicios
+  module:
+    - block_class
+    - system
+    - views
+  theme:
+    - drw2020
+third_party_settings:
+  block_class:
+    classes: servicios
+id: drw2020_views_block__servicios_block_1
+theme: drw2020
+region: highlighted
+weight: -11
+provider: null
+plugin: 'views_block:servicios-block_1'
+settings:
+  id: 'views_block:servicios-block_1'
+  label: Services
+  label_display: '0'
+  provider: views
+  views_label: Services
+  items_per_page: none
+  exposed: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

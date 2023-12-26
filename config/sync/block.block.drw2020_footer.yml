@@ -1,0 +1,31 @@
+uuid: be87f0c3-7f58-405f-879c-2650cb54f9cb
+langcode: es
+status: true
+dependencies:
+  config:
+    - system.menu.footer
+  module:
+    - block_class
+    - system
+  theme:
+    - drw2020
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-12 col-lg-12 menupie'
+_core:
+  default_config_hash: 8zRjTNbfNAJ94lQpZDu6MkyD87GYJ2zpH9VQPVmRbcM
+id: drw2020_footer
+theme: drw2020
+region: footer
+weight: -6
+provider: null
+plugin: 'system_menu_block:footer'
+settings:
+  id: 'system_menu_block:footer'
+  label: 'Footer Menu'
+  label_display: '0'
+  provider: system
+  level: 1
+  depth: 0
+  expand_all_items: false
+visibility: {  }
