@@ -94,30 +94,14 @@ body{
 .navbar-collapse{
   background: #0B2A3F;
 }
-/* LANGUAGE - IDIOM */
-.idioma{
-  float: right;
-  /*position: absolute;*/
-  right: 0px;
-  top: 16px;
-}
-.idioma img{
-  display: inline;
-  margin-left: 5px;
-  padding-top: 25px;
-}
-.idioma li{
+/* LANGUAGE - IDIOM - Switcher language */
+.switcher-language{
   display: inline-flex;
+}
+.switcher-language span{
   margin:0;
   padding: 0;
   padding-right:10px;
-}
-.idioma ul{
-  padding-right:10px;
-  padding-left: 0px;
-}
-.idioma a{
-  color: #fff;
 }
 #myregion{
   padding:0px;
@@ -734,9 +718,12 @@ footer li{
 }
 footer li a{
   margin: 0px;
-  padding: 0px !important;
+  padding: 0px;
   text-decoration: none;
   text-indent: 0px !important;
+}
+.faq a{
+  padding: 5px !important
 }
 footer .more-link a{
   background: #ff5722;

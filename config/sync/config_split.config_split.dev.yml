@@ -37,7 +37,6 @@ blacklist:
   - block.block.bootstrap_barrio_widget
   - block.block.drw2022_barrio_account_menu
   - block.block.drw2022_barrio_acercadelblog
-  - block.block.drw2022_barrio_alternadordeidiomacontent
   - block.block.drw2022_barrio_branding
   - block.block.drw2022_barrio_breadcrumbs
   - block.block.drw2022_barrio_contactblockresponsive
@@ -45,6 +44,7 @@ blacklist:
   - block.block.drw2022_barrio_footer
   - block.block.drw2022_barrio_footermessage
   - block.block.drw2022_barrio_help
+  - block.block.drw2022_barrio_languageswitchercontent
   - block.block.drw2022_barrio_local_actions
   - block.block.drw2022_barrio_local_tasks
   - block.block.drw2022_barrio_main_menu
@@ -60,10 +60,15 @@ blacklist:
   - block.block.drw2022_barrio_views_block__portafolio_block_1
   - block.block.drw2022_barrio_views_block__servicios_block_1
   - block.block.drw2022_barrio_widget
+  - block.block.views_block__faqs_block_1_2
+  - block_class.settings
   - bootstrap_barrio.settings
   - drw2022_barrio.settings
+  - views.view.listablogs
+  - block.block.drw2022_barrio_alternadordeidiomacontent
   - block.block.bootstrap_barrio_views_block__front_flexslider_es__block_1
   - block.block.drw2022_barrio_views_block__front_flexslider_es__block_1
-graylist: {  }
+graylist:
+  - views.view.faqs
 graylist_dependents: true
 graylist_skip_equal: true

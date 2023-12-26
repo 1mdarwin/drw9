@@ -15,7 +15,7 @@ third_party_settings:
 id: mainnavigation
 theme: drw2022_barrio
 region: primary_menu
-weight: 0
+weight: -15
 provider: null
 plugin: 'superfish:main'
 settings:
