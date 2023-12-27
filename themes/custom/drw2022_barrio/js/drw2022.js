@@ -155,29 +155,16 @@
     $('.webform-contactus-block .closebutton').click(function() {
       $('.webform-contactus-block').fadeOut(50);
     });
-    /* Control over searchbox*/
-    /*var isOpen = false;
-    var searchBox = $('.form-search');
-    var inputBox = $('.form-text');
-    var submitIcon = $('.icon');
-    submitIcon.mouseover(function() {
+    /* Control over searchbox
+    =============================================================*/
+    const input = document.getElementById("search-input");
+    const searchBtn = document.getElementById("search-btn");
 
-      if(isOpen == false){
-        searchBox.addClass('busca-open');
-        inputBox.focus();
-        isOpen = true;
-        inputBox.css('width','75%');
-        console.log('ingreso aqui');
-      }
-    });
-    inputBox.focusout(function() {
-
-      searchBox.removeClass('busca-open');
-      isOpen = false;
-      inputBox.css('width','0');
-      console.log('salio de aqui');
-    });
-*/
+    const expand = () => {
+      searchBtn.classList.toggle("close");
+      input.classList.toggle("square");
+    };
+    searchBtn.addEventListener("click", expand);
 
     /* End de control searchbox*/
 

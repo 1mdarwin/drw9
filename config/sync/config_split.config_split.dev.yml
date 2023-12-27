@@ -53,6 +53,7 @@ blacklist:
   - block.block.drw2022_barrio_powered
   - block.block.drw2022_barrio_responsivemenumobileicon
   - block.block.drw2022_barrio_search
+  - block.block.drw2022_barrio_searchform
   - block.block.drw2022_barrio_tools
   - block.block.drw2022_barrio_views_block__faqs_block_1
   - block.block.drw2022_barrio_views_block__listablogs_block_1

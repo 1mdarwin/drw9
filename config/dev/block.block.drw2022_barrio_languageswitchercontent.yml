@@ -3,14 +3,13 @@ langcode: en
 status: true
 dependencies:
   module:
-    - block_class
     - language
   theme:
     - drw2022_barrio
 id: drw2022_barrio_languageswitchercontent
 theme: drw2022_barrio
 region: primary_menu
-weight: 0
+weight: -12
 provider: null
 plugin: 'language_block:language_content'
 settings:
