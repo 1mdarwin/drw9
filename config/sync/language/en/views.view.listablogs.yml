@@ -1,0 +1,8 @@
+label: 'Our Blog'
+display:
+  default:
+    display_options:
+      use_more_text: more
+  page_1:
+    display_options:
+      title: 'Our Blog'
