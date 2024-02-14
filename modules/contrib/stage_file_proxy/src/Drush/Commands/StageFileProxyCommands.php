@@ -1,7 +1,8 @@
 <?php
 
-namespace Drupal\stage_file_proxy\Commands;
+namespace Drupal\stage_file_proxy\Drush\Commands;
 
+use Drupal\Component\DependencyInjection\ContainerInterface;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Database\Connection;
@@ -69,6 +70,18 @@ class StageFileProxyCommands extends DrushCommands {
     $this->database = $database;
     $this->fetchManager = $fetchManager;
     $this->root = $root;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container): self {
+    return new static(
+      $container->get('config.factory'),
+      $container->get('database'),
+      $container->get('stage_file_proxy.fetch_manager'),
+      '%app.root%',
+    );
   }
 
   /**
