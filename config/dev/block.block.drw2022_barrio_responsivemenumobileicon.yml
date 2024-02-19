@@ -9,7 +9,7 @@ dependencies:
 id: drw2022_barrio_responsivemenumobileicon
 theme: drw2022_barrio
 region: primary_menu
-weight: -14
+weight: -12
 provider: null
 plugin: responsive_menu_toggle
 settings:

@@ -9,7 +9,7 @@ dependencies:
 id: drw2022_barrio_languageswitchercontent
 theme: drw2022_barrio
 region: primary_menu
-weight: -12
+weight: -9
 provider: null
 plugin: 'language_block:language_content'
 settings:

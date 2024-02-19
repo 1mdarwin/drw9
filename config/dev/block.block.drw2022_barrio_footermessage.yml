@@ -14,8 +14,8 @@ third_party_settings:
     classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
 id: drw2022_barrio_footermessage
 theme: drw2022_barrio
-region: top_header
-weight: -11
+region: footer_first
+weight: -13
 provider: null
 plugin: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
 settings:

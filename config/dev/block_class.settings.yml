@@ -13,7 +13,10 @@ enable_id_replacement: true
 weight_attributes: null
 weight_class: null
 weight_id: null
+filter_html_clean_css_identifier: ''
+maxlength_attributes: 10000
+maxlength_id: 255
 attribute_keys_stored: '[]'
 attribute_value_stored: '[]'
 attributes_inline: '[]'
-id_replacement_stored: '{"mainnavigation":"drwmenu-sf","views_block__faqs_block_1_2":"faq"}'
+id_replacement_stored: '{"drw2022_barrio_mainnavigation":"drwmenu-sf"}'

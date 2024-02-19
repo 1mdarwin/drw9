@@ -58,7 +58,6 @@ module:
   path: 0
   path_alias: 0
   responsive_image: 0
-  responsive_menu: 0
   search: 0
   shortcut: 0
   simple_sitemap: 0
@@ -94,6 +93,6 @@ module:
   standard: 1000
 theme:
   claro: 0
-  drw2020: 0
-  bootstrap: 0
+  bootstrap_barrio: 0
+  drw2022_barrio: 0
 profile: standard
