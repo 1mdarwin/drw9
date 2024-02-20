@@ -1,0 +1,29 @@
+uuid: 2b41e321-8989-4593-b770-73b6336521b3
+langcode: es
+status: true
+dependencies:
+  config:
+    - views.view.listablogs
+  module:
+    - block_class
+    - views
+  theme:
+    - bootstrap_barrio
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3 '
+id: bootstrap_barrio_views_block__listablogs_block_1
+theme: bootstrap_barrio
+region: top_header
+weight: -10
+provider: null
+plugin: 'views_block:listablogs-block_1'
+settings:
+  id: 'views_block:listablogs-block_1'
+  label: 'Our Blog'
+  label_display: visible
+  provider: views
+  views_label: 'Our Blog'
+  items_per_page: none
+  exposed: {  }
+visibility: {  }

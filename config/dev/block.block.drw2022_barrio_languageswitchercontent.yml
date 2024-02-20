@@ -1,0 +1,20 @@
+uuid: 47f9f015-1b93-4bc7-aef3-ab166eda8a74
+langcode: en
+status: true
+dependencies:
+  module:
+    - language
+  theme:
+    - drw2022_barrio
+id: drw2022_barrio_languageswitchercontent
+theme: drw2022_barrio
+region: primary_menu
+weight: -9
+provider: null
+plugin: 'language_block:language_content'
+settings:
+  id: 'language_block:language_content'
+  label: 'Language switcher (Content)'
+  label_display: '0'
+  provider: language
+visibility: {  }

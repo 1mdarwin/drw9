@@ -1,0 +1,29 @@
+uuid: 34d4e80e-436f-4be2-8716-e83ab3880ff0
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:42100e2e-4733-4846-9da8-b68b2653b48a'
+  module:
+    - block_class
+    - block_content
+  theme:
+    - bootstrap_barrio
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
+id: bootstrap_barrio_footermessage
+theme: bootstrap_barrio
+region: top_header
+weight: -11
+provider: null
+plugin: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+settings:
+  id: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+  label: 'We are'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: 'We are block'
+  view_mode: full
+visibility: {  }

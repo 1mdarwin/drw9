@@ -26,7 +26,10 @@ body {
 }
 
 #navbar-main {
-  background-color: #1d84c3;
+  background-color: #0B2A3F;
+}
+.navbar-brand{
+  color: #ff5722;
 }
 
 a,
@@ -72,7 +75,7 @@ a:active,
 }
 
 .site-footer {
-  background: #292929;
+  background: #0B2A3F;
 }
 
 .region-header,

@@ -12,12 +12,10 @@ dependencies:
     - field.field.node.portafolio.field_url_porta
     - field.field.node.portafolio.upload
     - node.type.portafolio
-    - responsive_image.styles.portafolio
   module:
     - comment
     - file
     - link
-    - responsive_image
     - text
     - user
 id: node.portafolio.default
@@ -40,17 +38,6 @@ content:
       pager_id: 0
     third_party_settings: {  }
     weight: 4
-    region: content
-  field_imagen_porta:
-    type: responsive_image
-    label: hidden
-    settings:
-      responsive_image_style: portafolio
-      image_link: ''
-      image_loading:
-        attribute: eager
-    third_party_settings: {  }
-    weight: 2
     region: content
   field_url_porta:
     type: link
@@ -83,6 +70,7 @@ content:
     weight: 3
     region: content
 hidden:
+  field_imagen_porta: true
   field_metatag: true
   field_tipo_porta: true
   langcode: true

@@ -1,0 +1,35 @@
+uuid: 0ef3503e-967f-4283-bc00-3db178a66736
+langcode: es
+status: true
+dependencies:
+  config:
+    - views.view.portafolio
+  module:
+    - block_class
+    - system
+    - views
+  theme:
+    - drw2022_barrio
+third_party_settings:
+  block_class:
+    classes: clientes
+id: drw2022_barrio_views_block__portafolio_block_1
+theme: drw2022_barrio
+region: highlighted
+weight: -7
+provider: null
+plugin: 'views_block:portafolio-block_1'
+settings:
+  id: 'views_block:portafolio-block_1'
+  label: ''
+  label_display: visible
+  provider: views
+  views_label: ''
+  items_per_page: none
+  exposed: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    context_mapping: {  }
+    pages: '<front>'

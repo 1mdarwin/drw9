@@ -1,0 +1,29 @@
+uuid: 6fc091d7-7678-424a-88f4-7bd4bb957174
+langcode: es
+status: true
+dependencies:
+  content:
+    - 'block_content:basic:42100e2e-4733-4846-9da8-b68b2653b48a'
+  module:
+    - block_class
+    - block_content
+  theme:
+    - drw2022_barrio
+third_party_settings:
+  block_class:
+    classes: 'col-xs-12 col-sm-12 col-md-3 col-lg-3'
+id: drw2022_barrio_footermessage
+theme: drw2022_barrio
+region: footer_first
+weight: -13
+provider: null
+plugin: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+settings:
+  id: 'block_content:42100e2e-4733-4846-9da8-b68b2653b48a'
+  label: 'We are'
+  label_display: visible
+  provider: block_content
+  status: true
+  info: 'We are block'
+  view_mode: full
+visibility: {  }
