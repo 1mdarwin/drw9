@@ -157,7 +157,7 @@
     });
     /* Control over searchbox
     =============================================================*/
-    const input = document.getElementById("search-input");
+    /*const input = document.getElementById("search-input");
     const searchBtn = document.getElementById("search-btn");
 
     const expand = () => {
@@ -165,7 +165,7 @@
       input.classList.toggle("square");
     };
     searchBtn.addEventListener("click", expand);
-
+    */
     /* End de control searchbox*/
 
 
