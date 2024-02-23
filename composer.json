@@ -23,6 +23,7 @@
         "bower-asset/cropper": "^2.3",
         "bower-asset/slick-carousel": "^1.8",
         "composer/installers": "^1.2",
+        "cweagans/composer-patches": "^1.7",
         "drupal/admin_toolbar": "^3.1.0",
         "drupal/block_class": "^2.0",
         "drupal/bootstrap": "^3.24",
@@ -79,10 +80,16 @@
             "drupal/core-composer-scaffold": true,
             "drupal/core-project-message": true,
             "drupal/core-vendor-hardening": true,
-            "oomphinc/composer-installers-extender": true
+            "oomphinc/composer-installers-extender": true,
+            "cweagans/composer-patches": true
         }
     },
     "extra": {
+        "patches":{
+            "drupal/core":{
+                "big_pipe.js' checkMutation() does not check":"https://www.drupal.org/files/issues/2024-01-21/drupal-big_pipe_does_not_check_before_using_node_object-3416141.patch"
+            }
+        },
         "drupal-scaffold": {
             "locations": {
                 "web-root": "./"

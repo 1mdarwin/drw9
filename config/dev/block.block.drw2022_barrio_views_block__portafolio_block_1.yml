@@ -16,7 +16,7 @@ third_party_settings:
 id: drw2022_barrio_views_block__portafolio_block_1
 theme: drw2022_barrio
 region: highlighted
-weight: -7
+weight: -11
 provider: null
 plugin: 'views_block:portafolio-block_1'
 settings:

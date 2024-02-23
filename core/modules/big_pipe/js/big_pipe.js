@@ -89,6 +89,7 @@
    */
   function checkMutation(node) {
     return Boolean(
+      node &&
       node.nodeType === Node.ELEMENT_NODE &&
         node.nodeName === 'SCRIPT' &&
         node.dataset &&
