@@ -47,6 +47,7 @@
         "drupal/languageicons": "^2.0",
         "drupal/libraries": "^4.0",
         "drupal/metatag": "^2.0",
+        "drupal/paragraphs": "^1.17",
         "drupal/pathauto": "^1.9",
         "drupal/profile": "^1.7",
         "drupal/responsive_menu": "^4.4",
