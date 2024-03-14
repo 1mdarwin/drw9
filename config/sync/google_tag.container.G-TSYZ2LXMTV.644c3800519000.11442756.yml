@@ -11,13 +11,9 @@ tag_container_ids:
   - GTM-MMX9TM8
 advanced_settings:
   gtm:
-    data_layer: dataLayer
-    include_classes: false
-    allowlist_classes: ''
-    blocklist_classes: ''
-    include_environment: false
-    environment_id: ''
-    environment_token: ''
+    GTM-MMX9TM8:
+      data_layer: dataLayer
+      include_environment: false
 dimensions_metrics:
   -
     type: metric

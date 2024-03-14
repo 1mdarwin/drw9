@@ -65,7 +65,6 @@ return array(
     'Grasmash\\Expander\\' => array($vendorDir . '/grasmash/expander/src'),
     'Egulias\\EmailValidator\\' => array($vendorDir . '/egulias/email-validator/src'),
     'Drush\\' => array($vendorDir . '/drush/drush/src'),
-    'Drupal\\bootstrap\\' => array($baseDir . '/themes/contrib/bootstrap/src'),
     'Drupal\\Core\\' => array($baseDir . '/core/lib/Drupal/Core'),
     'Drupal\\Composer\\Plugin\\VendorHardening\\' => array($vendorDir . '/drupal/core-vendor-hardening'),
     'Drupal\\Composer\\Plugin\\Scaffold\\' => array($vendorDir . '/drupal/core-composer-scaffold'),
