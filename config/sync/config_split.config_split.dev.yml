@@ -6,11 +6,14 @@ id: dev
 label: dev
 description: 'Development modules and themes'
 weight: 0
+stackable: false
+no_patching: false
+storage: folder
 folder: config/dev
 module:
   responsive_menu: 0
 theme: {  }
-blacklist:
+complete_list:
   - block.block.bootstrap_barrio_account_menu
   - block.block.bootstrap_barrio_acercadelblog
   - block.block.bootstrap_barrio_alternadordeidiomacontent
@@ -69,7 +72,5 @@ blacklist:
   - block.block.drw2022_barrio_alternadordeidiomacontent
   - block.block.bootstrap_barrio_views_block__front_flexslider_es__block_1
   - block.block.drw2022_barrio_views_block__front_flexslider_es__block_1
-graylist:
+partial_list:
   - views.view.faqs
-graylist_dependents: true
-graylist_skip_equal: true
