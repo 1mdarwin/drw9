@@ -3,6 +3,7 @@
 namespace Drupal\config_split\Entity;
 
 use Drupal\Core\Config\Entity\ConfigEntityBase;
+use Drupal\Core\Entity\EntityTypeInterface;
 
 /**
  * Defines the Configuration Split setting entity.
@@ -36,26 +37,21 @@ use Drupal\Core\Config\Entity\ConfigEntityBase;
  *     "delete-form" = "/admin/config/development/configuration/config-split/{config_split}/delete",
  *     "enable" = "/admin/config/development/configuration/config-split/{config_split}/enable",
  *     "disable" = "/admin/config/development/configuration/config-split/{config_split}/disable",
- *     "activate" = "/admin/config/development/configuration/config-split/{config_split}/activate",
- *     "deactivate" = "/admin/config/development/configuration/config-split/{config_split}/deactivate",
- *     "import" = "/admin/config/development/configuration/config-split/{config_split}/import",
- *     "export" = "/admin/config/development/configuration/config-split/{config_split}/export",
  *     "collection" = "/admin/config/development/configuration/config-split"
  *   },
  *   config_export = {
  *     "id",
  *     "label",
  *     "description",
- *     "weight",
- *     "status",
- *     "stackable",
- *     "storage",
  *     "folder",
  *     "module",
  *     "theme",
- *     "complete_list",
- *     "partial_list",
- *     "no_patching",
+ *     "blacklist",
+ *     "graylist",
+ *     "graylist_dependents",
+ *     "graylist_skip_equal",
+ *     "weight",
+ *     "status",
  *   }
  * )
  */
@@ -83,34 +79,6 @@ class ConfigSplitEntity extends ConfigEntityBase implements ConfigSplitEntityInt
   protected $description = '';
 
   /**
-   * The weight of the configuration for sorting.
-   *
-   * @var int
-   */
-  protected $weight = 0;
-
-  /**
-   * The status, whether to be used by default.
-   *
-   * @var bool
-   */
-  protected $status = TRUE;
-
-  /**
-   * The stackable property.
-   *
-   * @var bool
-   */
-  protected $stackable = FALSE;
-
-  /**
-   * The split storage.
-   *
-   * @var string
-   */
-  protected $storage;
-
-  /**
    * The folder to export to.
    *
    * @var string
@@ -132,24 +100,63 @@ class ConfigSplitEntity extends ConfigEntityBase implements ConfigSplitEntityInt
   protected $theme = [];
 
   /**
-   * The configuration to explicitly filter out.
+   * The explicit configuration to filter out.
    *
    * @var string[]
    */
-  protected $complete_list = [];
+  protected $blacklist = [];
 
   /**
-   * The configuration to partially split.
+   * The configuration to ignore.
    *
    * @var string[]
    */
-  protected $partial_list = [];
+  protected $graylist = [];
 
   /**
-   * The configuration to not patch dependents.
+   * Include the graylist dependents flag.
    *
    * @var bool
    */
-  protected $no_patching = FALSE;
+  protected $graylist_dependents = TRUE;
+
+  /**
+   * Skip graylisted config without a change flag.
+   *
+   * @var bool
+   */
+  protected $graylist_skip_equal = TRUE;
+
+  /**
+   * The weight of the configuration when splitting several folders.
+   *
+   * @var int
+   */
+  protected $weight = 0;
+
+  /**
+   * The status, whether to be used by default.
+   *
+   * @var bool
+   */
+  protected $status = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function invalidateTagsOnSave($update) {
+    parent::invalidateTagsOnSave($update);
+    // Clear the config_filter plugin cache.
+    \Drupal::service('plugin.manager.config_filter')->clearCachedDefinitions();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected static function invalidateTagsOnDelete(EntityTypeInterface $entity_type, array $entities) {
+    parent::invalidateTagsOnDelete($entity_type, $entities);
+    // Clear the config_filter plugin cache.
+    \Drupal::service('plugin.manager.config_filter')->clearCachedDefinitions();
+  }
 
 }

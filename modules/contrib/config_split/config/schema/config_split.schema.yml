@@ -2,9 +2,6 @@ config_split.config_split.*:
   type: config_entity
   label: 'Configuration Split setting'
   mapping:
-    status:
-      type: boolean
-      label: 'Active'
     id:
       type: string
       label: 'ID'
@@ -17,15 +14,9 @@ config_split.config_split.*:
     weight:
       type: integer
       label: 'Weight'
-    stackable:
+    status:
       type: boolean
-      label: 'Stackable'
-    no_patching:
-      type: boolean
-      label: 'No Patching'
-    storage:
-      type: string
-      label: 'Storage'
+      label: 'Active'
     folder:
       type: string
       label: 'Folder'
@@ -41,13 +32,19 @@ config_split.config_split.*:
       sequence:
         type: integer
         label: 'Weight'
-    complete_list:
+    blacklist:
       type: sequence
-      label: 'Completely split configuration'
+      label: 'Filtered configuration'
       sequence:
         type: string
-    partial_list:
+    graylist:
       type: sequence
-      label: 'Partially split configuration'
+      label: 'Ignored configuration'
       sequence:
         type: string
+    graylist_dependents:
+      type: boolean
+      label: 'Include dependent configuration'
+    graylist_skip_equal:
+      type: boolean
+      label: 'Skip graylisted config without a change.'

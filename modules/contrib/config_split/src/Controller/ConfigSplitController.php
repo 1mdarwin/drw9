@@ -23,7 +23,6 @@ class ConfigSplitController extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function enableEntity($config_split) {
-    /** @var \Drupal\config_split\Entity\ConfigSplitEntityInterface $entity */
     $entity = $this->entityTypeManager()->getStorage('config_split')->load($config_split);
     $entity->set('status', TRUE);
     $entity->save();
@@ -45,7 +44,6 @@ class ConfigSplitController extends ControllerBase {
    * @throws \Drupal\Core\Entity\EntityStorageException
    */
   public function disableEntity($config_split) {
-    /** @var \Drupal\config_split\Entity\ConfigSplitEntityInterface $entity */
     $entity = $this->entityTypeManager()->getStorage('config_split')->load($config_split);
     $entity->set('status', FALSE);
     $entity->save();
