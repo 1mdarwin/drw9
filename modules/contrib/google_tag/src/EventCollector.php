@@ -102,7 +102,7 @@ final class EventCollector implements EventCollectorInterface {
     if ($delayed_events !== []) {
         $this->session->set('google_tag_events', []);
     }
-    return $delayed_events + $events;
+    return array_merge($delayed_events, $events);
   }
 
   /**

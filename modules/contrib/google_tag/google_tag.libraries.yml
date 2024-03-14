@@ -4,6 +4,7 @@ gtag:
   drupalSettings:
     gtag:
       tagId: null
+      consentMode: true
       otherIds: []
       events: []
   dependencies:

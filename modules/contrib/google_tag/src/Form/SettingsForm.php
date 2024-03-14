@@ -112,7 +112,7 @@ class SettingsForm extends ConfigFormBase {
       '#title' => $this->t('Allow multiple Tag Containers'),
       '#description' => $this->t('For <strong>most</strong> users, only one tag container is required. Each tag container represents a set of visibility conditions and events, and represents one or more measurement IDs. You only need multiple tag containers if your config is different per set of measurement IDs.'),
       '#default_value' => $config->get('use_collection'),
-      '#disabled' => !empty($google_tags) && count($google_tags) > 1,
+      '#disabled' => !empty($google_tags) && count($google_tags) > 1 && $config->get('use_collection'),
     ];
 
     return $fieldset;
