@@ -87,6 +87,9 @@
         "patches":{
             "drupal/core":{
                 "big_pipe.js' checkMutation() does not check":"https://www.drupal.org/files/issues/2024-01-21/drupal-big_pipe_does_not_check_before_using_node_object-3416141.patch"
+            },
+            "drupal/google_tag":{
+                "Enforce Privacy Consent Policy":"https://www.drupal.org/files/issues/2024-03-01/3424623-9-allow-saving-google-tag-setting-for-consent-mode.patch"
             }
         },
         "drupal-scaffold": {

@@ -3009,6 +3009,9 @@
                 },
                 "branch-alias": {
                     "dev-main": "2.x-dev"
+                },
+                "patches_applied": {
+                    "Enforce Privacy Consent Policy": "https://www.drupal.org/files/issues/2024-03-01/3424623-9-allow-saving-google-tag-setting-for-consent-mode.patch"
                 }
             },
             "installation-source": "dist",
