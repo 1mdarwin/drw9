@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "a3cc3ada0f86e79ffdea721274e74168",
+    "content-hash": "1dc76e7b997e2c7d6423c1d6b34b978c",
     "packages": [
         {
             "name": "asm89/stack-cors",
@@ -2845,17 +2845,17 @@
         },
         {
             "name": "drupal/google_tag",
-            "version": "2.0.4",
+            "version": "2.0.5",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/google_tag.git",
-                "reference": "2.0.4"
+                "reference": "2.0.5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/google_tag-2.0.4.zip",
-                "reference": "2.0.4",
-                "shasum": "a56bcdb566bf1af54dc0c8871eb720ba54f1392e"
+                "url": "https://ftp.drupal.org/files/projects/google_tag-2.0.5.zip",
+                "reference": "2.0.5",
+                "shasum": "75f5cbdf8ea8c78178a5dfab50cf7ee7777c6491"
             },
             "require": {
                 "drupal/core": "^9.5 || ^10",
@@ -2873,8 +2873,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.4",
-                    "datestamp": "1709073204",
+                    "version": "2.0.5",
+                    "datestamp": "1716308134",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
