@@ -73,11 +73,11 @@ class ArgumentCollector implements EventSubscriberInterface {
     }
 
     $view_id = $this->routeMatch->getParameter('view_id');
-    /** @var \Drupal\views\ViewEntityInterface $view_entity */
     if ($view_id && $view_entity = $this->viewStorage->load($view_id)) {
       $display_id = $this->routeMatch->getParameter('display_id');
 
       // Get a set of view arguments and try to add them to the index.
+      /** @var \Drupal\views\ViewEntityInterface $view_entity */
       $view = $view_entity->getExecutable();
       $args = $this->getViewArgumentsFromRoute();
       $this->sitemapViews->addArgumentsToIndex($view, $args, $display_id);

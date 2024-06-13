@@ -373,7 +373,7 @@ class FormHelper {
   /**
    * Validates the priority.
    *
-   * @param string|int $priority
+   * @param string $priority
    *   The priority value.
    *
    * @return bool

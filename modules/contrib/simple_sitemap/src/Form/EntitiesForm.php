@@ -110,6 +110,7 @@ class EntitiesForm extends SimpleSitemapFormBase {
     }
     natcasesort($entity_types);
 
+    /** @var string|\Drupal\Core\StringTranslation\TranslatableMarkup $label */
     foreach ($entity_types as $entity_type_id => $label) {
       $is_enabled = $this->entityManager->entityTypeIsEnabled($entity_type_id);
 

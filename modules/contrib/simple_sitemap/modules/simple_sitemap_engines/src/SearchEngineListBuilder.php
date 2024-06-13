@@ -81,8 +81,8 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
    */
   public function render(): array {
     return [
-      'sitemap_submission_engines' => $this->renderSitemapSubmissionEngines(),
       'index_now_engines' => $this->renderIndexNowEngines(),
+      'sitemap_submission_engines' => $this->renderSitemapSubmissionEngines(),
     ];
   }
 
@@ -97,7 +97,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
     $build = [
       '#type' => 'details',
       '#open' => $enabled,
-      '#title' => $this->t('Sitemap submission status'),
+      '#title' => $this->t('Sitemap submission status (ping protocol)'),
       'table' => [
         '#type' => 'table',
         '#header' => [
@@ -109,7 +109,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
         '#rows' => [],
         '#empty' => $this->t('There are no @label yet.', ['@label' => $this->entityType->getPluralLabel()]),
       ],
-      '#description' => $this->t('Submission settings can be configured <a href="@url">here</a>.',
+      '#description' => $this->t('Submission settings can be configured <a href="@url">here</a>.<br/>The ping protocol is <strong>being deprecated</strong>, use IndexNow if applicable.',
         ['@url' => Url::fromRoute('simple_sitemap.engines.settings')->toString()]
       ),
     ];
@@ -147,7 +147,7 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
     $build = [
       '#type' => 'details',
       '#open' => $enabled,
-      '#title' => $this->t('IndexNow status'),
+      '#title' => $this->t('Page submission status (IndexNow protocol)'),
       'table' => [
         '#type' => 'table',
         '#suffix' => $enabled && $info ? $this->t("The last IndexNow submission was <em>@entity</em> to @engine_label on @time", [
