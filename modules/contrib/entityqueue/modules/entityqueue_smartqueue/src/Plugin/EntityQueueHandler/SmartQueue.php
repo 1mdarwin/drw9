@@ -101,7 +101,7 @@ class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
       '#ajax' => [
         'wrapper' => 'smartqueue-bundle-wrapper',
         'callback' => [get_class($this), 'smartqueueSettingsAjax'],
-        'method' => 'replace',
+        'method' => 'replaceWith',
       ]
     ];
 

@@ -74,13 +74,11 @@ class EntityQueueCacheTagsTest extends KernelTestBase {
     $this->assertEqualsCanonicalizing([
       'config:entityqueue.entity_queue.simple_queue',
       'config:views.view.simple_queue_listing',
-      'entity_field_info',
       'entity_subqueue:simple_queue',
       'entity_subqueue_list',
       'node:1',
       'node:2',
       'node_list',
-      'views_data',
     ], $response->getCacheableMetadata()->getCacheTags());
   }
 

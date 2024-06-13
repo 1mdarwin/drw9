@@ -181,5 +181,3 @@ display:
         - user.permissions
       tags:
         - 'config:entityqueue.entity_queue.simple_queue'
-        - entity_field_info
-        - views_data

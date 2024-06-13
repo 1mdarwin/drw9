@@ -336,7 +336,7 @@ class EntityqueueDragtableWidget extends EntityReferenceAutocompleteWidget {
 
     // No value inserted on the input or empty value, we don't replace the
     // 'items-wrapper' element, this will prevent adding empty values.
-    if ($element['add_more']['new_item']['target_id']['#value'] === '') {
+    if (isset($element['add_more']) && $element['add_more']['new_item']['target_id']['#value'] === '') {
       return $element;
     }
 

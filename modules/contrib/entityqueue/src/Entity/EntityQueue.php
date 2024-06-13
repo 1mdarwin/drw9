@@ -294,44 +294,6 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
 
   /**
    * {@inheritdoc}
-   */
-  protected function invalidateTagsOnSave($update) {
-    // In addition to the parent implementation, we also need to invalidate
-    // queue-specific cache tags.
-    $tags = Cache::mergeTags($this->getEntityType()->getListCacheTags(), $this->getCacheTagsToInvalidate());
-
-    Cache::invalidateTags($tags);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * Override to never invalidate the individual entities' cache tags; the
-   * config system already invalidates them.
-   */
-  protected static function invalidateTagsOnDelete(EntityTypeInterface $entity_type, array $entities) {
-    $tags = $entity_type->getListCacheTags();
-
-    // In addition to the parent implementation, we also need to invalidate
-    // queue-specific cache tags.
-    foreach ($entities as $entity) {
-      $tags = Cache::mergeTags($tags, $entity->getCacheTagsToInvalidate());
-    }
-
-    Cache::invalidateTags($tags);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public function getCacheTagsToInvalidate() {
-    // A newly created or deleted queue could alter views data relationships, so
-    // we must invalidate the associated 'views_data' cache tag.
-    return Cache::mergeTags(parent::getCacheTagsToInvalidate(), ['views_data', 'entity_field_info']);
-  }
-
-  /**
-   * {@inheritdoc}
    *
    * @return static[]
    *   An array of entity queue objects, indexed by their IDs.
