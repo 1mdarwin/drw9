@@ -120,8 +120,10 @@ class BlazyImage {
       }
 
       // Prevents 404 warning when video thumbnail missing for a reason.
-      if ($dimensions = @getimagesize($abs)) {
-        [$width, $height] = $dimensions;
+      if (!BlazyFile::isExternal($uri)) {
+        if ($dimensions = @getimagesize($abs)) {
+          [$width, $height] = $dimensions;
+        }
       }
     }
 

@@ -1,6 +1,6 @@
 /**
  * @file
- * Provides CSS3 flex based on Flexbox layout.
+ * Provides CSS3 flex based on Flexbox Masonry layout.
  *
  * The .grid side margin affects the decision for .b-flex justify-content,
  * affects odd and even .grid items. And .grid margin auto causes more trouble,
@@ -45,8 +45,12 @@
   /* Left and right 0 makes centered and gapless parent without negative margin.
   Auto causes trouble against parent space-between vs. flex-start, incorrect
   overlapping .grid placement, yet best for dynamic var calculation. */
-  margin: 0 calc(var(--bf-col-gap) / 2) var(--bf-col-gap);
+  margin: 0 auto var(--bf-col-gap);
   padding: 0;
+}
+
+.b-flex.is-b-flex-disabled > .grid {
+  margin-top: 0 !important;
 }
 
 /** @todo listen to transitionend. */
@@ -109,6 +113,11 @@
   .item-list > .b-flex > .grid {
     display: flex;
     overflow: hidden;
+  }
+
+  .b-flex > .grid,
+  .item-list > .b-flex > .grid {
+    margin: 0 calc(var(--bf-col-gap) / 2);
   }
 
   .blazy.b-flex--sm-2 > .grid {

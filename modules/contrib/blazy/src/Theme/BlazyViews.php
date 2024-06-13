@@ -2,6 +2,7 @@
 
 namespace Drupal\blazy\Theme;
 
+use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Utility\Arrays;
@@ -78,11 +79,29 @@ class BlazyViews {
 
     // Given blazy--photoswipe-gallery, adds the [data-photoswipe-gallery], etc.
     if ($lightbox && in_array($lightbox, $lightboxes)) {
-      $settings['namespace']    = 'blazy';
-      $settings['media_switch'] = $lightbox;
-      $variables['attributes']  = $variables['attributes'] ?? [];
+      $variables['attributes'] = $variables['attributes'] ?? [];
 
-      Attributes::container($variables['attributes'], $settings);
+      $data = [
+        'namespace' => 'blazy',
+        'media_switch' => $lightbox,
+      ];
+
+      $settings = Blazy::init($data);
+
+      $settings[$lightbox] = $lightbox;
+
+      $blazies = $settings['blazies'];
+      if ($view = $variables['view']) {
+        $count = count($view->result);
+        $blazies->set('count', $count)
+          ->set('total', $count);
+      }
+
+      $variables['blazy'] = $settings;
+
+      \blazy()->moduleHandler()->alter('blazy_is_view', $variables['blazy'], $variables);
+
+      Attributes::container($variables['attributes'], $variables['blazy']);
     }
   }
 

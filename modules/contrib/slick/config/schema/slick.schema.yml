@@ -249,17 +249,17 @@ slick.optionset.*:
               type: sequence
               label: Responsive
               sequence:
-                - type: mapping
-                  mapping:
-                    breakpoint:
-                      type: integer
-                      label: Responsive
-                    unslick:
-                      type: boolean
-                      label: Unslick
-                    settings:
-                      type: slick_optionset
-                      label: 'Responsive settings'
+                type: mapping
+                mapping:
+                  breakpoint:
+                    type: integer
+                    label: Responsive
+                  unslick:
+                    type: boolean
+                    label: Unslick
+                  settings:
+                    type: slick_optionset
+                    label: 'Responsive settings'
 
 # HTML content/layout-related settings managed by Slick formatters and Views.
 slick_base:
@@ -270,8 +270,8 @@ slick_base:
       type: sequence
       label: 'Overridable options'
       sequence:
-        - type: string
-          label: Overridable
+        type: string
+        label: Overridable
 
 # Slick image base settings.
 slick_image:
@@ -315,5 +315,5 @@ filter_settings.slick_filter:
       type: sequence
       label: Overridables
       sequence:
-        - type: string
-          label: override
+        type: string
+        label: override

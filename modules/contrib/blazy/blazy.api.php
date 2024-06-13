@@ -309,7 +309,7 @@ function hook_blazy_attach_alter(array &$load, array $settings) {
     $template = ['#theme' => 'photoswipe_container'];
     $load['drupalSettings']['photoswipe'] = [
       'options' => blazy()->config('options', 'photoswipe.settings'),
-      'container' => blazy()->renderer()->renderPlain($template),
+      'container' => blazy()->renderInIsolation($template),
     ];
   }
 }

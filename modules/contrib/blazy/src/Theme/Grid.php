@@ -204,7 +204,8 @@ class Grid {
     $total = Internals::count($blazies);
     $grid_count = $blazies->get('grid.count', 0);
 
-    if ($dim = $blazies->get('grid.large_dimensions', [])) {
+    if ($dim = $blazies->get('grid.dimensions')) {
+      $dim = (array) $dim;
       $delta = $settings['delta'] ?? $blazies->get('delta');
       if (isset($dim[$delta])) {
         $attrs['data-b-w'] = $dim[$delta]['width'];
@@ -283,25 +284,20 @@ class Grid {
     }
 
     $blazies = $settings['blazies'];
-    // Phpstan wants multiple lines, not-efficient for simple re-assignment.
-    /* @phpstan-ignore-next-line */
-    if ($settings['grid_large'] = $settings['grid']) {
-      if (self::isNativeGridAsMasonry($settings)) {
-        $blazies->set('libs.nativegrid__masonry', TRUE);
-      }
+    $grid = $settings['grid_large'] = $settings['grid'];
+    if (self::isNativeGridAsMasonry($settings)) {
+      $blazies->set('libs.nativegrid__masonry', TRUE);
+    }
 
-      // If Native Grid style with numeric grid, assumed non-two-dimensional.
-      foreach (['small', 'medium', 'large'] as $key) {
-        $value = empty($settings['grid_' . $key]) ? NULL : $settings['grid_' . $key];
-        if ($dimensions = self::toDimensions($value)) {
-          $blazies->set('grid.' . $key . '_dimensions', $dimensions)
-            ->set('grid.' . $key, $value);
-        }
-      }
-
-      if ($dims = $blazies->get('grid.large_dimensions')) {
-        $blazies->set('grid.count', count($dims));
-      }
+    // If Native Grid style with numeric grid, assumed non-two-dimensional.
+    // @todo add supports for multiple grid_medium and grid_small.
+    if ($dimensions = self::toDimensions($grid)) {
+      // Prevents NestedArray from screwing up.
+      // @todo remove at 3.x grid.large_dimensions for grid.dimensions.
+      $blazies->set('grid.large_dimensions', $dimensions)
+        ->set('grid.dimensions', (object) $dimensions)
+        ->set('grid.large', $grid)
+        ->set('grid.count', count($dimensions));
     }
   }
 

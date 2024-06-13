@@ -258,7 +258,7 @@ class Placeholder {
    */
   private static function thumbnails(array &$settings): void {
     $blazies = $settings['blazies'];
-    $style   = NULL;
+    $style   = $blazies->get('thumbnail.style');
     $width   = $height = 1;
     $uri     = $blazies->get('image.uri');
     $tn_uri  = $settings['thumbnail_uri'] ?? NULL;
@@ -273,7 +273,7 @@ class Placeholder {
     }
 
     // This one uses non-unique image, similar to the main stage image.
-    if ($style = $blazies->get('thumbnail.style')) {
+    if ($style) {
       $disabled = $blazies->is('external') || $blazies->is('svg');
       if (!$disabled) {
         $_tn_uri = $style->buildUri($uri);
@@ -298,6 +298,13 @@ class Placeholder {
 
     // With CSS background, IMG may be empty, add thumbnail to the container.
     $blazies->set('thumbnail.url', $tn_url);
+
+    // SVG is scalable, can be used as a thumbnail as long as style is defined.
+    if (!$tn_url && $blazies->is('svg') && $style) {
+      $svg_url = BlazyImage::url($uri);
+      $blazies->set('thumbnail.url', $svg_url);
+    }
+
     if ($tn_url) {
       self::derivative($blazies, $uri, $tn_uri, $style, 'thumbnail');
     }

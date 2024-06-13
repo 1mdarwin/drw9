@@ -2,6 +2,7 @@
 # <a name="top"> </a>CONTENTS OF THIS FILE
 
  * [Introduction](#introduction)
+ * [Broken vs. working library versions](#broken)
  * [Requirements](#requirements)
  * [Recommended modules](#recommended-modules)
  * [Features](#features)
@@ -27,7 +28,7 @@ samples from [Slick Example](https://drupal.org/project/slick_extras) only if
 trouble to build slicks. Spending 5 minutes or so will save you hours in
 building more complex slideshows.
 
-Slick 2.x was out 9/21/15, and is not supported now, Jan 2020.
+Slick library v2.x was out 2015/9/21, and is not supported now, 2023/09.
 
 ***
 ## <a name="first"> </a>FIRST THINGS FIRST!
@@ -35,6 +36,20 @@ Read more at:
 * [Github](https://git.drupalcode.org/project/blazy/-/blob/8.x-2.x/docs/README.md#first-things-first)
 * [Blazy UI](/admin/help/blazy_ui#first)
 
+
+## <a name="broken"> </a>BROKEN VS. WORKING LIBRARY VERSIONS.
++ **Supported versions**: Slick library **>= 1.6 && <= 1.8.0**.
++ **1.8.0 has double misleading versions** aka breaking change found in 2021/10:
+  be sure versions in Slick package.json matches the version written in
+  slick.js. The reason, release 1.8.1 with package.json 1.8.1 has misleading
+  version 1.8.0 written in slick.js. If they don't match, they are not supported
+  by this module aka broken, only fixable with hilarious elaborate works aka
+  headaches.  
+  **What breaks**: dots, nested divities, out of sync navigation given less
+  slides, etc.
++ **Battle-tested version**: 1.6.0. If you see problems with later versions
+  above, 1.6.0 is the only least problematic one. It lacks of new
+  not-so-essential features, but also lacks of problems.
 
 ***
 ## <a name="requirements"> </a>REQUIREMENTS
@@ -68,6 +83,10 @@ Read more at:
      + **/libraries/accessible-slick/slick/slick-theme.css** (optional)
      + **/libraries/accessible-slick/slick/slick.min.js**
      + Or any path supported by core library finder as per Drupal 8.9+.
+   * **Warning!** This library was based on broken 1.8.1 version, so it
+     inherits the above-mentioned problems. A workaround was provided, but it
+     demands your attentions on few specific options as prompted when saving
+     the Optionset forms: `rows`, `slidesPerRow`, `slidesToShow`, etc.
 
 2. [Download jqeasing](https://github.com/gdsmith/jquery.easing), so available:  
 

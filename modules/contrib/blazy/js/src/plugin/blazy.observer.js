@@ -6,7 +6,7 @@
  *   This is an internal part of the Blazy system and should only be used by
  *   blazy-related code in Blazy module, or its sub-modules.
  *
- * @todo remove fallback for bLazy fork.
+ * @todo remove fallback for bLazy fork when min D10.
  */
 
 (function ($, _win) {
@@ -22,12 +22,20 @@
   }
 
   $.observer = {
+    elms: [],
+    withIo: false,
     init: function (scope, cb, elms, withIo) {
+      var me = this;
       var opts = scope.options || {};
       var queue = scope._queue || [];
       var resizeTrigger;
       var data = 'windowData' in scope ? scope.windowData() : {};
       var viewport = $.viewport;
+
+      // In case called outside the workflow.
+      if (!scope._raf) {
+        scope._raf = [];
+      }
 
       // Do not fill in the root, else broken. Leave it to browsers.
       var config = {
@@ -35,7 +43,9 @@
         threshold: opts.threshold || 0
       };
 
-      elms = $.toArray(elms);
+      // To remove old extra params from self::observe().
+      me.elms = elms = $.toArray(elms);
+      me.withIo = withIo;
 
       function _cb(entries) {
         if (!queue.length) {
@@ -63,7 +73,7 @@
         scope.ioObserver = _ioObserve();
       }
 
-      // IntersectionObserver for modern browsers, else degrades for IE11, etc.
+      // ResizeObserver for modern browsers, else degrades for IE11, etc.
       // @see https://caniuse.com/ResizeObserver
       // @see https://developer.mozilla.org/en-US/docs/Web/API/ResizeObserver
       var _roObserve = function () {
@@ -80,7 +90,10 @@
       return data;
     },
 
-    observe: function (scope, elms, withIo) {
+    observe: function (scope) {
+      var me = this;
+      var elms = me.elms;
+      var withIo = me.withIo;
       var opts = scope.options || {};
       var ioObserver = scope.ioObserver;
       var roObserver = scope.roObserver;

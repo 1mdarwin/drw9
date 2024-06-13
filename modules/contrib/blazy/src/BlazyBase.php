@@ -444,6 +444,13 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * {@inheritdoc}
    */
+  public function import(array $options): void {
+    Internals::import($options);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function initGrid(array $options): array {
     return Grid::initGrid($options);
   }
@@ -534,6 +541,19 @@ abstract class BlazyBase implements BlazyInterface {
   /**
    * {@inheritdoc}
    */
+  public function renderInIsolation(array &$elements) {
+    // @todo call directly ::renderInIsolation() when min D10.3.
+    if (Blazy::versionGreaterThan('10.3')) {
+      // @phpstan-ignore-next-line
+      return $this->renderer->renderInIsolation($elements);
+    }
+    // @phpstan-ignore-next-line
+    return $this->renderer->renderPlain($elements);
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function service($name): ?object {
     return Internals::service($name);
   }
@@ -585,6 +605,11 @@ abstract class BlazyBase implements BlazyInterface {
       // Ensures to merge to not nullify previous values.
       $object->set($data, NULL, TRUE);
     }
+
+    if ($key == 'blazies') {
+      Internals::count($object);
+    }
+
     $settings[$key] = $object;
     return $settings;
   }

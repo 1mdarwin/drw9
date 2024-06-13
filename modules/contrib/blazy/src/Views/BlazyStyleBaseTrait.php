@@ -133,7 +133,7 @@ trait BlazyStyleBaseTrait {
     }
 
     // @todo replace at 3.x with $this->manager->verifySafely($settings);
-    $this->manager->verify($settings);
+    $this->manager->verifySafely($settings);
     $this->manager->preSettings($settings);
 
     $this->prepareSettings($settings);

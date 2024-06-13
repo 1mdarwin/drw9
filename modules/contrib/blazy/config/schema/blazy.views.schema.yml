@@ -2,6 +2,12 @@ blazy_views_field:
   type: views_field
   label: Blazy
   mapping:
+    box_caption:
+      type: string
+      label: 'Lightbox caption'
+    box_caption_custom:
+      type: string
+      label: 'Lightbox custom caption'
     box_style:
       type: string
       label: 'Lightbox image style'

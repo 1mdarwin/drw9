@@ -31,16 +31,16 @@ To have gapless, simply add `is-b-gapless` class via template_preprocess. */
   --bn-row-height-masonry: 15px;
 }
 
-.b-nativegrid.is-b-masonry > .grid,
-.item-list > .b-nativegrid.is-b-masonry > .grid {
-  /* Do not control gap with margin, use gap in blazy.native.grid.css instead. */
-  margin: 0 auto;
+.b-nativegrid.is-b-masonry-disabled > .grid {
+  margin-top: 0 !important;
 }
 
-/** 480px with 16px base font. */
+/** 480px = 30em with 16px base font. */
 @media only screen and (min-width: 30em) {
   .b-nativegrid.is-b-masonry {
-    grid-auto-rows: var(--bn-row-height-masonry);
+    grid-template-rows: masonry;
+    /* grid-auto-rows: var(--bn-row-height-masonry); */
+    grid-auto-rows: auto;
     /* Add a min-height to the .b-nativegrid to avoid reflow due to using JS. */
     min-height: 180px;
   }
@@ -53,7 +53,9 @@ To have gapless, simply add `is-b-gapless` class via template_preprocess. */
   .b-nativegrid.is-b-masonry > .grid,
   .item-list > .b-nativegrid.is-b-masonry > .grid {
     overflow: hidden;
+    flex-wrap: nowrap;
     grid-row-end: span 2;
+    align-self: start;
   }
 
   /*
@@ -81,102 +83,102 @@ To have gapless, simply add `is-b-gapless` class via template_preprocess. */
 
   /* The only rule make sense for small devices, adjust it accordingly. */
   .b-nativegrid--sm-2.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--bn-col-gap)), 1fr));
   }
 }
 
-/** 641px with 16px base font. */
+/** 641px = 40.063em with 16px base font. */
 @media only screen and (min-width: 40.063em) {
   .b-nativegrid--md-2.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-3.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(33.3333%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(33.3333% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-4.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(25% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-5.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(20% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-6.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(16.6666%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(16.6666% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-7.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(14.2857%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(14.2857% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-8.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(12.5%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(12.5% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-9.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(11.11111%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(11.11111% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-10.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(10%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(10% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-11.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(9.0909%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(9.0909% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--md-12.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(8.3333%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(8.3333% - var(--bn-col-gap)), 1fr));
   }
 }
 
-/** 1025px with 16px base font. */
+/** 1025px = 64.063em with 16px base font. */
 @media only screen and (min-width: 64.063em) {
   /* Configurable one-dimensional layouts. */
   .b-nativegrid--lg-2.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(50%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-3.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(33.3333%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(33.3333% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-4.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(25%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(25% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-5.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(20%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(20% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-6.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(16.6666%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(16.6666% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-7.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(14.2857%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(14.2857% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-8.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(12.5%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(12.5% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-9.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(11.11111%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(11.11111% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-10.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(10%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(10% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-11.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(9.0909%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(9.0909% - var(--bn-col-gap)), 1fr));
   }
 
   .b-nativegrid--lg-12.is-b-masonry {
-    grid-template-columns: repeat(auto-fill, minmax(8.3333%, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(calc(8.3333% - var(--bn-col-gap)), 1fr));
   }
 }
 /* csslint ignore:end */

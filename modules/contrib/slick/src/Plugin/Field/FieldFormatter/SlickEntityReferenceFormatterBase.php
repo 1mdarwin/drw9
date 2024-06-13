@@ -68,7 +68,7 @@ abstract class SlickEntityReferenceFormatterBase extends BlazyEntityReferenceBas
    * {@inheritdoc}
    */
   protected function withElementThumbnail(array &$build, array $element): void {
-    if (!$build['#asnavor']) {
+    if (!$build['#asnavfor']) {
       return;
     }
 

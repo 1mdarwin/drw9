@@ -238,13 +238,14 @@ abstract class TextFilterBase extends FilterBase implements ContainerFactoryPlug
    *
    * See https://www.php.net/manual/en/class.domelement.php#101243
    */
-  protected function getHtml(\DOMElement $node): ?string {
+  protected function getHtml($node): ?string {
     $text = '';
     foreach ($node->childNodes as $child) {
       if ($child instanceof \DOMElement) {
         $text .= $child->ownerDocument->saveXML($child);
       }
     }
+
     return $text;
   }
 

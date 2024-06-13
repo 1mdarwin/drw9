@@ -12,8 +12,8 @@ blazy.settings:
       type: sequence
       label: 'No JavaScript'
       sequence:
-        - type: string
-          label: nojs
+        type: string
+        label: nojs
     fx:
       type: string
       label: 'Image effect'
@@ -106,8 +106,8 @@ blazy_base:
       type: sequence
       label: Captions
       sequence:
-        - type: string
-          label: Caption
+        type: string
+        label: Caption
     optionset:
       type: string
       label: Optionset
@@ -168,8 +168,8 @@ filter_settings.blazy_filter:
       type: sequence
       label: 'HTML tags'
       sequence:
-        - type: string
-          label: tag
+        type: string
+        label: tag
     use_data_uri:
       type: string
       label: 'Trust data URI'

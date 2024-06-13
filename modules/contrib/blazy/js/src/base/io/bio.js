@@ -70,7 +70,6 @@
   var FN_VIEWPORT = $.viewport;
   var FN;
 
-
   /**
    * Constructor for Bio, Blazy IntersectionObserver.
    *
@@ -235,7 +234,6 @@
           $[ADDCLASS](cn, C_IS_VISIBLE);
         }
 
-        // The function hooks into browsers' lazy-loading.
         intersecting.call(me, el);
 
         // The intersecting does the loading, the check must be afterwards.
@@ -412,13 +410,11 @@
 
     // Observe as IO, or initialize old bLazy as fallback.
     if (!INITIALIZED || reobserve) {
-      if ($.isIo) {
-        WINDATA = FN_OBSERVER.init(me, interact, elms, true);
+      WINDATA = FN_OBSERVER.init(me, interact, elms, true);
 
-        me.destroyed = false;
-      }
+      me.destroyed = false;
 
-      FN_OBSERVER.observe(me, elms, true);
+      FN_OBSERVER.observe(me);
 
       INITIALIZED = true;
     }

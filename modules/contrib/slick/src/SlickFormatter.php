@@ -92,7 +92,7 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
 
     $settings = $build['#settings'];
 
-    $build['#asnavor'] = $settings['blazies']->is('nav');
+    $build['#asnavfor'] = $settings['blazies']->is('nav');
     $build['#vanilla'] = !empty($settings['vanilla']);
   }
 
@@ -103,17 +103,6 @@ class SlickFormatter extends BlazyFormatter implements SlickFormatterInterface {
     SlickDefault::verify($settings, $this);
 
     return parent::verifySafely($settings, $key, $defaults);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove at 3.x.
-   */
-  public function verify(array &$settings): void {
-    parent::verify($settings);
-
-    SlickDefault::verify($settings, $this);
   }
 
 }

@@ -52,14 +52,7 @@
   overflow: visible;
   width: 100%;
   max-width: 100%;
-}
-
-/* Olivero surprises, adjust it. */
-.is-b-native h2 {
-  margin: 0;
-  color: #fff;
-  font-size: 1.25rem;
-  line-height: 1.6rem;
+  height: 100%;
 }
 
 /** 480px with 16px base font. */
@@ -72,7 +65,9 @@
   .b-nativegrid {
     gap: var(--bn-col-gap);
     grid-template-columns: auto;
+    /* Use min-content if to make perfectly calculated non-bg images fit. */
     grid-auto-rows: var(--bn-row-height-native);
+    /* bad for bg: align-items: start; */
     /* align-content: start;
     justify-content: start;  */
   }
@@ -81,7 +76,7 @@
   .blazy.b-nativegrid,
   .item-list > .b-nativegrid {
     display: grid;
-    grid-auto-flow: dense;
+    grid-auto-flow: row dense;
   }
 
   /** Without margin. */
@@ -92,6 +87,8 @@
   .b-nativegrid > .grid,
   .item-list > .b-nativegrid > .grid {
     display: flex;
+    flex-wrap: wrap;
+    /* @todo recheck align-self is broken. */
     align-items: start;
     justify-content: start;
   }
@@ -104,23 +101,23 @@
     grid-column: auto;
   }
 
-  .b-nativegrid.is-b-native .grid__content {
+  .is-b-native:not(.b-layout) .grid__content {
     overflow: hidden;
     height: 100%;
   }
 
   /* Add more relevant selectors accordingly to make gapless grids.
   Remove .is-b-native to make it fit height-width for Masonry as well, if needed. */
-  .b-nativegrid.is-b-native .b-cover,
-  .b-nativegrid.is-b-native .b-link,
-  .b-nativegrid.is-b-native .litebox,
-  .b-nativegrid.is-b-native .b-bg,
-  .b-nativegrid.is-b-native iframe,
-  .b-nativegrid.is-b-native picture,
-  .b-nativegrid.is-b-native video,
-  .b-nativegrid.is-b-native .media,
-  .b-nativegrid.is-b-native img.media__element,
-  .b-nativegrid.is-b-native .slide__media {
+  .is-b-native:not(.b-layout) .b-cover,
+  .is-b-native:not(.b-layout) .b-link,
+  .is-b-native:not(.b-layout) .litebox,
+  .is-b-native:not(.b-layout) .b-bg,
+  .is-b-native:not(.b-layout) iframe,
+  .is-b-native:not(.b-layout) picture,
+  .is-b-native:not(.b-layout) video,
+  .is-b-native:not(.b-layout) .media,
+  .is-b-native:not(.b-layout) img.media__element,
+  .is-b-native:not(.b-layout) .slide__media {
     position: static; /* To keep lightbox/ video icon centered. */
     width: 100%;
     height: inherit;
@@ -137,14 +134,22 @@
   }
 
   /* For some reason, unlike video, etc., iframe refuses to show when static. */
-  .b-nativegrid.is-b-native .grid iframe {
+  .is-b-native:not(.b-layout) .grid iframe {
     position: absolute;
     height: 100%;
   }
 
+  /* Olivero surprises, adjust it. */
+  .is-b-native:not(.b-layout) .blazy__caption h2 {
+    margin: 0;
+    color: #fff;
+    font-size: 1.25rem;
+    line-height: 1.6rem;
+  }
+
   /* To avoid initial confusion due to being overflow: hidden, adjust it. */
-  .b-nativegrid.is-b-native .blazy__caption,
-  .b-nativegrid.is-b-native .slide__caption {
+  .is-b-native:not(.b-layout) .blazy__caption,
+  .is-b-native:not(.b-layout) .slide__caption {
     position: absolute;
     z-index: 3;
     bottom: 0;
@@ -162,8 +167,8 @@
   }
 }
 
-/** 641px with 16px base font. */
-@media only screen and (min-width: 40.063em) {
+/** 640px with 16px base font. */
+@media only screen and (min-width: 40em) {
   .b-nativegrid--md-2 {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -264,123 +269,123 @@
   /* Dimensions for two-dimensional layout. */
   /** grid-row == height */
   /* @todo remove .grid and -ms- stuffs at 3.x. */
-  .b-nativegrid > .grid[data-b-h="1"] {
+  .b-nativegrid > [data-b-h="1"] {
     -ms-grid-row-span: 1;
     grid-row: span 1;
   }
 
-  .b-nativegrid > .grid[data-b-h="2"] {
+  .b-nativegrid > [data-b-h="2"] {
     -ms-grid-row-span: 2;
     grid-row: span 2;
   }
 
-  .b-nativegrid > .grid[data-b-h="3"] {
+  .b-nativegrid > [data-b-h="3"] {
     -ms-grid-row-span: 3;
     grid-row: span 3;
   }
 
-  .b-nativegrid > .grid[data-b-h="4"] {
+  .b-nativegrid > [data-b-h="4"] {
     -ms-grid-row-span: 4;
     grid-row: span 4;
   }
 
-  .b-nativegrid > .grid[data-b-h="5"] {
+  .b-nativegrid > [data-b-h="5"] {
     -ms-grid-row-span: 5;
     grid-row: span 5;
   }
 
-  .b-nativegrid > .grid[data-b-h="6"] {
+  .b-nativegrid > [data-b-h="6"] {
     -ms-grid-row-span: 6;
     grid-row: span 6;
   }
 
-  .b-nativegrid > .grid[data-b-h="7"] {
+  .b-nativegrid > [data-b-h="7"] {
     -ms-grid-row-span: 7;
     grid-row: span 7;
   }
 
-  .b-nativegrid > .grid[data-b-h="8"] {
+  .b-nativegrid > [data-b-h="8"] {
     -ms-grid-row-span: 8;
     grid-row: span 8;
   }
 
-  .b-nativegrid > .grid[data-b-h="9"] {
+  .b-nativegrid > [data-b-h="9"] {
     -ms-grid-row-span: 9;
     grid-row: span 9;
   }
 
-  .b-nativegrid > .grid[data-b-h="10"] {
+  .b-nativegrid > [data-b-h="10"] {
     -ms-grid-row-span: 10;
     grid-row: span 10;
   }
 
-  .b-nativegrid > .grid[data-b-h="11"] {
+  .b-nativegrid > [data-b-h="11"] {
     -ms-grid-row-span: 11;
     grid-row: span 11;
   }
 
-  .b-nativegrid > .grid[data-b-h="12"] {
+  .b-nativegrid > [data-b-h="12"] {
     -ms-grid-row-span: 12;
     grid-row: span 12;
   }
 
   /** grid-column == width */
-  .b-nativegrid > .grid[data-b-w="1"] {
+  .b-nativegrid > [data-b-w="1"] {
     -ms-grid-column-span: 1;
     grid-column: span 1;
   }
 
-  .b-nativegrid > .grid[data-b-w="2"] {
+  .b-nativegrid > [data-b-w="2"] {
     -ms-grid-column-span: 2;
     grid-column: span 2;
   }
 
-  .b-nativegrid > .grid[data-b-w="3"] {
+  .b-nativegrid > [data-b-w="3"] {
     -ms-grid-column-span: 3;
     grid-column: span 3;
   }
 
-  .b-nativegrid > .grid[data-b-w="4"] {
+  .b-nativegrid > [data-b-w="4"] {
     -ms-grid-column-span: 4;
     grid-column: span 4;
   }
 
-  .b-nativegrid > .grid[data-b-w="5"] {
+  .b-nativegrid > [data-b-w="5"] {
     -ms-grid-column-span: 5;
     grid-column: span 5;
   }
 
-  .b-nativegrid > .grid[data-b-w="6"] {
+  .b-nativegrid > [data-b-w="6"] {
     -ms-grid-column-span: 6;
     grid-column: span 6;
   }
 
-  .b-nativegrid > .grid[data-b-w="7"] {
+  .b-nativegrid > [data-b-w="7"] {
     -ms-grid-column-span: 7;
     grid-column: span 7;
   }
 
-  .b-nativegrid > .grid[data-b-w="8"] {
+  .b-nativegrid > [data-b-w="8"] {
     -ms-grid-column-span: 8;
     grid-column: span 8;
   }
 
-  .b-nativegrid > .grid[data-b-w="9"] {
+  .b-nativegrid > [data-b-w="9"] {
     -ms-grid-column-span: 9;
     grid-column: span 9;
   }
 
-  .b-nativegrid > .grid[data-b-w="10"] {
+  .b-nativegrid > [data-b-w="10"] {
     -ms-grid-column-span: 10;
     grid-column: span 10;
   }
 
-  .b-nativegrid > .grid[data-b-w="11"] {
+  .b-nativegrid > [data-b-w="11"] {
     -ms-grid-column-span: 11;
     grid-column: span 11;
   }
 
-  .b-nativegrid > .grid[data-b-w="12"] {
+  .b-nativegrid > [data-b-w="12"] {
     -ms-grid-column-span: 12;
     grid-column: span 12;
   }

@@ -377,7 +377,7 @@ class Lightbox {
 
       // Responsive image is unwrapped. Local videos wrapped.
       $content = $_resimage ? $box_html : $html;
-      $content = $manager->renderer()->renderPlain($content);
+      $content = $manager->renderInIsolation($content);
       $content = is_object($content) ? $content->__toString() : $content;
 
       // @todo merge with BlazyDefault::TAGS when mixed contents supported.

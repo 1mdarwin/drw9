@@ -17,9 +17,10 @@ use Drupal\blazy\Utility\Sanitize;
 use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Entity\EntityInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
- * Provides internal non-reusable blazy utilities.
+ * Provides internal kitchen-skink non-reusable blazy utilities.
  *
  * @internal
  *   This is an internal part of the Blazy system and should only be used by
@@ -38,6 +39,15 @@ class Internals {
    * @var int|null
    */
   protected static $blazyId;
+
+  /**
+   * Alias for base_path() for easy removal.
+   *
+   * @todo replace base_path() if any replacement by D11.
+   */
+  public static function basePath(): ?string {
+    return \base_path() ?: '';
+  }
 
   /**
    * Provides common content settings.
@@ -224,10 +234,20 @@ class Internals {
     foreach ($view->field as $field_name => $field) {
       if ($options = $field->options ?? []) {
         $names[] = $field_name;
+        $subsets = $options['settings'] ?? [];
+        $type = $options['type'] ?? 'x';
 
-        if (!empty($options['group_rows'])
-          && $limit = $options['delta_limit'] ?? 0) {
-          if ($subsets = $options['settings'] ?? []) {
+        if ($subsets) {
+          if (isset($subsets['media_switch'])) {
+            $data['formatters'][] = [
+              'type' => $type,
+              'field_name' => $field_name,
+              'settings' => $subsets,
+            ];
+          }
+
+          if (!empty($options['group_rows'])
+            && $limit = $options['delta_limit'] ?? 0) {
             // Ensures we are in the ecosystem. Grid option is only available at
             // multi-value fields. A single value is not a concern.
             if (isset($subsets['grid_medium'])) {
@@ -251,6 +271,34 @@ class Internals {
     $data = $blazies->get('view.data', []);
     $name = $blazies->get('field.name', 'x');
     return $data[$name]['limit'] ?? 0;
+  }
+
+  /**
+   * Import a config entity, and save it into database.
+   *
+   * @param array $options
+   *   Containing:
+   *     - module, the module name where config to be imported is stored.
+   *     - basename, file name without .yml extension: slick.optionset.nav, etc.
+   *     - folder, whether install, or optional.
+   */
+  public static function import(array $options): void {
+    $options = $options + ['folder' => 'install'];
+
+    [
+      'module' => $module,
+      'basename' => $basename,
+      'folder' => $folder,
+    ] = $options;
+
+    $path = self::getPath('module', $module);
+    $config_path = sprintf('%s/config/%s/%s.yml', $path, $folder, $basename);
+
+    if ($data = Yaml::parseFile($config_path)) {
+      \Drupal::configFactory()->getEditable($basename)
+        ->setData($data)
+        ->save(TRUE);
+    }
   }
 
   /**
@@ -357,6 +405,10 @@ class Internals {
 
     $parent = $parentsets['blazies'];
     $child  = $childsets['blazies'];
+
+    if ($bg = $parentsets['background'] ?? FALSE) {
+      $parent->set('is.bg', $bg);
+    }
 
     // $parent->set('first.settings', array_filter($child));
     // $parent->set('first.item_id', $child->get('item.id'));
