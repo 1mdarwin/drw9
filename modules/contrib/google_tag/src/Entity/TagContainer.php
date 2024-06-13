@@ -308,7 +308,7 @@ class TagContainer extends ConfigEntityBase implements EntityWithPluginCollectio
    */
   public function getConsentMode(): bool {
     $advanced_settings = $this->get('advanced_settings');
-    return (bool) ($advanced_settings['consent_mode'] ?? TRUE);
+    return !empty($advanced_settings['consent_mode']);
   }
 
   /**

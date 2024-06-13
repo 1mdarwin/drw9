@@ -2,6 +2,7 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\simple_sitemap\Entity\EntityHelper;
@@ -158,7 +159,7 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
         : NULL,
       'priority' => $data_set['priority'] ?? NULL,
       'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
-      'images' => $this->includeImages && !empty($entity)
+      'images' => $this->includeImages && !empty($entity) && $entity instanceof ContentEntityInterface
         ? $this->getEntityImageData($entity)
         : [],
       'meta' => [

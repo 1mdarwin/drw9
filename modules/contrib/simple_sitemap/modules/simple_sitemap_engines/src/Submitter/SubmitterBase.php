@@ -31,7 +31,7 @@ abstract class SubmitterBase {
   /**
    * The Drupal state service.
    *
-   * @var \Drupal\workflows\StateInterface
+   * @var \Drupal\Core\State\StateInterface
    */
   protected $state;
 

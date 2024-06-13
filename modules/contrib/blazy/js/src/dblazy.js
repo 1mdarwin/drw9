@@ -14,6 +14,7 @@
  * @todo remove unneeded dup methods once all codebase migrated.
  * @todo move more DOM methods into blazy.dom.js to make it ditchable for Cash.
  * @todo when IE gone, https://caniuse.com/dom-manip-convenience
+ * @todo remove all min files at D10, see https://www.drupal.org/node/3305725
  */
 
 /* global define */
@@ -592,7 +593,7 @@
   function nodeMapAttr(obj, scope) {
     var info = {};
     if (obj && obj.length) {
-      var arr = PROTO_A.slice.call(obj);
+      var arr = slice(obj);
       arr.forEach(function (a) {
         info[a.name] = a.value;
       }, scope || this);
@@ -657,7 +658,7 @@
     }
     else if (obj) {
       if (obj instanceof HTMLCollection) {
-        obj = PROTO_A.slice.call(obj);
+        obj = slice(obj);
       }
 
       if (obj instanceof NamedNodeMap) {
@@ -745,6 +746,7 @@
           return item.trim();
         });
       }
+      return [x];
     }
     return isArr(x) ? x : [x];
   }
@@ -1473,6 +1475,25 @@
   }
 
   /**
+   * A shortcut for Array.prototype.slice.
+   *
+   * @private
+   *
+   * Ensures an array is returned and not a NodeList or an Array-like object.
+   *
+   * @param {NodeList|Array.<Element>} elements
+   *   A NodeList, array of elements.
+   *
+   * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
+   *
+   * @return {Array.<Element>}
+   *   An array of elements.
+   */
+  function slice(elements) {
+    return PROTO_A.slice.call(elements);
+  }
+
+  /**
    * Process arguments, query the DOM if necessary. Adapted from core/once.
    *
    * @private
@@ -1486,15 +1507,15 @@
    *   An array of elements to process.
    */
   function toElms(selector, ctx) {
+    ctx = ctx || _doc;
+
     // Assume selector is an array-like element unless a string.
     var elements = toArray(selector);
     if (isStr(selector)) {
       elements = ctx.querySelectorAll(selector);
     }
 
-    // Ensures an array is returned and not a NodeList or an Array-like object.
-    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/from
-    return PROTO_A.slice.call(elements);
+    return slice(elements);
   }
 
   // Use colon to be namespaced with DOT properly, e.g:
@@ -1551,7 +1572,14 @@
       // el[V_REMOVE + E_LISTENER](type, EVENTS[e], options);
       // }
       if (isFun(_cb)) {
+        var customEvent = {
+          name: e,
+          callback: _cb,
+          type: type
+        };
+
         EVENTS[e] = _cb;
+        EVENTS[type] = customEvent;
 
         el[V_ADD + E_LISTENER](type, _cb, options);
       }
@@ -1567,6 +1595,7 @@
       if (isFun(_cb)) {
         el[V_REMOVE + E_LISTENER](type, _cb, options);
         delete EVENTS[e];
+        delete EVENTS[type];
       }
     }
   };
@@ -1699,6 +1728,13 @@
    * @see https://developer.mozilla.org/en-US/docs/Web/API/Document/createEvent
    */
   function trigger(els, eventNames, details, param) {
+    // Supports $.trigger('resize') for window;
+    if (isStr(els)) {
+      details = eventNames;
+      eventNames = els;
+      els = [_win];
+    }
+
     var chainCallback = function (el) {
       if (!isEvt(el)) {
         return;
@@ -1725,6 +1761,14 @@
         }
 
         el.dispatchEvent(event);
+
+        // Supports triggering events with extra arguments ala jQuery.
+        // $.trigger(ROOT, 'custom:move', [ctx, width]);
+        // $.on(ROOT, 'custom:move.NAMESPACE', function (e, ctx, width) {});
+        var type = eType(eventName);
+        if (EVENTS[type] && EVENTS[type].type === eventName && isArr(details)) {
+          EVENTS[type].callback.apply(null, [event].concat(details));
+        }
       };
 
       each(toArray(eventNames), execute);
@@ -1929,21 +1973,51 @@
    *
    * @param {Function} cb
    *   The callback function.
-   * @param {number} t
-   *   The timeout.
+   * @param {undefined|String|Array.<Element>|Element} t
+   *   The timeout, selector, or element(s).
    *
-   * @return {ResizeObserver|Function}
-   *   The ResizeObserver instance, or callback function.
+   * @return {Function}
+   *   The callback function.
    */
   DB.resize = function (cb, t) {
-    // @todo enable later when old projects are updated: lory, extended, etc.
-    // if (this.isRo) {
-    // return new ResizeObserver(cb);
-    // }
-    _win.onresize = function (e) {
+    // Preserves oldies till updated: lory, extended, etc.
+    // Safe to replace, previously only called: $.resize(cb)();
+    if (this.isRo && !isUnd(t)) {
+      var observer = new ResizeObserver(function (entries) {
+        var me = this;
+        var winsize = windowSize();
+
+        each(entries, function (entry) {
+          var rect = entry.contentRect;
+          var width = Math.floor(rect.width);
+          var height = Math.floor(rect.height);
+          var data = {
+            width: width,
+            height: height,
+            window: winsize
+          };
+
+          // Pass it to callback.
+          cb.apply(null, [me, data, entry]);
+        });
+      });
+
+      var elms = toElms(t);
+      if (elms.length) {
+        each(toElms(t), function (el) {
+          if (isElm(el)) {
+            observer.observe(el);
+          }
+        });
+      }
+      return cb;
+    }
+
+    _win.onresize = function () {
       clearTimeout(t);
-      t = setTimeout(cb.bind(e), 200);
+      t = setTimeout(cb, 200);
     };
+
     return cb;
   };
 
@@ -2161,7 +2235,9 @@
   }
 
   DB.context = context;
+  DB.slice = slice;
   DB.toElm = toElm;
+  DB.toElms = toElms;
   DB.camelCase = camelCase;
   DB.isVar = isVar;
   DB.computeStyle = computeStyle;

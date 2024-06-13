@@ -111,58 +111,6 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
 
     $form['#tree'] = TRUE;
 
-    $form['settings'] = [
-      '#type' => 'fieldset',
-      '#title' => $this->t('Sitemap submission settings'),
-    ];
-
-    $form['settings']['enabled'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Submit sitemaps to search engines'),
-      '#description' => $this->t("This enables/disables sitemap submission; don't forget to choose sitemaps below."),
-      '#default_value' => $config->get('enabled'),
-    ];
-
-    $form['settings']['submission_interval'] = [
-      '#type' => 'select',
-      '#title' => $this->t('Submission interval'),
-      '#options' => FormHelper::getCronIntervalOptions(),
-      '#default_value' => $config->get('submission_interval'),
-      '#states' => [
-        'visible' => [':input[name="settings[enabled]"]' => ['checked' => TRUE]],
-      ],
-    ];
-
-    $form['settings']['engines'] = [
-      '#type' => 'details',
-      '#title' => $this->t('Engines'),
-      '#markup' => '<div class="description">'
-      . $this->t('Choose which sitemaps are to be submitted to which search engines.<br>Sitemaps can be configured <a href="@url">here</a>.',
-          ['@url' => Url::fromRoute('entity.simple_sitemap.collection')->toString()]
-      )
-      . '</div>',
-      '#open' => TRUE,
-      '#states' => [
-        'visible' => [':input[name="settings[enabled]"]' => ['checked' => TRUE]],
-      ],
-    ];
-
-    $sitemaps = SimpleSitemap::loadMultiple();
-    foreach (SimpleSitemapEngine::loadSitemapSubmissionEngines() as $engine_id => $engine) {
-      $form['settings']['engines'][$engine_id] = [
-        '#type' => 'select',
-        '#title' => $engine->label(),
-        '#options' => array_map(
-          function ($sitemap) {
-            return $sitemap->label();
-          },
-          $sitemaps
-        ),
-        '#default_value' => $engine->sitemap_variants,
-        '#multiple' => TRUE,
-      ];
-    }
-
     $form['index_now'] = [
       '#type' => 'fieldset',
       '#title' => $this->t('IndexNow settings'),
@@ -235,6 +183,58 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
       '#validate' => [],
       '#prefix' => '<p>' . $text . '</p>',
     ];
+
+    $form['settings'] = [
+      '#type' => 'fieldset',
+      '#title' => $this->t('Sitemap submission settings'),
+    ];
+
+    $form['settings']['enabled'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Submit sitemaps to search engines'),
+      '#description' => $this->t("This enables/disables sitemap submission; don't forget to choose sitemaps below.<br/>The ping protocol is <strong>being deprecated</strong>, use IndexNow if applicable."),
+      '#default_value' => $config->get('enabled'),
+    ];
+
+    $form['settings']['submission_interval'] = [
+      '#type' => 'select',
+      '#title' => $this->t('Submission interval'),
+      '#options' => FormHelper::getCronIntervalOptions(),
+      '#default_value' => $config->get('submission_interval'),
+      '#states' => [
+        'visible' => [':input[name="settings[enabled]"]' => ['checked' => TRUE]],
+      ],
+    ];
+
+    $form['settings']['engines'] = [
+      '#type' => 'details',
+      '#title' => $this->t('Engines'),
+      '#markup' => '<div class="description">'
+      . $this->t('Choose which sitemaps are to be submitted to which search engines.<br>Sitemaps can be configured <a href="@url">here</a>.',
+          ['@url' => Url::fromRoute('entity.simple_sitemap.collection')->toString()]
+      )
+      . '</div>',
+      '#open' => TRUE,
+      '#states' => [
+        'visible' => [':input[name="settings[enabled]"]' => ['checked' => TRUE]],
+      ],
+    ];
+
+    $sitemaps = SimpleSitemap::loadMultiple();
+    foreach (SimpleSitemapEngine::loadSitemapSubmissionEngines() as $engine_id => $engine) {
+      $form['settings']['engines'][$engine_id] = [
+        '#type' => 'select',
+        '#title' => $engine->label(),
+        '#options' => array_map(
+          function ($sitemap) {
+            return $sitemap->label();
+          },
+          $sitemaps
+        ),
+        '#default_value' => $engine->sitemap_variants,
+        '#multiple' => TRUE,
+      ];
+    }
 
     return parent::buildForm($form, $form_state);
   }

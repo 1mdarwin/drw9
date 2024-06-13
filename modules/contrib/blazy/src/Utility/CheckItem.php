@@ -60,11 +60,13 @@ class CheckItem {
       try {
         // Provides translated $entity, if any.
         $entity = Blazy::translated($entity, $langcode);
-        $url = $entity->toUrl();
 
-        // $media->toUrl()->toString()
-        $internal_path = $url->getInternalPath();
-        $absolute_path = $url->setAbsolute()->toString();
+        // Edge case when an entity does a stupid thing.
+        if ($url = $entity->toUrl()) {
+          // $media->toUrl()->toString()
+          $internal_path = $url->getInternalPath();
+          $absolute_path = $url->setAbsolute()->toString();
+        }
       }
       catch (\Exception $ignore) {
         // Do nothing.

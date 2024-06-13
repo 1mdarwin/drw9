@@ -89,6 +89,7 @@ class BlazyDefault {
    */
   public static function cherrySettings() {
     return [
+      'background'      => FALSE,
       'box_style'       => '',
       'image_style'     => '',
       'media_switch'    => '',

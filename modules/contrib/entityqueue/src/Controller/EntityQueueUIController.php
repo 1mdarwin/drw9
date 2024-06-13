@@ -105,29 +105,33 @@ class EntityQueueUIController extends ControllerBase {
     foreach ($subqueues as $subqueue_id => $subqueue) {
       $row = $list_builder->buildRow($subqueue);
 
+      $row['operations']['data']['#links'] = [];
+
       // Check if entity is in queue.
       $subqueue_items = $subqueue->get('items')->getValue();
       if (in_array($entity->id(), array_column($subqueue_items, 'target_id'), TRUE)) {
-        $row['operations']['data']['#links'] = [
-          'remove-item' => [
+        $url = Url::fromRoute('entity.entity_subqueue.remove_item', ['entity_queue' => $queues[$subqueue->bundle()]->id(), 'entity_subqueue' => $subqueue_id, 'entity' => $entity->id()]);
+        if ($url->access()) {
+          $row['operations']['data']['#links']['remove-item'] = [
             'title' => $this->t('Remove from queue'),
-            'url' => Url::fromRoute('entity.entity_subqueue.remove_item', ['entity_queue' => $queues[$subqueue->bundle()]->id(), 'entity_subqueue' => $subqueue_id, 'entity' => $entity->id()]),
+            'url' => $url,
             'attributes' => [
               'class' => ['use-ajax'],
             ],
-          ],
-        ];
+          ];
+        }
       }
       else {
-        $row['operations']['data']['#links'] = [
-          'add-item' => [
+        $url = Url::fromRoute('entity.entity_subqueue.add_item', ['entity_queue' => $queues[$subqueue->bundle()]->id(), 'entity_subqueue' => $subqueue_id, 'entity' => $entity->id()]);
+        if ($url->access()) {
+          $row['operations']['data']['#links']['add-item'] = [
             'title' => $this->t('Add to queue'),
-            'url' => Url::fromRoute('entity.entity_subqueue.add_item', ['entity_queue' => $queues[$subqueue->bundle()]->id(), 'entity_subqueue' => $subqueue_id, 'entity' => $entity->id()]),
+            'url' => $url,
             'attributes' => [
               'class' => ['use-ajax'],
             ],
-          ],
-        ];
+          ];
+        }
       }
 
       // Add an operation for editing the subqueue items.
@@ -136,11 +140,16 @@ class EntityQueueUIController extends ControllerBase {
       // since if any of the AJAX links are used and the page is rebuilt,
       // <current> will point to the most recent AJAX callback, not the
       // original entityqueue tab.
-      $destination = Url::fromRoute("entity.$entity_type_id.entityqueue", [$entity_type_id => $entity->id()])->toString();
-      $row['operations']['data']['#links']['edit-subqueue-items'] = [
-        'title' => $this->t('Edit subqueue items'),
-        'url' => $subqueue->toUrl('edit-form', ['query' => ['destination' => $destination]]),
-      ];
+      $destination = Url::fromRoute("entity.$entity_type_id.entityqueue", [
+        $entity_type_id => $entity->id(),
+      ])->toString();
+      $url = $subqueue->toUrl('edit-form', ['query' => ['destination' => $destination]]);
+      if ($url->access()) {
+        $row['operations']['data']['#links']['edit-subqueue-items'] = [
+          'title' => $this->t('Edit subqueue items'),
+          'url' => $url,
+        ];
+      }
 
       $build['table']['#rows'][$subqueue->id()] = $row;
     }

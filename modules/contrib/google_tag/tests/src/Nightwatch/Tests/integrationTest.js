@@ -2,7 +2,7 @@ module.exports = {
   '@tags': ['google_tag'],
   before: function (browser) {
     browser.drupalInstall({
-      setupFile: 'modules/contrib/google_tag/tests/src/Nightwatch/TestSiteInstallTestScript.php',
+      setupFile: `${__dirname}/../TestSiteInstallTestScript.php`,
     })
   },
   after: function (browser) {

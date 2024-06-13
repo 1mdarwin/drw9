@@ -5,8 +5,10 @@
  * Post update functions for Entityqueue.
  */
 
+use Drupal\Core\Config\Entity\ConfigEntityUpdater;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\user\Entity\Role;
 
 /**
  * Update subqueues to be revisionable and translatable.
@@ -111,4 +113,25 @@ function entityqueue_post_update_remove_reverse_in_admin_setting() {
 
     $queue_config->save(TRUE);
   }
+}
+
+/**
+ * Revoke stale Entityqueue permissions.
+ */
+function entityqueue_post_update_revoke_stale_permissions(&$sandbox = NULL) {
+  $permission_definitions = \Drupal::service('user.permissions')->getPermissions();
+  \Drupal::classResolver(ConfigEntityUpdater::class)->update($sandbox, 'user_role', function (Role $role) use ($permission_definitions) {
+    $valid_permissions = array_intersect($role->getPermissions(), array_keys($permission_definitions));
+    $invalid_permissions = array_diff($role->getPermissions(), $valid_permissions);
+
+    $needs_update = FALSE;
+    foreach ($invalid_permissions as $invalid_permission) {
+      if (str_ends_with($invalid_permission, ' entityqueue')) {
+        $role->revokePermission($invalid_permission);
+        $needs_update = TRUE;
+      }
+    }
+
+    return $needs_update;
+  });
 }

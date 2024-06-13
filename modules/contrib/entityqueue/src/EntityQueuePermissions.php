@@ -42,16 +42,19 @@ class EntityQueuePermissions {
       $permissions["create $queue_id entityqueue"] = [
         'title' => $this->t('Add %queue subqueues', ['%queue' => $queue->label()]),
         'description' => $this->t('Access to create new subqueue to the %queue queue.', ['%queue' => $queue->label()]),
+        'dependencies' => [$queue->getConfigDependencyKey() => [$queue->getConfigDependencyName()]],
       ];
       $permissions["delete $queue_id entityqueue"] = [
         'title' => $this->t('Delete %queue subqueues', ['%queue' => $queue->label()]),
         'description' => $this->t('Access to delete subqueues of the %queue queue.', ['%queue' => $queue->label()]),
+        'dependencies' => [$queue->getConfigDependencyKey() => [$queue->getConfigDependencyName()]],
       ];
     }
 
     $permissions["update $queue_id entityqueue"] = [
       'title' => $this->t('Manipulate %queue queue', ['%queue' => $queue->label()]),
       'description' => $this->t('Access to update the %queue queue.', ['%queue' => $queue->label()]),
+      'dependencies' => [$queue->getConfigDependencyKey() => [$queue->getConfigDependencyName()]],
     ];
 
     return $permissions;

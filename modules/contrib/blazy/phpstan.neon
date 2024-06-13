@@ -1,6 +1,6 @@
 # Useless file, not working.
-includes:
-  - ../../../core/phpstan-baseline.neon
+# includes:
+#   - ../../../core/phpstan-baseline.neon
 parameters:
   # level 5 is still experimental, stick it to 4 at most for now.
   # See https://github.com/phpstan/phpstan/issues/105

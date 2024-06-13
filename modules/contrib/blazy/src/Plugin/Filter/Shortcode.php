@@ -33,9 +33,20 @@ class Shortcode {
     // Might not be available with self-closing [TAG data="BLAH" /].
     if (stristr($string, "[$item") !== FALSE) {
       $string = self::process($string, $item);
+
+      // @todo remove into self::replace().
+      $string = str_replace("<p><$item>", "<$item>", $string);
+      $string = str_replace("<p><$item ", "<$item ", $string);
+      $string = str_replace("</$item></p>", "</$item>", $string);
     }
 
-    return self::process($string, $container);
+    $text = self::process($string, $container);
+
+    // @todo remove into self::replace().
+    $text = str_replace("<p><$container>", "<$container>", $text);
+    $text = str_replace("<p><$container ", "<$container ", $text);
+    $text = str_replace("</$container></p>", "</$container>", $text);
+    return $text;
   }
 
   /**

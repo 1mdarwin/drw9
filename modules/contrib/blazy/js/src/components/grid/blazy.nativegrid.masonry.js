@@ -6,32 +6,92 @@
  * The two-dimensional Native Grid does not use JS until treated as a Masonry.
  * If you need GridStack kind, avoid inputting numeric value for Grid.
  * Below is the cheap version of GridStack.
+ *
+ * @credit: https://css-tricks.com/a-lightweight-masonry-solution/
  */
 
 (function ($, Drupal) {
 
   'use strict';
 
-  Drupal.blazy = Drupal.blazy || {};
-
   var ID = 'b-nativegrid';
   var ID_ONCE = 'b-masonry';
   var C_IS_MASONRY = 'is-' + ID_ONCE;
   var C_MOUNTED = C_IS_MASONRY + '-mounted';
-  var S_ELEMENT = '.' + ID + '.' + C_IS_MASONRY;
+  var C_IS_DISABLED = C_MOUNTED + '-disabled';
+  var S_BASE = '.' + ID;
+  var S_ELEMENT = S_BASE + '.' + C_IS_MASONRY;
   var C_IS_CAPTIONED = 'is-b-captioned';
-  var S_GRID = '.grid';
-  var V_MAX = 0;
+  var UNLOAD;
 
   /**
-   * Applies grid row end to each grid item.
+   * Processes a grid object.
+   *
+   * @param {Object} grid
+   *   The grid object.
+   */
+  function subprocess(grid) {
+    // Get the post relayout number of columns.
+    var ncol = getComputedStyle(grid._el).gridTemplateColumns.split(' ').length;
+
+    // If the number of columns has changed.
+    if (grid.ncol !== ncol || grid.mod) {
+      // Update number of columns.
+      grid.ncol = ncol;
+
+      // Revert to initial positioning, no margin.
+      var cleanout = function () {
+        $.each(grid.items, function (c) {
+          c.style.removeProperty('margin-top');
+        });
+      };
+
+      cleanout();
+
+      // If we have more than one column.
+      if (grid.ncol > 1) {
+        $.removeClass(grid._el, C_IS_DISABLED);
+        $.each(grid.items.slice(ncol), function (c, i) {
+          // Bottom edge of item above.
+          var prevFin = $.rect(grid.items[i]).bottom;
+          // Top edge of current item.
+          var currItm = $.rect(c).top;
+
+          c.style.marginTop = (prevFin + grid.gap - currItm) + 'px';
+        });
+      }
+      else {
+        $.addClass(grid._el, C_IS_DISABLED);
+        cleanout();
+      }
+
+      grid.mod = 0;
+    }
+  }
+
+  function map(grids) {
+    return grids.map(function (grid) {
+      var children = $.slice(grid.childNodes);
+
+      return {
+        _el: grid,
+        gap: parseFloat(getComputedStyle(grid).gridRowGap),
+        items: children.filter(function (c) {
+          return c.nodeType === 1 && +getComputedStyle(c).gridColumnEnd !== -1;
+        }),
+        ncol: 0,
+        count: children.length
+      };
+    });
+  }
+
+  /**
+   * Processes a grid masonry.
    *
    * @param {HTMLElement} elm
    *   The container HTML element.
    */
   function process(elm) {
-    var heights = {};
-    var items = $.findAll(elm, S_GRID);
     var caption = $.find(elm, '.views-field') && $.find(elm, '.views-field p');
 
     // @todo move it to PHP, unreliable here.
@@ -40,85 +100,74 @@
       $.addClass(elm, C_IS_CAPTIONED);
     }
 
-    var style = $.computeStyle(elm);
-    var gap = style.getPropertyValue('row-gap');
-    var rows = style.getPropertyValue('grid-auto-rows');
-    var box = $.find(elm, S_GRID);
-    var parentWidth = $.rect(elm).width;
-    var boxWidth = $.rect(box).width;
-    var boxStyle = $.computeStyle(box);
-    var margin = parseFloat(boxStyle.marginLeft) + parseFloat(boxStyle.marginRight);
-    var itemWidth = boxWidth + margin;
-    var columnCount = Math.round((1 / (itemWidth / parentWidth)));
-    var rowHeight = $.toInt(rows, 1);
+    $.addClass(elm, C_MOUNTED);
+  }
 
-    function processItem(el, id) {
-      var target = el.target;
-      var grid = target ? $.closest(target, S_GRID) : el;
-
-      id = id || items.indexOf(grid);
-      gap = $.toInt(gap, 0);
-
-      if (gap === 0) {
-        gap = 0.0001;
-      }
-
-      // Once setup, we rely on CSS to make it responsive.
-      var layout = function () {
-        var cn = $.find(grid, S_GRID + '__content');
-        var ch = $.outerHeight(cn, true);
-        var span = Math.ceil((ch + gap) / (rowHeight + gap));
-        var curColumn;
-        var style;
-
-        // Sets the grid row span based on content and gap height.
-        grid.style.gridRowEnd = 'span ' + span;
-
-        curColumn = (id % columnCount) || 0;
-
-        style = $.computeStyle(grid);
-
-        if ($.isUnd(heights[curColumn])) {
-          heights[curColumn] = 0;
-        }
-
-        heights[curColumn] += ch + parseFloat(style.marginBottom);
-      };
-
-      setTimeout(layout, 301);
-    }
-
-    // Process on page load.
-    $.each(items, processItem);
-
-    var checkHeight = function () {
-      var values = Object.values(heights);
-      var max = Math.max.apply(null, values);
-
-      if (max < 0) {
-        max = V_MAX;
-      }
-
-      // Min-height causes unwanted white-space. Height is too risky with
-      // dynamic contents without aspect ratio, but normally fit best.
-      max = parseInt(max, 10);
-      if (max > 0) {
-        elm.style.height = max + 'px';
-      }
-
-      V_MAX = max;
-
-      setTimeout(function () {
-        elm.style.height = '';
-      }, 1200);
+  /**
+   * Initialize the grid elements.
+   *
+   * @param {HTMLElement} grids
+   *   The container HTML elements.
+   */
+  function init(grids) {
+    var onResize = function (entry) {
+      grids.find(function (grid) {
+        return grid._el === entry.target.parentElement;
+      }).mod = 1;
     };
 
-    checkHeight();
+    var o = new ResizeObserver(function (entries) {
+      $.each(entries, onResize);
+    });
 
-    // Process on resize.
-    Drupal.blazy.checkResize(items, processItem, elm, processItem);
+    grids = map(grids);
 
-    $.addClass(elm, C_MOUNTED);
+    function observe() {
+      $.each(grids, function (grid) {
+        $.each(grid.items, function (c) {
+          o.observe(c);
+        });
+      });
+    }
+
+    function layout(e) {
+      if (e === UNLOAD) {
+        var elms = $.toElms(S_BASE);
+
+        if (grids.length) {
+          grids = map(elms);
+
+          grids.find(function (grid) {
+            return $.hasClass(grid._el, ID);
+          }).mod = 1;
+
+          $.each(grids, subprocess);
+        }
+      }
+      else {
+        $.each(grids, subprocess);
+      }
+    }
+
+    // Fix for LB or AJAX in general integration.
+    // @todo move it to an AJAX event when Drupal has one by 2048.
+    if (UNLOAD) {
+      setTimeout(function () {
+
+        layout(UNLOAD);
+        observe();
+
+        UNLOAD = false;
+      }, 700);
+    }
+
+    $.on('load.' + ID_ONCE, function () {
+      layout();
+      observe();
+
+      // No need to debounce, RO is already browser-optimized.
+      $.on('resize.' + ID_ONCE, layout, false);
+    }, false);
   }
 
   /**
@@ -128,11 +177,21 @@
    */
   Drupal.behaviors.blazyNativeGrid = {
     attach: function (context) {
-      $.once(process, ID_ONCE, S_ELEMENT, context);
+
+      var grids = $.once(process, ID_ONCE, S_ELEMENT, context);
+
+      if (grids.length && getComputedStyle(grids[0]).gridTemplateRows !== 'masonry') {
+        init(grids);
+      }
+
     },
     detach: function (context, setting, trigger) {
       if (trigger === 'unload') {
-        $.once.removeSafely(ID_ONCE, S_ELEMENT, context);
+        UNLOAD = true;
+        var els = $.once.removeSafely(ID_ONCE, S_BASE, context);
+        if (els && els.length) {
+          $.removeClass(els[0], C_MOUNTED);
+        }
       }
     }
 

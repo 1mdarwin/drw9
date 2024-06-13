@@ -222,7 +222,7 @@ class SlickFilter extends BlazyFilterBase {
   /**
    * Build the slick using the DOM lookups.
    */
-  private function withDomShortcode(\DOMElement $object, array $settings): array {
+  private function withDomShortcode($object, array $settings): array {
     $text = $this->getHtml($object);
 
     if (empty($text)) {

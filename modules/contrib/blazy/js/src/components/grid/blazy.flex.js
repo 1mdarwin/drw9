@@ -16,15 +16,60 @@
   var ID = 'b-flex';
   var ID_ONCE = ID;
   var C_MOUNTED = 'is-' + ID_ONCE;
-  var C_DONE = C_MOUNTED + '-done';
-  var C_RESIZED = C_MOUNTED + '-resized';
+  var C_IS_DISABLED = C_MOUNTED + '-disabled';
   var C_IS_CAPTIONED = 'is-b-captioned';
-  var S_ELEMENT = '.' + ID; // + ':not(.' + C_MOUNTED + ')';
-  var S_GRID = '.grid';
-  var V_BIO = 'bio';
-  var E_DONE = V_BIO + ':done';
-  var E_RESIZED = V_BIO + ':resizing';
-  var V_MAX = 0;
+  var S_BASE = '.' + ID;
+  // @fixme with lock masonry broken after AJAX unless class removed at detach.
+  // drupalSettings.blazy.useAjax ? '.' + ID :
+  var S_ELEMENT = S_BASE + ':not(.' + C_MOUNTED + ')';
+  var C_GRID = 'grid';
+  var S_GRID = '.' + C_GRID;
+  var UNLOAD;
+
+  /**
+   * Processes a grid object.
+   *
+   * @param {Object} grid
+   *   The grid object.
+   */
+  function subprocess(grid) {
+    // Get the post relayout number of columns.
+    var ncol = columnCount(grid._el);
+
+    // If the number of columns has changed.
+    if (grid.ncol !== ncol || grid.mod) {
+      // Update number of columns.
+      grid.ncol = ncol;
+
+      // Revert to initial positioning, no margin.
+      var cleanout = function () {
+        $.each(grid.items, function (c) {
+          c.style.removeProperty('margin-top');
+        });
+      };
+
+      cleanout();
+
+      // If we have more than one column.
+      if (grid.ncol > 1) {
+        $.removeClass(grid._el, C_IS_DISABLED);
+        $.each(grid.items.slice(ncol), function (c, i) {
+          // Bottom edge of item above.
+          var prevFin = $.rect(grid.items[i]).bottom;
+          // Top edge of current item.
+          var currItm = $.rect(c).top;
+
+          c.style.marginTop = (prevFin + grid.gap - currItm) + 'px';
+        });
+      }
+      else {
+        $.addClass(grid._el, C_IS_DISABLED);
+        cleanout();
+      }
+
+      grid.mod = 0;
+    }
+  }
 
   function columnCount(elm) {
     var box = $.find(elm, S_GRID);
@@ -36,175 +81,105 @@
     return Math.round((1 / (itemWidth / parentWidth)));
   }
 
+  function map(elms) {
+    return elms.map(function (el) {
+      var children = $.slice(el.childNodes);
+
+      return {
+        _el: el,
+        gap: parseFloat($.computeStyle(_doc.documentElement, '--bf-col-gap', true)),
+        items: children.filter(function (c) {
+          return $.hasClass(c, C_GRID);
+        }),
+        ncol: 0,
+        count: children.length
+      };
+    });
+  }
+
   /**
-   * Applies height adjustments to each item.
+   * Processes a grid masonry.
    *
    * @param {HTMLElement} elm
    *   The container HTML element.
    */
   function process(elm) {
-    var heights = {};
-    var items = $.findAll(elm, S_GRID);
-    var html = $.find(elm, '.b-html');
     var caption = $.find(elm, '.views-field') && $.find(elm, '.views-field p');
-    var columns = columnCount(elm);
 
-    function reset(grids) {
-      heights = {};
-
-      elm.style.height = '';
-      $.each(grids, function (el) {
-        el.style.transform = '';
-      });
-    }
-
-    function toGrid(grids) {
-      var layout = function (grid, id) {
-        var target = grid.target;
-        grid = target ? $.closest(target, S_GRID) : grid;
-        id = $.isUnd(id) ? grids.indexOf(grid) : id;
-
-        var cn = $.find(grid, S_GRID + '__content');
-        if (!$.isElm(cn)) {
-          return;
-        }
-
-        var cr = $.rect(cn);
-        var ch = cr.height;
-
-        if (ch < 60) {
-          cr = $.rect(grid);
-          ch = cr.height;
-        }
-
-        if (ch < 60) {
-          return;
-        }
-
-        var curColumn = (id % columns) || 0;
-        var style = $.computeStyle(grid);
-
-        if ($.isUnd(heights[curColumn])) {
-          heights[curColumn] = 0;
-        }
-
-        // grid.style.minHeight = ch + 'px';
-        heights[curColumn] += ch + parseFloat(style.marginBottom);
-
-        // If the item has an item above it, then move it to fill the gap.
-        if (id - columns >= 0) {
-          var nh = id - columns + 1;
-          var itemAbove = $.find(elm, S_GRID + ':nth-of-type(' + nh + ')');
-          if ($.isElm(itemAbove)) {
-            var prevBottom = $.rect(itemAbove).bottom;
-            var currentTop = cr.top - parseFloat(style.marginBottom);
-
-            // grid.style.top = '-' + (currentTop - prevBottom) + 'px';
-            grid.style.transform = 'translateY(-' + parseInt(currentTop - prevBottom, 0) + 'px)';
-          }
-        }
-      };
-
-      var processItem = function (item, id) {
-        layout(item, id);
-      };
-
-      // Process on page load.
-      $.each(grids, processItem);
-
-      var checkHeight = function () {
-        var values = Object.values(heights);
-        var max = Math.max.apply(null, values);
-
-        if (max < 0) {
-          max = V_MAX;
-        }
-
-        // Min-height causes unwanted white-space. Height is too risky with
-        // dynamic contents without aspect ratio, but normally fit best.
-        max = parseInt(max, 10);
-        if (max > 0) {
-          elm.style.height = max + 'px';
-        }
-
-        V_MAX = max;
-      };
-
-      checkHeight();
-
-      var loader = $.find(_doc.body, '> .ajaxin-wrapper');
-      $.remove(loader);
-    }
-
-    function start(grids, cw) {
-      if (cw > 1) {
-        toGrid(grids);
-      }
-
-      $.removeClass(elm, C_RESIZED);
-
-      setTimeout(function () {
-        $.addClass(elm, C_DONE);
-      }, 101);
-    }
-
-    function onMutation(entries) {
-      $.each(entries, function (entry) {
-        if ($.is(entry.target, elm) && entry.addedNodes.length) {
-          setTimeout(function () {
-            items = $.findAll(elm, S_GRID);
-            reset(items);
-
-            start(items, columns);
-          }, 301);
-        }
-      });
-    }
-
-    function initNow(e) {
-      var isDone = false;
-      var isResized = false;
-
-      if (e) {
-        isDone = e.type === E_DONE;
-        isResized = e.type === E_RESIZED;
-
-        reset(items);
-
-        if (isDone) {
-          $.off(E_DONE + '.' + ID, initNow);
-        }
-        else if (isResized) {
-          $.removeClass(elm, C_DONE);
-          $.addClass(elm, C_RESIZED);
-
-          columns = columnCount(elm);
-        }
-      }
-
-      items = $.findAll(elm, S_GRID);
-      start(items, columns);
-    }
-
-    if ($.isElm(html)) {
-      $.on(E_DONE + '.' + ID, initNow);
-    }
-    else {
-      setTimeout(initNow, 301);
-    }
-
-    $.on(E_RESIZED + '.' + ID, $.debounce(initNow, 601));
-
-    var observer = new MutationObserver(onMutation);
-    observer.observe(elm, {
-      childList: true
-    });
-
+    // @todo move it to PHP, unreliable here.
+    // It is here for Views rows not aware of captions, not formatters.
     if (caption) {
       $.addClass(elm, C_IS_CAPTIONED);
     }
 
     $.addClass(elm, C_MOUNTED);
+  }
+
+  /**
+   * Initialize the grid elements.
+   *
+   * @param {HTMLElement} grids
+   *   The container HTML elements.
+   */
+  function init(grids) {
+    var onResize = function (entry) {
+      grids.find(function (grid) {
+        return grid._el === entry.target.parentElement;
+      }).mod = 1;
+    };
+
+    var o = new ResizeObserver(function (entries) {
+      $.each(entries, onResize);
+    });
+
+    grids = map(grids);
+
+    function observe() {
+      $.each(grids, function (grid) {
+        $.each(grid.items, function (c) {
+          o.observe(c);
+        });
+      });
+    }
+
+    function layout(e) {
+      if (e === UNLOAD) {
+        var elms = $.toElms(S_BASE);
+
+        if (elms.length) {
+          grids = map(elms);
+
+          grids.find(function (grid) {
+            return $.hasClass(grid._el, ID);
+          }).mod = 1;
+
+          $.each(grids, subprocess);
+        }
+      }
+      else {
+        $.each(grids, subprocess);
+      }
+    }
+
+    // Fix for LB or AJAX in general integration.
+    // @todo move it to an AJAX event when Drupal has one by 2048.
+    if (UNLOAD) {
+      setTimeout(function () {
+
+        layout(UNLOAD);
+        observe();
+
+        UNLOAD = false;
+      }, 700);
+    }
+
+    $.on('load.' + ID_ONCE, function () {
+      layout();
+      observe();
+
+      // No need to debounce, RO is already browser-optimized.
+      $.on('resize.' + ID_ONCE, layout, false);
+    }, false);
   }
 
   /**
@@ -214,11 +189,21 @@
    */
   Drupal.behaviors.blazyFlex = {
     attach: function (context) {
-      $.once(process, ID_ONCE, S_ELEMENT, context);
+
+      var grids = $.once(process, ID_ONCE, S_ELEMENT, context);
+      init(grids);
+
     },
     detach: function (context, setting, trigger) {
       if (trigger === 'unload') {
-        $.once.removeSafely(ID_ONCE, S_ELEMENT, context);
+        UNLOAD = true;
+
+        setTimeout(function () {
+          var els = $.once.removeSafely(ID_ONCE, S_BASE, context);
+          if (els && els.length) {
+            $.removeClass(els[0], C_MOUNTED);
+          }
+        });
       }
     }
   };

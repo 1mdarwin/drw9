@@ -1,4 +1,42 @@
 
+Blazy 8.x-2.0-dev, 2024-05-15
+------------------------------
+- Fixed for D10.3 deprecated Renderer::renderPlain.
+
+Blazy 8.x-2.0-dev, 2024-05-12
+------------------------------
+- Supports triggering events with extra arguments ala jQuery.
+
+Blazy 8.x-2.0-dev, 2024-04-13
+------------------------------
+- Fixed for native grid masonry.
+
+Blazy 8.x-2.0-dev, 2024-04-13
+------------------------------
+- Changed grid dimensions to object due to breaking NestedArray downstream.
+
+Blazy 8.x-2.0-dev, 2024-04-12
+------------------------------
+- Improved media player responsiveness.
+
+Blazy 8.x-2.0-dev, 2024-04-11
+------------------------------
+- Fixed for SVG thumbnail.
+
+Blazy 8.x-2.0-dev, 2024-03-14
+------------------------------
+- Issue #3427632 by Mortarion: Shortcode compatibility with CKeditor5.
+
+Blazy 8.x-2.0-dev, 2024-03-09
+------------------------------
+- Issue #3424212: Performance issues with S3 (or other).
+- Issue #3424739 by chanelwheeler: Unable to assign link to image.
+
+Blazy 8.x-2.0-dev, 2024-02-01
+------------------------------
+- Issue #3411047 by heddn: The definition for the sequence declares the type of
+  its items in a way that is deprecated in drupal:8.0.0
+
 Blazy 8.x-2.0-dev, 2023-11-06
 ------------------------------
 - Issue #3399304 by gausarts, Corn696: Loading indicator no longer working.

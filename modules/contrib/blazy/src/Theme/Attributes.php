@@ -736,6 +736,10 @@ class Attributes {
       $classes[] = 'blazy--nojs';
     }
 
+    if ($blazies->is('bg')) {
+      $classes[] = 'is-b-bg';
+    }
+
     // Specific for media switcher, lightbox or not.
     if ($switcher) {
       $switch = str_replace('_', '-', $switcher);
@@ -749,8 +753,8 @@ class Attributes {
 
         // Allows lightboxes to inject their optionset, if any.
         // More accessible and contextual than in the <HEAD> or <SCRIPT> tags.
-        if ($extras = $blazies->data($lightbox)) {
-          $attributes['data-' . $switch] = Json::encode($extras);
+        if ($extras = $blazies->get('data.' . $lightbox)) {
+          $attributes['data-' . $switch] = is_string($extras) ? $extras : Json::encode($extras);
         }
       }
     }

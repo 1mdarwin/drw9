@@ -27,6 +27,7 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerBaseInt
     $load = [];
     $blazies = Check::attachments($load, $attach);
 
+    Internals::count($blazies);
     $this->attachments($load, $attach, $blazies);
 
     // Since 2.17 with self::attachments(), allows altering the ecosystem once.
@@ -247,6 +248,11 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerBaseInt
     if ($router = Path::routeMatch()) {
       $route_name = $router->getRouteName();
       $blazies->set('route_name', $route_name);
+
+      // @todo figure out more admin pages with AJAX where Blazy may sit.
+      if (strpos($route_name, 'layout_builder.') !== FALSE) {
+        $blazies->set('use.ajax', TRUE);
+      }
     }
 
     // Sub-modules may need to provide their data to be consumed here.

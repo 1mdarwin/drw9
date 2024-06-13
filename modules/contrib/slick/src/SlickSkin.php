@@ -19,6 +19,7 @@ class SlickSkin implements SlickSkinInterface {
    * {@inheritdoc}
    */
   public function skins() {
+    /* @phpstan-ignore-next-line */
     return \Drupal::service('slick.skin_manager')->load('slick_skin')->skins();
   }
 

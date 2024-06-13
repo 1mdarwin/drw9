@@ -72,3 +72,19 @@ views.relationship.entity_queue:
     limit_queue:
       type: string
       label: 'Limit to a specific entity queue'
+
+action.configuration.entityqueue_add_item:
+  type: mapping
+  label: 'Configuration for "Add Item to Subqueue" action'
+  mapping:
+    subqueue:
+      type: string
+      label: subqueue
+
+action.configuration.entityqueue_remove_item:
+  type: mapping
+  label: 'Configuration for "Add Item to Subqueue" action'
+  mapping:
+    subqueue:
+      type: string
+      label: subqueue

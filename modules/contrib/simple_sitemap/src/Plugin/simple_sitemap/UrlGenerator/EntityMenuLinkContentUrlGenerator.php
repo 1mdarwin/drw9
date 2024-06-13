@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Component\Plugin\Exception\PluginException;
+use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
@@ -228,7 +229,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
         : NULL,
       'priority' => $entity_settings['priority'] ?? NULL,
       'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
-      'images' => !empty($entity_settings['include_images']) && !empty($entity)
+      'images' => !empty($entity_settings['include_images']) && !empty($entity) && $entity instanceof ContentEntityInterface
         ? $this->getEntityImageData($entity)
         : [],
 

@@ -57,6 +57,21 @@ This will be your last resort if updates have errors. Never reload this page.
 7. Read more the [TROUBLESHOOTING](#troubleshooting) section for common trouble
    solutions.
 
+
+## <a name="wsod"></a>WSOD - WORST CASE UPDATE SOP  
+This might or might not be related to Blazy updates. At times, we got a WSOD.
+The following should do a total rebuild if a WSOD is not easily fixed by the
+above regular Update SOP:  
+1. Rename or delete `composer.lock` file and `vendor` folder at Drupal docroot.
+2. Run `composer update -W -n`, and or plus any additional arguments as per your
+   install so to re-configure composer including its `vendor` folder.
+3. Only if any issues with asset re-generations, rename or delete folders:
+   + `web/sites/default/files/css`
+   + `web/sites/default/files/js`
+4. Run `composer clear-cache`, if necessary. Will slow it down temporarily!
+5. Run `drush cr`, `drush updb` and `drush cr`. Note the silly sequence!
+
+
 **Note the order!**  
 It is very important to follow as is for successful updates. If you don't follow
 the above SOP, and stuck on a broken site, no need to uninstall modules which

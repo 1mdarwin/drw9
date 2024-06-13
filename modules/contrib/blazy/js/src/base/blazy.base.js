@@ -81,6 +81,17 @@
       return ((height / width) * 100).toFixed(2);
     },
 
+    // https://stackoverflow.com/questions/3971841
+    scale: function (srcWidth, srcHeight, maxWidth, maxHeight) {
+      var ratio = Math.min(maxWidth / srcWidth, maxHeight / srcHeight);
+
+      return {
+        width: srcWidth * ratio,
+        height: srcHeight * ratio,
+        ratio: ratio
+      };
+    },
+
     dimension: function (w, h) {
       return {
         width: w,

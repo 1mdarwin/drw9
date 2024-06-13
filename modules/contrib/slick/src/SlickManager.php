@@ -610,7 +610,7 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       }
 
       // Listens to signaled attributes via hook_alters.
-      Blazy::gridCheckAttributes($attrs, $content_attrs, $blazies, FALSE);
+      $this->gridCheckAttributes($attrs, $content_attrs, $blazies, FALSE);
 
       $theme = empty($settings['vanilla']) ? 'slide' : 'vanilla';
       $content = [
@@ -645,26 +645,6 @@ class SlickManager extends BlazyManagerBase implements SlickManagerInterface {
       $options['draggable'] = FALSE;
       $options['infinite'] = FALSE;
     }
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove post blazy:2.17.
-   */
-  public function verifyItem(array &$element, $delta): void {
-    // Do nothing.
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @todo remove at 3.x.
-   */
-  public function verify(array &$settings): void {
-    parent::verify($settings);
-
-    SlickDefault::verify($settings, $this);
   }
 
 }

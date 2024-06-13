@@ -40,8 +40,8 @@
         "drupal/google_analytics": "^4.0.0",
         "drupal/google_tag": "^2.0",
         "drupal/jquery_ui": "^1.6",
-        "drupal/jquery_ui_autocomplete": "^2.0",
-        "drupal/jquery_ui_menu": "^2.0",
+        "drupal/jquery_ui_autocomplete": "^2.1",
+        "drupal/jquery_ui_menu": "^2.1",
         "drupal/languageicons": "^2.0",
         "drupal/libraries": "^4.0",
         "drupal/metatag": "^2.0",
@@ -87,9 +87,6 @@
         "patches":{
             "drupal/core":{
                 "big_pipe.js' checkMutation() does not check":"https://www.drupal.org/files/issues/2024-01-21/drupal-big_pipe_does_not_check_before_using_node_object-3416141.patch"
-            },
-            "drupal/google_tag":{
-                "Enforce Privacy Consent Policy":"https://www.drupal.org/files/issues/2024-03-01/3424623-9-allow-saving-google-tag-setting-for-consent-mode.patch"
             }
         },
         "drupal-scaffold": {

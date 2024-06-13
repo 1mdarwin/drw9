@@ -27,11 +27,8 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
     $this->container
       ->get('main_content_renderer.html')
       ->invokePageAttachmentHooks($page);
-    self::assertEquals([
-      'contexts' => ['user.roles:authenticated'],
-      'tags' => $this->container->get('entity_type.manager')->getDefinition('google_tag_container')->getListCacheTags(),
-      'max-age' => -1,
-    ], $page['#cache']);
+    self::assertEquals($this->container->get('entity_type.manager')->getDefinition('google_tag_container')->getListCacheTags(), $page['#cache']['tags']);
+    self::assertEquals(-1, $page['#cache']['max-age']);
     self::assertNotContains('google_tag/gtag', $page['#attached']['library']);
     self::assertNotContains('drupalSettings', $page['#attached']);
   }
@@ -68,11 +65,8 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
     $this->container
       ->get('main_content_renderer.html')
       ->invokePageAttachmentHooks($page);
-    self::assertEquals([
-      'contexts' => ['user.roles:authenticated', 'url.path'],
-      'tags' => ['config:google_tag_container_list', 'config:google_tag.container.foo'],
-      'max-age' => -1,
-    ], $page['#cache']);
+    self::assertEquals(['config:google_tag_container_list', 'config:google_tag.container.foo'], $page['#cache']['tags']);
+    self::assertEquals(-1, $page['#cache']['max-age']);
     self::assertContains('google_tag/gtag', $page['#attached']['library']);
     self::assertEquals([
       'gtag' => [
@@ -92,7 +86,7 @@ final class PageAttachmentsHookTest extends GoogleTagTestCase {
           ],
         ],
         'additionalConfigInfo' => [],
-        'consentMode' => true,
+        'consentMode' => false,
       ],
     ], $page['#attached']['drupalSettings']);
 

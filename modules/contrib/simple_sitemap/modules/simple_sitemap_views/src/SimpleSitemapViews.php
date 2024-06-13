@@ -2,15 +2,16 @@
 
 namespace Drupal\simple_sitemap_views;
 
-use Drupal\simple_sitemap\Entity\SimpleSitemap;
-use Drupal\simple_sitemap_views\Plugin\views\display_extender\SimpleSitemapDisplayExtender;
+use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Database\Connection;
+use Drupal\Core\Database\Database;
 use Drupal\Core\Database\Query\ConditionInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\views\ViewEntityInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Queue\QueueFactory;
-use Drupal\Core\Database\Database;
+use Drupal\simple_sitemap\Entity\SimpleSitemap;
+use Drupal\simple_sitemap\Entity\SimpleSitemapType;
+use Drupal\simple_sitemap_views\Plugin\views\display_extender\SimpleSitemapDisplayExtender;
+use Drupal\views\ViewEntityInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 
@@ -129,6 +130,14 @@ class SimpleSitemapViews {
     $this->removeArgumentsFromIndex();
     $queue = $this->queueFactory->get('simple_sitemap.views.garbage_collector');
     $queue->deleteQueue();
+
+    // Remove the views URL generator from all sitemap types.
+    $types = SimpleSitemapType::loadMultiple();
+    foreach ($types as $type) {
+      if ($type->hasUrlGenerator('views')) {
+        $type->set('url_generators', array_keys(array_diff_key($type->getUrlGenerators(), ['views' => ''])))->save();
+      }
+    }
   }
 
   /**

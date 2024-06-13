@@ -113,7 +113,7 @@
       $.remove(iframe);
 
       // DOM ready fix, for slow iframe removal.
-      window.setTimeout(function () {
+      _win.setTimeout(function () {
         // Cache iframe for the potential repeating clicks.
         if (!newIframe) {
           newIframe = $.create(IFRAME, C_MD_ELEMENT);
@@ -207,6 +207,26 @@
     // Closes the video.
     $el.on('click.' + ID, S_CLOSE, stop);
 
+    var checkWidth = function () {
+      var ws = $.windowSize();
+      var data = $.parse(el.dataset.bMp);
+      var min = $.matchMedia('1024px') && !data.fs ? 15 : 0;
+      var width = data.owidth;
+      var height = data.oheight;
+      var as = $.image.scale(width, height, ws.width - min, ws.height - min);
+      var p = el.parentNode;
+      width = as.width > width ? width : as.width;
+
+      if ($.hasClass(p, 'media-wrapper')) {
+        p.style.width = width + 'px';
+        if (data.ratio !== data.oratio) {
+          el.style.padding = 'padding-bottom: ' + data.ratio + '%';
+        }
+      }
+    };
+
+    $.on(_win, 'resize.' + ID + ' orientationchange.' + ID, $.debounce(checkWidth, 210));
+
     // Listens to blazy:done event to auto-display instagram feeds.
     // if (instagram) {
     // $el.on('blazy:done', onDone);
@@ -235,6 +255,7 @@
     var provider = data.provider;
     var token = data.token;
     var width = $.toInt(data.width, 640);
+    var height = $.toInt(data.height, 360);
     var pad = $.image.ratio(data);
     var imgUrl = $el.attr('data-box-url');
     var href = el.href;
@@ -249,7 +270,29 @@
     var ariaPlay = Drupal.t('Load and play the video');
     var bProvider = '';
     var bToken = '';
+    var ws = $.windowSize();
+    var fs = data.fs || false;
+    var min = $.matchMedia('1024px') && !fs ? 15 : 0;
+    var as = $.image.scale(width, height, ws.width - min, ws.height - min);
+    var mp;
+    var oheight = height;
+    var owidth = width;
     var html = '';
+
+    width = as.width > width ? width : as.width;
+    height = as.height > height ? height : as.height;
+
+    var obj = {
+      width: width,
+      height: height,
+      ratio: ((height / width) * 100).toFixed(2),
+      owidth: owidth,
+      oheight: oheight,
+      oratio: pad,
+      fs: fs
+    };
+
+    mp = Drupal.checkPlain(JSON.stringify(obj));
 
     if (imgUrl) {
       html += '<img src="$imgUrl" class="$imgClass" alt="$alt" loading="lazy" decoding="async" />';
@@ -267,7 +310,7 @@
       html += '<span class="$icon $icon--play" data-b-url="$oembed" data-iframe-title="$alt" aria-label="$ariaPlay"$bProvider$bToken></span>';
     }
 
-    html = '<div class="$md $idClass $md--switch $player $md--ratio $md--ratio--fluid" aria-live="polite" style="padding-bottom: $pad%">' + html + '</div>';
+    html = '<div class="$md $idClass $md--switch $player $md--ratio $md--ratio--fluid" aria-live="polite" style="padding-bottom: $pad%" data-b-mp="$mp">' + html + '</div>';
 
     if (!settings.unwrap) {
       html = '<div class="$wrapper $wrapper--inline" style="width: $widthpx">' + html + '</div>';
@@ -283,6 +326,7 @@
       idClass: idClass,
       player: player,
       pad: pad,
+      mp: mp,
       imgUrl: imgUrl,
       imgClass: imgClass,
       alt: alt,

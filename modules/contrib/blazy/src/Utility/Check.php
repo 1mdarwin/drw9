@@ -93,6 +93,7 @@ class Check {
     // @todo remove when VIS detaches behaviors properly like IO.
     if ($blazies->use('ajax', FALSE)) {
       $load['library'][] = 'blazy/bio.ajax';
+      $config['useAjax'] = TRUE;
     }
 
     // Preload.
@@ -266,7 +267,7 @@ class Check {
       }
     }
 
-    // 4. No longer needed once extracted above, remove.
+    // 5. No longer needed once extracted above, remove.
     $blazies->unset('first.data')
       ->set('was.blazy', TRUE);
   }

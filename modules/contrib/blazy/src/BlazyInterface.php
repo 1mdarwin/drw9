@@ -360,6 +360,17 @@ interface BlazyInterface {
   ): void;
 
   /**
+   * Import a config entity, and save it into database.
+   *
+   * @param array $options
+   *   Containing:
+   *     - module, the module name where config to be imported is stored.
+   *     - basename, file name without .yml extension: slick.optionset.nav, etc.
+   *     - folder, whether install, or optional.
+   */
+  public function import(array $options): void;
+
+  /**
    * Initialize Grid at any containers with DIV > DIVs without passing contents.
    *
    * @param array $options
@@ -521,6 +532,17 @@ interface BlazyInterface {
    *   Whether the module exists, or not.
    */
   public function moduleExists($name): bool;
+
+  /**
+   * A D9-12 compat \Drupal\Core\Render\RendererInterface::renderInIsolation().
+   *
+   * @param array $elements
+   *   The structured array describing the data to be rendered.
+   *
+   * @return \Drupal\Component\Render\MarkupInterface
+   *   The rendered HTML.
+   */
+  public function renderInIsolation(array &$elements);
 
   /**
    * An alias for Internals::service().

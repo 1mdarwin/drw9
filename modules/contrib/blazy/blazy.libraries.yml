@@ -56,18 +56,20 @@ base:
   css:
     component:
       css/blazy.css: {}
+  js:
+    js/base/blazy.base.min.js: { minified: true, weight: -5.8 }
+  dependencies:
+    # in case core removes core/drupal for decoupled debounce.
+    - core/drupal
+    # @todo watch out for core namespace change.
+    - core/drupal.debounce
+    - blazy/dblazy
 
 # Shared drupal-related methods normally driven by Drupal UI options.
 drupal:
   js:
-    js/base/blazy.base.min.js: { minified: true, weight: -5.8 }
     js/base/blazy.drupal.min.js: { minified: true, weight: -1.7 }
   dependencies:
-    - core/drupal
-    # @todo watch out for core namespace change.
-    - core/drupal.debounce
-    # @todo when min D9.2 - core/once
-    - blazy/dblazy
     - blazy/base
 
 # The bLazy, IO, Native loader aka initializer for IE9+ and modern browsers.
@@ -106,7 +108,6 @@ loading:
     js/plugin/blazy.loading.min.js: { minified: true, weight: -5.5 }
   dependencies:
     - blazy/base
-    - blazy/dblazy
 
 filter:
   css:
@@ -288,7 +289,6 @@ admin:
   dependencies:
     - core/jquery
     - blazy/drupal
-    - blazy/dblazy
     - blazy/admin.grid
 
 # deprecated at 2.5 and removed at 3.+, unmaintained. Use PhotoSwipe, etc.

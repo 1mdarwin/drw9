@@ -42,6 +42,21 @@ class Blazy {
   use BlazyDeprecatedTrait;
 
   /**
+   * A wrapper for version_compare in Drupal context.
+   */
+  public static function versionGreaterThan($deprecatedVersion): bool {
+    $currentVersion = \Drupal::VERSION;
+    // Normalize the version string when it's a dev version to the first point
+    // release of that minor. E.g. 10.2.x-dev and 10.2-dev both translate
+    // to 10.2.0.
+    $normalizedVersion = substr($currentVersion, -strlen('-dev')) === '-dev'
+      ? str_replace(['.x-dev', '-dev'], '.0', $currentVersion)
+      : $currentVersion;
+
+    return version_compare($normalizedVersion, $deprecatedVersion, '>=');
+  }
+
+  /**
    * Alias for CheckItem::autoplay().
    */
   public static function autoplay($url, $check = TRUE): string {

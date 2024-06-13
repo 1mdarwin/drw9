@@ -118,3 +118,10 @@ function blazy_update_8208() {
 function blazy_update_8217() {
   // Do nothing to clear cache.
 }
+
+/**
+ * Matching a more relevant module version.
+ */
+function blazy_update_8223() {
+  // Do nothing to clear cache.
+}

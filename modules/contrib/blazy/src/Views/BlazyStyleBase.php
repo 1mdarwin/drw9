@@ -299,7 +299,7 @@ abstract class BlazyStyleBase extends BlazyStyleVanilla implements BlazyStyleBas
       if ($tn_style && !Internals::isSvg($tn_uri)) {
         if ($style = $this->manager->load($tn_style, 'image_style')) {
           $sets['thumbnail_style'] = $tn_style;
-          $tn_uri = $style->buildUri($tn_uri);
+          // @todo recheck and remove $tn_uri = $style->buildUri($tn_uri);
         }
       }
 

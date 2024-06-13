@@ -75,7 +75,7 @@ class GarbageCollector extends QueueWorkerBase implements ContainerFactoryPlugin
    */
   public function processItem($data) {
     $view_id = $data['view_id'];
-    /** @var \Drupal\views\ViewEntityInterface $view_entity */
+    /** @var \Drupal\views\ViewEntityInterface|null $view_entity */
     $view_entity = $this->viewStorage->load($view_id);
     $display_ids = [];
 

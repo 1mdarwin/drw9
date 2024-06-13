@@ -175,14 +175,15 @@
       var me = this;
       var jq = _win.jQuery;
 
-      if (me.find(id, ctx).length) {
-        me.remove(id, selector, ctx, clear);
-      }
-
       // @todo remove BC for pre core/once when min D9.2:
       if (IS_JQ && jq && jq.fn && $.isFun(jq.fn.removeOnce)) {
         jq(selector, $.context(ctx)).removeOnce(id);
       }
+
+      if (me.find(id, ctx).length) {
+        return me.remove(id, selector, ctx, clear);
+      }
+      return [];
     };
   }
 

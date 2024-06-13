@@ -116,7 +116,7 @@ class Path {
       /* @phpstan-ignore-next-line */
       $path = is_callable($function) ? $function($type, $name) : '';
     }
-    return $absolute ? \base_path() . $path : $path;
+    return $absolute ? Internals::basePath() . $path : $path;
   }
 
   /**
@@ -172,7 +172,7 @@ class Path {
     $libraries = [];
     foreach (self::libraries($names, TRUE) as $key => $path) {
       if ($path) {
-        $libraries[$key] = $base_path ? \base_path() . $path : $path;
+        $libraries[$key] = $base_path ? Internals::basePath() . $path : $path;
       }
     }
     return $libraries;
@@ -188,7 +188,7 @@ class Path {
     $names = is_array($name) ? $name : [$name];
     foreach (self::libraries($names) as $path) {
       if ($path) {
-        $library = $base_path ? \base_path() . $path : $path;
+        $library = $base_path ? Internals::basePath() . $path : $path;
         break;
       }
     }
