@@ -7,7 +7,7 @@
  * This is a spin off from the Internationalization (i18n) package.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Routing\RouteMatchInterface;
@@ -111,7 +111,7 @@ function template_preprocess_languageicons_link_content(array &$variables): void
   $language = $variables['language'];
   $title = $variables['title'] ? $variables['title'] : $language->getName();
   $size = \Drupal::config('languageicons.settings')->get('size');
-  [$width, $height] = explode('x', $size);
+  [$width, $height] = $size ? explode('x', $size) : FALSE;
 
   if ($path = \Drupal::config('languageicons.settings')->get('path')) {
     $variables['icon'] = [
@@ -119,8 +119,8 @@ function template_preprocess_languageicons_link_content(array &$variables): void
       '#uri' => str_replace('*', $language->getId(), Html::escape($path)),
       '#alt' => $title,
       '#title' => $title,
-      '#width' => $width,
-      '#height' => $height,
+      '#width' => $width ?? '',
+      '#height' => $height ?? '',
       '#attributes' => ['class' => ['language-icon']],
     ];
   }

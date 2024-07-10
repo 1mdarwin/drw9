@@ -5,7 +5,7 @@
  * Post-update hooks for the Language Icons module.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Remove form state values from saved config.
