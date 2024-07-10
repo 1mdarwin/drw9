@@ -5,7 +5,7 @@
  * Install, uninstall, schema and update hooks for Language Icons.
  */
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /**
  * Implements hook_install().
