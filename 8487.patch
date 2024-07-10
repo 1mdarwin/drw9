@@ -1,0 +1,810 @@
+From 111b912e331a5ca9a52b957a836f9c8c8e7e717b Mon Sep 17 00:00:00 2001
+From: quietone <quietone@2572884.no-reply.drupal.org>
+Date: Sat, 22 Jun 2024 23:09:44 +1200
+Subject: [PATCH 01/17] add a test
+
+---
+ .../EntityViewDisplayCommentArticleTest.php   | 45 +++++++++++++++++++
+ 1 file changed, 45 insertions(+)
+ create mode 100644 core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+new file mode 100644
+index 000000000000..8e80897239ae
+--- /dev/null
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -0,0 +1,45 @@
++<?php
++
++declare(strict_types=1);
++
++namespace Drupal\Tests\system\Functional\Form;
++
++use Drupal\Core\Database\Database;
++use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
++use Drupal\Tests\BrowserTestBase;
++
++/**
++ * Tests view display 'node.article.default' is not removed.
++ */
++class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
++
++  /**
++   * {@inheritdoc}
++   */
++  protected $profile = 'standard';
++
++  /**
++   * {@inheritdoc}
++   */
++  protected $defaultTheme = 'stark';
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function setUp(): void {
++    parent::setUp();
++    $this->drupalLogin($this->rootUser);
++  }
++
++  /**
++   * Tests the form persists.
++   */
++  public function testError(): void {
++    $this->drupalGet('/admin/structure/comment/manage/comment/display');
++    $this->drupalGet('/admin/reports/dblog');
++    $assert_session = $this->assertSession();
++    $assert_session->pageTextNotContains("Entity view display 'node.article.default': Component");
++
++  }
++
++}
+-- 
+GitLab
+
+
+From 7cae435a0252dcd23aa0a0bcf5e4fe645af0d2b0 Mon Sep 17 00:00:00 2001
+From: quietone <quietone@2572884.no-reply.drupal.org>
+Date: Sat, 22 Jun 2024 23:25:39 +1200
+Subject: [PATCH 02/17] phpcs fixes
+
+---
+ .../src/Functional/Form/EntityViewDisplayCommentArticleTest.php | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 8e80897239ae..2b0adc526082 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -4,8 +4,6 @@
+ 
+ namespace Drupal\Tests\system\Functional\Form;
+ 
+-use Drupal\Core\Database\Database;
+-use Drupal\Core\EventSubscriber\MainContentViewSubscriber;
+ use Drupal\Tests\BrowserTestBase;
+ 
+ /**
+-- 
+GitLab
+
+
+From b73d5c95378d49f428cb71307ed82b7538a799e6 Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Sun, 30 Jun 2024 23:52:15 -0400
+Subject: [PATCH 03/17] Apply fix from #3384600
+
+---
+ core/modules/user/src/Form/EntityPermissionsForm.php | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/core/modules/user/src/Form/EntityPermissionsForm.php b/core/modules/user/src/Form/EntityPermissionsForm.php
+index 41c6f140f095..234d2f3e8dcf 100644
+--- a/core/modules/user/src/Form/EntityPermissionsForm.php
++++ b/core/modules/user/src/Form/EntityPermissionsForm.php
+@@ -93,11 +93,11 @@ protected function permissionsByProvider(): array {
+     // Get the names of all config entities that depend on $this->bundle.
+     $config_name = $this->bundle->getConfigDependencyName();
+     $config_entities = $this->configManager
+-      ->getConfigEntitiesToChangeOnDependencyRemoval('config', [$config_name]);
++      ->findConfigEntityDependenciesAsEntities('config', [$config_name]);
+     $config_names = array_map(
+       function ($dependent_config) {
+         return $dependent_config->getConfigDependencyName();
+-      }, $config_entities['delete'] ?? []
++      }, $config_entities
+     );
+     $config_names[] = $config_name;
+ 
+-- 
+GitLab
+
+
+From d3cc512e79760c215ec60fc907b1d53917417c45 Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Mon, 1 Jul 2024 00:15:28 -0400
+Subject: [PATCH 04/17] Add missing @group annotation to the test
+
+---
+ .../src/Functional/Form/EntityViewDisplayCommentArticleTest.php | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 2b0adc526082..6e0cdc5b0722 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -8,6 +8,8 @@
+ 
+ /**
+  * Tests view display 'node.article.default' is not removed.
++ *
++ * @group Form
+  */
+ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+ 
+-- 
+GitLab
+
+
+From c3e62228e13dda51bb9e21459b15f6c1670cf83a Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Mon, 1 Jul 2024 08:23:38 -0400
+Subject: [PATCH 05/17] Update unit test to match changes to the form
+
+---
+ .../tests/src/Unit/Form/EntityPermissionsFormTest.php     | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
+
+diff --git a/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php b/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php
+index aa4639f3192e..fde06a665344 100644
+--- a/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php
++++ b/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php
+@@ -60,12 +60,10 @@ public function testPermissionsByProvider(string $dependency_name, bool $found):
+     $module_handler = $this->prophesize(ModuleHandlerInterface::class)->reveal();
+     $module_extension_list = $this->prophesize(ModuleExtensionList::class)->reveal();
+     $prophecy = $this->prophesize(ConfigManagerInterface::class);
+-    $prophecy->getConfigEntitiesToChangeOnDependencyRemoval('config', ['node.type.article'])
++    $prophecy->findConfigEntityDependenciesAsEntities('config', ['node.type.article'])
+       ->willReturn([
+-        'delete' => [
+-          new ConfigEntityDependency('core.entity_view_display.node.article.full'),
+-          new ConfigEntityDependency('field.field.node.article.body'),
+-        ],
++        new ConfigEntityDependency('core.entity_view_display.node.article.full'),
++        new ConfigEntityDependency('field.field.node.article.body'),
+       ]);
+     $config_manager = $prophecy->reveal();
+     $prophecy = $this->prophesize(EntityTypeInterface::class);
+-- 
+GitLab
+
+
+From ca721c47687347cad8cf46773eb49f48f302be9f Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Mon, 1 Jul 2024 17:57:22 -0400
+Subject: [PATCH 06/17] Functional test: enable comment, field_ui, not standard
+ profile
+
+---
+ .../src/Functional/Form/EntityViewDisplayCommentArticleTest.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 6e0cdc5b0722..daccad8af740 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -16,7 +16,7 @@ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+   /**
+    * {@inheritdoc}
+    */
+-  protected $profile = 'standard';
++  protected static $modules = ['comment', 'field_ui'];
+ 
+   /**
+    * {@inheritdoc}
+-- 
+GitLab
+
+
+From 7c0c41d488efd2ad983ac52197f76c94d329b09f Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Wed, 3 Jul 2024 00:31:08 -0400
+Subject: [PATCH 07/17] Revert "Functional test: enable comment, field_ui, not
+ standard profile"
+
+This reverts commit f93e78443b2b1c1f300de2499d674e8c61fdc56e.
+---
+ .../src/Functional/Form/EntityViewDisplayCommentArticleTest.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index daccad8af740..6e0cdc5b0722 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -16,7 +16,7 @@ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+   /**
+    * {@inheritdoc}
+    */
+-  protected static $modules = ['comment', 'field_ui'];
++  protected $profile = 'standard';
+ 
+   /**
+    * {@inheritdoc}
+-- 
+GitLab
+
+
+From 34782e2172a3a0c24c013b5bb82c245ebf0f2716 Mon Sep 17 00:00:00 2001
+From: Sascha Grossenbacher <saschagros@gmail.com>
+Date: Thu, 4 Jul 2024 00:47:29 +0200
+Subject: [PATCH 08/17] Revert "Revert "Functional test: enable comment,
+ field_ui, not standard profile""
+
+This reverts commit d8b0d15d02b4f09ab31cf3be8564eac1e4df01c4.
+---
+ .../src/Functional/Form/EntityViewDisplayCommentArticleTest.php | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 6e0cdc5b0722..daccad8af740 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -16,7 +16,7 @@ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+   /**
+    * {@inheritdoc}
+    */
+-  protected $profile = 'standard';
++  protected static $modules = ['comment', 'field_ui'];
+ 
+   /**
+    * {@inheritdoc}
+-- 
+GitLab
+
+
+From 5b07a36a49ef0a2891b59f48053e1d7746c9fa74 Mon Sep 17 00:00:00 2001
+From: Sascha Grossenbacher <saschagros@gmail.com>
+Date: Thu, 4 Jul 2024 01:02:18 +0200
+Subject: [PATCH 09/17] update test
+
+---
+ .../EntityViewDisplayCommentArticleTest.php   | 26 ++++++++++++-------
+ 1 file changed, 16 insertions(+), 10 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index daccad8af740..d6f80156a792 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -4,7 +4,9 @@
+ 
+ namespace Drupal\Tests\system\Functional\Form;
+ 
++use Drupal\comment\Tests\CommentTestTrait;
+ use Drupal\Tests\BrowserTestBase;
++use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+ 
+ /**
+  * Tests view display 'node.article.default' is not removed.
+@@ -12,32 +14,36 @@
+  * @group Form
+  */
+ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
++  use CommentTestTrait, ContentTypeCreationTrait;
+ 
+   /**
+    * {@inheritdoc}
+    */
+-  protected static $modules = ['comment', 'field_ui'];
++  protected static $modules = ['comment', 'field_ui', 'dblog', 'node'];
+ 
+   /**
+    * {@inheritdoc}
+    */
+   protected $defaultTheme = 'stark';
+ 
+-  /**
+-   * {@inheritdoc}
+-   */
+-  protected function setUp(): void {
+-    parent::setUp();
+-    $this->drupalLogin($this->rootUser);
+-  }
+-
+   /**
+    * Tests the form persists.
+    */
+   public function testError(): void {
++
++    $this->drupalCreateContentType(['type' => 'article']);
++
++    $this->addDefaultCommentField('node', 'article');
++
++    $admin_user = $this->createUser(['access site reports', 'administer permissions', 'administer comment display']);
++    $this->drupalLogin($admin_user);
++
+     $this->drupalGet('/admin/structure/comment/manage/comment/display');
+-    $this->drupalGet('/admin/reports/dblog');
+     $assert_session = $this->assertSession();
++    $assert_session->statusCodeEquals(200);
++
++    $this->drupalGet('/admin/reports/dblog');
++    $assert_session->statusCodeEquals(200);
+     $assert_session->pageTextNotContains("Entity view display 'node.article.default': Component");
+ 
+   }
+-- 
+GitLab
+
+
+From 8bb6e0379463e0deb259e65ea97390a666346dd2 Mon Sep 17 00:00:00 2001
+From: Sascha Grossenbacher <saschagros@gmail.com>
+Date: Thu, 4 Jul 2024 01:50:58 +0200
+Subject: [PATCH 10/17] make the test fail as expected
+
+---
+ .../Form/EntityViewDisplayCommentArticleTest.php  | 15 ++++++++++++---
+ 1 file changed, 12 insertions(+), 3 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index d6f80156a792..82e44e065db5 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -4,7 +4,10 @@
+ 
+ namespace Drupal\Tests\system\Functional\Form;
+ 
++use Drupal\comment\Entity\CommentType;
+ use Drupal\comment\Tests\CommentTestTrait;
++use Drupal\Component\Utility\Unicode;
++use Drupal\Core\Entity\Entity\EntityViewDisplay;
+ use Drupal\Tests\BrowserTestBase;
+ use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+ 
+@@ -30,20 +33,26 @@ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+    * Tests the form persists.
+    */
+   public function testError(): void {
+-
++    // Set up the node and comment field, use the default view display
++    // so that the dependency is set up properly.
+     $this->drupalCreateContentType(['type' => 'article']);
+-
+-    $this->addDefaultCommentField('node', 'article');
++    $this->addDefaultCommentField('node', 'article', comment_view_mode: 'default');
+ 
+     $admin_user = $this->createUser(['access site reports', 'administer permissions', 'administer comment display']);
+     $this->drupalLogin($admin_user);
+ 
++    // Access both the Manage display and permission page, which is not
++    // accessible currently, ensure there are no warnings in the log.
+     $this->drupalGet('/admin/structure/comment/manage/comment/display');
+     $assert_session = $this->assertSession();
+     $assert_session->statusCodeEquals(200);
++    $this->drupalGet('/admin/structure/comment/manage/comment/permissions');
++    $assert_session = $this->assertSession();
++    $assert_session->statusCodeEquals(403);
+ 
+     $this->drupalGet('/admin/reports/dblog');
+     $assert_session->statusCodeEquals(200);
++    $assert_session->pageTextContains("access denied");
+     $assert_session->pageTextNotContains("Entity view display 'node.article.default': Component");
+ 
+   }
+-- 
+GitLab
+
+
+From 7794b3d0dc4490e1cff48394cac2c335c35d075b Mon Sep 17 00:00:00 2001
+From: Sascha Grossenbacher <5019-berdir@users.noreply.drupalcode.org>
+Date: Thu, 4 Jul 2024 06:35:33 +0000
+Subject: [PATCH 11/17] remove uses
+
+---
+ .../Functional/Form/EntityViewDisplayCommentArticleTest.php    | 3 ---
+ 1 file changed, 3 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 82e44e065db5..20c46d0becea 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -4,10 +4,7 @@
+ 
+ namespace Drupal\Tests\system\Functional\Form;
+ 
+-use Drupal\comment\Entity\CommentType;
+ use Drupal\comment\Tests\CommentTestTrait;
+-use Drupal\Component\Utility\Unicode;
+-use Drupal\Core\Entity\Entity\EntityViewDisplay;
+ use Drupal\Tests\BrowserTestBase;
+ use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+ 
+-- 
+GitLab
+
+
+From bb2f8da9a095205ef964e7ed03747dc449df7347 Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Thu, 4 Jul 2024 13:24:47 -0400
+Subject: [PATCH 12/17] Clean up code and comments
+
+---
+ .../EntityViewDisplayCommentArticleTest.php   | 26 +++++++++++--------
+ 1 file changed, 15 insertions(+), 11 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 20c46d0becea..021a1dbbca59 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -14,12 +14,14 @@
+  * @group Form
+  */
+ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+-  use CommentTestTrait, ContentTypeCreationTrait;
++
++  use CommentTestTrait;
++  use ContentTypeCreationTrait;
+ 
+   /**
+    * {@inheritdoc}
+    */
+-  protected static $modules = ['comment', 'field_ui', 'dblog', 'node'];
++  protected static $modules = ['comment', 'dblog', 'field_ui', 'node'];
+ 
+   /**
+    * {@inheritdoc}
+@@ -27,31 +29,33 @@ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+   protected $defaultTheme = 'stark';
+ 
+   /**
+-   * Tests the form persists.
++   * Tests that circular config dependencies do not cause errors.
+    */
+   public function testError(): void {
+-    // Set up the node and comment field, use the default view display
+-    // so that the dependency is set up properly.
++    // Set up the node and comment field. Use the default view display
++    // in order to test the dependency.
+     $this->drupalCreateContentType(['type' => 'article']);
+     $this->addDefaultCommentField('node', 'article', comment_view_mode: 'default');
+ 
+-    $admin_user = $this->createUser(['access site reports', 'administer permissions', 'administer comment display']);
++    $admin_user = $this->createUser([
++      'access site reports',
++      'administer permissions',
++      'administer comment display',
++    ]);
+     $this->drupalLogin($admin_user);
+ 
+     // Access both the Manage display and permission page, which is not
+-    // accessible currently, ensure there are no warnings in the log.
+-    $this->drupalGet('/admin/structure/comment/manage/comment/display');
++    // accessible currently. Ensure there are no warnings in the log.
+     $assert_session = $this->assertSession();
++    $this->drupalGet('/admin/structure/comment/manage/comment/display');
+     $assert_session->statusCodeEquals(200);
+     $this->drupalGet('/admin/structure/comment/manage/comment/permissions');
+-    $assert_session = $this->assertSession();
+     $assert_session->statusCodeEquals(403);
+ 
+     $this->drupalGet('/admin/reports/dblog');
+     $assert_session->statusCodeEquals(200);
+-    $assert_session->pageTextContains("access denied");
++    $assert_session->pageTextContains('access denied');
+     $assert_session->pageTextNotContains("Entity view display 'node.article.default': Component");
+-
+   }
+ 
+ }
+-- 
+GitLab
+
+
+From 45efdc8a00230afd0520b02a82d10b980133db2c Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Sat, 6 Jul 2024 16:48:40 -0400
+Subject: [PATCH 13/17] Update comments in the new functional test
+
+---
+ .../Form/EntityViewDisplayCommentArticleTest.php     | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 021a1dbbca59..483fbcdd27bd 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -9,7 +9,8 @@
+ use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+ 
+ /**
+- * Tests view display 'node.article.default' is not removed.
++ * Tests that Drupal\user\Form\EntityPermissionsForm::access() does not trigger
++ * warning messages.
+  *
+  * @group Form
+  */
+@@ -29,11 +30,11 @@ class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+   protected $defaultTheme = 'stark';
+ 
+   /**
+-   * Tests that circular config dependencies do not cause errors.
++   * Tests that access check does not trigger warnings.
+    */
+   public function testError(): void {
+-    // Set up the node and comment field. Use the default view display
+-    // in order to test the dependency.
++    // Set up the node and comment field. Use the 'default' view mode since
++    // 'full' is not defined, so it will not be added to the config entity.
+     $this->drupalCreateContentType(['type' => 'article']);
+     $this->addDefaultCommentField('node', 'article', comment_view_mode: 'default');
+ 
+@@ -45,13 +46,14 @@ public function testError(): void {
+     $this->drupalLogin($admin_user);
+ 
+     // Access both the Manage display and permission page, which is not
+-    // accessible currently. Ensure there are no warnings in the log.
++    // accessible currently.
+     $assert_session = $this->assertSession();
+     $this->drupalGet('/admin/structure/comment/manage/comment/display');
+     $assert_session->statusCodeEquals(200);
+     $this->drupalGet('/admin/structure/comment/manage/comment/permissions');
+     $assert_session->statusCodeEquals(403);
+ 
++    // Ensure there are no warnings in the log.
+     $this->drupalGet('/admin/reports/dblog');
+     $assert_session->statusCodeEquals(200);
+     $assert_session->pageTextContains('access denied');
+-- 
+GitLab
+
+
+From e278583b31201a67cce3103523347528c5829185 Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Sat, 6 Jul 2024 17:09:47 -0400
+Subject: [PATCH 14/17] Use simpler syntax for anonymous function
+
+---
+ core/modules/user/src/Form/EntityPermissionsForm.php | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/core/modules/user/src/Form/EntityPermissionsForm.php b/core/modules/user/src/Form/EntityPermissionsForm.php
+index 234d2f3e8dcf..4e64c29d18e2 100644
+--- a/core/modules/user/src/Form/EntityPermissionsForm.php
++++ b/core/modules/user/src/Form/EntityPermissionsForm.php
+@@ -95,9 +95,8 @@ protected function permissionsByProvider(): array {
+     $config_entities = $this->configManager
+       ->findConfigEntityDependenciesAsEntities('config', [$config_name]);
+     $config_names = array_map(
+-      function ($dependent_config) {
+-        return $dependent_config->getConfigDependencyName();
+-      }, $config_entities
++      fn($dependent_config) => $dependent_config->getConfigDependencyName(),
++      $config_entities,
+     );
+     $config_names[] = $config_name;
+ 
+-- 
+GitLab
+
+
+From 2695b2a35df905b71e03e1667baf31d0994ef9b2 Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Sat, 6 Jul 2024 17:12:20 -0400
+Subject: [PATCH 15/17] Do not load config entities
+
+Use findConfigEntityDependencies(), which returns ConfigEntityDependency
+objects, instead of findConfigEntityDependenciesAsEntities().
+
+The unit test already mocks the method using ConfigEntityDependency
+objects.
+---
+ core/modules/user/src/Form/EntityPermissionsForm.php            | 2 +-
+ .../user/tests/src/Unit/Form/EntityPermissionsFormTest.php      | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/core/modules/user/src/Form/EntityPermissionsForm.php b/core/modules/user/src/Form/EntityPermissionsForm.php
+index 4e64c29d18e2..d97b5987b67c 100644
+--- a/core/modules/user/src/Form/EntityPermissionsForm.php
++++ b/core/modules/user/src/Form/EntityPermissionsForm.php
+@@ -93,7 +93,7 @@ protected function permissionsByProvider(): array {
+     // Get the names of all config entities that depend on $this->bundle.
+     $config_name = $this->bundle->getConfigDependencyName();
+     $config_entities = $this->configManager
+-      ->findConfigEntityDependenciesAsEntities('config', [$config_name]);
++      ->findConfigEntityDependencies('config', [$config_name]);
+     $config_names = array_map(
+       fn($dependent_config) => $dependent_config->getConfigDependencyName(),
+       $config_entities,
+diff --git a/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php b/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php
+index fde06a665344..c240aafa803e 100644
+--- a/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php
++++ b/core/modules/user/tests/src/Unit/Form/EntityPermissionsFormTest.php
+@@ -60,7 +60,7 @@ public function testPermissionsByProvider(string $dependency_name, bool $found):
+     $module_handler = $this->prophesize(ModuleHandlerInterface::class)->reveal();
+     $module_extension_list = $this->prophesize(ModuleExtensionList::class)->reveal();
+     $prophecy = $this->prophesize(ConfigManagerInterface::class);
+-    $prophecy->findConfigEntityDependenciesAsEntities('config', ['node.type.article'])
++    $prophecy->findConfigEntityDependencies('config', ['node.type.article'])
+       ->willReturn([
+         new ConfigEntityDependency('core.entity_view_display.node.article.full'),
+         new ConfigEntityDependency('field.field.node.article.body'),
+-- 
+GitLab
+
+
+From 3effe11d5cc490d594e6710751c388412a8f33cf Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Sat, 6 Jul 2024 18:04:37 -0400
+Subject: [PATCH 16/17] First seantence of test class comment should be one
+ line
+
+---
+ .../Functional/Form/EntityViewDisplayCommentArticleTest.php | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+index 483fbcdd27bd..4283a4918fad 100644
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+@@ -9,8 +9,10 @@
+ use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+ 
+ /**
+- * Tests that Drupal\user\Form\EntityPermissionsForm::access() does not trigger
+- * warning messages.
++ * Tests that access check does not trigger warning messages.
++ *
++ * The access check for /admin/structure/comment/manage/comment/permissions is
++ * Drupal\user\Form\EntityPermissionsForm::EntityPermissionsForm::access().
+  *
+  * @group Form
+  */
+-- 
+GitLab
+
+
+From a70410607092da257012e49156dd4db12270998e Mon Sep 17 00:00:00 2001
+From: Benji Fisher <benji@FisherFam.org>
+Date: Sun, 7 Jul 2024 16:25:53 -0400
+Subject: [PATCH 17/17] Move the new test to the user module
+
+---
+ .../EntityViewDisplayCommentArticleTest.php   | 65 -------------------
+ .../src/Functional/UserPermissionsTest.php    | 36 +++++++++-
+ 2 files changed, 35 insertions(+), 66 deletions(-)
+ delete mode 100644 core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+
+diff --git a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php b/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
+deleted file mode 100644
+index 4283a4918fad..000000000000
+--- a/core/modules/system/tests/src/Functional/Form/EntityViewDisplayCommentArticleTest.php
++++ /dev/null
+@@ -1,65 +0,0 @@
+-<?php
+-
+-declare(strict_types=1);
+-
+-namespace Drupal\Tests\system\Functional\Form;
+-
+-use Drupal\comment\Tests\CommentTestTrait;
+-use Drupal\Tests\BrowserTestBase;
+-use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
+-
+-/**
+- * Tests that access check does not trigger warning messages.
+- *
+- * The access check for /admin/structure/comment/manage/comment/permissions is
+- * Drupal\user\Form\EntityPermissionsForm::EntityPermissionsForm::access().
+- *
+- * @group Form
+- */
+-class EntityViewDisplayCommentArticleTest extends BrowserTestBase {
+-
+-  use CommentTestTrait;
+-  use ContentTypeCreationTrait;
+-
+-  /**
+-   * {@inheritdoc}
+-   */
+-  protected static $modules = ['comment', 'dblog', 'field_ui', 'node'];
+-
+-  /**
+-   * {@inheritdoc}
+-   */
+-  protected $defaultTheme = 'stark';
+-
+-  /**
+-   * Tests that access check does not trigger warnings.
+-   */
+-  public function testError(): void {
+-    // Set up the node and comment field. Use the 'default' view mode since
+-    // 'full' is not defined, so it will not be added to the config entity.
+-    $this->drupalCreateContentType(['type' => 'article']);
+-    $this->addDefaultCommentField('node', 'article', comment_view_mode: 'default');
+-
+-    $admin_user = $this->createUser([
+-      'access site reports',
+-      'administer permissions',
+-      'administer comment display',
+-    ]);
+-    $this->drupalLogin($admin_user);
+-
+-    // Access both the Manage display and permission page, which is not
+-    // accessible currently.
+-    $assert_session = $this->assertSession();
+-    $this->drupalGet('/admin/structure/comment/manage/comment/display');
+-    $assert_session->statusCodeEquals(200);
+-    $this->drupalGet('/admin/structure/comment/manage/comment/permissions');
+-    $assert_session->statusCodeEquals(403);
+-
+-    // Ensure there are no warnings in the log.
+-    $this->drupalGet('/admin/reports/dblog');
+-    $assert_session->statusCodeEquals(200);
+-    $assert_session->pageTextContains('access denied');
+-    $assert_session->pageTextNotContains("Entity view display 'node.article.default': Component");
+-  }
+-
+-}
+diff --git a/core/modules/user/tests/src/Functional/UserPermissionsTest.php b/core/modules/user/tests/src/Functional/UserPermissionsTest.php
+index b9fea1381634..e0112f1d6765 100644
+--- a/core/modules/user/tests/src/Functional/UserPermissionsTest.php
++++ b/core/modules/user/tests/src/Functional/UserPermissionsTest.php
+@@ -4,9 +4,10 @@
+ 
+ namespace Drupal\Tests\user\Functional;
+ 
++use Drupal\comment\Tests\CommentTestTrait;
+ use Drupal\Tests\BrowserTestBase;
+-use Drupal\user\RoleInterface;
+ use Drupal\user\Entity\Role;
++use Drupal\user\RoleInterface;
+ 
+ /**
+  * Verifies role permissions can be added and removed via the permissions page.
+@@ -15,6 +16,8 @@
+  */
+ class UserPermissionsTest extends BrowserTestBase {
+ 
++  use CommentTestTrait;
++
+   /**
+    * User with admin privileges.
+    *
+@@ -297,4 +300,35 @@ public function testAccessBundlePermission(): void {
+     $this->assertSession()->statusCodeEquals(403);
+   }
+ 
++  /**
++   * Tests that access check does not trigger warnings.
++   *
++   * The access check for /admin/structure/comment/manage/comment/permissions is
++   * \Drupal\user\Form\EntityPermissionsForm::EntityPermissionsForm::access().
++   */
++  public function testBundlePermissionError(): void {
++    \Drupal::service('module_installer')->install(['comment', 'dblog', 'field_ui', 'node']);
++    // Set up the node and comment field. Use the 'default' view mode since
++    // 'full' is not defined, so it will not be added to the config entity.
++    $this->drupalCreateContentType(['type' => 'article']);
++    $this->addDefaultCommentField('node', 'article', comment_view_mode: 'default');
++
++    $this->drupalLogin($this->adminUser);
++    $this->grantPermissions(Role::load($this->rid), ['access site reports', 'administer comment display']);
++
++    // Access both the Manage display and permission page, which is not
++    // accessible currently.
++    $assert_session = $this->assertSession();
++    $this->drupalGet('/admin/structure/comment/manage/comment/display');
++    $assert_session->statusCodeEquals(200);
++    $this->drupalGet('/admin/structure/comment/manage/comment/permissions');
++    $assert_session->statusCodeEquals(403);
++
++    // Ensure there are no warnings in the log.
++    $this->drupalGet('/admin/reports/dblog');
++    $assert_session->statusCodeEquals(200);
++    $assert_session->pageTextContains('access denied');
++    $assert_session->pageTextNotContains("Entity view display 'node.article.default': Component");
++  }
++
+ }
+-- 
+GitLab
+
