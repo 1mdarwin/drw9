@@ -4299,27 +4299,27 @@
         },
         {
             "name": "drupal/views_bootstrap",
-            "version": "5.4.0",
-            "version_normalized": "5.4.0.0",
+            "version": "5.4.1",
+            "version_normalized": "5.4.1.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/views_bootstrap.git",
-                "reference": "5.4.0"
+                "reference": "5.4.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/views_bootstrap-5.4.0.zip",
-                "reference": "5.4.0",
-                "shasum": "7793581fbd9c797aed6c12a6ee85dc87e79f7870"
+                "url": "https://ftp.drupal.org/files/projects/views_bootstrap-5.4.1.zip",
+                "reference": "5.4.1",
+                "shasum": "0b1248be659d069e52be7821875a24b9e78a3484"
             },
             "require": {
-                "drupal/core": "^9 || ^10"
+                "drupal/core": "^9 || ^10 || ^11"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "5.4.0",
-                    "datestamp": "1658954222",
+                    "version": "5.4.1",
+                    "datestamp": "1722552101",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
