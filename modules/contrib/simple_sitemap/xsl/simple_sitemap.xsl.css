@@ -52,13 +52,14 @@ table.sitemap thead tr .tablesorter-headerDesc {
 table.sitemap thead tr .tablesorter-headerAsc .tablesorter-header-inner::after {
   position: absolute;
   right: 0;
-  content: '\25b2';
+  content: "\25b2";
 }
 
+/* stylelint-disable-next-line prettier/prettier */
 table.sitemap thead tr .tablesorter-headerDesc .tablesorter-header-inner::after {
   position: absolute;
   right: 0;
-  content: '\25bc';
+  content: "\25bc";
 }
 
 table.sitemap tbody tr ul {

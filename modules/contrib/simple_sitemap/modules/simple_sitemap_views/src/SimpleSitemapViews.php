@@ -80,7 +80,7 @@ class SimpleSitemapViews {
     EntityTypeManagerInterface $entity_type_manager,
     ConfigFactoryInterface $config_factory,
     QueueFactory $queue_factory,
-    Connection $database
+    Connection $database,
   ) {
     $this->viewStorage = $entity_type_manager->getStorage('view');
     $this->configFactory = $config_factory;

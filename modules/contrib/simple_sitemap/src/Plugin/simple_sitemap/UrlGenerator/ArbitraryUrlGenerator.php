@@ -48,7 +48,7 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     $plugin_definition,
     Logger $logger,
     Settings $settings,
-    ModuleHandlerInterface $module_handler
+    ModuleHandlerInterface $module_handler,
   ) {
     parent::__construct(
       $configuration,
@@ -67,7 +67,8 @@ class ArbitraryUrlGenerator extends UrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition): SimpleSitemapPluginBase {
+    $plugin_definition,
+  ): SimpleSitemapPluginBase {
 
     return new static(
       $configuration,

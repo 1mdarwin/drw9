@@ -1,45 +1,48 @@
 /**
  * @file
- * Attaches simple_sitemap behaviors to the sitemap entities form.
+ * Defines the behavior of the entity settings form.
  */
-(($, Drupal, once) => {
+
+((Drupal, once) => {
+  /**
+   * The behavior of the entity settings form.
+   *
+   * @type {Drupal~behavior}
+   *
+   * @prop {Drupal~behaviorAttach} attach
+   *   Attaches the behavior to the form.
+   */
   Drupal.behaviors.simpleSitemapEntities = {
-    attach() {
-      const $checkboxes = $(
-        once(
-          'simple-sitemap-entities',
-          'table tr input[type=checkbox][checked]',
-        ),
-      );
+    attach(context) {
+      once(
+        'simple-sitemap-entities',
+        'table tr input[type=checkbox][checked]',
+        context,
+      ).forEach((checkbox) => {
+        checkbox.addEventListener('change', (event) => {
+          const row = event.target.closest('tr');
+          const table = event.target.closest('table');
 
-      if ($checkboxes.length) {
-        $checkboxes.on('change', function change() {
-          const $row = $(this).closest('tr');
-          const $table = $row.closest('table');
+          row.classList.toggle('color-success');
+          row.classList.toggle('color-warning');
 
-          $row.toggleClass('color-success color-warning');
+          const messages = new Drupal.Message();
+          const id = 'simple-sitemap-entities-warning';
+          const showMessage = table.querySelector('tr.color-warning') !== null;
+          const messageExists = messages.select(id) !== null;
 
-          const showWarning = $table.find('tr.color-warning').length > 0;
-          const $warning = $('.simple-sitemap-entities-warning');
-
-          if (showWarning && !$warning.length) {
-            $(Drupal.theme('simpleSitemapEntitiesWarning')).insertBefore(
-              $table,
+          if (showMessage && !messageExists) {
+            messages.add(
+              Drupal.t(
+                'The sitemap settings and any per-entity overrides will be deleted for the unchecked entity types.',
+              ),
+              { id, type: 'warning' },
             );
-          }
-          if (!showWarning && $warning.length) {
-            $warning.remove();
+          } else if (!showMessage && messageExists) {
+            messages.remove(id);
           }
         });
-      }
+      });
     },
   };
-
-  $.extend(Drupal.theme, {
-    simpleSitemapEntitiesWarning() {
-      return `<div class="simple-sitemap-entities-warning messages messages--warning" role="alert">${Drupal.t(
-        'The sitemap settings and any per-entity overrides will be deleted for the unchecked entity types.',
-      )}</div>`;
-    },
-  });
-})(jQuery, Drupal, once);
+})(Drupal, once);

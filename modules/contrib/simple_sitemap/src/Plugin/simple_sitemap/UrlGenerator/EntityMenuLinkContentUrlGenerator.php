@@ -89,7 +89,7 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     EntityHelper $entity_helper,
     EntityManager $entities_manager,
     MenuLinkTreeInterface $menu_link_tree,
-    MenuLinkManagerInterface $menu_link_manager
+    MenuLinkManagerInterface $menu_link_manager,
   ) {
     parent::__construct(
       $configuration,
@@ -113,7 +113,8 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition): SimpleSitemapPluginBase {
+    $plugin_definition,
+  ): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,

@@ -87,7 +87,7 @@ abstract class EntityUrlGeneratorBase extends UrlGeneratorBase {
     Settings $settings,
     LanguageManagerInterface $language_manager,
     EntityTypeManagerInterface $entity_type_manager,
-    EntityHelper $entity_helper
+    EntityHelper $entity_helper,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $logger, $settings);
     $this->languages = $language_manager->getLanguages();

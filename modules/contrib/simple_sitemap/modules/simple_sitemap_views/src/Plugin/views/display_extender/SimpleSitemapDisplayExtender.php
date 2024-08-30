@@ -2,14 +2,14 @@
 
 namespace Drupal\simple_sitemap_views\Plugin\views\display_extender;
 
-use Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\views\Plugin\views\display\DisplayRouterInterface;
-use Drupal\views\Plugin\views\display\DisplayPluginBase;
-use Drupal\simple_sitemap_views\SimpleSitemapViews;
-use Drupal\simple_sitemap\Form\FormHelper;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\simple_sitemap\Form\FormHelper;
+use Drupal\simple_sitemap_views\SimpleSitemapViews;
+use Drupal\views\Plugin\views\display\DisplayPluginBase;
+use Drupal\views\Plugin\views\display\DisplayRouterInterface;
+use Drupal\views\Plugin\views\display_extender\DisplayExtenderPluginBase;
 use Drupal\views\ViewExecutable;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Simple XML Sitemap display extender plugin.

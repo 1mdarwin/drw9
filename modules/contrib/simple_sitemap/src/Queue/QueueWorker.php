@@ -7,6 +7,8 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\KeyValueStore\KeyValueFactoryInterface;
 use Drupal\Core\Lock\LockBackendInterface;
+use Drupal\Core\Logger\LoggerChannelTrait;
+use Drupal\Core\Utility\Error;
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Settings;
@@ -17,6 +19,7 @@ use Drupal\simple_sitemap\Settings;
 class QueueWorker {
 
   use BatchTrait;
+  use LoggerChannelTrait;
 
   protected const REBUILD_QUEUE_CHUNK_ITEM_SIZE = 5000;
   public const LOCK_ID = 'simple_sitemap:generation';
@@ -150,13 +153,15 @@ class QueueWorker {
    * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend that should be used.
    */
-  public function __construct(Settings $settings,
-                              KeyValueFactoryInterface $key_value,
-                              SimpleSitemapQueue $element_queue,
-                              Logger $logger,
-                              ModuleHandlerInterface $module_handler,
-                              EntityTypeManagerInterface $entity_type_manager,
-                              LockBackendInterface $lock) {
+  public function __construct(
+    Settings $settings,
+    KeyValueFactoryInterface $key_value,
+    SimpleSitemapQueue $element_queue,
+    Logger $logger,
+    ModuleHandlerInterface $module_handler,
+    EntityTypeManagerInterface $entity_type_manager,
+    LockBackendInterface $lock,
+  ) {
     $this->settings = $settings;
     $this->store = $key_value->get('simple_sitemap');
     $this->queue = $element_queue;
@@ -323,7 +328,8 @@ class QueueWorker {
         }
       }
       catch (\Exception $e) {
-        watchdog_exception('simple_sitemap', $e);
+        $logger = $this->getLogger('simple_sitemap');
+        Error::logException($logger, $e);
       }
 
       // @todo May want to use deleteItems() instead.

@@ -2,19 +2,19 @@
 
 namespace Drupal\simple_sitemap\Form;
 
-use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\DependencyInjection\ClassResolverInterface;
+use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityFormInterface;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\simple_sitemap\Entity\EntityHelper;
-use Drupal\simple_sitemap\Form\Handler\EntityFormHandlerInterface;
 use Drupal\simple_sitemap\Form\Handler\BundleEntityFormHandler;
 use Drupal\simple_sitemap\Form\Handler\EntityFormHandler;
+use Drupal\simple_sitemap\Form\Handler\EntityFormHandlerInterface;
 use Drupal\simple_sitemap\Manager\Generator;
-use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\simple_sitemap\Settings;
 
 /**
@@ -92,7 +92,7 @@ class FormHelper {
     Settings $settings,
     EntityHelper $entity_helper,
     AccountProxyInterface $current_user,
-    ClassResolverInterface $class_resolver
+    ClassResolverInterface $class_resolver,
   ) {
     $this->generator = $generator;
     $this->settings = $settings;

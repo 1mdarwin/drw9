@@ -3,11 +3,11 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\SitemapGenerator;
 
 use Drupal\Core\Extension\ModuleExtensionList;
-use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\simple_sitemap\Entity\SimpleSitemapInterface;
+use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Extension\ModuleHandlerInterface;
 
 /**
  * Provides a base class for SitemapGenerator plugins.
@@ -85,7 +85,7 @@ abstract class SitemapGeneratorBase extends SimpleSitemapPluginBase implements S
     ModuleHandlerInterface $module_handler,
     SitemapWriter $sitemap_writer,
     Settings $settings,
-    ModuleExtensionList $module_list
+    ModuleExtensionList $module_list,
   ) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->moduleHandler = $module_handler;
