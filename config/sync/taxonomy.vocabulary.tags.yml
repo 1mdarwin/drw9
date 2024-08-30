@@ -4,7 +4,8 @@ status: true
 dependencies: {  }
 _core:
   default_config_hash: yoNVreoTdTZTY7GuE8fI9Jmxqdz8vlo4ZJKixMNSosw
-name: Etiquetas
+name: Tags
 vid: tags
-description: 'Utilice etiquetas para agrupar artículos sobre temas similares en categorías.'
+description: 'Use tags to group articles on similar topics into categories.'
 weight: 0
+new_revision: false

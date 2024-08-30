@@ -52,11 +52,13 @@ class SearchEngineListBuilder extends ConfigEntityListBuilder {
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
    */
-  public function __construct(EntityTypeInterface $entity_type,
-                              EntityStorageInterface $storage,
-                              DateFormatterInterface $date_formatter,
-                              StateInterface $state,
-                              ConfigFactoryInterface $config_factory) {
+  public function __construct(
+    EntityTypeInterface $entity_type,
+    EntityStorageInterface $storage,
+    DateFormatterInterface $date_formatter,
+    StateInterface $state,
+    ConfigFactoryInterface $config_factory,
+  ) {
     parent::__construct($entity_type, $storage);
     $this->dateFormatter = $date_formatter;
     $this->state = $state;

@@ -2,17 +2,17 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\Core\Entity\ContentEntityInterface;
-use Drupal\Core\Url;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Path\PathValidatorInterface;
+use Drupal\Core\Url;
 use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Exception\SkipElementException;
 use Drupal\simple_sitemap\Logger;
 use Drupal\simple_sitemap\Manager\CustomLinkManager;
 use Drupal\simple_sitemap\Plugin\simple_sitemap\SimpleSitemapPluginBase;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -84,7 +84,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     EntityTypeManagerInterface $entity_type_manager,
     EntityHelper $entity_helper,
     CustomLinkManager $custom_links,
-    PathValidatorInterface $path_validator) {
+    PathValidatorInterface $path_validator,
+  ) {
     parent::__construct(
       $configuration,
       $plugin_id,
@@ -106,7 +107,8 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
     ContainerInterface $container,
     array $configuration,
     $plugin_id,
-    $plugin_definition): SimpleSitemapPluginBase {
+    $plugin_definition,
+  ): SimpleSitemapPluginBase {
     return new static(
       $configuration,
       $plugin_id,

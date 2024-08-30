@@ -3,14 +3,15 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\Database\Connection;
 use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Settings;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Form\FormStateInterface;
-use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
-use Drupal\Core\Database\Connection;
 
 /**
  * Provides form to manage sitemap status.
@@ -50,6 +51,8 @@ class StatusForm extends SimpleSitemapFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typedConfigManager
+   *   The typed config manager.
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
    *   The sitemap generator service.
    * @param \Drupal\simple_sitemap\Settings $settings
@@ -67,16 +70,18 @@ class StatusForm extends SimpleSitemapFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typedConfigManager,
     SimplesitemapOld $generator,
     Settings $settings,
     FormHelper $form_helper,
     Connection $database,
     DateFormatter $date_formatter,
     QueueWorker $queue_worker,
-    RendererInterface $renderer
+    RendererInterface $renderer,
   ) {
     parent::__construct(
       $config_factory,
+      $typedConfigManager,
       $generator,
       $settings,
       $form_helper
@@ -93,6 +98,7 @@ class StatusForm extends SimpleSitemapFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('config.typed'),
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.settings'),
       $container->get('simple_sitemap.form_helper'),

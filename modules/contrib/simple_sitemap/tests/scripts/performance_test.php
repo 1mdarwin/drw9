@@ -5,6 +5,7 @@
 use Drupal\Component\Utility\Timer;
 use Drupal\Core\Batch\BatchBuilder;
 use Drupal\Core\Database\Database;
+use Drupal\Core\StringTranslation\ByteSizeMarkup;
 use Drupal\node\Entity\Node;
 use Drupal\node\Entity\NodeType;
 use Drupal\Tests\RandomGeneratorTrait;
@@ -133,8 +134,8 @@ class Tester {
       $context['message'] = "Query count: " . count($query_logger->get('simple_sitemap'));
     }
     else {
-      $peak_mem = format_size(memory_get_peak_usage(TRUE));
-      $mem = format_size(memory_get_usage(TRUE));
+      $peak_mem = ByteSizeMarkup::create(memory_get_peak_usage(TRUE));
+      $mem = ByteSizeMarkup::create(memory_get_usage(TRUE));
       $context['message'] = "Memory: $peak_mem, non-peak mem: $mem";
     }
   }

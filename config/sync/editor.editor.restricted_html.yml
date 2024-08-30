@@ -52,4 +52,5 @@ settings:
         - '<h6 id>'
     media_media:
       allow_view_mode_override: false
-image_upload: {  }
+image_upload:
+  status: false

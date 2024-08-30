@@ -2,12 +2,12 @@
 
 namespace Drupal\simple_sitemap_views\EventSubscriber;
 
-use Symfony\Component\HttpKernel\Event\TerminateEvent;
-use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Drupal\simple_sitemap_views\SimpleSitemapViews;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Symfony\Component\HttpKernel\KernelEvents;
 use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\simple_sitemap_views\SimpleSitemapViews;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\TerminateEvent;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Collect information about views arguments.
@@ -54,7 +54,7 @@ class ArgumentCollector implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     $events[KernelEvents::TERMINATE] = 'onTerminate';
     return $events;
   }

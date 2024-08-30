@@ -2,10 +2,10 @@
 
 namespace Drupal\simple_sitemap_views\Controller;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\simple_sitemap_views\SimpleSitemapViews;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
+use Drupal\simple_sitemap_views\SimpleSitemapViews;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Controller for Simple XML Sitemap Views admin page.

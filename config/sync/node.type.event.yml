@@ -5,7 +5,7 @@ dependencies: {  }
 name: Event
 type: event
 description: 'Events have a start date and an optional end date as well as a teaser and a body. They can be extended by other modules, too.'
-help: ''
+help: null
 new_revision: false
 preview_mode: 1
 display_submitted: true

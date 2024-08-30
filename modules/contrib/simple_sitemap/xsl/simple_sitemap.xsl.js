@@ -37,11 +37,11 @@
     type: 'numeric',
   });
 
-  $(document).ready(() => {
+  document.addEventListener('DOMContentLoaded', () => {
     // Set some location variables.
-    const $h1 = $('h1');
-    $h1.text(`${$h1.text()}: ${window.location}`);
-    document.title = $h1.text();
+    const h1 = document.querySelector('h1');
+    h1.textContent = `${h1.textContent}: ${window.location}`;
+    document.title = h1.textContent;
 
     const $table = $('table');
     const options = { widgets: ['zebra'] };

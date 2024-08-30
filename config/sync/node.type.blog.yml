@@ -11,7 +11,7 @@ third_party_settings:
 name: 'Entrada de blog'
 type: blog
 description: 'Una <em>entrada de blog</em> es un mensaje individual en un diario en línea, o <em>blog</em>.'
-help: ''
+help: null
 new_revision: false
 preview_mode: 1
 display_submitted: true

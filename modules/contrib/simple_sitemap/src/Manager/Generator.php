@@ -64,7 +64,7 @@ class Generator implements SitemapGetterInterface {
     Settings $settings,
     QueueWorker $queue_worker,
     LockBackendInterface $lock = NULL,
-    Logger $logger = NULL
+    Logger $logger = NULL,
   ) {
     $this->settings = $settings;
     $this->queueWorker = $queue_worker;

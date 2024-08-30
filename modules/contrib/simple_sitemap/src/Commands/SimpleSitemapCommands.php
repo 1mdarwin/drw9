@@ -3,8 +3,8 @@
 namespace Drupal\simple_sitemap\Commands;
 
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
-use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Manager\Generator;
+use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drush\Commands\DrushCommands;
 
 /**

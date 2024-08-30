@@ -6,3 +6,4 @@ name: 'Web Links'
 vid: vocabulary_4
 description: 'Categoria de enlaces a otros Sitios Web'
 weight: 0
+new_revision: false

@@ -12,7 +12,7 @@ dependencies:
   - responsive_menu:responsive_menu
   - drupal:language
 
-# Information added by Drupal.org packaging script on 2023-11-01
-version: '4.4.3'
+# Information added by Drupal.org packaging script on 2024-08-21
+version: '4.4.4'
 project: 'responsive_menu'
-datestamp: 1698854984
+datestamp: 1724236780

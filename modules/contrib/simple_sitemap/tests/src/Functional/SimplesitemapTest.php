@@ -682,7 +682,7 @@ class SimplesitemapTest extends SimplesitemapTestBase {
   /**
    * Test cases for ::testGenerationResume.
    */
-  public function generationResumeProvider() {
+  public static function generationResumeProvider() {
     return [
       [1000, 500, 1],
       [1000, 500, 3, ['de']],

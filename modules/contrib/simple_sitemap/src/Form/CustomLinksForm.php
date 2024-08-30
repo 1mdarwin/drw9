@@ -3,6 +3,7 @@
 namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\simple_sitemap\Manager\Generator;
@@ -26,6 +27,8 @@ class CustomLinksForm extends SimpleSitemapFormBase {
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typedConfigManager
+   *   The typed config manager.
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
    *   The sitemap generator service.
    * @param \Drupal\simple_sitemap\Settings $settings
@@ -37,13 +40,15 @@ class CustomLinksForm extends SimpleSitemapFormBase {
    */
   public function __construct(
     ConfigFactoryInterface $config_factory,
+    TypedConfigManagerInterface $typedConfigManager,
     Generator $generator,
     Settings $settings,
     FormHelper $form_helper,
-    PathValidatorInterface $path_validator
+    PathValidatorInterface $path_validator,
   ) {
     parent::__construct(
       $config_factory,
+      $typedConfigManager,
       $generator,
       $settings,
       $form_helper
@@ -57,6 +62,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('config.factory'),
+      $container->get('config.typed'),
       $container->get('simple_sitemap.generator'),
       $container->get('simple_sitemap.settings'),
       $container->get('simple_sitemap.form_helper'),

@@ -2,12 +2,12 @@
 
 namespace Drupal\simple_sitemap_views\Plugin\QueueWorker;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
-use Drupal\simple_sitemap_views\SimpleSitemapViews;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Database\Database;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Queue\QueueWorkerBase;
+use Drupal\simple_sitemap_views\SimpleSitemapViews;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Executes garbage collection in the simple_sitemap_views table.
