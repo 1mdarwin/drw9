@@ -5,7 +5,7 @@ dependencies: {  }
 name: Encuesta
 type: poll
 description: 'A <em>poll</em> is a question with a set of possible responses. A <em>poll</em>, once created, automatically provides a simple running count of the number of votes received for each response.'
-help: ''
+help: null
 new_revision: false
 preview_mode: 1
 display_submitted: true

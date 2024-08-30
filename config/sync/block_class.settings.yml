@@ -1,3 +1,4 @@
+langcode: en
 maxlength_block_class_field: 255
 field_type: multiple_textfields
 default_case: standard

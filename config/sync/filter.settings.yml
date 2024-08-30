@@ -1,5 +1,4 @@
 _core:
   default_config_hash: FiPjM3WdB__ruFA7B6TLwni_UcZbmek5G4b2dxQItxA
-langcode: es
 fallback_format: '5'
 always_show_fallback_choice: false
