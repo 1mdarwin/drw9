@@ -1,4 +1,5 @@
 gtag:
+  header: true
   js:
     js/gtag.js: { preprocess: false }
   drupalSettings:
@@ -10,12 +11,14 @@ gtag:
   dependencies:
     - core/drupalSettings
 gtag.ajax:
+  header: true
   js:
     js/gtag.ajax.js: { }
   dependencies:
     - core/drupal.ajax
 
 gtm:
+  header: true
   js:
     js/gtm.js: { preprocess: false }
   drupalSettings:

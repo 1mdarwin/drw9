@@ -2,7 +2,6 @@
 
 declare(strict_types=1);
 
-
 use Drupal\commerce_product\Entity\Product;
 use Drupal\commerce_product\Entity\ProductAttribute;
 use Drupal\commerce_product\Entity\ProductAttributeValue;

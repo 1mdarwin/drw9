@@ -64,12 +64,7 @@ class TagContainerForm extends EntityForm {
    * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
    *   Language manager.
    */
-  public function __construct(
-    ConditionManager $condition_manager,
-    ContextRepositoryInterface $context_repository,
-    GoogleTagEventManager $tag_event_manager,
-    LanguageManagerInterface $language_manager
-  ) {
+  public function __construct(ConditionManager $condition_manager, ContextRepositoryInterface $context_repository, GoogleTagEventManager $tag_event_manager, LanguageManagerInterface $language_manager) {
     $this->conditionManager = $condition_manager;
     $this->contextRepository = $context_repository;
     $this->tagEventManager = $tag_event_manager;
@@ -104,11 +99,9 @@ class TagContainerForm extends EntityForm {
       '#type' => 'fieldset',
       '#title' => $this->t('Google Tag ID(s)'),
       '#prefix' => '<div id="' . $accounts_wrapper_id . '">',
-      '#description' => $this->t(
-        'This ID is unique to each site you want to track separately, and is in the form of UA-xxxxx-yy, G-xxxxxxxx, AW-xxxxxxxxx, or DC-xxxxxxxx. To get a Web Property ID, <a href=":analytics">register your site with Google Analytics</a>, or if you already have registered your site, go to your Google Analytics Settings page to see the ID next to every site profile. <a href=":webpropertyid">Find more information in the documentation</a>.', [
+      '#description' => $this->t('This ID is unique to each site you want to track separately, and is in the form of UA-xxxxx-yy, G-xxxxxxxx, AW-xxxxxxxxx, or DC-xxxxxxxx. To get a Web Property ID, <a href=":analytics">register your site with Google Analytics</a>, or if you already have registered your site, go to your Google Analytics Settings page to see the ID next to every site profile. <a href=":webpropertyid">Find more information in the documentation</a>.', [
         ':analytics' => 'https://marketingplatform.google.com/about/analytics/',
-        ':webpropertyid' => Url::fromUri('https://developers.google.com/analytics/resources/concepts/gaConceptsAccounts',
-          ['fragment' => 'webProperty'])->toString(),
+        ':webpropertyid' => Url::fromUri('https://developers.google.com/analytics/resources/concepts/gaConceptsAccounts', ['fragment' => 'webProperty'])->toString(),
       ]),
       '#suffix' => '</div>',
     ];
@@ -192,7 +185,7 @@ class TagContainerForm extends EntityForm {
     }
 
     $id_prefix = implode('-', ['accounts_wrapper', 'accounts']);
-    // Add blank account
+    // Add blank account.
     $form['accounts_wrapper']['add_gtag_id'] = [
       '#type' => 'submit',
       '#value' => $this->t('Add another ID'),
@@ -641,8 +634,10 @@ class TagContainerForm extends EntityForm {
       $condition = $form_state->get(['conditions', $condition_id]);
       $condition->submitConfigurationForm($form['conditions'][$condition_id], SubformState::createForSubform($form['conditions'][$condition_id], $form, $form_state));
       $configuration = $condition->getConfiguration();
+
       // Due to strict type checking, cast negation to a boolean.
-      $configuration['negate'] = (bool) $configuration['negate'];
+      $configuration['negate'] = (bool) (array_key_exists('negate', $configuration) ? $configuration['negate'] : FALSE);
+
       // Update the insertion conditions on the container.
       $this->entity->getInsertionConditions()->addInstanceId($condition_id, $configuration);
     }

@@ -28,9 +28,7 @@ final class SearchApiSubscriber implements EventSubscriberInterface {
    * @param \Drupal\google_tag\EventCollectorInterface $collector
    *   Collector service.
    */
-  public function __construct(
-    EventCollectorInterface $collector
-  ) {
+  public function __construct(EventCollectorInterface $collector) {
     $this->collector = $collector;
   }
 

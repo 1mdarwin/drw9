@@ -124,7 +124,7 @@ trait GoogleTagManagerSettingsTrait {
     foreach ($advanced_values['gtm'] as $gtm_id => $settings) {
       // Skip if $settings is not an array.
       if (!is_array($settings)) {
-          continue;
+        continue;
       }
 
       $environment_id = trim($settings['environment_id']);
