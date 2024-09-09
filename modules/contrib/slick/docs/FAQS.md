@@ -3,7 +3,7 @@
 ## <a name="faq"></a>FAQ
 
 ### PROGRAMATICALLY
-[**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php)
+[**slick.api.php**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php)
 
 
 ### QUICK PERFORMANCE TIPS
@@ -58,7 +58,7 @@ accordingly. The provided skins are very basic to support the necessary layouts.
 It is not the module job to match your awesome design requirements.
 
 #### Registering Slick skins:
-[**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php#L337)
+[**slick.api.php**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php#L337)
 
 1. Copy `\Drupal\slick\Plugin\slick\SlickSkin` into your module
   `/src/Plugin/slick directory`.
@@ -128,7 +128,7 @@ more advanced 3d carousels, etc, simply put them into js array of the target
 skin. Be sure to add proper weight, if you are acting on existing slick events,
 normally < 0 (`slick.load.min.js`) is the one.
 
-See [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/8.x-2.x/slick.api.php#L337)
+See [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php#L337)
 for more info on skins, including registering skins.
 
 Other skins are available at

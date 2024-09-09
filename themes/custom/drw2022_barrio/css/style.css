@@ -1051,6 +1051,9 @@ footer p{
   .clientes{
     text-align: left;
   }
+  .view-content.row{
+      display:flex !important;
+  }
   /* contact footer */
   .contactblk{
     background: none;

@@ -191,6 +191,9 @@ abstract class BlazyAdminFormatterBase extends BlazyAdminBase {
       $excludes['optionset'] = TRUE;
     }
 
+    $excludes['admin_uri'] = TRUE;
+    $excludes['use_lb'] = TRUE;
+
     if (empty($settings['grid'])) {
       foreach (['grid', 'grid_medium', 'grid_small', 'visible_items'] as $key) {
         $excludes[$key] = TRUE;

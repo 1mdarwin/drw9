@@ -24,7 +24,7 @@ trait BlazyFormatterViewTrait {
     FieldItemListInterface $items,
     $langcode,
     array $entities = [],
-    array $settings = []
+    array $settings = [],
   ) {
     // Modifies elements before building elements.
     $entities = empty($entities) ? [] : array_values($entities);

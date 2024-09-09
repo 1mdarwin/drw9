@@ -119,7 +119,7 @@
     var total = elms.length;
 
     $.each(elms, function (el, i) {
-      var media = $.parse($.attr(el, 'data-b-media data-media'));
+      var media = $.parse($.attr(el, 'data-b-media'));
       var caption = el.nextElementSibling;
       var validCaption = caption && $.hasClass(caption, 'litebox__caption');
       var url = $.attr(el, 'href');

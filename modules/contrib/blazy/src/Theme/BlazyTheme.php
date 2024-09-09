@@ -33,10 +33,9 @@ class BlazyTheme {
    *       Image is optional for CSS background, or iframe only displays.
    *   - settings: HTML related settings containing at least a required uri.
    *   - url: An optional URL the image can be linked to, can be any of
-   *       audio/video, or entity URLs, when using Colorbox/Photobox, or Link to
-   *       content options.
+   *       audio/video, or entity URLs, when using Colorbox/Splidebox, or Link
+   *       to content options.
    *   - attributes: The container attributes (media, media--ratio etc.).
-   *   - item_attributes: The image attributes (width, height, src, etc.).
    *   - url_attributes: An array of URL attributes, lightbox or content links.
    *   - noscript: The fallback image for non-js users.
    *   - postscript: Any extra content to put into blazy goes here. Use keyed or

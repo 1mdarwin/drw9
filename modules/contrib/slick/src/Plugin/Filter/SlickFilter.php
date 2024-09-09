@@ -63,7 +63,7 @@ class SlickFilter extends BlazyFilterBase {
   protected static $navId = 'thumb';
 
   /**
-   * The slick admin service.
+   * {@inheritdoc}
    *
    * @var \Drupal\slick\Form\SlickAdminInterface
    */
@@ -77,7 +77,7 @@ class SlickFilter extends BlazyFilterBase {
   protected $formatter;
 
   /**
-   * The slick manager.
+   * {@inheritdoc}
    *
    * @var \Drupal\slick\SlickManagerInterface
    */

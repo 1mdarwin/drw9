@@ -2,8 +2,7 @@
 ***
 ## <a name="composer"></a>INSTALLING THIRD-PARTY LIBRARIES VIA COMPOSER
 
-Until Drupal has an official [core management of the 3rd-party front-end libraries](https://www.drupal.org/project/drupal/issues/2873160), there are various ways to
-install third party bower (deprecated)/ npm asset libraries.
+Until Drupal has an official [core management of the 3rd-party front-end libraries](https://www.drupal.org/project/drupal/issues/2873160), there are various ways to install third party bower (deprecated)/ npm asset libraries.
 
 Check out any below suitable to your workflow:  
 

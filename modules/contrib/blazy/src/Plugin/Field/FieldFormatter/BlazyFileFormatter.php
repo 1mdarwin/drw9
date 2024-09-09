@@ -33,6 +33,11 @@ class BlazyFileFormatter extends BlazyFormatterBlazy {
   /**
    * {@inheritdoc}
    */
+  protected static $byDelta = TRUE;
+
+  /**
+   * {@inheritdoc}
+   */
   protected static $useOembed = TRUE;
 
   /**

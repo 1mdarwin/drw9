@@ -634,7 +634,7 @@ display:
         type: default
         options:
           grouping: {  }
-          row_class: 'col-xs-12 col-sm-6 col-md-4 '
+          row_class: 'col-xs-12 col-sm-6 col-md-4'
           default_row_class: true
       row:
         type: fields
@@ -1338,8 +1338,6 @@ display:
         - 'config:field.storage.node.body'
         - 'config:field.storage.node.field_imagen_porta'
         - 'config:field.storage.node.field_url_porta'
-        - entity_field_info
-        - views_data
   page_1:
     id: page_1
     display_title: Page

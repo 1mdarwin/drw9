@@ -52,17 +52,25 @@ trait TraitAdminBase {
     $admin_css = $this->blazyManager->config('admin_css', 'blazy.settings') ?: FALSE;
     // Disable the admin css in the off canvas menu, to avoid conflicts with
     // the active frontend theme.
-    if ($admin_css && $request = Path::requestStack()) {
-      $current = $request->getCurrentRequest();
-      $uri = $current->getRequestUri();
-      $wrapper_format = $current->query->get('_wrapper_format');
+    $uris = $this->getUri();
+    if ($admin_css && $uri = $uris['uri']) {
+      $wrapper_format = $uris['wrapper_format'] ?? '';
 
       if ($wrapper_format === "drupal_dialog.off_canvas"
-        || strpos($uri, '/views/nojs') !== FALSE) {
+        || strpos($uri, '/views/nojs') !== FALSE
+        || strpos($uri, '/layout_builder/') !== FALSE) {
         $admin_css = FALSE;
       }
     }
     return $admin_css;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function isAdminLb(): bool {
+    $uris = $this->getUri();
+    return strpos($uris['uri'], '/layout_builder/') !== FALSE;
   }
 
   /**
@@ -85,6 +93,30 @@ trait TraitAdminBase {
       $scopes->set('initializer', get_called_class());
     }
     return $scopes;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function themeDescription(array &$form, array $parents = []): void {
+    if (!empty($form['#description'])) {
+      $desc = [
+        '#type'  => 'details',
+        '#title' => $this->t('?'),
+        '#open'  => FALSE,
+      ];
+
+      if ($parents) {
+        $desc['#parents'] = $parents;
+      }
+
+      $desc['description'] = [
+        '#markup' => $form['#description'],
+      ];
+
+      $form['#description'] = $this->blazyManager->renderInIsolation($desc);
+      $form['#wrapper_attributes']['class'][] = 'form-item--collapsidesc';
+    }
   }
 
   /**
@@ -111,9 +143,19 @@ trait TraitAdminBase {
     $entity_type = $blazies->get('field.entity_type') ?: ($definition['entity_type'] ?? '');
     $view_mode = $blazies->get('field.view_mode') ?: ($definition['view_mode'] ?? '');
     $switch = !$scopes->is('no_lightboxes') && isset($settings['media_switch']);
+    $wrapper_format = NULL;
+    $lb = FALSE;
+
+    if ($current = $this->getCurrentRequest()) {
+      $wrapper_format = $current->query->get('_wrapper_format');
+      if ($uri = $current->getRequestUri()) {
+        $lb = strpos($uri, '/layout_builder') !== FALSE;
+      }
+    }
 
     $bools = [
       'background',
+      'by_delta',
       'caches',
       'grid_required',
       'grid_simple',
@@ -145,6 +187,7 @@ trait TraitAdminBase {
     $sliders = in_array($namespace, ['slick', 'splide']);
     $scopes->set('data.lightboxes', $lightboxes)
       ->set('is.fieldable', $target_type && $entity_type)
+      ->set('is._lb', $lb)
       ->set('is.lightbox', count($lightboxes) > 0)
       ->set('is.responsive_image', $responsive)
       ->set('is.slider', $scopes->is('slider') ?: $sliders)
@@ -154,7 +197,8 @@ trait TraitAdminBase {
       ->set('entity.type', $entity_type)
       ->set('plugin_id', $plugin_id)
       ->set('target_type', $target_type)
-      ->set('view_mode', $view_mode);
+      ->set('view_mode', $view_mode)
+      ->set('_wrapper_format', $wrapper_format);
 
     $data = [
       'deprecations',
@@ -218,6 +262,16 @@ trait TraitAdminBase {
     }
 
     $scopes->set('was.scoped', TRUE);
+  }
+
+  /**
+   * Returns the current request object.
+   */
+  protected function getCurrentRequest() {
+    if ($request = Path::requestStack()) {
+      return $request->getCurrentRequest();
+    }
+    return NULL;
   }
 
   /**
@@ -288,6 +342,18 @@ trait TraitAdminBase {
   }
 
   /**
+   * Returns the admin URI.
+   */
+  protected function getUri(): array {
+    $uri = $wrapper_format = '';
+    if ($current = $this->getCurrentRequest()) {
+      $uri = $current->getRequestUri();
+      $wrapper_format = $current->query->get('_wrapper_format');
+    }
+    return ['uri' => $uri, 'wrapper_format' => $wrapper_format];
+  }
+
+  /**
    * Initialize the grid.
    */
   protected function initGrid($total, $classes): array {
@@ -304,6 +370,17 @@ trait TraitAdminBase {
       'classes'  => $classes,
       'settings' => $grids['settings'],
     ];
+  }
+
+  /**
+   * Returns the supported multi-breakpoint grids.
+   */
+  protected function isMultiBreakpoint(array $definition): bool {
+    $settings = $definition['settings'] ?? [];
+    if ($style = $settings['style'] ?? '') {
+      return in_array($style, ['flexbox', 'nativegrid']);
+    }
+    return FALSE;
   }
 
 }

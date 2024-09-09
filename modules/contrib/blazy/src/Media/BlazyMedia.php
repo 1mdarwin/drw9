@@ -62,7 +62,7 @@ class BlazyMedia implements BlazyMediaInterface {
   public function __construct(
     BlazyManagerInterface $manager,
     Client $http_client,
-    IFrameUrlHelper $iframe_url_helper
+    IFrameUrlHelper $iframe_url_helper,
   ) {
     $this->manager = $manager;
     $this->httpClient = $http_client;

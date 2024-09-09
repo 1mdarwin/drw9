@@ -132,7 +132,7 @@ class BlazyResponsiveImage {
   public static function dimensions(
     array &$settings,
     $resimage = NULL,
-    $initial = FALSE
+    $initial = FALSE,
   ): void {
     $blazies    = $settings['blazies'];
     $dimensions = $blazies->get('resimage.dimensions', []);

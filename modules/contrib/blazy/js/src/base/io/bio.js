@@ -107,7 +107,6 @@
     var count = me.count;
     var io = me.ioObserver;
     var watching = opts.visibleClass || revalidate || false;
-    var check;
 
     // Only destroy if no use for is-b-visible class.
     if (BIOTICK === count - 1) {
@@ -124,14 +123,9 @@
     if (io) {
       // We are here with arbitrary observed elements for hidden children.
       // See https://drupal.org/node/3279316.
-      if (!$.is(el, sel)) {
-        check = $.find(el, sel);
-        if ($.isElm(check)) {
-          // The job is done, unobserve.
-          io.unobserve(el);
-          // Pass back bounding rects to the unbound hidden element here on.
-          el = check;
-        }
+      var hidden = FN_OBSERVER.hiddenChild(el, sel);
+      if (hidden) {
+        el = hidden;
       }
 
       if (me.isLoaded(el) && !revalidate) {
@@ -290,6 +284,7 @@
     me.count = elms.length;
     me._raf = [];
     me._queue = [];
+    me.withIo = true;
 
     // Observe elements. Old blazy as fallback is also initialized here.
     // IO will unobserve, or disconnect. Old bLazy will self destroy.
@@ -394,7 +389,7 @@
         io.disconnect();
       }
 
-      FN_OBSERVER.unload(me);
+      FN_OBSERVER.unload();
       me.count = 0;
       me.elms = [];
       me.ioObserver = null;
@@ -414,7 +409,7 @@
 
       me.destroyed = false;
 
-      FN_OBSERVER.observe(me);
+      FN_OBSERVER.observe();
 
       INITIALIZED = true;
     }
