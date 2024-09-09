@@ -70,7 +70,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     EntityDisplayRepositoryInterface $entity_display_repository,
     TypedConfigManagerInterface $typed_config,
     DateFormatterInterface $date_formatter,
-    BlazyManagerInterface $blazy_manager
+    BlazyManagerInterface $blazy_manager,
   ) {
     $this->entityDisplayRepository = $entity_display_repository;
     $this->typedConfig             = $typed_config;
@@ -120,6 +120,15 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       ];
     }
 
+    if ($scopes->is('by_delta') && !$scopes->is('_views')) {
+      $form['by_delta'] = [
+        '#type'   => 'textfield',
+        '#title'  => $this->t('By delta'),
+        '#weight' => -111,
+        '#wrapper_attributes' => $this->getTooltipClasses(),
+      ];
+    }
+
     if ($skins = $scopes->data('skins')) {
       $form['skin'] = [
         '#type'     => 'select',
@@ -162,7 +171,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     }
 
     // Add descriptions, if applicable.
-    foreach ($this->openingDescriptions($scopes) as $key => $description) {
+    foreach ($this->openingDescriptions() as $key => $description) {
       if (isset($form[$key])) {
         $form[$key]['#description'] = $description;
       }
@@ -173,8 +182,9 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * {@inheritdoc}
    */
   public function gridForm(array &$form, array $definition): void {
-    $scopes = $this->toScopes($definition);
-    $required = $scopes->is('grid_required');
+    $scopes    = $this->toScopes($definition);
+    $required  = $scopes->is('grid_required');
+    $multigrid = $this->isMultiBreakpoint($definition);
 
     if (!$scopes->is('no_grid_header')) {
       $header  = $this->t('Group individual items as block grid?');
@@ -191,7 +201,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     }
 
     $form['grid'] = [
-      '#type'     => 'textfield',
+      '#type'     => 'textarea',
       '#title'    => $this->t('Grid large'),
       '#enforced' => TRUE,
       '#required' => $required,
@@ -200,7 +210,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     ];
 
     $form['grid_medium'] = [
-      '#type'  => 'textfield',
+      '#type'  => $multigrid ? 'textarea' : 'textfield',
       '#title' => $this->t('Grid medium'),
     ];
 
@@ -235,9 +245,10 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       if (isset($form[$key])) {
         $form[$key]['#enforced'] = TRUE;
         $form[$key]['#weight'] = $key == 'grid_header' ? 50 : 61;
+
         $form[$key]['#states'] = [
           'visible' => [
-            'input[name$="[grid]"]' => ['!value' => ''],
+            '[name$="[grid]"]' => ['!value' => ''],
           ],
         ];
       }
@@ -264,6 +275,37 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
    * {@inheritdoc}
    */
   public function closingForm(array &$form, array $definition): void {
+    $scopes = $this->toScopes($definition);
+    $namespace = $scopes->get('namespace');
+    $valid = $scopes->get('field') && $scopes->is('theme_field');
+    $uri = $this->getUri()['uri'];
+    $lb = strpos($uri, '/layout_builder/') !== FALSE;
+
+    if ($namespace == 'blazy') {
+      $valid = $lb || $valid;
+
+      if ($lb) {
+        $form['use_lb'] = [
+          '#type' => 'hidden',
+          '#value' => TRUE,
+        ];
+      }
+    }
+
+    if ($valid) {
+      $form['use_theme_field'] = [
+        '#title'       => $this->t('Use field template'),
+        '#type'        => 'checkbox',
+        '#description' => $this->closingDescriptions()['use_theme_field'],
+        '#weight'      => -100,
+      ];
+    }
+
+    $form['admin_uri'] = [
+      '#type' => 'hidden',
+      '#value' => $uri,
+    ];
+
     $this->finalizeForm($form, $definition);
   }
 
@@ -452,6 +494,9 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     $excludes  = ['details', 'fieldset', 'hidden', 'markup', 'item', 'table'];
     $selects   = ['cache', 'optionset', 'view_mode'];
     $fullwidth = $scopes->data('fullwidth', []);
+    $descs     = $scopes->data('additional_descriptions', []);
+    $repdescs  = $scopes->data('replaced_descriptions', []);
+    $multigrid = $this->isMultiBreakpoint($definition);
 
     $this->blazyManager->moduleHandler()->alter('blazy_form_element', $form, $definition, $scopes);
 
@@ -549,6 +594,11 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
 
         $wide = in_array($key, ['grid', 'box_caption_custom'])
           || ($scopes->is('grid_required') && $key == 'style');
+
+        if ($multigrid && $key == 'grid_medium') {
+          $wide = TRUE;
+        }
+
         if ($wide || ($fullwidth && in_array($key, $fullwidth))) {
           $wrapper_attrs['data-b-w'] = 12;
         }
@@ -589,12 +639,34 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
       }
 
       // Don't store values babysitters.
-      if (!empty($form[$key]['#unset']) || ($form[$key]['#access'] ?? 'x') == FALSE) {
+      if (!empty($form[$key]['#unset'])
+        || ($form[$key]['#access'] ?? 'x') == FALSE) {
         unset($form[$key]['#default_value']);
       }
 
       if (in_array($key, $scopes->data('deprecations'))) {
         unset($form[$key]['#default_value']);
+      }
+
+      // Additional descriptions.
+      if ($desc = $descs[$key] ?? '') {
+        if (!empty($form[$key]['#description'])) {
+          $placement = $desc['placement'] ?? '';
+          $description = $desc['description'] ?? '';
+          if ($placement == 'after') {
+            $form[$key]['#description'] .= $description;
+          }
+          else {
+            $form[$key]['#description'] = $description . ' ' . $form[$key]['#description'];
+          }
+        }
+      }
+      elseif ($desc = $repdescs[$key] ?? '') {
+        $form[$key]['#description'] = $desc;
+      }
+
+      if ($this->isAdminLb() || $scopes->is('collapsible_description')) {
+        $this->themeDescription($form[$key]);
       }
     }
 
@@ -606,6 +678,10 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
           $form['closing']['#attached']['library'][] = $key;
         }
       }
+    }
+
+    if ($this->isAdminLb()) {
+      $form['closing']['#attached']['library'][] = 'blazy/admin.lb';
     }
 
     $this->blazyManager->moduleHandler()->alter('blazy_complete_form_element', $form, $definition, $scopes);
@@ -628,9 +704,6 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
     if ($lightboxes = $scopes->data('lightboxes')) {
       foreach ($lightboxes as $lightbox) {
         $name = Unicode::ucwords(str_replace('_', ' ', $lightbox));
-        if ($lightbox == 'photobox') {
-          $name .= ' (Deprecated)';
-        }
         if ($lightbox == 'mfp') {
           $name = 'Magnific Popup';
         }
@@ -733,7 +806,7 @@ abstract class BlazyAdminBase implements BlazyAdminInterface {
         '#title'       => $this->t('@title', ['@title' => $title]),
         // @todo recheck '#enforced' => !$scopes->is('vanilla'),
         '#description' => $desc,
-        '#weight'      => -100,
+        '#weight'      => -99,
       ];
 
       if ($base == 'inline') {

@@ -144,7 +144,7 @@ class BlazyAdminTest implements BlazyAdminTestInterface {
     array $target_bundles = [],
     array $allowed_field_types = [],
     $entity_type_id = 'media',
-    $target_type = ''
+    $target_type = '',
   ): array {
     return $this->blazyAdmin->getFieldOptions($target_bundles, $allowed_field_types, $entity_type_id, $target_type);
   }

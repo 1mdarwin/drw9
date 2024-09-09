@@ -34,7 +34,7 @@
     var t = $('> ' + _elSlider, elm).length ? $('> ' + _elSlider, elm) : el;
     var a = $('> ' + _elArrow, elm);
     var o = t.data(_id) ? $.extend({}, drupalSettings.slick, t.data(_id)) : $.extend({}, drupalSettings.slick);
-    var r = $.type(o.responsive) === 'array' && o.responsive.length ? o.responsive : false;
+    var r = o.responsive && o.responsive.length ? o.responsive : false;
     var d = o.appendDots;
     var b;
     var isBlazy = o.lazyLoad === 'blazy' && _blazy;

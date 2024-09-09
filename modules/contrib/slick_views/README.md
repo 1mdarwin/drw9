@@ -16,13 +16,13 @@ interface. This ensures you can leave Views UI off once everything is setup.
 ***
 ## <a name="first"> </a>FIRST THINGS FIRST!
 Read more at:
-* [Github](https://git.drupalcode.org/project/blazy/-/blob/8.x-2.x/docs/README.md#first-things-first)
+* [Github](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/README.md#first-things-first)
 * [Blazy UI](/admin/help/blazy_ui#first)
 
 
 ## REQUIREMENTS
 * Views (in core)
-* [Slick 2.x above](https://drupal.org/project/slick)
+* [Slick 3.x](https://drupal.org/project/slick)
 
 Be sure to install the [Slick example](https://drupal.org/project/slick_extras)
 to avoid adventures in the first place.

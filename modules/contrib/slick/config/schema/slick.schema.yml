@@ -14,9 +14,6 @@ slick.settings:
     slick_css:
       type: boolean
       label: 'Enable Slick library slick-theme.css'
-    disable_old_skins:
-      type: boolean
-      label: 'Disable old skins'
     sitewide:
       type: integer
       label: 'Load slick globally'

@@ -463,7 +463,6 @@ display:
           title: ''
           link: ''
           class: ''
-          id: ''
           override: false
           overridables:
             arrows: '0'
@@ -1746,7 +1745,6 @@ display:
           title: ''
           link: ''
           class: ''
-          id: slick-grid
           override: false
           overridables:
             arrows: '0'

@@ -120,7 +120,7 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
       }
 
       if (empty($slide[static::$itemId]) && !empty($sets['image'])) {
-        $slide[static::$itemId] = $this->getFieldRendered($index, $sets['image']);
+        $slide[static::$itemId] = $this->getFieldRendered($index, $sets['image'], FALSE, $row);
       }
 
       $build['items'][$index] = $slide;
@@ -133,28 +133,16 @@ abstract class SlickViewsBase extends BlazyStylePluginBase {
   /**
    * {@inheritdoc}
    *
-   * @todo remove all these at 3.x.
+   * Few settings are required before being passed into manager.
    */
   protected function buildSettings() {
     $settings = parent::buildSettings();
     $blazies  = $this->manager->verifySafely($settings);
 
-    $settings['overridables'] = empty($settings['override'])
-      ? array_filter($settings['overridables']) : $settings['overridables'];
-
-    // BC for non-required Display style. Blazy 2.5+ requires explicit style.
-    if (!empty($settings['grid'])
-      && !empty($settings['visible_items'])
-      && empty($settings['style'])) {
-      $settings['style'] = 'grid';
-    }
-
-    // @todo remove, should be taken care of by manager for one door check.
     $nav = !$settings['vanilla']
       && $settings['optionset_thumbnail']
       && isset($this->view->result[1]);
 
-    // @todo remove settings only after SlickGroup updated.
     $settings['nav'] = $nav;
     $blazies->set('is.nav', $nav);
 

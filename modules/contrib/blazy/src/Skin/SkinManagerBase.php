@@ -101,7 +101,7 @@ abstract class SkinManagerBase extends DefaultPluginManager implements SkinManag
     \Traversable $namespaces,
     CacheBackendInterface $cache_backend,
     ModuleHandlerInterface $module_handler,
-    BlazyInterface $manager
+    BlazyInterface $manager,
   ) {
     parent::__construct(static::$path, $namespaces, $module_handler, static::$interface, static::$annotation);
 

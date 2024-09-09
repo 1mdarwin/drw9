@@ -79,12 +79,34 @@ class SlickGrouping extends SlickViewsBase {
       ];
     }
 
+    foreach (array_keys($form) as $key) {
+      if (strpos($key, '#') !== FALSE) {
+        continue;
+      }
+
+      if ($type = $form[$key]['#type'] ?? '') {
+        if ($type != 'hidden') {
+          $form[$key]['#wrapper_attributes']['class'][] = 'grid';
+          $form[$key]['#wrapper_attributes']['data-b-w'] = 6;
+          $form[$key]['#wrapper_attributes']['data-b-h'] = 1;
+        }
+      }
+    }
+
     $groupings = $this->options['grouping'] ?: [];
 
     for ($i = 0; $i <= count($groupings); $i++) {
       foreach (['rendered', 'rendered_strip'] as $key) {
         // $form['grouping'][$i][$key]['#field_suffix'] = '&nbsp;';
         $form['grouping'][$i][$key]['#title_display'] = 'before';
+      }
+
+      foreach (['field', 'rendered', 'rendered_strip'] as $key) {
+        if (isset($form['grouping'][$i][$key])) {
+          $form['grouping'][$i][$key]['#wrapper_attributes']['class'][] = 'grid';
+          $form['grouping'][$i][$key]['#wrapper_attributes']['data-b-w'] = 6;
+          $form['grouping'][$i][$key]['#wrapper_attributes']['data-b-h'] = 1;
+        }
       }
     }
 

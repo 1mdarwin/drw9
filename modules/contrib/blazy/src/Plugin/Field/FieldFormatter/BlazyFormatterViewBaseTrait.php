@@ -19,7 +19,7 @@ trait BlazyFormatterViewBaseTrait {
   protected function baseViewElements(
     FieldItemListInterface $items,
     $langcode,
-    array $settings = []
+    array $settings = [],
   ): array {
     // Early opt-out if the field is empty.
     if ($items->isEmpty()) {

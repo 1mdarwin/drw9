@@ -2,9 +2,9 @@
 ***
 ## <a name="troubleshooting"></a>TROUBLESHOOTING
 * Masonry (Flexbox and or Native Grid) are messed up, try uninstalling BigPipe.
-  Before 2.7, we tried hard to be BigPipe-compatible, but it broke things like
+  Before 2.17, we tried hard to be BigPipe-compatible, but it broke things like
   Masonry on infinite pager VIS/ IO, etc. Not always, but applicable if any
-  other BigPipe-related JS/ CSS issues as seen at Slick/ Splide, etc. 
+  other BigPipe-related JS/ CSS issues as seen at Slick/ Splide, etc.
 * Any javascript-related issues might no longer be valid when
   `No JavaScript lazy` enabled. Unless the exceptions, things that Native
   doesn't support (Blur, BG, Video, etc.) are met, or for those who still

@@ -10,6 +10,7 @@
  * [Installing libraries via Composer](#composer)
  * [Configuration](#configuration)
  * [theme_blazy()](#theme-blazy)
+ * [Multimedia galleries](#galleries)
  * [Lightboxes](#lightboxes)
  * [SVG](#svg)
  * [WEBP](#webp)
@@ -53,17 +54,6 @@ We tried to minimize this issue, but if that happens you are well informed.
 Core modules:  
 1. Media  
 2. Filter
-
-### Applicable for Blazy module <= 2.5:
-The bLazy library is forked at Blazy 2.6, and no longer required from now on,
-see [#3257511](https://drupal.org/node/3257511).
-Any references to bLazy library is no longer relevant for forked version at 2.6.  
-
-* [Download bLazy](https://github.com/dinbror/blazy)  
-* Extract it as is, rename **blazy-master** to **blazy**, so both assets are:  
-
-  + **/libraries/blazy/blazy.js**
-  + **/libraries/blazy/blazy.min.js**
 
 ***
 ## <a name="recommended-modules"> </a>RECOMMENDED LIBRARIES/ MODULES
@@ -148,7 +138,7 @@ Visit the following to configure and make use of Blazy:
 
 1. [/admin/config/media/blazy](/admin/config/media/blazy)
 
-   Enable Blazy UI sub-module first, otherwise regular **Access denied**.
+   Enable Blazy UI sub-module first, otherwise regular **404|403**.
    Contains few global options. Blazy UI can be uninstalled at production later
    without problems.
 
@@ -217,7 +207,7 @@ comparison, or helpful screenshots, to spot the issues better.
 2. Add a Blazy formatter for the Media or Image field.
 3. Add any lightbox under **Media switcher** option.
 4. Limit the values to 1 under **Multiple field settings** > **Display**, if
-   any.
+   any multi-value field.
 
 #### Without **Blazy Grid**  
 If you can't use **Blazy Grid** for a reason, maybe having a table, HTML list,
@@ -229,7 +219,6 @@ etc., try the following:
    + **blazy--flybox-gallery**
    + **blazy--intense-gallery**
    + **blazy--mfp-gallery** (Magnific Popup)
-   + **blazy--photobox-gallery**
    + **blazy--photoswipe-gallery**
    + **blazy--slick-lightbox-gallery**
    + **blazy--splidebox-gallery**
@@ -297,8 +286,7 @@ Known lightboxes which has supports for Responsive image:
 
 ### Lightbox requirements
 * Colorbox, PhotoSwipe, etc. requires both modules and their libraries present.
-* Photobox, Magnific Popup, requires only libraries to be present:  
-  + `/libraries/photobox/photobox/jquery.photobox.js`
+* Magnific Popup, requires only libraries to be present:  
   + `/libraries/magnific-popup/dist/jquery.magnific-popup.min.js`  
   The reason for no modules are being required because no special settings, nor
   re-usable options to bother provided by them. Aside from the fact, Blazy has

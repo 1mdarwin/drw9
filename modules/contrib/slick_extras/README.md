@@ -13,14 +13,14 @@ so it may not keep your particular use.
 
 ## <a name="first"> </a>FIRST THINGS FIRST!
 Read more at:
-* [Github](https://git.drupalcode.org/project/blazy/-/blob/8.x-2.x/docs/README.md#first-things-first)
+* [Github](https://git.drupalcode.org/project/blazy/-/blob/3.0.x/docs/README.md#first-things-first)
 * [Blazy UI](/admin/help/blazy_ui#first)
 
 ## REQUIREMENTS
 
-* [Blazy](https://www.drupal.org/project/blazy) (2.17+)
-* [Slick](https://www.drupal.org/project/slick) (2.10+)
-* [Slick Views](https://www.drupal.org/project/slick_views) (2.8+)
+* [Blazy 3.x](https://www.drupal.org/project/blazy)
+* [Slick 3.x](https://www.drupal.org/project/slick)
+* [Slick Views 3.x](https://www.drupal.org/project/slick_views)
 * field_image and field_images, see INSTALLATION.
 
 ## INSTALLATION
@@ -247,10 +247,6 @@ broken Grid, see skin Grid above for more details.
   not documented. Cloning saves many steps. Even if you are very experienced
   with Views UI.
 
-## RECOMMENDED MODULES
-* [Markdown](https://drupal.org/project/markdown) for readability.
-
-
 ## MAINTAINERS
 * [Gaus Surahman](https://drupal.org/user/159062)
 * CHANGELOG.txt for helpful souls with their patches, suggestions and reports.
@@ -263,7 +259,7 @@ And don't forget to uninstall this module at production. This only serves as
 examples, no real usage, nor intended for production. But it is safe to keep it
 at production if you forget to uninstall though.
 
-See the project page at drupal.org:
+See the project page at drupal.org for more updated info:
 
 [Slick Extras](https://drupal.org/project/slick_extras)
 

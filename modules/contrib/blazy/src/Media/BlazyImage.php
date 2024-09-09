@@ -441,7 +441,9 @@ class BlazyImage {
     $dim = ['width' => $width, 'height' => $height];
 
     // Funnily $uri is ignored at all core image effects.
-    $style->transformDimensions($dim, $uri);
+    if ($style) {
+      $style->transformDimensions($dim, $uri);
+    }
 
     // Sometimes they are string, cast them integer to reduce JS logic.
     self::toInt($dim, 'width', 'height');

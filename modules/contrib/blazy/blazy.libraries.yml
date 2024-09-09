@@ -10,6 +10,9 @@ dblazy:
     js/plugin/blazy.sanitizer.min.js: { minified: true, weight: -5.9 }
     # Can be ditched for Cash, or core DOM library, if any.
     js/plugin/blazy.dom.min.js: { minified: true, weight: -5.9 }
+  dependencies:
+    - core/drupal
+    - core/once
 
 dompurify:
   remote: https://github.com/cure53/DOMPurify
@@ -59,8 +62,6 @@ base:
   js:
     js/base/blazy.base.min.js: { minified: true, weight: -5.8 }
   dependencies:
-    # in case core removes core/drupal for decoupled debounce.
-    - core/drupal
     # @todo watch out for core namespace change.
     - core/drupal.debounce
     - blazy/dblazy
@@ -116,7 +117,6 @@ filter:
   js:
     js/components/blazy.filter.min.js: { minified: true, weight: -1.6 }
   dependencies:
-    - core/drupal
     - blazy/dblazy
 
 blur:
@@ -157,12 +157,33 @@ ratio:
     - blazy/base
 
 # CSS grids.
+style:
+  css:
+    component:
+      css/components/blazy.style.css: {}
+  dependencies:
+    - blazy/base
+
 column:
   css:
     component:
       css/components/grid/blazy.column.css: {}
   dependencies:
+    - blazy/style
+
+dygrid:
+  js:
+    js/components/grid/blazy.dygrid.min.js: { minified: true, weight: -0.05 }
+  dependencies:
     - blazy/base
+    - blazy/loading
+
+masonry:
+  js:
+    js/components/grid/blazy.masonry.min.js: { minified: true, weight: -0.05 }
+  dependencies:
+    - blazy/base
+    - blazy/loading
 
 flex:
   css:
@@ -172,6 +193,18 @@ flex:
     js/components/grid/blazy.flex.min.js: { minified: true, weight: -0.04 }
   dependencies:
     - blazy/compat
+    - blazy/style
+    - blazy/masonry
+
+flexbox:
+  css:
+    component:
+      css/components/grid/blazy.flexbox.css: {}
+  js:
+    js/components/grid/blazy.flexbox.min.js: { minified: true, weight: -0.04 }
+  dependencies:
+    - blazy/style
+    - blazy/dygrid
 
 grid:
   css:
@@ -184,8 +217,10 @@ nativegrid:
   css:
     component:
       css/components/grid/blazy.nativegrid.css: {}
+  js:
+    js/components/grid/blazy.nativegrid.min.js: { minified: true, weight: -0.04 }
   dependencies:
-    - blazy/base
+    - blazy/dygrid
 
 nativegrid.masonry:
   css:
@@ -196,6 +231,8 @@ nativegrid.masonry:
   dependencies:
     - blazy/compat
     - blazy/nativegrid
+    - blazy/style
+    - blazy/masonry
 
 # Lightboxes.
 lightbox:
@@ -278,6 +315,11 @@ admin.optionset:
     theme:
       css/components/admin/blazy.admin-optionset.css: {}
 
+admin.lb:
+  css:
+    theme:
+      css/components/admin/blazy.admin-lb.css: {}
+
 admin:
   css:
     theme:
@@ -290,22 +332,3 @@ admin:
     - core/jquery
     - blazy/drupal
     - blazy/admin.grid
-
-# deprecated at 2.5 and removed at 3.+, unmaintained. Use PhotoSwipe, etc.
-photobox:
-  remote: https://github.com/yairEO/photobox/
-  version: 1.x
-  license:
-    name: MIT
-    url: https://github.com/yairEO/photobox/issues/17
-    gpl-compatible: true
-  css:
-    base:
-      /libraries/photobox/photobox/photobox.css: {}
-  js:
-    /libraries/photobox/photobox/jquery.photobox.js: {}
-    js/components/jquery/blazy.photobox.min.js: { minified: true }
-  dependencies:
-    - core/jquery
-    - blazy/drupal
-  deprecated: The %library_id% is deprecated in blazy:2.5 and is removed in blazy:3.0.0.

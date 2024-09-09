@@ -15,7 +15,7 @@ trait BlazyFormatterEntityTrait {
     array $allowed_field_types = [],
     $entity_type = 'media',
     $target_type = '',
-    $exclude = TRUE
+    $exclude = TRUE,
   ): array {
     $options = [];
 
