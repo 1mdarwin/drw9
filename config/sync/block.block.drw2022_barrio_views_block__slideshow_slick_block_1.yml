@@ -1,10 +1,11 @@
-uuid: be9d2714-b543-40fc-bef4-2cea2dfed94b
+uuid: 9aea8d0c-dad5-41f3-a1a9-8b25ba29c7b4
 langcode: en
 status: true
 dependencies:
   config:
     - views.view.slideshow_slick
   module:
+    - system
     - views
   theme:
     - drw2022_barrio
@@ -22,4 +23,8 @@ settings:
   views_label: ''
   items_per_page: none
   exposed: {  }
-visibility: {  }
+visibility:
+  request_path:
+    id: request_path
+    negate: false
+    pages: '<front>'

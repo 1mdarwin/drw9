@@ -10,10 +10,16 @@ weight: 0
 tag_container_ids:
   - GTM-MMX9TM8
 advanced_settings:
+  consent_mode: false
   gtm:
     GTM-MMX9TM8:
       data_layer: dataLayer
+      include_classes: false
+      allowlist_classes: ''
+      blocklist_classes: ''
       include_environment: false
+      environment_id: ''
+      environment_token: ''
 dimensions_metrics:
   -
     type: metric
@@ -25,12 +31,12 @@ conditions:
     negate: true
     pages: "/admin\r\n/admin/*\r\n/batch\r\n/node/add*\r\n/node/*/*\r\n/user/*/*"
 events:
-  sign_up:
-    method: CMS
   search: {  }
   generate_lead:
     value: ''
     currency: ''
-  custom: {  }
   login:
     method: CMS
+  sign_up:
+    method: CMS
+  custom: {  }

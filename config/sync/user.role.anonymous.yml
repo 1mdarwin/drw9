@@ -5,7 +5,6 @@ dependencies:
   module:
     - comment
     - search
-    - statistics
     - system
 _core:
   default_config_hash: pq_mEIu_B4widZN7Ap81iCJSjShFFdcL0jEiCi8VrDk
@@ -18,4 +17,3 @@ permissions:
   - 'access content'
   - 'post comments'
   - 'search content'
-  - 'view post access counter'
