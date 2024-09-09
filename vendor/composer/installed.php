@@ -3,7 +3,7 @@
         'name' => 'drupal/legacy-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '6152b5f9d5980bba565f5c93d233886ba0012914',
+        'reference' => 'e240a2a29c5a79bb711b1c185061a4f4a78f71cf',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -254,9 +254,9 @@
             'dev_requirement' => false,
         ),
         'drupal/bootstrap_barrio' => array(
-            'pretty_version' => '5.5.16',
-            'version' => '5.5.16.0',
-            'reference' => '5.5.16',
+            'pretty_version' => '5.5.17',
+            'version' => '5.5.17.0',
+            'reference' => '5.5.17',
             'type' => 'drupal-theme',
             'install_path' => __DIR__ . '/../../themes/contrib/bootstrap_barrio',
             'aliases' => array(),
@@ -580,7 +580,7 @@
         'drupal/legacy-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '6152b5f9d5980bba565f5c93d233886ba0012914',
+            'reference' => 'e240a2a29c5a79bb711b1c185061a4f4a78f71cf',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -1455,9 +1455,9 @@
             'dev_requirement' => false,
         ),
         'twbs/bootstrap' => array(
-            'pretty_version' => 'v5.3.2',
-            'version' => '5.3.2.0',
-            'reference' => '344e912d04b5b6a04482113eff20ab416ff01048',
+            'pretty_version' => 'v5.3.3',
+            'version' => '5.3.3.0',
+            'reference' => '6e1f75f420f68e1d52733b8e407fc7c3766c9dba',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twbs/bootstrap',
             'aliases' => array(),
@@ -1475,7 +1475,7 @@
         'twitter/bootstrap' => array(
             'dev_requirement' => false,
             'replaced' => array(
-                0 => 'v5.3.2',
+                0 => 'v5.3.3',
             ),
         ),
         'webflo/drupal-finder' => array(
