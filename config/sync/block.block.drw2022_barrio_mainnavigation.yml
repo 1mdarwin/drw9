@@ -11,7 +11,7 @@ dependencies:
     - drw2022_barrio
 third_party_settings:
   block_class:
-    replaced_id: drwmenu-sf
+    classes: drwmenu-sf
 id: drw2022_barrio_mainnavigation
 theme: drw2022_barrio
 region: primary_menu
