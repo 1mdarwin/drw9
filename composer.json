@@ -29,7 +29,7 @@
         "drupal/block_class": "^3.0",
         "drupal/bootstrap_barrio": "^5.5",
         "drupal/captcha": "^2.0",
-        "drupal/config_filter": "1.12",
+        "drupal/config_filter": "1.13",
         "drupal/config_split": "1.9",
         "drupal/core": "^10.3",
         "drupal/core-composer-scaffold": "^10.2",
