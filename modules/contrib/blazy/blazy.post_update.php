@@ -15,3 +15,15 @@ function blazy_post_update_remove_deprecated_settings() {
   }
   $config->save(TRUE);
 }
+
+/**
+ * Added max region count setting for Blazy layout.
+ */
+function blazy_post_update_added_max_region_count() {
+  $config = \Drupal::configFactory()->getEditable('blazy.settings');
+  $count = (int) $config->get('max_region_count');
+  if ($count < 1) {
+    $config->set('max_region_count', 0);
+    $config->save(TRUE);
+  }
+}

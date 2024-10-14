@@ -1,3 +1,12 @@
+Blazy Layout 3.x-dev, 2024-09-22
+--------------------------------
+- Fixed for hidden regions beyond defaults.
+
+Blazy Layout 3.x-dev, 2024-09-21
+--------------------------------
+- Fixed for collapsed background at Flexbox engine.
+- Added supports for plain column numbers 1-12 for Flexbox.
+- Added known issues and solutions.
 
 Blazy Layout 3.x-dev, 2024-04-27
 --------------------------------

@@ -14,9 +14,17 @@ Visit layout builder pages, and add a Blazy Layout there.
 
 
 ## KNOWN ISSUES/ LIMITATIONS
-* This module doesn't provide a CSS framework integration, instead using the
+* This module does not provide a CSS framework integration, instead using the
   existing grid solutions with few tweaks to support regular floating elements
   commonly seen at one-dimensional layouts.
+* When changing **Region count** option, or at initial setup, the layout is not
+  immediately updated. **Solutions**:
+  * Hit **Configure section** link of **Blazy dynamic layout** again.
+  * Hit **Update** button in modal again for the second time.
+  * Hit **Save layout** button before working.
+
+  The issue might be cached layout is not properly cleared up on AJAX.
+  The second or third pass (hitting Update button) should fix the glitch.
 
 
 # AUTHOR/MAINTAINER/CREDITS

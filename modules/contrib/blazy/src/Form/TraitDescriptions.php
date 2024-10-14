@@ -24,7 +24,7 @@ trait TraitDescriptions {
    */
   public function nativeGridDescription() {
     $lb = $this->isAdminLb();
-    return $this->t('<br><br>Accepted format for any below is a space separated value with a pair of <code>WIDTHxHEIGHT</code> or <code>WIDTH-HEIGHT</code>, or just single numbers. Use linebreak per 100% or 12 columns for reability. <br><br><b>Flexbox</b>, not <em>Flexbox Masonry</em>: <ol><li>Accepted limited column combination: <br><code>10 15 20 25 30 33 34 40 50 60 75 77 80 100</code><br>Each row must amount to 100% without slashes, e.g.: <br><code>25 50 25</code> / <code>33 34 33</code> / <code>30 20 20 30</code>.</li><li>To have a min-height specify in the format where WIDTH is the percentage, and HEIGHT is one of <br><code>x2s xxs xs sm md lg xl xxl x2l x3l x4l x5l</code>, e.g: <br><code>100-xxl</code><br><code>50-md 50-md</code><br><code>30-xs 20-xs 20-xs 30-xs</code><br>To add yours, see <code>css/blazy.style.css</code>.</li></ol><b>Native Grid</b>: <ol><li><b>One-dimensional</b>: Input a single numeric column grid, acting as Masonry, e.g.: <br><code>4</code> or <code>4x4</code><br>The first will be auto-height, the last fixed height. <em>Best with</em>: scaled images.</li><li><b>Two-dimensional</b>: Input the format pair based on the amount of columns/ rows, at max 12, e.g.: <br><code>4x4 4x3 2x2 2x4 2x2 2x3 2x3 4x2 4x2</code> <br>This will resemble GridStack optionset <b>Tagore</b>. Any single value e.g.: <code>4x4</code> will repeat uniformly like one-dimensional. <br><em>Best with</em>: <ul><li><b>Use CSS background</b> ON.</li><li>Exact item amount or better more designated grids than lacking. Use a little math with the exact item amount to have gapless grids.</li><li>Disabled image aspect ratio to use grid ratio instead.</li></ul></li></ol>@lb', [
+    return $this->t('<br><br>Accepted format for any below is a space separated value with a pair of <code>WIDTHxHEIGHT</code> or <code>WIDTH-HEIGHT</code>, or just single numbers. Use linebreak per 100% or 12 columns for reability. <br><br><b>Flexbox</b>, not <em>Flexbox Masonry</em>: <ol><li><b>Fixed/uniform width</b> with column amount: 1 to 12.</li><li><b>Variable width</b> with percentage: <br><code>10 15 20 25 30 33 34 40 50 55 60 75 77 80 100</code><br>Each row must amount to 100%, e.g.: <br><code>25 50 25</code><br><code>33 34 33</code><br><code>30 20 20 30</code></li><li><b>Variable width and fixed height</b>: To have a min-height specify in the format where WIDTH is the percentage, and HEIGHT is one of <br><code>x2s xxs xs sm md lg xl xxl x2l x3l x4l x5l</code>, e.g: <br><code>100-xxl</code><br><code>50-md 50-md</code><br><code>30-xs 20-xs 20-xs 30-xs</code><br>To add yours, see <code>css/blazy.style.css</code>.</li></ol><b>Native Grid</b>: <ol><li><b>One-dimensional</b>: Input a single numeric column grid, acting as Masonry, e.g.: <br><code>4</code> or <code>4x4</code><br>The first will be auto-height, the last fixed height. <em>Best with</em>: scaled images.</li><li><b>Two-dimensional</b>: Input the format pair based on the amount of columns/ rows, at max 12, e.g.: <br><code>4x4 4x3 2x2 2x4 2x2 2x3 2x3 4x2 4x2</code> <br>This will resemble GridStack optionset <b>Tagore</b>. Any single value e.g.: <code>4x4</code> will repeat uniformly like one-dimensional. <br><em>Best with</em>: <ul><li><b>Use CSS background</b> ON.</li><li>Exact item amount or better more designated grids than lacking. Use a little math with the exact item amount to have gapless grids.</li><li>Disabled image aspect ratio to use grid ratio instead.</li></ul></li></ol>@lb', [
       '@lb' => $lb ? '' : $this->t('This requires any grid-related <b>Display style</b>. Unless required, leave empty to DIY, or to not build grids.'),
     ]);
   }
@@ -34,7 +34,13 @@ trait TraitDescriptions {
    */
   public function baseDescriptions($scopes): array {
     $namespace = $scopes->get('namespace', 'blazy');
+    $help = '/admin/help/blazy_ui';
     $ui_url = '/admin/config/media/blazy';
+
+    if ($this->blazyManager->moduleExists('help')) {
+      $help = Url::fromUri('internal:/admin/help/blazy_ui')->toString();
+    }
+
     if ($this->blazyManager->moduleExists('blazy_ui')) {
       $ui_url = Url::fromRoute('blazy.settings')->toString();
     }
@@ -73,7 +79,7 @@ trait TraitDescriptions {
         ':dimensions'  => '//size43.com/jqueryVideoTool.html',
         ':follow'      => '//en.wikipedia.org/wiki/Aspect_ratio_%28image%29',
         ':link'        => '//www.smashingmagazine.com/2014/02/27/making-embedded-content-work-in-responsive-design/',
-        ':ratio'       => '/admin/help/blazy_ui#aspect-ratio',
+        ':ratio'       => $help . '#aspect-ratio',
       ]),
       'view_mode' => $view_mode,
       'thumbnail_style' => $this->t('Usages: <ol><li>Placeholder replacement for image effects (blur, etc.)</li><li>Splidebox/PhotoSwipe thumbnail</li><li>Custom works with thumbnails.</li></ol> Be sure to have similar aspect ratio for the best blur effect. Leave empty to not use thumbnails.'),

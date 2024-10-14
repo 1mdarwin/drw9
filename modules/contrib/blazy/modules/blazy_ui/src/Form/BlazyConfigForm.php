@@ -59,17 +59,22 @@ class BlazyConfigForm extends BlazyConfigFormBase {
     $svg_sanitizer = 'https://github.com/darylldoyle/svg-sanitizer';
     $class = $exists ? 'info' : 'warning';
     $hints = [];
+    $help = '/admin/help/blazy_ui';
+
+    if ($this->manager->moduleExists('help')) {
+      $help = Url::fromUri('internal:/admin/help/blazy_ui')->toString();
+    }
 
     // Adapted from Colorbox module, thanks.
     $dom_text = $dom_exists ?
       '[v] ' . $this->t('The DOMPurify library is installed to sanitize lightbox captions. Be sure to clear cache for library discoveries. [<a href=":ui">Blazy UI help</a>]', [
-        ':ui' => '/admin/help/blazy_ui#dompurify',
+        ':ui' => $help . '#dompurify',
       ])
       :
       '[x] ' . $this->t('<strong>Warning!</strong> The <a href=":url">DOMPurify</a> library is not installed. It is necessary for HTML in lightbox captions. Without it, they are only sanitized server-side, or builtin. [<a href=":ui">Blazy UI help</a>].',
         [
           ':url' => 'https://github.com/cure53/DOMPurify/archive/main.zip',
-          ':ui' => '/admin/help/blazy_ui#dompurify',
+          ':ui' => $help . '#dompurify',
         ]);
 
     $hints[] = [
@@ -83,13 +88,13 @@ class BlazyConfigForm extends BlazyConfigFormBase {
 
     $svg_text = $svg_exists ?
       '[v] ' . $this->t('The SVG Sanitizer library is installed to sanitize inline SVG. [<a href=":ui">Blazy UI help</a>]', [
-        ':ui' => '/admin/help/blazy_ui#svg',
+        ':ui' => $help . '#svg',
       ])
       :
       '[x] ' . $this->t('<strong>Warning!</strong> The <a href=":url">SVG Sanitizer</a> library is not installed. This library is necessary if you want to use SVG inline. Without it, the world would be ended. [<a href=":ui">Blazy UI help</a>].',
         [
           ':url' => $svg_sanitizer,
-          ':ui' => '/admin/help/blazy_ui#svg',
+          ':ui' => $help . '#svg',
         ]);
 
     $hints[] = [
@@ -258,6 +263,14 @@ class BlazyConfigForm extends BlazyConfigFormBase {
       }
     }
 
+    $form['max_region_count'] = [
+      '#type'          => 'number',
+      '#title'         => $this->t('Max region count'),
+      '#default_value' => $config->get('max_region_count'),
+      '#description'   => $this->t('Specific for Blazy layout, define the maximum amount of regions. Default to 20 if left 0 or below 9. Regions beyond this amount will be hidden.'),
+      '#access'        => $this->manager->moduleExists('blazy_layout'),
+    ];
+
     $form['blazy'] = [
       '#type'        => 'details',
       '#tree'        => TRUE,
@@ -383,6 +396,7 @@ class BlazyConfigForm extends BlazyConfigFormBase {
       ->set('unstyled_extensions', $form_state->getValue('unstyled_extensions'))
       ->set('use_encodedbox', $form_state->getValue('use_encodedbox'))
       ->set('use_oembed', $form_state->getValue('use_oembed'))
+      ->set('max_region_count', $form_state->getValue('max_region_count'))
       ->set('blazy.loadInvisible', $form_state->getValue([
         'blazy',
         'loadInvisible',
@@ -411,10 +425,13 @@ class BlazyConfigForm extends BlazyConfigFormBase {
     $config->save();
 
     // Invalidate the library discovery cache to update the responsive image.
-    $this->libraryDiscovery->clearCachedDefinitions();
+    // @todo use LibraryDiscoveryCollector::clear() for D12.
+    // $this->libraryDiscovery->clearCachedDefinitions();
     $this->configFactory->clearStaticCache();
 
-    $this->messenger()->addMessage($this->t('Be sure to <a href=":clear_cache">clear the cache</a> if trouble to see the updated settings.', [':clear_cache' => Url::fromRoute('system.performance_settings')->toString()]));
+    $this->messenger()->addMessage($this->t('Be sure to <a href=":clear_cache">clear the cache</a> if trouble to see the updated settings.', [
+      ':clear_cache' => Url::fromRoute('system.performance_settings')->toString(),
+    ]));
 
     parent::submitForm($form, $form_state);
   }

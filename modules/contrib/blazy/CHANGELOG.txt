@@ -1,3 +1,12 @@
+Blazy 3.0.x-dev, 2024-09-22
+---------------------------
+- Issue #3469022 by ahmad khader: Fix flybox malfunctions after being closed for
+  the first time.
+- Added max_region_count option for Blazy layout.
+
+Blazy 3.0.x-dev, 2024-09-15
+---------------------------
+Issue #3474291 by leslieg: Update logo for compatibility with Project Browser.
 
 Blazy 3.0.x-dev, 2024-08-11
 ---------------------------

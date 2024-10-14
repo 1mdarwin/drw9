@@ -34,9 +34,10 @@ class BlazyLayout extends BlazyLayoutForm {
     // Provides inline style.
     $this->styles($output, $settings);
 
-    // Updates settings.
+    // Updates settings and layout.
     $output['#settings'] = $settings;
     $this->setConfiguration($settings);
+    $output['#layout'] = $this->pluginDefinition;
 
     return $output;
   }

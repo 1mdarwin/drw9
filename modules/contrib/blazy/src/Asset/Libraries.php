@@ -8,7 +8,7 @@ use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Media\Preloader;
 use Drupal\blazy\Theme\Lightbox;
 use Drupal\Core\Asset\LibrariesDirectoryFileFinder;
-use Drupal\Core\Asset\LibraryDiscovery;
+use Drupal\Core\Asset\LibraryDiscoveryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,7 +19,7 @@ class Libraries extends Config implements LibrariesInterface {
   /**
    * The library discovery service.
    *
-   * @var \Drupal\Core\Asset\LibraryDiscovery
+   * @var \Drupal\Core\Asset\LibraryDiscoveryInterface
    */
   protected $discovery;
 
@@ -44,14 +44,14 @@ class Libraries extends Config implements LibrariesInterface {
   /**
    * {@inheritdoc}
    */
-  public function discovery(): LibraryDiscovery {
+  public function discovery(): LibraryDiscoveryInterface {
     return $this->discovery;
   }
 
   /**
    * Sets library discovery service.
    */
-  public function setDiscovery(LibraryDiscovery $discovery): self {
+  public function setDiscovery(LibraryDiscoveryInterface $discovery): self {
     $this->discovery = $discovery;
     return $this;
   }
