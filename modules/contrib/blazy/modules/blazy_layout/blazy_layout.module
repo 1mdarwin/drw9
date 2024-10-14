@@ -152,7 +152,6 @@ function blazy_layout_preprocess_field(array &$variables) {
     || !empty($element['#third_party_settings']['blazy']['blazy'])) {
     if ($settings = $element['#blazy'] ?? []) {
       $blazies = $settings['blazies'];
-      $variables['blazies'] = $blazies->storage();
 
       // @fixme might be 0 even has one if embedded inside LB blocks.
       if ($blazies->total() == 0) {
@@ -164,6 +163,8 @@ function blazy_layout_preprocess_field(array &$variables) {
             ->set('total', $count);
         }
       }
+
+      $variables['blazies'] = $blazies->storage();
 
       // Make Blazy background have less divities if just a single image.
       // Basically reverting to stable9 logic with minimal divities.
@@ -183,6 +184,18 @@ function blazy_layout_preprocess_field(array &$variables) {
 function blazy_layout_layout_alter(array &$definitions) {
   if ($layout = $definitions['blazy_layout'] ?? NULL) {
     if ($regions = $layout->getRegions()) {
+      $count = count($regions);
+      if ($count < 10) {
+        $max = (int) blazy()->config('max_region_count');
+        if ($max < 10) {
+          $max = 20;
+        }
+        foreach (range(9, $max) as $delta) {
+          $regions['blzyr_' . $delta] = [
+            'label' => t('Region @delta', ['@delta' => $delta]),
+          ];
+        }
+      }
 
       // Append the BG region into the defined regions.
       $regions['bg'] = [

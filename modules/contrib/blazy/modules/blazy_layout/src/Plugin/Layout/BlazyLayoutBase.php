@@ -205,7 +205,9 @@ abstract class BlazyLayoutBase extends LayoutDefault implements BlazyLayoutInter
         if ($classes = $this->manager->getClasses($subsets)) {
           $settings['regions'][$name]['settings']['classes'] = $classes;
         }
-        if (empty($output[$name])) {
+
+        // Always show empty regions to avoid collapsed regions at LB.
+        if (empty($output[$name]) && !$this->inPreview) {
           $settings['regions'][$name]['settings']['empty'] = TRUE;
         }
       }
@@ -249,6 +251,7 @@ abstract class BlazyLayoutBase extends LayoutDefault implements BlazyLayoutInter
 
     ksort($new_regions);
     $this->pluginDefinition->setRegions($new_regions);
+    $this->pluginDefinition->set('blazies', $new_regions);
   }
 
   /**
@@ -352,6 +355,7 @@ abstract class BlazyLayoutBase extends LayoutDefault implements BlazyLayoutInter
       }
 
       if ($this->inPreview) {
+        $output[$name]['#attributes']['data-region'] = $name;
         if ($selectors = static::$selectors[$id][$name] ?? []) {
           $output[$name]['#attributes']['data-b-selector'] = Json::encode($selectors);
         }

@@ -50,6 +50,9 @@ blazy.settings:
     use_oembed:
       type: boolean
       label: 'Use oEmbed'
+    max_region_count:
+      type: integer
+      label: 'Max region count'
     blazy:
       type: mapping
       label: Blazy

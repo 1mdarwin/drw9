@@ -23,6 +23,11 @@
   inset: 0;
 }
 
+/* Prevents unexpected collapsed background. */
+.b-layout > .region--bg {
+  width: 100% !important;
+}
+
 .b-layout > .region--bg:not(.layout-builder__region),
 .b-layout > .region--empty:not(.layout-builder__region) {
   min-height: 0;

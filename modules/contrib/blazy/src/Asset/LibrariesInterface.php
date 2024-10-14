@@ -3,7 +3,7 @@
 namespace Drupal\blazy\Asset;
 
 use Drupal\blazy\Config\ConfigInterface;
-use Drupal\Core\Asset\LibraryDiscovery;
+use Drupal\Core\Asset\LibraryDiscoveryInterface;
 
 /**
  * Provides libraries utilities.
@@ -13,10 +13,10 @@ interface LibrariesInterface extends ConfigInterface {
   /**
    * Retrieves the library descovery service.
    *
-   * @return \Drupal\Core\Asset\LibraryDiscovery
+   * @return \Drupal\Core\Asset\LibraryDiscoveryInterface
    *   The library discovery.
    */
-  public function discovery(): LibraryDiscovery;
+  public function discovery(): LibraryDiscoveryInterface;
 
   /**
    * Returns library attachments suitable for #attached property.

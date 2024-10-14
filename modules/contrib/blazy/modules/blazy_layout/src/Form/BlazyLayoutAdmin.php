@@ -7,6 +7,7 @@ use Drupal\blazy_layout\BlazyLayoutDefault as Defaults;
 use Drupal\blazy_layout\BlazyLayoutManagerInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\Core\Url;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -47,12 +48,21 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
   public function formBase(array &$form, array $settings, array $excludes = []): void {
     $elements = [];
     $attrs    = ['class' => ['is-tooltip']];
+    $max      = (int) $this->manager->config('max_region_count');
+    $url      = Url::fromUri('internal:/admin/config/media/blazy')->toString();
+
+    if ($max < 10) {
+      $max = 20;
+    }
 
     $elements['count'] = [
       '#type'        => 'number',
       '#title'       => $this->t('Region count'),
-      '#maxlength'   => 255,
-      '#description' => $this->t('The amount of regions, normally matches the amount of grids specific for Native Grid.'),
+      '#min'         => 1,
+      '#description' => $this->t('The amount of regions (max @max), normally matches the amount of grids specific for Native Grid and Flexbox. Visit <a href=":url">Blazy UI</a> to change the allowed maximum region amount: @max. Regions beyond that will be hidden.<br><b>Warning!</b> Till we have a working AJAX, whenever changing this amount, after hitting the Update button, re-open this modal, and hit Update button again to update the regions.', [
+        ':url' => $url,
+        '@max' => $max,
+      ]),
     ];
 
     $elements['style'] = [

@@ -193,7 +193,6 @@
           .find(S_CONTENT).innerHTML = '';
       };
 
-      var called = false;
       var transitioning = function () {
         if (OC_BODY_CLOSING) {
           $.removeClass(body, OC_BODY_CLOSING);
@@ -202,9 +201,6 @@
           $el.removeClass(OC);
           closing();
         }
-
-        $el.off('transitionend', transitioning);
-        called = true;
       };
 
       $.removeClass(body, C_IS_OPEN);
@@ -225,14 +221,7 @@
         closing();
       }
 
-      $el.on('transitionend', transitioning);
-
-      // Failsafe in case transitionend is screwed up, people click it rapidly.
-      setTimeout(function () {
-        if (!called && $el.hasClass(OC)) {
-          transitioning();
-        }
-      }, 1200);
+      $el.one('transitionend', transitioning);
 
       Drupal.detachBehaviors($el[0]);
 
