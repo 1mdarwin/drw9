@@ -10,7 +10,7 @@ dependencies:
 # Add a fake version so local drush and Git checkouts do not fail dependencies.
 # version: 3.x
 
-# Information added by Drupal.org packaging script on 2024-05-17
-version: '3.0.2'
+# Information added by Drupal.org packaging script on 2024-10-18
+version: '3.0.3'
 project: 'slick_views'
-datestamp: 1715947971
+datestamp: 1729253843
