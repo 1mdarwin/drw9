@@ -26,7 +26,7 @@
         "cweagans/composer-patches": "^1.7",
         "drupal/admin_toolbar": "^3.1.0",
         "drupal/blazy": "^3.0.10",
-        "drupal/block_class": "^3.0",
+        "drupal/block_class": "^4.0",
         "drupal/bootstrap_barrio": "^5.5",
         "drupal/captcha": "^2.0",
         "drupal/config_filter": "1.13",

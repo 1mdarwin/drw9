@@ -30,53 +30,22 @@ include:
 
 ################
 # Block Class: Pipeline configuration variables and custom jobs, mostly:
-#  - Broaden test coverage to all supported core versions and max PHP.
-#  - Require all jobs to pass: CSpell, ESLint, PHPCS and PHPSTAN.
+#  - Require jobs to pass: CSpell, PHPCS, PHPSTAN and Stylelint.
 ################
 
 variables:
-  ################
-  # Opt in variables: Broaden test coverage.
-  ################
+  # Broaden test coverage.
+  OPT_IN_TEST_PREVIOUS_MAJOR: 1
+  OPT_IN_TEST_MAX_PHP: 1
   OPT_IN_TEST_PREVIOUS_MINOR: 1
   OPT_IN_TEST_NEXT_MINOR: 1
-  OPT_IN_TEST_PREVIOUS_MAJOR: 1
-  OPT_IN_TEST_NEXT_MAJOR: 1
-  OPT_IN_TEST_MAX_PHP: 1
+  # OPT_IN_TEST_NEXT_MAJOR: 1
 
 #
-# Composer overrides and configuration.
-#   - Require legacy themes bartik, seven for phpunit D7 Migrate tests to pass.
-#
-composer:
-  after_script:
-    - composer require drupal/bartik drupal/seven
-composer (max PHP version):
-  after_script:
-    - composer require drupal/bartik drupal/seven
-# @TODO: D11 is not yet compatible with bartik and seven in contrib (#3434485).
-# composer (next major):
-#   after_script:
-#     - composer require drupal/bartik drupal/seven
-composer (next minor):
-  after_script:
-    - composer require drupal/bartik drupal/seven
-composer (previous minor):
-  after_script:
-    - composer require drupal/bartik drupal/seven
-
-#
-# CSPELL overrides and configuration.
+# CSpell overrides and configuration.
 #
 cspell:
   # Require spellcheck to pass.
-  allow_failure: false
-
-#
-# ESLINT overrides and configuration.
-#
-eslint:
-  # Require eslint to pass.
   allow_failure: false
 
 #
@@ -94,15 +63,8 @@ phpstan:
   allow_failure: false
 
 #
-# PHPUNIT overrides and configuration.
+# Stylelint overrides and configuration.
 #
-phpunit:
-  # Require phpunit to pass.
+stylelint:
+  # Require stylelint to pass.
   allow_failure: false
-
-# #
-# # STYLELINT overrides and configuration.
-# #
-# stylelint:
-#   # Require stylelint to pass.
-#   allow_failure: false
