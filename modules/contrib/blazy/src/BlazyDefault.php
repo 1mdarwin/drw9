@@ -321,14 +321,14 @@ class BlazyDefault {
    *
    * The reserved attributes is defined before entering Blazy as bonus variable.
    * Consider other bonuses: title and content attributes at a later stage.
-   * layering is crucial for mixed media, cannot be simply dumped as
+   * Layering is crucial for mixed media, cannot be simply dumped as
    * indexed children, must have clear properties indentifying their functions.
    *
    * @done prefix non-renderable with # at/by 3.x to minimize render errors.
    * The first error was identified with BVEF due to being out of sync when
    * given an extra property `entity` as seen at BlazyEntity::build().
    * No issues so far with all these, yet conversions will eliminate any.
-   * Initial effort was via Blazy::toHashtag() chekpoint till full migration.
+   * Initial effort was via Blazy::toHashtag() checkpoint till full migration.
    */
   public static function themeProperties() {
     return [

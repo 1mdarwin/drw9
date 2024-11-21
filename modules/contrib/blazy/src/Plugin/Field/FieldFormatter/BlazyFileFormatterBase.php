@@ -2,16 +2,16 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\Field\BlazyDependenciesTrait;
-use Drupal\blazy\Field\BlazyElementTrait;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Media\BlazyImage;
-use Drupal\blazy\Utility\Sanitize;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Field\BlazyDependenciesTrait;
+use Drupal\blazy\Field\BlazyElementTrait;
+use Drupal\blazy\Media\BlazyImage;
+use Drupal\blazy\Utility\Sanitize;
+use Drupal\blazy\internals\Internals;
 use Drupal\field\FieldConfigInterface;
 use Drupal\file\Plugin\Field\FieldFormatter\FileFormatterBase;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;

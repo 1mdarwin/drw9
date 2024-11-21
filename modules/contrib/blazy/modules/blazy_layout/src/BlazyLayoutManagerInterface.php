@@ -93,4 +93,11 @@ interface BlazyLayoutManagerInterface extends BlazyManagerInterface {
    */
   public function toRules(array $data, $id): string;
 
+  /**
+   * Returns the available admin theme to fetch the media library styling.
+   *
+   * @todo remove, useless.
+   */
+  public function getMediaLibraries(): array;
+
 }

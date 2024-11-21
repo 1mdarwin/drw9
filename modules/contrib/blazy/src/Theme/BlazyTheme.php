@@ -2,14 +2,14 @@
 
 namespace Drupal\blazy\Theme;
 
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Template\Attribute;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Media\Placeholder;
 use Drupal\blazy\Utility\Check;
 use Drupal\blazy\Utility\Path;
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Template\Attribute;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides theme-related alias methods to de-clutter Blazy.

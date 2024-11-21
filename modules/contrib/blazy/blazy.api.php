@@ -341,7 +341,7 @@ function hook_blazy_lightboxes_alter(array &$lightboxes) {
  */
 function hook_blazy_alter(array &$build, array $settings) {
   if (!empty($settings['media_switch']) && $settings['media_switch'] == 'photoswipe') {
-    // Full blown overrides:
+    // Full blown overrides, and must also implement trusted callback:
     $build['#pre_render'][] = 'my_module_pre_render';
   }
 }
@@ -369,7 +369,7 @@ function hook_blazy_build_alter(array &$build, array $settings) {
   // This also allows a quasi-lightbox like ElevateZoomPlus inject its optionset
   // as its value: elevatezoomplus: responsive, etc.
   if ($blazies->get('colorbox') || $blazies->get('zooming')) {
-    // Full blown overrides:
+    // Full blown overrides, and must also implement trusted callback:
     $build['#pre_render'][] = 'my_module_pre_render_build';
   }
 }
@@ -494,13 +494,13 @@ function hook_blazy_settings_alter(array &$build, $object) {
   // - `blazy_filter` for BlazyFilter, supports both plain media and galleries.
   // - `slick_filter` for SlickFilter galleries.
   // - `splide_filter` for SplideFilter galleries.
-  $plugin_id = $blazies->get('view.plugin_id') == 'blazy';
+  $expected_plugin_id = $blazies->get('view.plugin_id') == 'blazy';
 
   // Only concern with blocks having `Rewrite view resuts` to fix 404 due to
   // `data:image` placeholder is stripped out by Views sanitization procedure.
   // By default machine names are like block_1, or page_1, etc. till changed.
   $rewriten_blocks = ['block_categories', 'block_popular', 'block_related'];
-  if ($plugin_id && $view_mode = $blazies->get('view.view_mode')) {
+  if ($expected_plugin_id && $view_mode = $blazies->get('view.view_mode')) {
     if (in_array($view_mode, $rewriten_blocks)) {
       $blazies->set('ui.placeholder', '/blank.svg');
     }
@@ -547,10 +547,12 @@ function hook_blazy_item_alter(array &$settings, array &$attributes, array &$ite
   // says put $blazies->set('libs.media', TRUE); in hook_blazy_settings_alter(),
   // conditionally to not waste libraries.
   if ($blazies->get('colorbox') && $blazies->get('media.embed_url')) {
+    // Set the Media switch option to Image to iframe, hence, media player.
     $blazies->set('switch', 'media')
       // The is.player is deprecated in 2.17 for use.player.
       // ->set('is.player', TRUE)
       ->set('use.player', TRUE)
+      // Disable lightbox so to use the above inline media player.
       ->set('is.lightbox', FALSE);
   }
 

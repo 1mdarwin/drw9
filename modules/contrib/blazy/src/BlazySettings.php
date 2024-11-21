@@ -2,8 +2,8 @@
 
 namespace Drupal\blazy;
 
-use Drupal\blazy\Utility\Arrays;
 use Drupal\Component\Utility\NestedArray;
+use Drupal\blazy\Utility\Arrays;
 
 /**
  * Provides settings object.

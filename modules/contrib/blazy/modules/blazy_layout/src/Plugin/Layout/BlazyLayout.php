@@ -39,6 +39,7 @@ class BlazyLayout extends BlazyLayoutForm {
     $this->setConfiguration($settings);
     $output['#layout'] = $this->pluginDefinition;
 
+    ksort($output);
     return $output;
   }
 

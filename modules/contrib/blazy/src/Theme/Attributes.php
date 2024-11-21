@@ -2,17 +2,17 @@
 
 namespace Drupal\blazy\Theme;
 
-use Drupal\blazy\internals\Internals;
+use Drupal\Component\Serialization\Json;
+use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\blazy\Media\BlazyImage;
 use Drupal\blazy\Media\BlazyResponsiveImage;
 use Drupal\blazy\Media\Placeholder;
 use Drupal\blazy\Media\Ratio;
 use Drupal\blazy\Utility\Arrays;
 use Drupal\blazy\Utility\Check;
-use Drupal\Component\Serialization\Json;
-use Drupal\Component\Utility\Html;
-use Drupal\Component\Utility\UrlHelper;
-use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides non-reusable blazy attribute static methods.

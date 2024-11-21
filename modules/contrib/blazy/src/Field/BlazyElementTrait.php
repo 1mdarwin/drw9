@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy\Field;
 
+use Drupal\Core\Render\Markup;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\Theme\Attributes;
-use Drupal\Core\Render\Markup;
 
 /**
  * A Trait for blazy element and its captions.

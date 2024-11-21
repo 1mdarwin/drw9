@@ -52,6 +52,7 @@
 }
 
 .layout-builder .b-layout .block {
+  width: 100%;
   background-color: transparent;
 }
 
@@ -62,9 +63,11 @@
   bottom: 0;
   left: 0;
   width: 100%;
-  min-height: 48px;
+  min-height: 42px;
   margin: 0;
+  padding: 8px 0;
   pointer-events: none;
+  background-color: #eff6fcbf;
 }
 
 .b-layout .region--bg.region--empty .layout-builder__add-block {
@@ -74,6 +77,7 @@
 
 .b-layout .layout-builder__add-block a {
   pointer-events: auto;
+  font-size: 14px;
 }
 
 .layout-builder .grid .blazy__caption,
@@ -101,7 +105,7 @@
   text-align: center;
   color: #fff;
   background-color: rgba(0, 0, 0, 0.4);
-  font-size: 14px;
+  font-size: 12px;
   line-height: 1.2;
 }
 
@@ -111,4 +115,17 @@
 
 [dir="rtl"] .b-layout-wrapper--ete .region--bg .block--b-bg > .contextual {
   left: 100px;
+}
+
+.layout-builder__region > .blazy,
+.layout-builder__region > .b-link {
+  display: block;
+  width: 100%;
+}
+
+/* Disable link/lightbox/player for admin preview to avoid conflict actions. */
+.layout-builder .b-layout .b-link,
+.layout-builder .b-layout .litebox,
+.layout-builder .b-layout .media__icon {
+  pointer-events: none;
 }

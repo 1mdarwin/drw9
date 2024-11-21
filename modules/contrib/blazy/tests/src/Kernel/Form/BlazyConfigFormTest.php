@@ -2,11 +2,11 @@
 
 namespace Drupal\Tests\blazy\Kernel\Form;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy_ui\Form\BlazyConfigForm;
 use Drupal\Core\Form\FormInterface;
 use Drupal\Core\Form\FormState;
 use Drupal\KernelTests\KernelTestBase;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy_ui\Form\BlazyConfigForm;
 
 /**
  * Tests the Blazy UI settings form.

@@ -2,15 +2,15 @@
 
 namespace Drupal\blazy\internals;
 
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityInterface;
+use Drupal\Core\File\FileExists;
+use Drupal\Core\File\FileSystemInterface;
 use Drupal\blazy\BlazySettings;
 use Drupal\blazy\Media\BlazyFile;
 use Drupal\blazy\Theme\Grid;
 use Drupal\blazy\Utility\Markdown;
 use Drupal\blazy\Utility\Path;
-use Drupal\Component\Utility\Html;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\Core\File\FileExists;
-use Drupal\Core\File\FileSystemInterface;
 
 /**
  * Provides internal kitchen-sink non-reusable blazy utilities.

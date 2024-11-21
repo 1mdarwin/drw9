@@ -2,8 +2,8 @@
 
 namespace Drupal\slick_ui\Form;
 
-use Drupal\blazy\Form\BlazyConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\Form\BlazyConfigFormBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -109,7 +109,7 @@ class SlickSettingsForm extends BlazyConfigFormBase {
       ->save();
 
     // Invalidate the library discovery cache to update new assets.
-    $this->libraryDiscovery->clearCachedDefinitions();
+    // @todo update for D12 $this->libraryDiscovery->clearCachedDefinitions();
     $this->configFactory->clearStaticCache();
 
     parent::submitForm($form, $form_state);

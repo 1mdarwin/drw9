@@ -2,9 +2,9 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
+use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterTrait;
 use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterViewTrait;
-use Drupal\Core\Field\FieldDefinitionInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

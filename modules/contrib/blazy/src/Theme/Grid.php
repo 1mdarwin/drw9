@@ -2,11 +2,11 @@
 
 namespace Drupal\blazy\Theme;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\blazy\Blazy;
-use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Utility\Arrays;
 use Drupal\blazy\Utility\Check;
-use Drupal\Component\Serialization\Json;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides grid utilities.

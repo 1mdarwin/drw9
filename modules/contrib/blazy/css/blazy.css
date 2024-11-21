@@ -167,11 +167,6 @@ absolute position and fixed dimensions. */
   opacity: 0;
 }
 
-/* Olivero surprises when blazy grid item is acting as a layout region. */
-.blazy > .grid {
-  margin-block-end: 0;
-}
-
 .blazy .grid__content,
 .blazy .region__content {
   position: relative;
@@ -186,9 +181,12 @@ absolute position and fixed dimensions. */
 }
 
 /* Fix for unnecessary Olivero Grid surprises with Splide/Slick excessive width. */
-.view--blazy,
-.view--blazy .view-content,
-.block .view--blazy,
-.block .view--blazy .view-content {
+.view.view--blazy,
+.view.view--blazy .view-content {
   display: block;
+}
+
+/* Olivero surprises when blazy grid item is acting as a layout region. */
+.blazy > .grid {
+  margin-block-end: 0;
 }

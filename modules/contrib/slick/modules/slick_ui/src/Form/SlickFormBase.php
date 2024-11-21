@@ -2,9 +2,9 @@
 
 namespace Drupal\slick_ui\Form;
 
+use Drupal\Core\Form\FormStateInterface;
 use Drupal\blazy\Form\BlazyEntityFormBase;
 use Drupal\blazy\Traits\EasingTrait;
-use Drupal\Core\Form\FormStateInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

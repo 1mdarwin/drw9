@@ -2,16 +2,16 @@
 
 namespace Drupal\blazy\Theme;
 
-use Drupal\blazy\Blazy;
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Media\BlazyFile;
-use Drupal\blazy\Utility\Arrays;
-use Drupal\blazy\Utility\Sanitize;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Entity\EntityInterface;
+use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Media\BlazyFile;
+use Drupal\blazy\Utility\Arrays;
+use Drupal\blazy\Utility\Sanitize;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides lightbox utilities.
@@ -432,6 +432,10 @@ class Lightbox {
 
     if ($is_html) {
       $attrs['class'][] = 'litebox--html';
+    }
+
+    if ($blazies->is('bg')) {
+      $attrs['class'][] = 'litebox--bg';
     }
 
     // Only strip if not already.

@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy\Media\Svg;
 
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Media\BlazyFile;
 use Drupal\Component\Utility\Color;
 use Drupal\Core\File\FileSystemInterface;
+use Drupal\blazy\Media\BlazyFile;
+use Drupal\blazy\internals\Internals;
 use Drupal\file\Entity\File;
 use enshrined\svgSanitize\Sanitizer;
 

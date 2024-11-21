@@ -2,17 +2,17 @@
 
 namespace Drupal\Tests\blazy\FunctionalJavascript;
 
-use Drupal\blazy\Blazy;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Render\BubbleableMetadata;
 use Drupal\Core\Render\RenderContext;
-use Drupal\filter\Entity\FilterFormat;
-use Drupal\filter\FilterPluginCollection;
-use Drupal\filter\FilterProcessResult;
 use Drupal\FunctionalJavascriptTests\DrupalSelenium2Driver;
 use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\Tests\blazy\Traits\BlazyCreationTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\blazy\Blazy;
+use Drupal\filter\Entity\FilterFormat;
+use Drupal\filter\FilterPluginCollection;
+use Drupal\filter\FilterProcessResult;
 
 /**
  * Tests the Blazy Filter JavaScript using Selenium, or Chromedriver.

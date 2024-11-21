@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
-use Drupal\blazy\Blazy;
-use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\Tests\UnitTestCase;
+use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
+use Drupal\blazy\Blazy;
 
 /**
  * @coversDefaultClass \Drupal\blazy\BlazyMedia
@@ -100,7 +100,7 @@ class BlazyMediaUnitTest extends UnitTestCase {
   /**
    * Provider for ::testBlazyMediaBuild.
    */
-  public function providerTestBlazyMediaBuild() {
+  public static function providerTestBlazyMediaBuild() {
     $iframe = [
       '#type' => 'html_tag',
       '#tag' => 'iframe',

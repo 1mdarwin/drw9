@@ -2,10 +2,10 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
-use Drupal\blazy\BlazyManager;
+use Drupal\Tests\UnitTestCase;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
-use Drupal\Tests\UnitTestCase;
+use Drupal\blazy\BlazyManager;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

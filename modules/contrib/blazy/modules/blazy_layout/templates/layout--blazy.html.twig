@@ -40,7 +40,7 @@
         %}
         <div{{ region_attributes.bg.addClass(bg_classes) }}>
           {% if in_preview and IS_EMPTY %}
-            <p class="blazy__warning">{% trans %}Any backgrounds require Blazy Image/ Media with Use CSS Background, or just Background color.{% endtrans %}</p>
+            <p class="blazy__warning">{% trans %}Any backgrounds require Blazy or builtin Image/Media with Use CSS Background, or just Background color.{% endtrans %}</p>
           {% endif %}
           {{ content.bg }}
         </div>

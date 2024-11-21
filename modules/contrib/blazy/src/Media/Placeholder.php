@@ -2,8 +2,8 @@
 
 namespace Drupal\blazy\Media;
 
-use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Theme\Attributes;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides placeholder thumbnail image.

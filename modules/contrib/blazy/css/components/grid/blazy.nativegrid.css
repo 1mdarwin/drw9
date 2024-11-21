@@ -40,8 +40,8 @@ ul.blazy.b-nativegrid {
   padding: 0;
 }
 
-.b-nativegrid > .grid,
-.item-list > .b-nativegrid > .grid {
+.blazy.b-nativegrid > .grid,
+.item-list > .blazy.b-nativegrid > .grid {
   display: block;
   width: 100%;
   min-height: 40px;
@@ -57,19 +57,19 @@ ul.blazy.b-nativegrid {
   margin: 0;
 }
 
-.b-nativegrid .grid__content,
-.b-nativegrid .region__content {
+.blazy.b-nativegrid .grid__content,
+.blazy.b-nativegrid .region__content {
   height: 100%;
 }
 
 /** 480px = 30em with 16px base font. */
 @media only screen and (min-width: 480px) {
-  .b-nativegrid > .grid,
-  .item-list > .b-nativegrid > .grid {
+  .blazy.b-nativegrid > .grid,
+  .item-list > .blazy.b-nativegrid > .grid {
     margin-bottom: 0;
   }
 
-  .b-nativegrid {
+  .blazy.b-nativegrid {
     gap: var(--bn-col-gap);
     grid-template-columns: auto;
     /* Use min-content if to make perfectly calculated non-bg images fit. */
@@ -79,20 +79,19 @@ ul.blazy.b-nativegrid {
     justify-content: start;  */
   }
 
-  .b-nativegrid,
   .blazy.b-nativegrid,
-  .item-list > .b-nativegrid {
+  .item-list > .blazy.b-nativegrid {
     display: grid;
     grid-auto-flow: row dense;
   }
 
   /** Without margin. */
-  .b-nativegrid.is-b-gapless {
+  .blazy.b-nativegrid.is-b-gapless {
     gap: 0; /* csslint allow: known-properties, gap */
   }
 
-  .b-nativegrid > .grid,
-  .item-list > .b-nativegrid > .grid {
+  .blazy.b-nativegrid > .grid,
+  .item-list > .blazy.b-nativegrid > .grid {
     display: flex;
     flex-wrap: wrap;
     /* @todo recheck align-self is broken. */
@@ -167,54 +166,54 @@ ul.blazy.b-nativegrid {
   }
 
   /* The only rule make sense for small devices, adjust it accordingly. */
-  .b-nativegrid--sm-2 {
+  .blazy.b-nativegrid--sm-2 {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 /** 640px = 40em with 16px base font. */
 @media only screen and (min-width: 640px) {
-  .b-nativegrid--md-2 {
+  .blazy.b-nativegrid--md-2 {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .b-nativegrid--md-3 {
+  .blazy.b-nativegrid--md-3 {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .b-nativegrid--md-4 {
+  .blazy.b-nativegrid--md-4 {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  .b-nativegrid--md-5 {
+  .blazy.b-nativegrid--md-5 {
     grid-template-columns: repeat(5, 1fr);
   }
 
-  .b-nativegrid--md-6 {
+  .blazy.b-nativegrid--md-6 {
     grid-template-columns: repeat(6, 1fr);
   }
 
-  .b-nativegrid--md-7 {
+  .blazy.b-nativegrid--md-7 {
     grid-template-columns: repeat(7, 1fr);
   }
 
-  .b-nativegrid--md-8 {
+  .blazy.b-nativegrid--md-8 {
     grid-template-columns: repeat(8, 1fr);
   }
 
-  .b-nativegrid--md-9 {
+  .blazy.b-nativegrid--md-9 {
     grid-template-columns: repeat(9, 1fr);
   }
 
-  .b-nativegrid--md-10 {
+  .blazy.b-nativegrid--md-10 {
     grid-template-columns: repeat(10, 1fr);
   }
 
-  .b-nativegrid--md-11 {
+  .blazy.b-nativegrid--md-11 {
     grid-template-columns: repeat(11, 1fr);
   }
 
-  .b-nativegrid--md-12 {
+  .blazy.b-nativegrid--md-12 {
     grid-template-columns: repeat(12, 1fr);
   }
 }
@@ -226,151 +225,151 @@ ul.blazy.b-nativegrid {
  */
 @media only screen and (min-width: 768px) {
   /* Default for two-dimensional layout. */
-  .b-nativegrid {
+  .blazy.b-nativegrid {
     grid-template-columns: repeat(12, 1fr);
   }
 
   /* Configurable one-dimensional layouts. */
-  .b-nativegrid--lg-2 {
+  .blazy.b-nativegrid--lg-2 {
     grid-template-columns: repeat(2, 1fr);
   }
 
-  .b-nativegrid--lg-3 {
+  .blazy.b-nativegrid--lg-3 {
     grid-template-columns: repeat(3, 1fr);
   }
 
-  .b-nativegrid--lg-4 {
+  .blazy.b-nativegrid--lg-4 {
     grid-template-columns: repeat(4, 1fr);
   }
 
-  .b-nativegrid--lg-5 {
+  .blazy.b-nativegrid--lg-5 {
     grid-template-columns: repeat(5, 1fr);
   }
 
-  .b-nativegrid--lg-6 {
+  .blazy.b-nativegrid--lg-6 {
     grid-template-columns: repeat(6, 1fr);
   }
 
-  .b-nativegrid--lg-7 {
+  .blazy.b-nativegrid--lg-7 {
     grid-template-columns: repeat(7, 1fr);
   }
 
-  .b-nativegrid--lg-8 {
+  .blazy.b-nativegrid--lg-8 {
     grid-template-columns: repeat(8, 1fr);
   }
 
-  .b-nativegrid--lg-9 {
+  .blazy.b-nativegrid--lg-9 {
     grid-template-columns: repeat(9, 1fr);
   }
 
-  .b-nativegrid--lg-10 {
+  .blazy.b-nativegrid--lg-10 {
     grid-template-columns: repeat(10, 1fr);
   }
 
-  .b-nativegrid--lg-11 {
+  .blazy.b-nativegrid--lg-11 {
     grid-template-columns: repeat(11, 1fr);
   }
 
-  .b-nativegrid--lg-12 {
+  .blazy.b-nativegrid--lg-12 {
     grid-template-columns: repeat(12, 1fr);
   }
 
   /* Dimensions for two-dimensional layout. */
   /** grid-row == height */
-  .b-nativegrid > [data-b-h="1"] {
+  .blazy.b-nativegrid > [data-b-h="1"] {
     grid-row: span 1;
   }
 
-  .b-nativegrid > [data-b-h="2"] {
+  .blazy.b-nativegrid > [data-b-h="2"] {
     grid-row: span 2;
   }
 
-  .b-nativegrid > [data-b-h="3"] {
+  .blazy.b-nativegrid > [data-b-h="3"] {
     grid-row: span 3;
   }
 
-  .b-nativegrid > [data-b-h="4"] {
+  .blazy.b-nativegrid > [data-b-h="4"] {
     grid-row: span 4;
   }
 
-  .b-nativegrid > [data-b-h="5"] {
+  .blazy.b-nativegrid > [data-b-h="5"] {
     grid-row: span 5;
   }
 
-  .b-nativegrid > [data-b-h="6"] {
+  .blazy.b-nativegrid > [data-b-h="6"] {
     grid-row: span 6;
   }
 
-  .b-nativegrid > [data-b-h="7"] {
+  .blazy.b-nativegrid > [data-b-h="7"] {
     grid-row: span 7;
   }
 
-  .b-nativegrid > [data-b-h="8"] {
+  .blazy.b-nativegrid > [data-b-h="8"] {
     grid-row: span 8;
   }
 
-  .b-nativegrid > [data-b-h="9"] {
+  .blazy.b-nativegrid > [data-b-h="9"] {
     grid-row: span 9;
   }
 
-  .b-nativegrid > [data-b-h="10"] {
+  .blazy.b-nativegrid > [data-b-h="10"] {
     grid-row: span 10;
   }
 
-  .b-nativegrid > [data-b-h="11"] {
+  .blazy.b-nativegrid > [data-b-h="11"] {
     grid-row: span 11;
   }
 
-  .b-nativegrid > [data-b-h="12"] {
+  .blazy.b-nativegrid > [data-b-h="12"] {
     grid-row: span 12;
   }
 
   /** grid-column == width */
-  .b-nativegrid > [data-b-w="1"] {
+  .blazy.b-nativegrid > [data-b-w="1"] {
     grid-column: span 1;
   }
 
-  .b-nativegrid > [data-b-w="2"] {
+  .blazy.b-nativegrid > [data-b-w="2"] {
     grid-column: span 2;
   }
 
-  .b-nativegrid > [data-b-w="3"] {
+  .blazy.b-nativegrid > [data-b-w="3"] {
     grid-column: span 3;
   }
 
-  .b-nativegrid > [data-b-w="4"] {
+  .blazy.b-nativegrid > [data-b-w="4"] {
     grid-column: span 4;
   }
 
-  .b-nativegrid > [data-b-w="5"] {
+  .blazy.b-nativegrid > [data-b-w="5"] {
     grid-column: span 5;
   }
 
-  .b-nativegrid > [data-b-w="6"] {
+  .blazy.b-nativegrid > [data-b-w="6"] {
     grid-column: span 6;
   }
 
-  .b-nativegrid > [data-b-w="7"] {
+  .blazy.b-nativegrid > [data-b-w="7"] {
     grid-column: span 7;
   }
 
-  .b-nativegrid > [data-b-w="8"] {
+  .blazy.b-nativegrid > [data-b-w="8"] {
     grid-column: span 8;
   }
 
-  .b-nativegrid > [data-b-w="9"] {
+  .blazy.b-nativegrid > [data-b-w="9"] {
     grid-column: span 9;
   }
 
-  .b-nativegrid > [data-b-w="10"] {
+  .blazy.b-nativegrid > [data-b-w="10"] {
     grid-column: span 10;
   }
 
-  .b-nativegrid > [data-b-w="11"] {
+  .blazy.b-nativegrid > [data-b-w="11"] {
     grid-column: span 11;
   }
 
-  .b-nativegrid > [data-b-w="12"] {
+  .blazy.b-nativegrid > [data-b-w="12"] {
     grid-column: span 12;
   }
 }

@@ -2,8 +2,8 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFileFormatterBase;
 use Drupal\Component\Utility\Xss;
+use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFileFormatterBase;
 use Drupal\slick\SlickDefault;
 
 /**

@@ -84,7 +84,7 @@ To make reading this README a breeze at [Blazy help](/admin/help/blazy_ui)
 * [Jumper](https://www.drupal.org/project/jumper)
 * [Zooming](https://www.drupal.org/project/zooming)
 * [ElevateZoom Plus](https://www.drupal.org/project/elevatezoomplus)
-
+* [Ultimenu](https://www.drupal.org/project/ultimenu)
 
 Most duplication efforts from the above modules will be merged into
 `\Drupal\blazy\Dejavu`, or anywhere else namespaces.
@@ -125,7 +125,7 @@ least 7 lightboxes, and likely more.
 
    Install the module as usual, more info can be found on:
 
-   [Installing Drupal 8 Modules](https://drupal.org/node/1897420)
+   [Installing Drupal Modules](https://drupal.org/node/1897420)
 
 2. **COMPOSER:**
 
@@ -199,7 +199,10 @@ comparison, or helpful screenshots, to spot the issues better.
 + For more `hook_alter`: `grep -r ">alter(" ./blazy`, or see `blazy.api.php`
 + Use `settings.blazies` object to provoke HTML changes conditionally via the
   provided settings alters. Samples are in `blazy.api.php`, more in sub-modules.
-+ As last resorts, override `blazy.html.twig`.
++ If you can bear a headache, replace or decorate Blazy services.
++ As last resorts, override `blazy.html.twig`. Headaches are yours in the long
+  run. FYI, even the author, me, never touch this file in any custom works.
+  The above suffices at 100% own cases.
 
 ### <a name="galleries"> </a> USAGES: BLAZY FOR MULTIMEDIA GALLERY VIA VIEWS UI
 #### Using **Blazy Grid**

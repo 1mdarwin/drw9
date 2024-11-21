@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\blazy\Unit;
 
+use Drupal\Tests\UnitTestCase;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
-use Drupal\Tests\UnitTestCase;
 
 /**
  * @coversDefaultClass \Drupal\blazy\BlazyManager
@@ -123,7 +123,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
    * @return array
    *   An array of tested data.
    */
-  public function providerTestGetBlazy() {
+  public static function providerTestGetBlazy() {
     $data[] = [
       '',
       '',

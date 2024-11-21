@@ -10,14 +10,6 @@
   box-sizing: border-box;
 }
 
-/* Fix for unnecessary Olivero Grid surprises causing Slick excessive width. */
-.view,
-.view .view-content,
-.block .view,
-.block .view .view-content {
-  display: block;
-}
-
 .slick img {
   height: auto;
 }

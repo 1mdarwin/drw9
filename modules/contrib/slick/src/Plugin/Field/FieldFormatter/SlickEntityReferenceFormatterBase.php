@@ -2,8 +2,8 @@
 
 namespace Drupal\slick\Plugin\Field\FieldFormatter;
 
-use Drupal\blazy\Field\BlazyEntityReferenceBase;
 use Drupal\Component\Utility\Xss;
+use Drupal\blazy\Field\BlazyEntityReferenceBase;
 use Drupal\slick\SlickDefault;
 
 /**

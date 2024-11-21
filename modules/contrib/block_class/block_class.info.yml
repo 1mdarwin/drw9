@@ -1,12 +1,13 @@
 name: 'Block Class'
 type: module
-description: 'Allows assigning CSS classes to Blocks.'
+description: 'Allows assigning the classes to Blocks.'
 package: User interface
+configure: block_class.settings
 core_version_requirement: ^9 || ^10 || ^11
 dependencies:
   - drupal:block
 
-# Information added by Drupal.org packaging script on 2024-08-09
-version: '3.0.0'
+# Information added by Drupal.org packaging script on 2024-11-02
+version: '4.0.0'
 project: 'block_class'
-datestamp: 1723241678
+datestamp: 1730520925

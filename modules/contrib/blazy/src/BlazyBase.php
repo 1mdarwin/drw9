@@ -2,10 +2,6 @@
 
 namespace Drupal\blazy;
 
-use Drupal\blazy\Asset\LibrariesInterface;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Theme\Grid;
-use Drupal\blazy\Utility\Arrays;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\DependencyInjection\DependencySerializationTrait;
 use Drupal\Core\Entity\EntityInterface;
@@ -14,6 +10,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
+use Drupal\blazy\Asset\LibrariesInterface;
+use Drupal\blazy\Theme\Grid;
+use Drupal\blazy\Utility\Arrays;
+use Drupal\blazy\internals\Internals;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

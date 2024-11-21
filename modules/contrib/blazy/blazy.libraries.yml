@@ -320,12 +320,21 @@ admin.lb:
     theme:
       css/components/admin/blazy.admin-lb.css: {}
 
+admin.tabs:
+  css:
+    theme:
+      css/components/admin/blazy.admin-tabs.css: {}
+  js:
+    js/components/admin/blazy.admin-tabs.min.js: { minified: true }
+  dependencies:
+    - blazy/dblazy
+
 admin:
   css:
     theme:
       css/components/admin/blazy.admin.css: {}
       css/components/admin/blazy.admin-modal.css: {}
-      css/components/admin/blazy.admin.tooltip.css: {}
+      css/components/admin/blazy.admin-tooltip.css: {}
   js:
     js/components/jquery/blazy.admin.min.js: { minified: true }
   dependencies:
