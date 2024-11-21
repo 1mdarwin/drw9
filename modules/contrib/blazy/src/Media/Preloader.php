@@ -2,9 +2,9 @@
 
 namespace Drupal\blazy\Media;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\Utility\CheckItem;
-use Drupal\Component\Utility\UrlHelper;
 
 /**
  * Provides preload utility.

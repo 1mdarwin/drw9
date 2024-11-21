@@ -4,10 +4,19 @@
  */
 
 /* stylelint-disable declaration-no-important */
+:root {
+  /* The gap 15px is to match CSS grid convention such as Bootstrap.
+  Affected by .grid margin 0 vs. auto. This 14px is best for .b-flex. Adjust it. */
+  --blz-gap: 15px;
+}
+
+.b-layout-wrapper {
+  /* To make stacking layouts reasonable, adjust like anything else. */
+  margin-bottom: var(--blz-gap);
+}
+
 .blazy.b-layout {
   position: relative;
-  /* To make stacking layouts reasonable, adjust like anything else. */
-  margin-bottom: 15px;
 }
 
 .b-layout > .grid {
@@ -18,14 +27,10 @@
 
 .b-layout .region--bg {
   z-index: 0;
-  width: 100%;
+  /* Prevents unexpected collapsed background. */
+  width: 100% !important;
   margin: 0;
   inset: 0;
-}
-
-/* Prevents unexpected collapsed background. */
-.b-layout > .region--bg {
-  width: 100% !important;
 }
 
 .b-layout > .region--bg:not(.layout-builder__region),
@@ -33,8 +38,12 @@
   min-height: 0;
 }
 
+.b-layout .is-b-bg,
+.b-layout .b-link--bg,
+.b-layout .litebox--bg,
 .b-layout .region--bg,
 .b-layout .region--bg > .b-bg,
+.b-layout .region > .b-bg,
 .b-layout .region > div > .b-bg,
 .b-layout .region > div > .block > .b-bg {
   position: absolute;
@@ -45,6 +54,15 @@
   /** Temp fix, also to fix the VIDEO element to max width, not only IMG. */
   object-fit: cover;
   inset: 0;
+}
+
+.b-layout .litebox--bg > .media,
+.b-layout .b-link--bg > .media {
+  height: 100%;
+}
+
+.b-layout .block {
+  padding: var(--blz-gap);
 }
 
 .b-layout .block:not(.block--b-bg) {
@@ -64,7 +82,6 @@
   width: 100%;
   height: 100%;
   pointer-events: none;
-  background-color: rgba(12, 99, 240, 0.4);
   inset: 0;
 }
 
@@ -95,7 +112,7 @@
 
 .blazy.b-layout--ete > .region--bg {
   left: 50%;
-  width: 100vw;
+  width: 100vw !important;
   transform: translateX(-50%);
 }
 
@@ -110,7 +127,7 @@
 other themes with similar problems. */
 .b-layout--ete.b-theme-olivero > .region--bg {
   /* Should be 100vw, but accounts for Olivero as a problematic sample. */
-  width: calc(100vw + var(--content-left));
+  width: calc(100vw + var(--content-left)) !important;
 }
 
 .b-layout .region > * {

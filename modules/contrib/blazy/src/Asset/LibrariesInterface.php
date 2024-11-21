@@ -2,8 +2,8 @@
 
 namespace Drupal\blazy\Asset;
 
-use Drupal\blazy\Config\ConfigInterface;
 use Drupal\Core\Asset\LibraryDiscoveryInterface;
+use Drupal\blazy\Config\ConfigInterface;
 
 /**
  * Provides libraries utilities.

@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy;
 
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Theme\Lightbox;
 use Drupal\Core\Security\TrustedCallbackInterface;
 use Drupal\Core\Url;
+use Drupal\blazy\Theme\Lightbox;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Implements a public facing blazy manager.
@@ -660,6 +660,10 @@ class BlazyManager extends BlazyManagerBase implements BlazyManagerInterface, Tr
       if ($url) {
         $element['#url'] = $url;
         $element['#url_attributes']['class'][] = 'b-link';
+
+        if ($blazies->is('bg')) {
+          $element['#url_attributes']['class'][] = 'b-link--bg';
+        }
       }
     }
   }

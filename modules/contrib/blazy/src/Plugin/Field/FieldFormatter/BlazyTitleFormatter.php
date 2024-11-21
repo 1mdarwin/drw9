@@ -2,11 +2,11 @@
 
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
-use Drupal\blazy\internals\Internals;
 use Drupal\Core\Field\FieldItemInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\StringFormatter;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Plugin implementation of the 'Blazy Title' formatter.

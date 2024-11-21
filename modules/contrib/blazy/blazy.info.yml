@@ -16,7 +16,7 @@ test_dependencies:
 # Also accounts for the failing PHP8.1+ with git clone or --prefer-source.
 # version: 3.x
 
-# Information added by Drupal.org packaging script on 2024-09-22
-version: '3.0.11'
+# Information added by Drupal.org packaging script on 2024-10-24
+version: '3.0.13'
 project: 'blazy'
-datestamp: 1726993778
+datestamp: 1729740945

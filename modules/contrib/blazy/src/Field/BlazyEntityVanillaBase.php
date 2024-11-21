@@ -2,12 +2,12 @@
 
 namespace Drupal\blazy\Field;
 
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterEntityTrait;
-use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterTrait;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldFormatter\EntityReferenceFormatterBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterEntityTrait;
+use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterTrait;
+use Drupal\blazy\internals\Internals;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

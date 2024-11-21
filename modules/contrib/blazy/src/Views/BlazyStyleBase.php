@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy\Views;
 
-use Drupal\blazy\Blazy;
-use Drupal\blazy\internals\Internals;
 // @todo enable use Drupal\blazy\Field\BlazyElementTrait;
 use Drupal\Core\Url;
+use Drupal\blazy\Blazy;
+use Drupal\blazy\internals\Internals;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

@@ -16,7 +16,7 @@
 }
 
 /* Help focus on the expanded details. */
-.form-wrapper--b-layout > details[open] {
+.ui-dialog .form-wrapper--b-layout > details[open] {
   border-radius: 8px !important;
-  background-color: rgba(0,0,0,0.5) !important;
+  background-color: rgba(0, 0, 0, 0.5) !important;
 }

@@ -2,15 +2,15 @@
 
 namespace Drupal\blazy\Plugin\Filter;
 
+use Drupal\Component\Utility\Unicode;
+use Drupal\Component\Utility\Xss;
 // @todo use Drupal\media\MediaInterface;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault as Defaults;
 use Drupal\blazy\Field\BlazyElementTrait;
-use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Media\BlazyFile as File;
 use Drupal\blazy\Media\BlazyImage as Image;
-use Drupal\Component\Utility\Unicode;
-use Drupal\Component\Utility\Xss;
+use Drupal\blazy\internals\Internals;
 // @todo use Drupal\blazy\Media\BlazyMedia;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

@@ -163,6 +163,16 @@ interface BlazyAdminInterface extends BlazyAdminInteropInterface {
   public function isAdminLb(): bool;
 
   /**
+   * Provides horizontal tabs menu for nested details elements.
+   */
+  public function tabify(array &$form, $form_id, $region): void;
+
+  /**
+   * Provides compact description due to small estates in modal.
+   */
+  public function themeDescription(array &$form, array $parents = []): void;
+
+  /**
    * Returns escaped options.
    *
    * @return array
@@ -182,11 +192,6 @@ interface BlazyAdminInterface extends BlazyAdminInteropInterface {
   public function toScopes(array &$definition): BlazySettings;
 
   /**
-   * Provides compact description due to small estates in modal.
-   */
-  public function themeDescription(array &$form, array $parents = []): void;
-
-  /**
    * Returns native grid description.
    */
   public function nativeGridDescription();
@@ -194,12 +199,12 @@ interface BlazyAdminInterface extends BlazyAdminInteropInterface {
   /**
    * Returns base descriptions.
    */
-  public function baseDescriptions($scopes): array;
+  public function baseDescriptions(): array;
 
   /**
    * Returns grid descriptions.
    */
-  public function gridDescriptions($scopes): array;
+  public function gridDescriptions(): array;
 
   /**
    * Returns grid header description.

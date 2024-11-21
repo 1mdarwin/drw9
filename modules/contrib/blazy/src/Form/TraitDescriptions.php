@@ -32,10 +32,12 @@ trait TraitDescriptions {
   /**
    * {@inheritdoc}
    */
-  public function baseDescriptions($scopes): array {
-    $namespace = $scopes->get('namespace', 'blazy');
+  public function baseDescriptions(): array {
+    $scopes = $this->scopes;
+    $namespace = static::$namespace;
     $help = '/admin/help/blazy_ui';
     $ui_url = '/admin/config/media/blazy';
+    $lb = $this->isAdminLb();
 
     if ($this->blazyManager->moduleExists('help')) {
       $help = Url::fromUri('internal:/admin/help/blazy_ui')->toString();
@@ -51,6 +53,7 @@ trait TraitDescriptions {
     }
 
     return [
+      'background' => $this->background(),
       'preload' => $this->t("Preload to optimize the loading of late-discovered resources. Normally large or hero images below the fold. By preloading a resource, you tell the browser to fetch it sooner than the browser would otherwise discover it before Native lazy or lazyloader JavaScript kicks in, or starts its own preload or decoding. The browser caches preloaded resources so they are available immediately when needed. Nothing is loaded or executed at preloading stage. <br>Just a friendly heads up: do not overuse this option, because not everything are critical, <a href=':url'>read more</a>.", [
         ':url' => 'https://www.drupal.org/node/3262804',
       ]),
@@ -64,16 +67,18 @@ trait TraitDescriptions {
         ':webdev' => 'https://web.dev/browser-level-image-lazy-loading/#avoid-lazy-loading-images-that-are-in-the-first-visible-viewport',
       ]),
       'image_style' => $this->t('The content image style. This will be treated as the fallback image to override the global option <a href=":url">Responsive image 1px placeholder</a>, which is normally smaller, if Responsive image are provided. Shortly, leave it empty to make Responsive image fallback respected. Otherwise this is the only image displayed. This image style is also used to provide dimensions not only for image/iframe but also any media entity like local video, where no images are even associated with, to have the designated dimensions in tandem with aspect ratio as otherwise no UI to customize for.', [':url' => $ui_url]),
-      'media_switch' => $this->t('Clear cache if lightboxes do not appear here due to being permanently cached. <ol><li><b>Link to content/ by Link field</b>: for aggregated small media contents -- slicks, splides, grids, etc.</li><li><b>Image to iframe</b>: video is hidden below image until toggled, otherwise iframe is always displayed, and draggable fails. Aspect ratio applies.</li><li><b>(Quasi-)lightboxes</b>: Colorbox, ElevateZoomPlus, Intense, Splidebox, PhotoSwipe, Magnific Popup, Slick Lightbox, Splidebox, Zooming, etc. Depends on the enabled supported modules, or has known integration with Blazy. See docs or <em>/admin/help/blazy_ui</em> for details.</li>@rendered</ol> Add <em>Thumbnail style</em> if using Splidebox, Slick, or others which may need it. Try selecting "<strong>- None -</strong>" first before changing if trouble with this complex form states.', [
+      'responsive_image_style' => $this->resimageDescriptions(),
+      'media_switch' => $this->t('Clear cache if lightboxes do not appear here due to being permanently cached. <ol><li><b>Link to content/ by Link field</b>: for aggregated small media contents -- slicks, splides, grids, etc.</li><li><b>Image to iframe</b>: video is hidden below image until toggled, otherwise iframe is always displayed, and draggable fails. Aspect ratio applies.</li><li><b>(Quasi-)lightboxes</b>: Colorbox, ElevateZoomPlus, Intense, Splidebox, PhotoSwipe, Magnific Popup, Slick Lightbox, Splidebox, Zooming, etc. Depends on the enabled supported modules, or has known integration with Blazy. See docs or <em>/admin/help/blazy_ui</em> for details.</li>@rendered</ol> @lb', [
         '@rendered' => $scopes->form('fieldable') ? $this->t('<li><b>Image rendered by its formatter</b>: image-related settings here will be ignored: breakpoints, image style, CSS background, aspect ratio, lazyload, etc. Only choose if needing a special image formatter such as Image Link Formatter.</li>') : '',
+        '@lb' => $lb ? '' : $this->t('Add <em>Thumbnail style</em> if using Splidebox, Slick, or others which may need it. Try selecting "<strong>- None -</strong>" first before changing if trouble with this complex form states.'),
       ]),
-      'box_style' => $this->t('Supports both Responsive and regular images.'),
+      'box_style' => $this->t('Only relevant for lightboxes under Media switcher. Supports both Responsive and regular images.'),
       'box_media_style' => $this->t('Allows different lightbox video dimensions. Or can be used to have a swipable video if <a href=":photoswipe">Blazy PhotoSwipe</a>, or <a href=":slick">Slick Lightbox</a>, or <a href=":splidebox">Splidebox</a> installed.', [
-        ':photoswipe' => 'https:drupal.org/project/blazy_photoswipe',
-        ':slick' => 'https:drupal.org/project/slick_lightbox',
-        ':splidebox' => 'https:drupal.org/project/splidebox',
+        ':photoswipe' => 'https://drupal.org/project/blazy_photoswipe',
+        ':slick' => 'https://drupal.org/project/slick_lightbox',
+        ':splidebox' => 'https://drupal.org/project/splidebox',
       ]),
-      'box_caption' => $this->t('Automatic will search for Alt text first, then Title text. Try selecting <strong>- None -</strong> first when changing if trouble with form states.'),
+      'box_caption' => $this->t('Automatic will search for Alt text first, then Title text.'),
       'box_caption_custom' => $this->t('Multi-value rich text field will be mapped to each image by its delta.'),
       'ratio' => $this->t('Aspect ratio to get consistently responsive images and iframes. Coupled with Image style. And to fix layout reflow, excessive height issues, whitespace below images, collapsed container, no-js users, etc. <a href=":dimensions" target="_blank">Image styles and video dimensions</a> must <a href=":follow" target="_blank">follow the aspect ratio</a>. If not, images will be distorted. <a href=":link" target="_blank">Learn more</a>. <ul><li><b>Fixed ratio:</b> all images use the same aspect ratio mobile up. Use it to avoid JS works, or if it fails Responsive image. </li><li><b>Fluid:</b> aka dynamic, dimensions are calculated. First specific for non-responsive images, using PHP for pure CSS if any matching the fixed ones (1:1, 2:3, etc.), <a href=":ratio">read more</a>. If none found, JS works are attempted to fix it.</li><li><b>Leave empty:</b> to DIY (such as using CSS mediaquery), or when working with gapless grids like GridStack, or Blazy Native Grid.</li></ul>', [
         ':dimensions'  => '//size43.com/jqueryVideoTool.html',
@@ -90,7 +95,8 @@ trait TraitDescriptions {
   /**
    * {@inheritdoc}
    */
-  public function gridDescriptions($scopes): array {
+  public function gridDescriptions(): array {
+    $scopes = $this->scopes;
     $lb = $this->isAdminLb();
     $description = $this->t('@lbGrid is boxy. Column is stacky in flexbox or CSS column. They mean to be the same thing here on. Unless otherwise specified below, it must be a number denoting the amount of columns (1 - 12, or empty).', [
       '@lb' => $lb ? '' : 'Empty the value first if trouble with changing form states. ',
@@ -120,10 +126,9 @@ trait TraitDescriptions {
   public function openingDescriptions(): array {
     $lb = $this->isAdminLb();
     return [
-      'background' => $this->t('Check this to turn the image into CSS background. This opens up the goodness of CSS, such as background cover, fixed attachment, etc. <br /><strong>Important!</strong> Requires an Aspect ratio, otherwise collapsed containers. Unless explicitly removed such as for GridStack which manages its own problem, or a min-height is added using grid min-height (see Blazy layout sub-module Grid option), or manually to <strong>.b-bg</strong> selector. @lb', [
-        '@lb' => $lb ? $this->t('<br><strong>Note!</strong> Must disable <strong>Use field template</strong> for background to work.') : '',
-      ]),
-      'by_delta' => $this->t('Display a single item by delta, starting from 0. Useful to display a multi-value field when broken down into a single display like Layout Builder blocks so that one field can occupy multiple regions simply by using its delta. More efficient than creating different single fields for the same image or media. Almost similar to Views <strong>Display all values in the same row (DAVISR)</strong>, except only designated to display a single value beyond Views UI. If embedded inside Views, this option is not available for more robust Views DAVISR. Be sure to disable Display style and grid options since it will show one item only.'),
+      // @todo remove after sub-modules.
+      'background' => $this->background(),
+      'by_delta' => $this->t('Display a single item by delta, starting from 0. Leave it -1 to display all. Useful to display a multi-value field when broken down into a single display like Layout Builder blocks so that one field can occupy multiple regions simply by using its delta. More efficient than creating different single fields for the same image or media. Almost similar to Views <strong>Display all values in the same row (DAVISR)</strong>, except only designated to display a single value beyond Views UI. If embedded inside Views, this option is not available for more robust Views DAVISR. Be sure to disable Display style and grid options since it will show one item only.'),
       'caption' => $this->t('Enable any of the following fields as captions. These fields are treated and wrapped as captions.'),
       'layout' => $this->t('Requires a skin. The builtin layouts affects the entire items uniformly. Leave empty to DIY.'),
       'skin' => $this->t('Skins allow various layouts with just CSS. Some options below depend on a skin. Leave empty to DIY. Or use the provided hook_info() and implement the skin interface to register ones.'),
@@ -131,6 +136,26 @@ trait TraitDescriptions {
         '@lb' => $lb ? '' : $this->t(', see Blazy Layout sub-module for Layout Builder'),
       ]),
     ];
+  }
+
+  /**
+   * Returns formatter base descriptions.
+   */
+  protected function resimageDescriptions(): string {
+    $scopes = $this->scopes;
+    if (!$scopes->is('responsive_image')) {
+      return '';
+    }
+    $url = Url::fromRoute('entity.responsive_image_style.collection')->toString();
+    $description = $this->t('Responsive image style for the main stage image is more reasonable for large images. Works with multi-serving IMG, or PICTURE element. Leave empty to disable. <a href=":url" target="_blank">Manage responsive image styles</a>.', [
+      ':url' => $url,
+    ]);
+    if ($this->blazyManager->moduleExists('blazy_ui')) {
+      $description .= ' ' . $this->t('<a href=":url2">Enable lazyloading Responsive image</a>.', [
+        ':url2' => Url::fromRoute('blazy.settings')->toString(),
+      ]);
+    }
+    return $description;
   }
 
   /**
@@ -164,6 +189,16 @@ trait TraitDescriptions {
         '@lb' => $lb ? $this->t('If enabled, it may break CSS background due to extra divities. Backgrounds require very minimal divities.') : '',
       ]),
     ];
+  }
+
+  /**
+   * Returns background description, due to dups till sub-module updates.
+   */
+  private function background(): string {
+    $lb = $this->isAdminLb();
+    return $this->t('Check this to turn the image into CSS background. This opens up the goodness of CSS, such as background cover, fixed attachment, etc. <br /><strong>Important!</strong> Requires an Aspect ratio, otherwise collapsed containers. Unless explicitly removed such as for GridStack which manages its own problem, or a min-height is added using grid min-height (see Blazy layout sub-module Grid option), or manually to <strong>.b-bg</strong> selector. @lb', [
+      '@lb' => $lb ? $this->t('<br><strong>Note!</strong> Must disable <strong>Use field template</strong> (if provided, default to FALSE) for background to work.') : '',
+    ]);
   }
 
 }

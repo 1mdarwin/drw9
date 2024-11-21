@@ -2,8 +2,6 @@
 
 namespace Drupal\blazy\Media;
 
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Utility\Path;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Field\EntityReferenceFieldItemListInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
@@ -13,6 +11,8 @@ use Drupal\Core\Image\ImageInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Site\Settings;
 use Drupal\Core\StreamWrapper\PublicStream;
+use Drupal\blazy\Utility\Path;
+use Drupal\blazy\internals\Internals;
 use Drupal\file\FileInterface;
 use Drupal\file\FileRepository;
 use Symfony\Component\DependencyInjection\ContainerInterface;

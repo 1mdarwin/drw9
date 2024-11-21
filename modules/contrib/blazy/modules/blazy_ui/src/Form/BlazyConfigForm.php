@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy_ui\Form;
 
-use Drupal\blazy\Blazy;
-use Drupal\blazy\Form\BlazyConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\blazy\Blazy;
+use Drupal\blazy\Form\BlazyConfigFormBase;
 
 /**
  * Defines blazy admin config form.
@@ -113,7 +113,7 @@ class BlazyConfigForm extends BlazyConfigFormBase {
       'items' => $hints,
       '#attributes' => [
         'class' => [
-          'messages-list__item ',
+          'messages-list__item',
           'messages',
           'messages--' . $class,
         ],
@@ -267,7 +267,7 @@ class BlazyConfigForm extends BlazyConfigFormBase {
       '#type'          => 'number',
       '#title'         => $this->t('Max region count'),
       '#default_value' => $config->get('max_region_count'),
-      '#description'   => $this->t('Specific for Blazy layout, define the maximum amount of regions. Default to 20 if left 0 or below 9. Regions beyond this amount will be hidden.'),
+      '#description'   => $this->t('Specific for Blazy layout, define the maximum amount of regions. Default to 20 if left 0 or below 9. Regions beyond this amount will be hidden. If changed, be sure to clear caches for regions to be re-registered.'),
       '#access'        => $this->manager->moduleExists('blazy_layout'),
     ];
 

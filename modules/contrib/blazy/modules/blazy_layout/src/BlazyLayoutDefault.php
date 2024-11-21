@@ -3,6 +3,7 @@
 namespace Drupal\blazy_layout;
 
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\blazy\BlazyDefault;
 
 /**
  * Defines shared plugin default settings for field formatter and Views style.
@@ -24,6 +25,13 @@ class BlazyLayoutDefault {
       'flexbox' => 'Flexbox',
       'nativegrid' => 'Native Grid',
     ];
+  }
+
+  /**
+   * Returns sensible default options common for entities lacking of UI.
+   */
+  public static function entitySettings() {
+    return BlazyDefault::entitySettings();
   }
 
   /**
@@ -52,6 +60,26 @@ class BlazyLayoutDefault {
       'gapless'   => FALSE,
       'padding'   => '',
       'max_width' => '',
+    ];
+  }
+
+  /**
+   * Returns the media settings.
+   */
+  public static function layoutMediaSettings() {
+    return [
+      'id' => '',
+      'background' => TRUE,
+      'media_switch' => '',
+      'image_style' => '',
+      'responsive_image_style' => '',
+      'box_caption' => '',
+      'box_style' => '',
+      'box_media_style' => '',
+      'ratio' => 'fluid',
+      'link' => '',
+      // @todo remove after an update.
+      'use_player' => FALSE,
     ];
   }
 
@@ -138,28 +166,28 @@ class BlazyLayoutDefault {
    * Returns layout id.
    */
   public static function layoutId($id) {
-    return "blazy_$id";
+    return "b-layout--{$id}";
   }
 
   /**
    * Returns layout id.
    */
   public static function layoutLabel($label) {
-    return "Blazy: $label";
+    return "Blazy: {$label}";
   }
 
   /**
    * Returns region ID.
    */
   public static function regionId($id): string {
-    return "blzyr_$id";
+    return "blzyr_{$id}";
   }
 
   /**
    * Returns region label.
    */
   public static function regionLabel($id): string {
-    return "Region $id";
+    return "Region {$id}";
   }
 
   /**
@@ -174,7 +202,7 @@ class BlazyLayoutDefault {
   /**
    * Returns the shared settings.
    */
-  private static function sharedSettings() {
+  public static function sharedSettings() {
     return [
       'wrapper'     => 'div',
       'attributes'  => '',
@@ -183,6 +211,7 @@ class BlazyLayoutDefault {
       'styles'      => [
         'colors'  => self::styleSettings(),
         'layouts' => self::sublayoutSettings(),
+        'media' => self::layoutMediaSettings(),
       ],
     ];
   }

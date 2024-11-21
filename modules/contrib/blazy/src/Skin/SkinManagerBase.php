@@ -2,12 +2,12 @@
 
 namespace Drupal\blazy\Skin;
 
-use Drupal\blazy\BlazyInterface;
-use Drupal\blazy\Plugin\SkinPluginInterface;
 use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
+use Drupal\blazy\BlazyInterface;
+use Drupal\blazy\Plugin\SkinPluginInterface;
 
 /**
  * Provides skin manager base service.

@@ -4,8 +4,9 @@ namespace Drupal\blazy\Theme;
 
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Utility\Arrays;
+use Drupal\blazy\Views\BlazyStylePluginInterface;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Provides optional Views integration.
@@ -59,15 +60,22 @@ class BlazyViews {
     if ($view = $variables['view'] ?? NULL) {
       if ($fields = $view->field) {
         foreach ($fields as $field) {
-          if (isset($field->options['media_switch'])) {
+          if (isset($field->options['settings']['media_switch'])) {
             $valid = TRUE;
             break;
           }
         }
       }
+
+      if ($style = $view->style_plugin) {
+        if ($style instanceof BlazyStylePluginInterface) {
+          $valid = TRUE;
+        }
+      }
     }
 
     // Add own CSS class to fix theme compat like Olivero Grid surprises.
+    // Adding `view--blazy` under Advanced > Other > CSS class should also work.
     if ($valid) {
       $variables['attributes']['class'][] = 'view--blazy';
     }

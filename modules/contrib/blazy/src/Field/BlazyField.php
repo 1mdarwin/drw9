@@ -2,11 +2,11 @@
 
 namespace Drupal\blazy\Field;
 
+use Drupal\Component\Utility\Xss;
+use Drupal\Core\Render\Element;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyDefault;
 use Drupal\blazy\internals\Internals;
-use Drupal\Component\Utility\Xss;
-use Drupal\Core\Render\Element;
 
 /**
  * Provides common field API operation methods.

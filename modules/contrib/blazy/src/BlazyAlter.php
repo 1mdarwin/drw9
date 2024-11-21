@@ -2,9 +2,9 @@
 
 namespace Drupal\blazy;
 
-use Drupal\blazy\internals\Internals;
 use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Field\FormatterInterface;
+use Drupal\blazy\internals\Internals;
 use Drupal\editor\Entity\Editor;
 
 /**
@@ -260,6 +260,15 @@ class BlazyAlter {
   public static function blazySettingsAlter(array &$build, $object): void {
     $settings = &$build['#settings'];
     $blazies  = $settings['blazies'];
+
+    // Adds bio.ajax to fix product variation AJAX within BigPipe.
+    // Views AJAX will automatically work, however to support other non-views
+    // AJAX, add more conditions to your custom hook_blazy_settings_alter.
+    if ($type = $blazies->get('field.entity_type')) {
+      if ($type == 'commerce_product_variation') {
+        $blazies->set('use.ajax', TRUE);
+      }
+    }
 
     // Sniffs for Views to allow block__no_wrapper, views_no_wrapper, etc.
     $function = 'views_get_current_view';

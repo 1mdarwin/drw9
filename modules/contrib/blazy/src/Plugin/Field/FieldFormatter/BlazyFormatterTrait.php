@@ -3,8 +3,8 @@
 namespace Drupal\blazy\Plugin\Field\FieldFormatter;
 
 use Drupal\blazy\Field\BlazyField;
-use Drupal\blazy\internals\Internals;
 use Drupal\blazy\Traits\PluginScopesTrait;
+use Drupal\blazy\internals\Internals;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

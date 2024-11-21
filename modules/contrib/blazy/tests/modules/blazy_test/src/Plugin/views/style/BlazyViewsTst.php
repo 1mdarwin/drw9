@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy_test\Plugin\views\style;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Views\BlazyStylePluginBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Views\BlazyStylePluginBase;
+use Drupal\blazy\internals\Internals;
 
 /**
  * Blazy Views Test style plugin.
@@ -21,7 +21,7 @@ use Drupal\Core\Form\FormStateInterface;
  *   display_types = {"normal"}
  * )
  */
-class BlazyViewsTest extends BlazyStylePluginBase {
+class BlazyViewsTst extends BlazyStylePluginBase {
 
   /**
    * {@inheritdoc}

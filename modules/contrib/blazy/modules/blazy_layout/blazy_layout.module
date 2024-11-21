@@ -5,9 +5,10 @@
  * Provides a single layout with dynamic regions for Layout Builder.
  */
 
+use Drupal\Core\Render\Element;
+use Drupal\Core\Template\Attribute;
 use Drupal\blazy_layout\BlazyLayoutDefault;
 use Drupal\blazy_layout\BlazyLayoutManager;
-use Drupal\Core\Template\Attribute;
 
 /**
  * Provides a convenient shortcut for procedural hooks.
@@ -59,6 +60,7 @@ function blazy_layout_preprocess_layout(array &$variables) {
   $wrappers = $variables['content']['#wrapper_attributes'] ?? [];
   $variables['wrapper_attributes'] = new Attribute($wrappers);
   $in_preview = $variables['in_preview'];
+  $count = $settings['count'] = (int) $settings['count'];
   $settings['background'] = $background = $in_preview ||
     !empty($settings['background']) ||
     !empty($variables['content']['bg']);
@@ -81,17 +83,22 @@ function blazy_layout_preprocess_layout(array &$variables) {
     $variables['region_attributes']['bg']['data-b-w'] = $style == 'nativegrid' ? 12 : 100;
   }
 
+  // Cleanup unused regions.
+  _blazy_layout_cleanup_regions($variables, $count);
+
+  // Create an attributes variable for each region.
   $region_settings = $settings['regions'];
   if ($regions = $blazies->get('grid.items', [])) {
-    $count = $settings['count'] = (int) $settings['count'];
-
-    // Create an attributes variable for each region.
     foreach (range(1, $count) as $delta => $value) {
       $name = BlazyLayoutDefault::regionId($delta);
+
+      // Cleanup unwanted block attributes from builtin Media background.
+      _blazy_layout_cleanup_block_attributes($variables, $name);
 
       // Core region attributes depend on content[region], hence enforced.
       _blazy_layout_region_attributes($variables, $name);
 
+      // Add browser title tooltip over regions.
       if ($in_preview && $region = $region_settings[$name] ?? []) {
         $label = $region['label'] ?? '';
         $variables['region_attributes'][$name]['title'] = $label;
@@ -114,6 +121,49 @@ function blazy_layout_preprocess_layout(array &$variables) {
 
     $regions = array_diff(array_keys($settings['regions']), ['bg']);
     $variables['regions'] = $regions;
+  }
+}
+
+/**
+ * Cleanup unused regions.
+ */
+function _blazy_layout_cleanup_regions(array &$variables, $count) {
+  $bg = $variables['content']['bg'] ?? [];
+  unset($variables['content']['bg']);
+
+  foreach (Element::children($variables['content']) as $delta => $name) {
+    if ($delta >= $count) {
+      unset($variables['content'][$name]);
+    }
+  }
+
+  $variables['content']['bg'] = $bg;
+}
+
+/**
+ * Cleanup unwanted block attributes from builtin Media background.
+ */
+function _blazy_layout_cleanup_block_attributes(array &$variables, $name) {
+  $contents = &$variables['content'];
+  if (isset($contents[$name])) {
+    $subcontents = &$contents[$name];
+    foreach ($subcontents as $uuid => &$content) {
+      if (strpos($uuid, '-media') !== FALSE) {
+        unset(
+          $content['#attributes']['data-layout-block-uuid'],
+          $content['#attributes']['data-layout-builder-highlight-id']
+        );
+
+        if ($classes = $content['#attributes']['class'] ?? []) {
+          $classes = array_diff($classes, [
+            'js-layout-builder-block',
+            'layout-builder-block',
+          ]);
+          $content['#attributes']['class'] = $classes;
+        }
+        break;
+      }
+    }
   }
 }
 

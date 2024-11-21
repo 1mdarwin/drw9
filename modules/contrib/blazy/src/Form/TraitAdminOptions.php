@@ -2,9 +2,9 @@
 
 namespace Drupal\blazy\Form;
 
-use Drupal\blazy\BlazySettings;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Cache\Cache;
+use Drupal\blazy\BlazySettings;
 
 /**
  * A blazy admin Trait to declutter, and focus more on form elements.

@@ -5,12 +5,12 @@
  * Provides basic Blazy integration for lazy loading and multi-serving images.
  */
 
+use Drupal\Core\Field\FormatterInterface;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\BlazyAlter;
 use Drupal\blazy\BlazyManager;
 use Drupal\blazy\Theme\BlazyTheme;
 use Drupal\blazy\Theme\BlazyViews;
-use Drupal\Core\Field\FormatterInterface;
 use Drupal\editor\Entity\Editor;
 
 /**

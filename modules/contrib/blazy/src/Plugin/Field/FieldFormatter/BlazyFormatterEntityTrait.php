@@ -21,7 +21,7 @@ trait BlazyFormatterEntityTrait {
 
     // Fix for Views UI not recognizing Media bundles, unlike Formatters.
     if (empty($target_bundles)) {
-      if ($service = $this->formatter->service('entity_type.bundle.info')) {
+      if ($service = $this->manager->service('entity_type.bundle.info')) {
         $target_bundles = $service->getBundleInfo($entity_type);
       }
     }
@@ -30,7 +30,7 @@ trait BlazyFormatterEntityTrait {
     $excludes = $exclude ? $this->getExcludedFieldOptions() : [];
 
     foreach ($target_bundles as $bundle => $label) {
-      if ($fields = $this->formatter->loadByProperties([
+      if ($fields = $this->manager->loadByProperties([
         'entity_type' => $entity_type,
         'bundle' => $bundle,
       ], 'field_config', FALSE)) {
@@ -75,7 +75,7 @@ trait BlazyFormatterEntityTrait {
       $excludes['field_' . $exclude] = 'field_' . $exclude;
     }
 
-    $this->formatter->moduleHandler()->alter('blazy_excluded_field_options', $excludes);
+    $this->manager->moduleHandler()->alter('blazy_excluded_field_options', $excludes);
     return $excludes;
   }
 

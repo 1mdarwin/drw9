@@ -2,13 +2,13 @@
 
 namespace Drupal\blazy\Asset;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\Config\Config;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Media\Preloader;
-use Drupal\blazy\Theme\Lightbox;
 use Drupal\Core\Asset\LibrariesDirectoryFileFinder;
 use Drupal\Core\Asset\LibraryDiscoveryInterface;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Config\Config;
+use Drupal\blazy\Media\Preloader;
+use Drupal\blazy\Theme\Lightbox;
+use Drupal\blazy\internals\Internals;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**

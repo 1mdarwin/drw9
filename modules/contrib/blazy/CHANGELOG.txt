@@ -1,3 +1,11 @@
+Blazy 3.0.x-dev, 2024-10-24
+---------------------------
+- Issue #3477901 by bburg: With Magnific Popup, next/prev buttons trigger pop up
+
+Blazy 3.0.x-dev, 2024-10-21
+---------------------------
+- Removed unwanted By delta option outside Layout builder.
+
 Blazy 3.0.x-dev, 2024-09-22
 ---------------------------
 - Issue #3469022 by ahmad khader: Fix flybox malfunctions after being closed for

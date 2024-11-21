@@ -20,6 +20,7 @@
   var PREFIX_HEADING = 'heading_';
   var PREFIX_LINK = 'link_';
   var PREFIX_LINK_HOVER = 'link_hover_';
+  var TRANSPARENT = 'transparent';
 
   // See https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet/addRule
   // See https://developer.mozilla.org/en-US/docs/Web/API/CSSStyleSheet/insertRule
@@ -56,12 +57,11 @@
   function toRgba(color, alpha) {
     if (!$.isUnd(alpha)) {
       if (Math.abs(alpha) === 0) {
-        return 'transparent';
+        return TRANSPARENT;
       }
       else if (Math.abs(alpha) === 1) {
-        return color;
+        return color === '#000000' || color === '#000' ? TRANSPARENT : color;
       }
-
       return 'rgba(' + parseInt(color.slice(-6, -4), 16) + ',' + parseInt(color.slice(-4, -2), 16) + ',' + parseInt(color.slice(-2), 16) + ',' + alpha + ')';
     }
     return color;

@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\blazy\Kernel;
 
-use Drupal\blazy\Blazy;
 // @todo use Drupal\Core\Render\Element;
 use Drupal\Core\Form\FormState;
+use Drupal\blazy\Blazy;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
@@ -267,7 +267,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
    * @return array
    *   An array of tested data.
    */
-  public function providerTestBlazyMedia() {
+  public static function providerTestBlazyMedia() {
     return [
       ['', TRUE],
       ['https://xyz123.com/x/123', FALSE],

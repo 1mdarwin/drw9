@@ -2,12 +2,13 @@
 
 namespace Drupal\blazy_layout\Form;
 
-use Drupal\blazy\Form\BlazyAdminBase;
-use Drupal\blazy_layout\BlazyLayoutDefault as Defaults;
-use Drupal\blazy_layout\BlazyLayoutManagerInterface;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\blazy\Form\BlazyAdminBase;
+use Drupal\blazy\Plugin\Field\FieldFormatter\BlazyFormatterEntityTrait;
+use Drupal\blazy_layout\BlazyLayoutDefault as Defaults;
+use Drupal\blazy_layout\BlazyLayoutManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -16,6 +17,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterface {
 
   use StringTranslationTrait;
+  use BlazyFormatterEntityTrait;
 
   /**
    * The blazy layout manager service.
@@ -45,21 +47,29 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
   /**
    * {@inheritdoc}
    */
-  public function formBase(array &$form, array $settings, array $excludes = []): void {
+  public function formBase(array &$form, array $settings, array $options = []): void {
+    $excludes = $options['excludes'] ?? [];
     $elements = [];
     $attrs    = ['class' => ['is-tooltip']];
     $max      = (int) $this->manager->config('max_region_count');
-    $url      = Url::fromUri('internal:/admin/config/media/blazy')->toString();
+    $url      = '/admin/config/media/blazy';
+
+    $this->checkDefinition($settings, $options);
+
+    if ($this->manager->moduleExists('blazy_ui')) {
+      $url = Url::fromUri('internal:/admin/config/media/blazy')->toString();
+    }
 
     if ($max < 10) {
       $max = 20;
     }
 
+    $options = range(1, $max);
     $elements['count'] = [
-      '#type'        => 'number',
+      '#type'        => 'select',
       '#title'       => $this->t('Region count'),
-      '#min'         => 1,
-      '#description' => $this->t('The amount of regions (max @max), normally matches the amount of grids specific for Native Grid and Flexbox. Visit <a href=":url">Blazy UI</a> to change the allowed maximum region amount: @max. Regions beyond that will be hidden.<br><b>Warning!</b> Till we have a working AJAX, whenever changing this amount, after hitting the Update button, re-open this modal, and hit Update button again to update the regions.', [
+      '#options'     => array_combine($options, $options),
+      '#description' => $this->t('The amount of regions (max @max, excluding Background region), normally matches the amount of grids specific for Native Grid and Flexbox. Visit <a href=":url">Blazy UI > Max region count</a> to change the allowed maximum region amount: @max. Regions beyond that will be hidden.', [
         ':url' => $url,
         '@max' => $max,
       ]),
@@ -89,10 +99,14 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
   /**
    * {@inheritdoc}
    */
-  public function formStyles(array &$form, array $settings, array $excludes = []): void {
-    $attrs = ['class' => ['is-tooltip']];
+  public function formStyles(array &$form, array $settings, array $options = []): void {
+    $this->checkDefinition($settings, $options);
 
-    if ($region = $settings['rid'] ?? NULL) {
+    $excludes = $options['excludes'] ?? [];
+    $attrs    = ['class' => ['is-tooltip']];
+    $region   = $settings['rid'] ?? NULL;
+
+    if ($region) {
       $parents = ['layout_settings', 'regions', $region, 'settings', 'styles'];
     }
     else {
@@ -115,16 +129,17 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
     ];
 
     // Colors.
-    $form['styles']['colors'] = [
+    $form_id = 'colors';
+    $form['styles'][$form_id] = [
       '#type'        => 'details',
       '#tree'        => TRUE,
       '#open'        => TRUE,
       '#title'       => $this->t('Colors'),
-      '#parents'     => array_merge($parents, ['colors']),
-      '#description' => $this->t('Might conflict against CSS framework classes like Bootstrap, etc. Leave them to default (color #000000/ black, and opacity 1) values to respect framework. Useful if colors are not provided by frameworks. Background and Overlay options require Blazy Image/Media with Use CSS Background enabled to exist in the region. Text with <code>P</code> tag.'),
+      '#parents'     => array_merge($parents, [$form_id]),
+      '#description' => $this->t('If you input CSS framework cosmetic color classes (Bootstrap, etc.) under <b>Classes</b> option above, it might conflict or be overriden. Just choose one of them. Leave them to default (color #000000/ black, and opacity 1) values to use CSS framework. Useful if colors are not provided by frameworks. Overlay options require Blazy Image/Media block with <b>Use CSS Background</b> enabled, or <b>Styles &gt; Media</b>, to exist in the region. Text with <code>P</code> tag.'),
     ];
 
-    $colors = &$form['styles']['colors'];
+    $colors = &$form['styles'][$form_id];
 
     foreach (array_keys(Defaults::styleSettings()) as $key) {
       $type  = strpos($key, '_color') ? 'color' : 'range';
@@ -142,7 +157,7 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
         continue;
       }
 
-      $value = $settings['colors'][$key] ?? '';
+      $value = $settings[$form_id][$key] ?? '';
 
       if ($colors[$key]['#type'] == 'range') {
         $colors[$key]['#min'] = 0;
@@ -164,15 +179,16 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
     }
 
     // Layouts.
-    $form['styles']['layouts'] = [
+    $form_id = 'layouts';
+    $form['styles'][$form_id] = [
       '#type'    => 'details',
       '#tree'    => TRUE,
       '#open'    => TRUE,
       '#title'   => $this->t('Layouts'),
-      '#parents' => array_merge($parents, ['layouts']),
+      '#parents' => array_merge($parents, [$form_id]),
     ];
 
-    $layouts = &$form['styles']['layouts'];
+    $layouts = &$form['styles'][$form_id];
     foreach (Defaults::sublayoutSettings() as $key => $value) {
       $type  = is_bool($value) ? 'checkbox' : 'textfield';
       $title = str_replace('_', ' ', $key);
@@ -206,9 +222,112 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
       }
 
       $attrs['data-b-prop'] = str_replace('_', '', $key);
-      $layouts[$key]['#default_value'] = $settings['layouts'][$key] ?? '';
+      $layouts[$key]['#default_value'] = $settings[$form_id][$key] ?? '';
       $layouts[$key]['#attributes'] = $attrs;
     }
+
+    // Media.
+    $form_id = 'media';
+    $help = '/admin/help/blazy_layout';
+    $exists = $this->manager->moduleExists('media_library_form_element');
+
+    if ($this->manager->moduleExists('help')) {
+      $help = Url::fromUri('internal:/admin/help/blazy_layout')->toString();
+    }
+
+    $form['styles'][$form_id] = [
+      '#type'    => 'details',
+      '#tree'    => TRUE,
+      '#open'    => TRUE,
+      '#title'   => $this->t('Media'),
+      '#parents' => array_merge($parents, [$form_id]),
+    ];
+
+    $media = &$form['styles'][$form_id];
+    $description = $this->t('Read more how to use media as background <a href=":help">here</a>.', [
+      ':help' => $help,
+    ]);
+
+    if (!$exists) {
+      $description .= $this->t('Requires <a href=":url2">Media library form element</a> module.', [
+        ':url2' => 'https://www.drupal.org/project/media_library_form_element',
+      ]);
+    }
+
+    $media['#description'] = $description;
+
+    $this->baseImageForm($media, $this->definition);
+
+    // Remove irrelevant link to content as it is itself.
+    // @todo unset($media['media_switch']['#options']['content']);
+    foreach (Defaults::layoutMediaSettings() as $key => $value) {
+      $type = is_bool($value) ? 'checkbox' : 'select';
+      $title = str_replace('_', ' ', $key);
+      $value = $settings[$form_id][$key] ?? $value;
+      $description = '';
+      $weight = NULL;
+      $self = FALSE;
+
+      // @todo remove deprecated option after an update.
+      if ($key == 'use_player') {
+        continue;
+      }
+
+      // BC for use_player.
+      if ($key == 'media_switch' && !empty($settings[$form_id]['use_player'])) {
+        $value = 'media';
+      }
+
+      if ($key == 'id') {
+        $self = TRUE;
+        $title = 'background media';
+        $type = $exists ? 'media_library' : 'textfield';
+        $weight = -110;
+      }
+      elseif ($key == 'background') {
+        $weight = -108;
+      }
+      elseif ($key == 'link') {
+        $description = $this->t('<b>Supported types</b>: Link or plain Text containing URL. It will be used for <b>Media switcher &gt; Image linked by Link field</b> so that the image is wrapped by this Link value, only if its formatter/ output is plain text URL. This Link field should exist at the media bundles: image, video and remote_video, so to get unique link per region.');
+      }
+
+      if ($self) {
+        $media[$key]['#type'] = $type;
+        $media[$key]['#title'] = $this->t('@title', ['@title' => ucfirst($title)]);
+      }
+
+      if ($description) {
+        $media[$key]['#description'] = $description;
+      }
+
+      if ($type == 'select') {
+        $media[$key]['#empty_option'] = $this->t('- None -');
+      }
+
+      if ($weight) {
+        $media[$key]['#weight'] = $weight;
+      }
+
+      if ($key == 'id') {
+        $value = $settings[$form_id]['media_library_selection'] ?? $value;
+        if ($exists) {
+          // @todo add options to avoid hard-coded bundles.
+          $media[$key]['#allowed_bundles'] = ['image', 'video', 'remote_video'];
+          $media[$key]['#cardinality'] = 1;
+        }
+        else {
+          $media[$key]['#disabled'] = TRUE;
+        }
+      }
+
+      $attrs['data-b-prop'] = str_replace('_', '', $key);
+
+      $media[$key]['#default_value'] = $value;
+      $media[$key]['#attributes'] = $attrs;
+    }
+
+    // Add tabs for readability.
+    $this->tabify($form, 'styles', $region);
   }
 
   /**
@@ -216,9 +335,10 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
    *
    * @todo refine and merge with self::formWrappers().
    */
-  public function formSettings(array &$form, array $settings, array $excludes = []): void {
+  public function formSettings(array &$form, array $settings, array $options = []): void {
+    $excludes    = $options['excludes'] ?? [];
     $defaults    = Defaults::layoutSettings();
-    $admin_css   = $this->blazyManager->config('admin_css', 'blazy.settings');
+    $admin_css   = $this->manager->config('admin_css', 'blazy.settings');
     $attrs       = ['class' => ['is-tooltip']];
     $bottoms     = ['align_items', 'grid_auto_rows'];
     $elements    = $options = [];
@@ -242,15 +362,15 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
 
         case 'align_items':
           $options = Defaults::aligItems();
-          $description = $this->t('Flexbox and Native Grid only. Try <code>start</code> to have floating elements, but might break Blazy CSS background. The CSS align-items property sets the align-self value on all direct children as a group. In Flexbox, it controls the alignment of items on the Cross Axis. In Grid Layout, it controls the alignment of items on the Block Axis within their grid area. <a href="@url">Read more</a>', [
-            '@url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items',
+          $description = $this->t('Flexbox and Native Grid only. Try <code>start</code> to have floating elements, but might break Blazy CSS background. The CSS align-items property sets the align-self value on all direct children as a group. In Flexbox, it controls the alignment of items on the Cross Axis. In Grid Layout, it controls the alignment of items on the Block Axis within their grid area. <a href=":url">Read more</a>', [
+            ':url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/align-items',
           ]);
           break;
 
         case 'grid_auto_rows':
           $options = [];
-          $description = $this->t('Native Grid only. Accepted values: auto, min-content, max-content, minmax. Spefiic for minmax, it requires additional arguments, e.g.: minmax(80px, auto). Default to use the CSS rule <code>var(--bn-row-height-native)</code> or 80px. <a href="@url">Read more</a>', [
-            '@url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows',
+          $description = $this->t('Native Grid only. Accepted values: auto, min-content, max-content, minmax. Spefiic for minmax, it requires additional arguments, e.g.: minmax(80px, auto). Default to use the CSS rule <code>var(--bn-row-height-native)</code> or 80px. <a href=":url">Read more</a>', [
+            ':url' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows',
           ]);
           break;
 
@@ -303,15 +423,11 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
       // Stupid, but in case more stupidity gets in the way.
       if ($type == 'textfield') {
         $value = strip_tags($value);
-      }
-
-      $elements[$name]['#default_value'] = $settings[$name] ?? $value;
-
-      if ($type == 'textfield') {
         $elements[$name]['#size'] = 20;
         $elements[$name]['#maxlength'] = 255;
       }
 
+      $elements[$name]['#default_value'] = $settings[$name] ?? $value;
       if ($type !== 'hidden') {
         $elements[$name]['#attributes']['class'][] = 'is-tooltip';
 
@@ -341,9 +457,10 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
   public function formWrappers(
     array &$form,
     array $settings,
-    array $excludes = [],
+    array $options = [],
     $root = TRUE,
   ): void {
+    $excludes = $options['excludes'] ?? [];
     $attrs    = ['class' => ['is-tooltip']];
     $elements = [];
 
@@ -389,56 +506,33 @@ class BlazyLayoutAdmin extends BlazyAdminBase implements BlazyLayoutAdminInterfa
   }
 
   /**
-   * {@inheritdoc}
+   * Checks for definition.
    */
-  public function formBackground(
-    array &$form,
-    array $settings,
-    array $excludes = [],
-    $root = TRUE,
-  ): void {
-    $attrs    = ['class' => ['is-tooltip']];
-    $elements = [];
-
-    $elements['wrapper'] = [
-      '#type'     => 'select',
-      '#options'  => $root ? Defaults::mainWrapperOptions() : Defaults::regionWrapperOptions(),
-      '#required' => TRUE,
-      '#title'    => $this->t('Wrapper'),
+  protected function checkDefinition(array $settings, array $options): void {
+    $definition = [
+      'background' => TRUE,
+      'multimedia' => TRUE,
+      'responsive_image' => TRUE,
+      'no_box_caption_custom' => TRUE,
+      'no_loading' => TRUE,
+      'no_preload' => TRUE,
+      'namespace' => 'blazy',
     ];
 
-    $elements['attributes'] = [
-      '#type'        => 'textfield',
-      '#title'       => $this->t('Attributes'),
-      '#description' => $this->t('Use comma: role|main,data-key|value'),
-      '#access'      => FALSE,
-    ];
-
-    $elements['classes'] = [
-      '#type'        => 'textfield',
-      '#title'       => $this->t('Classes'),
-      '#description' => $this->t('Use space: bg-dark text-white'),
-    ];
-
-    $elements['row_classes'] = [
-      '#type'        => 'textfield',
-      '#title'       => $this->t('Row classes'),
-      '#description' => $this->t('Use space: align-items-stretch no-gutters'),
-      '#access'      => FALSE,
-    ];
-
-    foreach (array_keys($elements) as $key) {
-      if ($excludes && in_array($key, $excludes)) {
-        unset($elements[$key]);
-        continue;
-      }
-
-      $value = $settings[$key] ?? '';
-      $elements[$key]['#default_value'] = $value ? Xss::filter($value) : '';
-      $elements[$key]['#attributes'] = $attrs;
+    // @todo add option to choose either Media or Content type.
+    $media_bundles = [];
+    foreach (['image', 'video', 'remote_video'] as $key) {
+      $media_bundles = [$key => ['label' => ucfirst($key)]];
     }
 
-    $form += $elements;
+    $names = ['text', 'string', 'link'];
+    $links = $this->getFieldOptionsWithBundles($media_bundles, $names, 'media');
+
+    $definition['links'] = $links;
+
+    $settings['media_switch'] = '';
+    $definition['settings'] = $settings;
+    $this->toScopes($definition);
   }
 
   /**

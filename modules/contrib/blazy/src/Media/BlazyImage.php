@@ -2,10 +2,10 @@
 
 namespace Drupal\blazy\Media;
 
-use Drupal\blazy\BlazyDefault;
-use Drupal\blazy\internals\Internals;
-use Drupal\blazy\Utility\Sanitize;
 use Drupal\Core\Entity\ContentEntityInterface;
+use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Utility\Sanitize;
+use Drupal\blazy\internals\Internals;
 use Drupal\image\Plugin\Field\FieldType\ImageItem;
 use Drupal\media\MediaInterface;
 

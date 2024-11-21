@@ -2,9 +2,9 @@
 
 namespace Drupal\blazy\Plugin\Filter;
 
+use Drupal\Component\Utility\Crypt;
 use Drupal\blazy\Blazy;
 use Drupal\blazy\internals\Internals;
-use Drupal\Component\Utility\Crypt;
 
 /**
  * Provides filter attribute utilities.

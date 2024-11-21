@@ -200,4 +200,30 @@ class BlazyLayoutManager extends BlazyManager implements BlazyLayoutManagerInter
     ));
   }
 
+  /**
+   * {@inheritdoc}
+   */
+  public function getMediaLibraries(): array {
+    $libraries = [];
+    $admin_theme = $this->config('admin', 'system.theme');
+
+    // @todo remove once media_library is loaded at frontend modal.
+    if ($this->moduleExists('media_library')) {
+      $libraries[] = 'media_library/view';
+      $libraries[] = 'media_library/ui';
+      $libraries[] = 'media_library/widget';
+    }
+
+    if ($admin_theme == 'claro') {
+      $libraries[] = 'claro/media_library.theme';
+      $libraries[] = 'claro/media_library.ui';
+    }
+    elseif ($admin_theme == 'gin') {
+      $libraries[] = 'gin/media_library';
+    }
+
+    // Adminimal, Classy has no special media library theme, skip.
+    return $libraries;
+  }
+
 }
