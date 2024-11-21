@@ -2,11 +2,11 @@
 
 namespace Drupal\slick\Plugin\Filter;
 
-use Drupal\blazy\Plugin\Filter\BlazyFilterBase;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\blazy\Plugin\Filter\BlazyFilterBase;
 use Drupal\filter\FilterProcessResult;
 use Drupal\slick\SlickDefault;
 use Symfony\Component\DependencyInjection\ContainerInterface;

@@ -11,7 +11,7 @@ dependencies:
 # Also accounts for the failing PHP8.1+ with git clone or --prefer-source.
 # version: 3.x
 
-# Information added by Drupal.org packaging script on 2024-08-11
-version: '3.0.3'
+# Information added by Drupal.org packaging script on 2024-10-18
+version: '3.0.4'
 project: 'slick'
-datestamp: 1723362748
+datestamp: 1729250267

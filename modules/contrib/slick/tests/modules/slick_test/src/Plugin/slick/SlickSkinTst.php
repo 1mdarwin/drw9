@@ -12,7 +12,7 @@ use Drupal\slick\SlickSkinPluginBase;
  *   label = @Translation("Slick skin test")
  * )
  */
-class SlickSkinTest extends SlickSkinPluginBase {
+class SlickSkinTst extends SlickSkinPluginBase {
 
   /**
    * Sets the slick skins.

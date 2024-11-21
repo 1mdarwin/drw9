@@ -2,11 +2,11 @@
 
 namespace Drupal\slick\Form;
 
-use Drupal\blazy\Form\BlazyAdminInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Render\Element;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
+use Drupal\blazy\Form\BlazyAdminInterface;
 use Drupal\slick\SlickManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 

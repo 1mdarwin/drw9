@@ -2,8 +2,8 @@
 
 namespace Drupal\slick_ui\Controller;
 
-use Drupal\blazy\Controller\BlazyListBuilderBase;
 use Drupal\Core\Entity\EntityTypeInterface;
+use Drupal\blazy\Controller\BlazyListBuilderBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
