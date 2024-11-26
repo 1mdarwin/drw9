@@ -1,0 +1,79 @@
+id: iml_d7_commerce1_product_variation_product
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Content
+migration_group: DRW
+label: 'Commerce product variation (product)'
+source:
+  plugin: commerce1_product
+  product_variation_type: product
+process:
+  variation_id:
+    -
+      plugin: default_value
+      default_value: 1
+  revision_id:
+    -
+      plugin: get
+      source: revision_id
+  sku:
+    -
+      plugin: get
+      source: sku
+  title:
+    -
+      plugin: default_value
+      default_value: 'Impuestos Municipales'
+  type:
+    -
+      plugin: get
+      source: type
+  language:
+    -
+      plugin: get
+      source: language
+  uid:
+    -
+      plugin: get
+      source: uid
+  status:
+    -
+      plugin: get
+      source: status
+  created:
+    -
+      plugin: get
+      source: created
+  changed:
+    -
+      plugin: get
+      source: changed
+  data:
+    -
+      plugin: get
+      source: data
+  price:
+    -
+      plugin: commerce1_migrate_commerce_price
+      source: commerce_price
+  commerce_price:
+    -
+      plugin: commerce1_migrate_commerce_price
+      source: commerce_price
+  field_metatag:
+    -
+      plugin: d7_metatag_entities
+      source: pseudo_metatag_entities
+destination:
+  plugin: 'entity:commerce_product_variation'
+  destination_module: commerce_product
+  default_bundle: product
+migration_dependencies:
+  required:
+    - iml_d7_commerce1_product_variation_type
+  optional:
+    - upgrade_d7_field_instance

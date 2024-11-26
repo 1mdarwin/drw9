@@ -1,0 +1,32 @@
+id: iml_d7_commerce1_profile_type
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Configuration
+migration_group: DRW
+label: 'Profile types'
+source:
+  plugin: commerce1_profile_type
+process:
+  id:
+    -
+      plugin: get
+      source: type
+  name:
+    -
+      plugin: get
+      source: type
+  label:
+    -
+      plugin: callback
+      callable: ucfirst
+      source: type
+destination:
+  plugin: 'entity:profile_type'
+  destination_module: profile
+migration_dependencies:
+  required: {  }
+  optional: {  }

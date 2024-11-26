@@ -1,0 +1,36 @@
+# Migration metadata
+id: iml_users
+label: Migrate all users from old site D7
+migration_group: DRW
+
+source:
+  plugin: users
+
+destination:
+  plugin: entity:user
+
+process:
+  uid: uid
+  name: name
+  pass: pass
+  mail: mail
+  status: status
+  created: created
+  login: login
+  access: access
+  roles:
+    - plugin: skip_on_empty
+      method: process
+      source: user_roles
+    - plugin: explode
+      delimiter: ','
+    - plugin: callback
+      callable: trim
+    - plugin: static_map
+      map:
+        'forum admin': administrator
+        'webmaster': administrator
+      default_value: null
+migration_dependencies:
+  required: { }
+dependencies: {}

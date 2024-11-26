@@ -1,0 +1,55 @@
+id: iml_d7_story_paragraph
+class: Drupal\node\Plugin\migrate\D7NodeTranslation
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Content
+migration_group: DRW
+label: 'Migrate Stories to Paragraphs types - transform'
+source:
+  plugin: d7_node_complete
+  node_type: story
+process:
+  field_sub_title:
+    -
+      plugin: get
+      source: title
+  field_title:
+    -
+      plugin: get
+      source: title
+  field_body:
+    -
+      plugin: sub_process
+      source: body
+      process:
+        value: value
+        format:
+          plugin: default_value
+          default_value: "basic_html"
+  field_image:
+    -
+      plugin: sub_process
+      source: field_foto_story
+      # source: field_image
+      process:
+        target_id:
+          plugin: migration_lookup
+          migration: iml_d7_images_story
+          source: fid
+  # field_image:
+  #   -
+  #     plugin: default_value
+  #     default_value: 37
+destination:
+  plugin: 'entity_reference_revisions:paragraph'
+  default_bundle: story_item
+  # translations: true
+migration_dependencies:
+  # required:
+  #   - iml_d7_user
+  #   - iml_d7_file
+  #   - iml_d7_story_images
+
+

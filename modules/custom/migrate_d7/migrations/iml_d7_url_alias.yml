@@ -1,0 +1,72 @@
+id: iml_d7_url_alias
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Content
+migration_group: DRW
+label: 'URL aliases'
+source:
+  plugin: d7_url_alias
+  node_type: story
+  constants:
+    slash: /
+process:
+  id:
+    -
+      plugin: get
+      source: pid
+  _path:
+    -
+      plugin: concat
+      source:
+        - constants/slash
+        - source
+  alias:
+    -
+      plugin: concat
+      source:
+        - constants/slash
+        - alias
+  node_translation:
+    -
+      plugin: explode
+      source: source
+      delimiter: /
+    -
+      plugin: extract
+      default: INVALID_NID
+      index:
+        - 1
+    -
+      plugin: migration_lookup
+      migration:
+        # - upgrade_d7_node_complete_page
+        - iml_d7_node_complete_story
+        # - upgrade_d7_node_complete_ddblock_news_item
+        # - upgrade_d7_node_complete_galeria
+        # - upgrade_d7_node_complete_book
+        # - upgrade_d7_node_complete_documento
+        # - upgrade_d7_node_complete_webform
+        # - upgrade_d7_node_complete_banner
+        # - upgrade_d7_node_complete_anuncios
+        # - upgrade_d7_node_complete_impuesto
+    -
+      plugin: node_complete_node_translation_lookup
+  langcode:
+    -
+      plugin: null_coalesce
+      source:
+        - '@node_translation/1'
+        - language
+  path:
+    -
+      plugin: path_set_translated
+      source:
+        - '@_path'
+        - '@node_translation'
+destination:
+  plugin: 'entity:path_alias'
+migration_dependencies:
+  required: {  }

@@ -1,0 +1,46 @@
+id: iml_d7_commerce1_order_item_type
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Configuration
+migration_group: DRW
+label: 'Commerce order item type'
+source:
+  plugin: commerce1_order_item_type
+process:
+  id:
+    -
+      plugin: default_value
+      default_value: impuestos_ot
+    #   source: type
+    #   bypass: true
+    #   map:
+    #     shipping: false
+    # -
+    #   plugin: skip_on_empty
+    #   method: row
+  type:
+    -
+      plugin: default_value
+      default_value: impuestos_ot
+  label:
+    -
+      plugin: default_value
+      default_value: impuestos-ot
+  purchasableEntityType:
+    -
+      plugin: default_value
+      default_value: commerce_product_variation
+  orderType:
+    -
+      plugin: default_value
+      default_value: default
+destination:
+  plugin: 'entity:commerce_order_item_type'
+  destination_module: commerce_order
+migration_dependencies:
+  required: {  }
+  optional: {  }

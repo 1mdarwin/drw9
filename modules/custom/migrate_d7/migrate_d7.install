@@ -1,0 +1,17 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the migrate_d7 module.
+ */
+function migrate_d7_uninstall(){
+  $configs = [
+
+  ];
+  foreach($configs as $config){
+    $delete = \Drupal::database()->delete('config')
+      ->condition('name', $config)
+      ->execute();
+  }
+  drupal_flush_all_caches();
+}

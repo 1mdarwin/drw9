@@ -1,0 +1,130 @@
+id: iml_d7_commerce1_order_item_impuestoline
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Content
+migration_group: DRW
+label: 'Commerce order item (impuestoline)'
+source:
+  plugin: commerce1_line_item
+  line_item_type: impuestoline
+process:
+  order_item_id:
+    -
+      plugin: get
+      source: line_item_id
+  revision_id:
+    -
+      plugin: get
+      source: revision_id
+  type:
+    # -
+    #   plugin: static_map
+    #   source: type
+    #   bypass: true
+    #   map:
+    #     shipping: false
+    #     commerce_discount: false
+    # -
+    #   plugin: skip_on_empty
+    #   method: row
+    -
+      plugin: default_value
+      default_value: impuestos_ot
+  uid:
+    -
+      plugin: get
+      source: uid
+  status:
+    -
+      plugin: get
+      source: status
+  created:
+    -
+      plugin: get
+      source: created
+  changed:
+    -
+      plugin: get
+      source: changed
+  title:
+    -
+      plugin: default_value
+      default_value: 'PVImpuestos'
+      # plugin: get
+      # source: title
+  purchased_entity:
+    -
+      plugin: migration_lookup
+      migration: iml_d7_commerce1_product_variation_product
+      source: commerce_product
+  quantity:
+    -
+      plugin: get
+      source: quantity
+  adjustments:
+    -
+      plugin: commerce1_order_item_discount_adjustment
+      source: order_components/0/data/components
+    -
+      plugin: commerce_adjustments
+  uses_legacy_adjustments:
+    -
+      plugin: default_value
+      default_value: false
+  unit_price:
+    -
+      plugin: get
+      source: field_monto_li
+      # plugin: commerce1_migrate_commerce_price
+      # source: commerce_unit_price
+  total_price:
+    -
+      plugin: commerce1_migrate_commerce_price
+      source: commerce_total
+  commerce_product:
+    -
+      plugin: sub_process
+      source: commerce_product
+      process:
+        target_id: product_id
+  commerce_display_path:
+    -
+      plugin: get
+      source: commerce_display_path
+  field_rubro:
+    -
+      plugin: get
+      source: field_rubro_li
+  field_fecha:
+    -
+      plugin: sub_process
+      source: field_fecha_pa_li
+      process:
+        value:
+          plugin: format_date
+          from_format: 'Y-m-d H:i:s'
+          to_format: 'Y-m-d\TH:i:s'
+          source: value
+  # field_monto:
+  #   -
+  #     plugin: get
+  #     source: field_monto_li
+  field_servicio:
+    -
+      plugin: get
+      source: field_servicio_li
+  field_metatag:
+    -
+      plugin: d7_metatag_entities
+      source: pseudo_metatag_entities
+destination:
+  plugin: 'entity:commerce_order_item'
+  destination_module: commerce_order
+  default_bundle: impuestos_ot
+migration_dependencies:
+  required:
+    - iml_d7_commerce1_product_variation_product

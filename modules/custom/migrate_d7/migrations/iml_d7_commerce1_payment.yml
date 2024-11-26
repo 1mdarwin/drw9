@@ -1,0 +1,70 @@
+id: iml_d7_commerce1_payment
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Content
+migration_group: DRW
+label: 'Commerce payment'
+source:
+  plugin: commerce1_payment_transaction
+  constants:
+    type: payment_manual
+process:
+  payment_id:
+    -
+      plugin: get
+      source: transaction_id
+  payment_gateway:
+    -
+      plugin: migration_lookup
+      migration: iml_d7_commerce1_payment_gateway
+      source: payment_method
+    -
+      plugin: skip_on_empty
+      method: row
+  type:
+    -
+      plugin: get
+      source: constants/type
+  order_id:
+    -
+      plugin: migration_lookup
+      migration: iml_d7_commerce1_order
+      source: order_id
+    -
+      plugin: skip_on_empty
+      method: row
+  amount/number:
+    -
+      plugin: get
+      source: amount
+  amount/currency_code:
+    -
+      plugin: get
+      source: currency_code
+  refunded_amount/number:
+    -
+      plugin: get
+      source: refund_amount
+  refunded_amount/currency_code:
+    -
+      plugin: get
+      source: currency_code
+  state:
+    -
+      plugin: get
+      source: status
+  completed:
+    -
+      plugin: get
+      source: received
+destination:
+  plugin: 'entity:commerce_payment'
+  destination_module: commerce_payment
+migration_dependencies:
+  # required:
+  #   - iml_d7_commerce1_order
+  #   - iml_d7_commerce1_payment_gateway

@@ -1,0 +1,65 @@
+id: iml_d7_commerce1_profile_revision_billing
+class: Drupal\migrate\Plugin\Migration
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Content
+migration_group: DRW
+label: 'Commerce customer profile (billing)'
+source:
+  plugin: commerce1_profile_revision
+  profile_type: billing
+process:
+  profile_id:
+    -
+      plugin: get
+      source: profile_id
+  revision_id:
+    -
+      plugin: get
+      source: revision_id
+  type:
+    -
+      plugin: static_map
+      source: type
+      bypass: true
+      map:
+        billing: customer
+  uid:
+    -
+      plugin: get
+      source: uid
+  status:
+    -
+      plugin: get
+      source: status
+  created:
+    -
+      plugin: get
+      source: created
+  changed:
+    -
+      plugin: get
+      source: changed
+  data:
+    -
+      plugin: get
+      source: data
+  address:
+    -
+      plugin: addressfield
+      source: commerce_customer_address
+  field_metatag:
+    -
+      plugin: d7_metatag_entities
+      source: pseudo_metatag_entities
+destination:
+  plugin: 'entity:profile'
+  destination_module: profile
+  default_bundle: billing
+migration_dependencies:
+  required:
+    - iml_d7_commerce1_profile_billing
+  optional: {  }

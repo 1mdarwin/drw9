@@ -1,0 +1,8 @@
+name: 'migrate_d7'
+type: module
+description: 'Migrate content from D7 to D10'
+package: DRW
+core_version_requirement: ^10 || ^11
+dependencies:
+  - migrate_plus:migrate_plus
+  - migrate_tools:migrate_tools

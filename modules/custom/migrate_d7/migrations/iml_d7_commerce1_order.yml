@@ -1,0 +1,136 @@
+id: iml_d7_commerce1_order
+class: Drupal\commerce_migrate_commerce\Plugin\migrate\Order
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Commerce
+  - Content
+migration_group: DRW
+label: 'Commerce order'
+source:
+  plugin: commerce1_order
+process:
+  order_id:
+    -
+      plugin: get
+      source: order_id
+  order_number:
+    -
+      plugin: get
+      source: order_number
+  revision_id:
+    -
+      plugin: get
+      source: revision_id
+  type:
+    -
+      plugin: static_map
+      source: type
+      default_value: default
+      map:
+        commerce_order: default
+  uid:
+    -
+      plugin: get
+      source: uid
+  ip_address:
+    -
+      plugin: get
+      source: hostname
+  state:
+    -
+      plugin: static_map
+      source: status
+      map:
+        checkout_checkout: draft
+        checkout_review: draft
+        checkout_payment: draft
+        checkout_complete: draft
+        cart: draft
+        canceled: canceled
+        pending: completed
+        processing: completed
+        completed: completed
+  cart:
+    -
+      plugin: static_map
+      source: status
+      default_value: false
+      map:
+        cart: true
+  created:
+    -
+      plugin: get
+      source: created
+  changed:
+    -
+      plugin: get
+      source: changed
+  placed:
+    -
+      plugin: skip_on_value
+      method: process
+      source: '@state'
+      value:
+        - draft
+        - cancelled
+    -
+      plugin: get
+      source: created
+  completed:
+    -
+      plugin: skip_on_value
+      method: process
+      not_equals: true
+      source: '@state'
+      value: completed
+    -
+      plugin: get
+      source: changed
+  mail:
+    -
+      plugin: get
+      source: mail
+  data/refresh_state:
+    -
+      plugin: get
+      source: refresh_state
+  store_id:
+    -
+      plugin: default_value
+      source: default_store_id
+      default_value: 1
+  adjustments:
+    -
+      plugin: commerce1_order_adjustment_shipping
+      source: shipping_line_items
+    -
+      plugin: commerce_adjustments
+  order_items:
+    -
+      plugin: migration_lookup
+      migration: iml_d7_commerce1_order_item_impuestoline
+      source: commerce_line_items
+      no_stub: true
+    -
+      plugin: skip_on_empty
+      method: process
+  total_price:
+    -
+      plugin: commerce1_migrate_commerce_price
+      source: commerce_order_total
+  billing_profile:
+    -
+      plugin: commerce_migrate_commerce_reference_revision
+      migration: commerce1_profile
+      source: commerce_customer_billing
+      no_stub: true
+destination:
+  plugin: 'entity:commerce_order'
+  destination_module: commerce_order
+migration_dependencies:
+  # required:
+    # - iml_d7_commerce1_order_item_impuestoline
+    # - iml_d7_commerce1_profile_billing
+

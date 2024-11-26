@@ -1,0 +1,80 @@
+id: iml_d7_images_story
+class: Drupal\node\Plugin\migrate\D7NodeTranslation
+field_plugin_method: null
+cck_plugin_method: null
+migration_tags:
+  - 'Drupal 7'
+  - Content
+migration_group: DRW
+label: 'Migrate Images Stories to Media file'
+source:
+  plugin: d7_file
+  node_type: story
+  constants:
+    source_base_path: /backup/dist/lojaprod/
+    drupal_file_dest: 'public://articles/'
+process:
+  skip_on_value:
+    plugin: skip_on_value
+    source: filemime
+    method: row
+    not_equals: true
+    value:
+      - image/jpeg
+      - image/png
+      - image/gif
+      - image/jpg
+  name: filename
+  field_media_image/target_id:
+    plugin: migration_lookup
+    migration: iml_d7_file
+    source: fid
+  field_media_image/alt: filename
+  thumbnail/target_id:
+    plugin: migration_lookup
+    migration: iml_d7_file
+    source: fid
+  uid:
+    -
+      plugin: skip_on_empty
+      method: process
+      message: 'No user for this file.'
+    -
+      plugin: migration_lookup
+      migration: iml_d7_user
+      source: author
+      no_stub: true
+
+  # field_media_image:
+  #   -
+  #     plugin: sub_process
+  #     source: field_foto_story
+  #     process:
+  #       target_id: fid
+  #       alt: alt
+  #       title: title
+  #       width: width
+  #       height: height
+  # thumbnail:
+  #   -
+  #     plugin: sub_process
+  #     source: field_foto_story
+  #     process:
+  #       target_id: fid
+  #       alt: alt
+  #       title: title
+  #       width: width
+  #       height: height
+destination:
+  plugin: 'entity:media'
+  default_bundle: image
+
+  # translations: true
+migration_dependencies: {
+  # required:
+  #   - iml_d7_user
+  #   - iml_d7_file
+}
+
+
+
