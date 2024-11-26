@@ -4,9 +4,7 @@ namespace Drupal\simple_sitemap_engines\Submitter;
 
 use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Logger\LoggerChannelTrait;
 use Drupal\Core\State\StateInterface;
-use Drupal\Core\Utility\Error;
 use Drupal\simple_sitemap\Logger;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\TransferException;
@@ -15,8 +13,6 @@ use GuzzleHttp\Exception\TransferException;
  * Base class for submitter services.
  */
 abstract class SubmitterBase {
-
-  use LoggerChannelTrait;
 
   /**
    * The HTTP Client service.
@@ -107,8 +103,7 @@ abstract class SubmitterBase {
       return TRUE;
     }
     catch (TransferException $e) {
-      $logger = $this->getLogger('simple_sitemap_engines');
-      Error::logException($logger, $e);
+      $this->logger->logException($e);
       $this->onFailure();
       return FALSE;
     }

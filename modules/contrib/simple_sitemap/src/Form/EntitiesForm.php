@@ -11,7 +11,6 @@ use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Manager\EntityManager;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Settings;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides form to manage entity settings.
@@ -68,21 +67,6 @@ class EntitiesForm extends SimpleSitemapFormBase {
     );
     $this->entityHelper = $entity_helper;
     $this->entityManager = $entity_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('simple_sitemap.generator'),
-      $container->get('simple_sitemap.settings'),
-      $container->get('simple_sitemap.form_helper'),
-      $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.entity_manager')
-    );
   }
 
   /**

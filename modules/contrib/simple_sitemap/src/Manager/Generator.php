@@ -12,7 +12,7 @@ use Drupal\simple_sitemap\Settings;
 /**
  * Main managing service.
  *
- * Capable of setting/loading module settings, queuing elements and generating
+ * Capable of setting/loading module settings, queueing elements and generating
  * the sitemap. Services for custom link and entity link generation can be
  * fetched from this service as well.
  */
@@ -55,16 +55,16 @@ class Generator implements SitemapGetterInterface {
    *   The simple_sitemap.settings service.
    * @param \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker
    *   The simple_sitemap.queue_worker service.
-   * @param \Drupal\Core\Lock\LockBackendInterface|null $lock
+   * @param \Drupal\Core\Lock\LockBackendInterface $lock
    *   The lock backend that should be used.
-   * @param \Drupal\simple_sitemap\Logger|null $logger
+   * @param \Drupal\simple_sitemap\Logger $logger
    *   Simple XML Sitemap logger.
    */
   public function __construct(
     Settings $settings,
     QueueWorker $queue_worker,
-    LockBackendInterface $lock = NULL,
-    Logger $logger = NULL,
+    LockBackendInterface $lock,
+    Logger $logger,
   ) {
     $this->settings = $settings;
     $this->queueWorker = $queue_worker;
@@ -231,6 +231,7 @@ class Generator implements SitemapGetterInterface {
    */
   public function entityManager(): EntityManager {
     /** @var \Drupal\simple_sitemap\Manager\EntityManager $entity_manager */
+    // phpcs:ignore DrupalPractice.Objects.GlobalDrupal.GlobalDrupal
     $entity_manager = \Drupal::service('simple_sitemap.entity_manager');
 
     if ($this->sitemaps !== NULL) {
@@ -248,6 +249,7 @@ class Generator implements SitemapGetterInterface {
    */
   public function customLinkManager(): CustomLinkManager {
     /** @var \Drupal\simple_sitemap\Manager\CustomLinkManager $custom_link_manager */
+    // phpcs:ignore DrupalPractice.Objects.GlobalDrupal.GlobalDrupal
     $custom_link_manager = \Drupal::service('simple_sitemap.custom_link_manager');
 
     if ($this->sitemaps !== NULL) {

@@ -1,23 +1,21 @@
 <?php
 
-namespace Drupal\simple_sitemap\Commands;
+namespace Drupal\simple_sitemap\Drush\Commands;
 
 use Drupal\simple_sitemap\Entity\SimpleSitemap;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Queue\QueueWorker;
+use Drush\Attributes as CLI;
+use Drush\Commands\AutowireTrait;
 use Drush\Commands\DrushCommands;
+use Symfony\Component\Console\Exception\InvalidOptionException;
 
 /**
  * Provides Drush commands for managing sitemaps.
  */
-class SimpleSitemapCommands extends DrushCommands {
+final class SimpleSitemapCommands extends DrushCommands {
 
-  /**
-   * The simple_sitemap.generator service.
-   *
-   * @var \Drupal\simple_sitemap\Manager\Generator
-   */
-  protected $generator;
+  use AutowireTrait;
 
   /**
    * SimplesitemapCommands constructor.
@@ -25,24 +23,15 @@ class SimpleSitemapCommands extends DrushCommands {
    * @param \Drupal\simple_sitemap\Manager\Generator $generator
    *   The simple_sitemap.generator service.
    */
-  public function __construct(Generator $generator) {
-    $this->generator = $generator;
-
+  public function __construct(protected Generator $generator) {
     parent::__construct();
   }
 
   /**
    * Regenerate all sitemaps or continue generation.
-   *
-   * @command simple-sitemap:generate
-   *
-   * @usage drush simple-sitemap:generate
-   *   Regenerate all sitemaps or continue generation.
-   *
-   * @validate-module-enabled simple_sitemap
-   *
-   * @aliases ssg, simple-sitemap-generate
    */
+  #[CLI\Command(name: 'simple-sitemap:generate', aliases: ['ssg', 'simple-sitemap-generate'])]
+  #[CLI\Usage(name: 'drush simple-sitemap:generate', description: 'Regenerate all sitemaps or continue generation.')]
   public function generate(): void {
     $this->generator->generate(QueueWorker::GENERATE_TYPE_DRUSH);
   }
@@ -50,25 +39,12 @@ class SimpleSitemapCommands extends DrushCommands {
   /**
    * Queue all or specific sitemaps for regeneration.
    *
-   * @param array $options
-   *   The command options.
-   *
-   * @command simple-sitemap:rebuild-queue
-   *
-   * @option variants
-   *   Queue all or specific sitemaps for regeneration.
-   *
-   * @usage drush simple-sitemap:rebuild-queue
-   *   Rebuild the sitemap queue for all sitemaps.
-   * @usage drush simple-sitemap:rebuild-queue --variants=default,test
-   *   Rebuild the sitemap queue queuing only sitemaps 'default' and 'test'.
-   *
-   * @validate-module-enabled simple_sitemap
-   *
-   * @aliases ssr, simple-sitemap-rebuild-queue
-   *
    * @throws \Drupal\Component\Plugin\Exception\PluginException
    */
+  #[CLI\Command(name: 'simple-sitemap:rebuild-queue', aliases: ['ssr', 'simple-sitemap-rebuild-queue'])]
+  #[CLI\Option(name: 'variants', description: 'Queue all or specific sitemaps for regeneration.')]
+  #[CLI\Usage(name: 'drush simple-sitemap:rebuild-queue', description: 'Rebuild the sitemap queue for all sitemaps.')]
+  #[CLI\Usage(name: 'drush simple-sitemap:rebuild-queue --variants=default,test', description: "Rebuild the sitemap queue queueing only sitemaps <info>default</info> and <info>test</info>.")]
   public function rebuildQueue(array $options = ['variants' => '']): void {
     $variants = array_keys(SimpleSitemap::loadMultiple());
     if (isset($options['variants']) && (string) $options['variants'] !== '') {
@@ -79,8 +55,7 @@ class SimpleSitemapCommands extends DrushCommands {
             ? (' Available variants are: ' . implode(', ', $variants))
             : '')
           . '.';
-        $this->logger()->log('error', $message);
-        return;
+        throw new InvalidOptionException($message);
       }
       $variants = $chosen_variants;
     }
@@ -90,7 +65,7 @@ class SimpleSitemapCommands extends DrushCommands {
     $message = $variants
       ? 'The following sitemaps have been queued for regeneration: ' . implode(', ', $variants) . '.'
       : 'No sitemaps have been queued for regeneration.';
-    $this->logger()->log('notice', $message);
+    $this->logger()->notice($message);
   }
 
 }

@@ -26,11 +26,10 @@ function simple_sitemap_post_update_8403(&$sandbox) {
   }
 }
 
-
 /**
  * Clear cache as service definitions changed.
  *
  * @see https://www.drupal.org/project/simple_sitemap/issues/3444946
  */
-function simple_sitemap_post_update_8404(array &$sandbox = NULL): void {
+function simple_sitemap_post_update_8404(?array &$sandbox = NULL): void {
 }

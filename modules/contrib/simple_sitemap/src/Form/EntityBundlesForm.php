@@ -10,7 +10,6 @@ use Drupal\simple_sitemap\Entity\EntityHelper;
 use Drupal\simple_sitemap\Manager\EntityManager;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Settings;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
@@ -79,22 +78,6 @@ class EntityBundlesForm extends SimpleSitemapFormBase {
     $this->entityHelper = $entity_helper;
     $this->entityManager = $entity_manager;
     $this->entityTypeManager = $entity_type_manager;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('simple_sitemap.generator'),
-      $container->get('simple_sitemap.settings'),
-      $container->get('simple_sitemap.form_helper'),
-      $container->get('simple_sitemap.entity_helper'),
-      $container->get('simple_sitemap.entity_manager'),
-      $container->get('entity_type.manager')
-    );
   }
 
   /**

@@ -5,13 +5,12 @@ namespace Drupal\simple_sitemap\Form;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Database\Connection;
-use Drupal\Core\Datetime\DateFormatter;
+use Drupal\Core\Datetime\DateFormatterInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\simple_sitemap\Manager\Generator as SimplesitemapOld;
 use Drupal\simple_sitemap\Queue\QueueWorker;
 use Drupal\simple_sitemap\Settings;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides form to manage sitemap status.
@@ -28,7 +27,7 @@ class StatusForm extends SimpleSitemapFormBase {
   /**
    * The date formatter service.
    *
-   * @var \Drupal\Core\Datetime\DateFormatter
+   * @var \Drupal\Core\Datetime\DateFormatterInterface
    */
   protected $dateFormatter;
 
@@ -61,7 +60,7 @@ class StatusForm extends SimpleSitemapFormBase {
    *   Helper class for working with forms.
    * @param \Drupal\Core\Database\Connection $database
    *   The database connection.
-   * @param \Drupal\Core\Datetime\DateFormatter $date_formatter
+   * @param \Drupal\Core\Datetime\DateFormatterInterface $date_formatter
    *   The date formatter service.
    * @param \Drupal\simple_sitemap\Queue\QueueWorker $queue_worker
    *   The simple_sitemap.queue_worker service.
@@ -75,7 +74,7 @@ class StatusForm extends SimpleSitemapFormBase {
     Settings $settings,
     FormHelper $form_helper,
     Connection $database,
-    DateFormatter $date_formatter,
+    DateFormatterInterface $date_formatter,
     QueueWorker $queue_worker,
     RendererInterface $renderer,
   ) {
@@ -90,23 +89,6 @@ class StatusForm extends SimpleSitemapFormBase {
     $this->dateFormatter = $date_formatter;
     $this->queueWorker = $queue_worker;
     $this->renderer = $renderer;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('simple_sitemap.generator'),
-      $container->get('simple_sitemap.settings'),
-      $container->get('simple_sitemap.form_helper'),
-      $container->get('database'),
-      $container->get('date.formatter'),
-      $container->get('simple_sitemap.queue_worker'),
-      $container->get('renderer')
-    );
   }
 
   /**

@@ -2,18 +2,20 @@
 
 namespace Drupal\simple_sitemap\Form;
 
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Entity\EntityForm;
 use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
 use Drupal\simple_sitemap\Entity\SimpleSitemapType;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Form handler for sitemap edit forms.
  */
 class SimpleSitemapEntityForm extends EntityForm {
+
+  use AutowireTrait;
 
   /**
    * The entity being used by this form.
@@ -28,15 +30,6 @@ class SimpleSitemapEntityForm extends EntityForm {
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   protected $entityTypeManager;
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('entity_type.manager')
-    );
-  }
 
   /**
    * SimpleSitemapEntityForm constructor.

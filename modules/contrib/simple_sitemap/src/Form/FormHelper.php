@@ -140,7 +140,8 @@ class FormHelper {
    *   TRUE if a form can be altered, FALSE otherwise.
    */
   protected function formAlterAccess(): bool {
-    return $this->currentUser->hasPermission('administer sitemap settings');
+    return $this->currentUser->hasPermission('administer sitemap settings')
+      || $this->currentUser->hasPermission('edit entity sitemap settings');
   }
 
   /**
@@ -230,6 +231,7 @@ class FormHelper {
       '#type' => 'checkbox',
       '#title' => $this->t('Regenerate all sitemaps after hitting <em>Save</em>'),
       '#description' => $this->t('This setting will regenerate all sitemaps including the above changes.'),
+      '#access' => $this->currentUser->hasPermission('administer sitemap settings'),
       '#default_value' => FALSE,
       '#tree' => FALSE,
       '#weight' => 90,
@@ -403,7 +405,7 @@ class FormHelper {
    *   Cron intervals.
    */
   public static function getCronIntervalOptions(): array {
-    /** @var \Drupal\Core\Datetime\DateFormatter $formatter */
+    /** @var \Drupal\Core\Datetime\DateFormatterInterface $formatter */
     $formatter = \Drupal::service('date.formatter');
     $intervals = array_flip(static::$cronIntervals);
     foreach ($intervals as $interval => &$label) {

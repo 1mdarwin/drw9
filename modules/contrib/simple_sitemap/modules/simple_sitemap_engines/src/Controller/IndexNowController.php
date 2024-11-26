@@ -4,7 +4,6 @@ namespace Drupal\simple_sitemap_engines\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\simple_sitemap_engines\Submitter\IndexNowSubmitter;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -29,15 +28,6 @@ class IndexNowController extends ControllerBase {
    */
   public function __construct(IndexNowSubmitter $submitter) {
     $this->submitter = $submitter;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): IndexNowController {
-    return new static(
-      $container->get('simple_sitemap.engines.index_now_submitter')
-    );
   }
 
   /**
