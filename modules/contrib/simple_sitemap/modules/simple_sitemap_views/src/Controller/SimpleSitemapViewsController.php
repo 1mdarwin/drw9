@@ -5,7 +5,6 @@ namespace Drupal\simple_sitemap_views\Controller;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Url;
 use Drupal\simple_sitemap_views\SimpleSitemapViews;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Controller for Simple XML Sitemap Views admin page.
@@ -27,15 +26,6 @@ class SimpleSitemapViewsController extends ControllerBase {
    */
   public function __construct(SimpleSitemapViews $sitemap_views) {
     $this->sitemapViews = $sitemap_views;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container): SimpleSitemapViewsController {
-    return new static(
-      $container->get('simple_sitemap.views')
-    );
   }
 
   /**

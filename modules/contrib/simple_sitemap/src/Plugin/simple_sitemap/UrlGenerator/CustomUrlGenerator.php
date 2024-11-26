@@ -2,8 +2,6 @@
 
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
-use Drupal\Component\Utility\UrlHelper;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Path\PathValidatorInterface;
@@ -42,13 +40,6 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * @var \Drupal\Core\Path\PathValidatorInterface
    */
   protected $pathValidator;
-
-  /**
-   * Include images of custom links.
-   *
-   * @var bool
-   */
-  protected $includeImages;
 
   /**
    * CustomUrlGenerator constructor.
@@ -127,8 +118,6 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
    * {@inheritdoc}
    */
   public function getDataSets(): array {
-    $this->includeImages = $this->settings->get('custom_links_include_images', FALSE);
-
     $custom_link_settings = $this->customLinks->setSitemaps($this->sitemap)->get();
     $custom_link_settings = $custom_link_settings ? reset($custom_link_settings) : [];
 
@@ -150,38 +139,11 @@ class CustomUrlGenerator extends EntityUrlGeneratorBase {
       throw new SkipElementException();
     }
 
-    $url_object = Url::fromUserInput($data_set['path'])->setAbsolute();
+    $url = Url::fromUserInput($data_set['path']);
 
-    $entity = $this->entityHelper->getEntityFromUrlObject($url_object);
+    $data_set['include_images'] = $this->settings->get('custom_links_include_images', FALSE);
 
-    $path_data = [
-      'url' => $url_object,
-      'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
-      'priority' => $data_set['priority'] ?? NULL,
-      'changefreq' => !empty($data_set['changefreq']) ? $data_set['changefreq'] : NULL,
-      'images' => $this->includeImages && !empty($entity) && $entity instanceof ContentEntityInterface
-        ? $this->getEntityImageData($entity)
-        : [],
-      'meta' => [
-        'path' => $url_object->getInternalPath(),
-      ],
-    ];
-
-    if (($query = $url_object->getOption('query')) && is_array($query)) {
-      $path_data['meta']['query'] = UrlHelper::buildQuery($query);
-    }
-
-    // Additional info useful in hooks.
-    if (!empty($entity)) {
-      $path_data['meta']['entity_info'] = [
-        'entity_type' => $entity->getEntityTypeId(),
-        'id' => $entity->id(),
-      ];
-    }
-
-    return $path_data;
+    return $this->constructPathData($url, $data_set);
   }
 
 }

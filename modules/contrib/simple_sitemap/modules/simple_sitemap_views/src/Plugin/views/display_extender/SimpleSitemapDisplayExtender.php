@@ -299,7 +299,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
       $arg_counter = 0;
 
       foreach ($bits as $bit) {
-        if ($bit === '%' || strpos($bit, '%') === 0) {
+        if ($bit === '%' || str_starts_with($bit, '%')) {
           $arg_counter++;
         }
       }
@@ -323,7 +323,7 @@ class SimpleSitemapDisplayExtender extends DisplayExtenderPluginBase {
     $bits = explode('/', $this->displayHandler->getPath());
 
     foreach ($bits as $bit) {
-      if ($bit === '%' || strpos($bit, '%') === 0) {
+      if ($bit === '%' || str_starts_with($bit, '%')) {
         return TRUE;
       }
     }

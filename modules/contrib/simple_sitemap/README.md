@@ -15,9 +15,12 @@ Author and maintainer: Pawel Ginalski (gbyte)
  * Drupal: https://www.drupal.org/u/gbyte
  * Homepage: https://gbyte.dev/
 
-The module generates multilingual XML sitemaps which adhere to Google's new
-hreflang standard. Out of the box the sitemaps index most of Drupal's
-content entity types including:
+The module generates standard-compliant hreflang XML sitemaps to enhance your
+site's SEO, notifies search engines of website changes via IndexNow and sitemap
+ping protocols, and provides a framework for developing other sitemap types.
+
+The multilingual XML sitemaps adhere to Google's new hreflang standard. Out of
+the box the sitemaps index most of Drupal's content entity types including:
 
  * nodes
  * taxonomy terms
@@ -25,8 +28,8 @@ content entity types including:
  * users
  * ...
 
-Contributed entity types like commerce products can be indexed
-as well. On top of that custom links and view pages can be added to sitemaps.
+Contributed entity types like commerce products can be indexed as well. On top
+of that custom links and view pages can be added to sitemaps.
 
 To learn about XML sitemaps, see https://en.wikipedia.org/wiki/Sitemaps.
 
@@ -42,8 +45,8 @@ for instructions on how to install or update Drupal modules.
 
 ### PERMISSIONS ###
 
-The module permission 'administer sitemap settings' can be configured under
-admin/people/permissions.
+The module permissions can be configured under
+admin/people/permissions/module/simple_sitemap.
 
 ### SITEMAPS ###
 
@@ -160,7 +163,7 @@ Further things that can be tweaked are unchecking 'Exclude duplicate links' and
 increasing 'Maximum links in a sitemap'.
 
 These settings will increase the demand for PHP  execution time and memory, so
-please make sure to test the sitemap generation behaviour. See
+please make sure to test the sitemap generation behavior. See
 'PERFORMANCE TEST'.
 
 ### OTHER SETTINGS ###

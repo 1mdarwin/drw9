@@ -2,9 +2,9 @@
 
 namespace Drupal\Tests\simple_sitemap_views\Functional;
 
+use Drupal\Tests\simple_sitemap\Functional\SimplesitemapTestBase;
 use Drupal\simple_sitemap\Entity\SimpleSitemapType;
 use Drupal\simple_sitemap_views\SimpleSitemapViews;
-use Drupal\Tests\simple_sitemap\Functional\SimplesitemapTestBase;
 use Drupal\views\Views;
 
 /**

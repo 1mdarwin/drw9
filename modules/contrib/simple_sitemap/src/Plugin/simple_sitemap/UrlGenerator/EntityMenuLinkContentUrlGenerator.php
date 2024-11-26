@@ -3,7 +3,6 @@
 namespace Drupal\simple_sitemap\Plugin\simple_sitemap\UrlGenerator;
 
 use Drupal\Component\Plugin\Exception\PluginException;
-use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Menu\MenuLinkManagerInterface;
@@ -175,10 +174,10 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
       throw new SkipElementException();
     }
 
-    $url_object = $data_set->getUrlObject()->setAbsolute();
+    $url = $data_set->getUrlObject();
 
     // Do not include external paths.
-    if ($url_object->isExternal()) {
+    if ($url->isExternal()) {
       throw new SkipElementException();
     }
 
@@ -200,53 +199,10 @@ class EntityMenuLinkContentUrlGenerator extends EntityUrlGeneratorBase {
     if (empty($entity_settings[$this->sitemap->id()]['index'])) {
       throw new SkipElementException();
     }
-    $entity_settings = reset($entity_settings);
 
-    if ($url_object->isRouted()) {
+    $entity_settings = $entity_settings[$this->sitemap->id()];
 
-      // Do not include paths that have no URL.
-      if (in_array($url_object->getRouteName(), ['<nolink>', '<none>'])) {
-        throw new SkipElementException();
-      }
-
-      $path = $url_object->getInternalPath();
-    }
-    // There can be internal paths that are not rooted, like 'base:/path'.
-    elseif (strpos($uri = $url_object->toUriString(), 'base:/') === 0) {
-      // Handle base scheme.
-      $path = $uri[6] === '/' ? substr($uri, 7) : substr($uri, 6);
-    }
-    else {
-      // Handle unforeseen schemes.
-      $path = $uri;
-    }
-
-    $entity = $this->entityHelper->getEntityFromUrlObject($url_object);
-
-    $path_data = [
-      'url' => $url_object,
-      'lastmod' => !empty($entity) && method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
-      'priority' => $entity_settings['priority'] ?? NULL,
-      'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
-      'images' => !empty($entity_settings['include_images']) && !empty($entity) && $entity instanceof ContentEntityInterface
-        ? $this->getEntityImageData($entity)
-        : [],
-
-      // Additional info useful in hooks.
-      'meta' => [
-        'path' => $path,
-      ],
-    ];
-    if (!empty($entity)) {
-      $path_data['meta']['entity_info'] = [
-        'entity_type' => $entity->getEntityTypeId(),
-        'id' => $entity->id(),
-      ];
-    }
-
-    return $path_data;
+    return $this->constructPathData($url, $entity_settings);
   }
 
 }

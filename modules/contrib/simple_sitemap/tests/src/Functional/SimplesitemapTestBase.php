@@ -3,8 +3,8 @@
 namespace Drupal\Tests\simple_sitemap\Functional;
 
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\language\Entity\ConfigurableLanguage;
 use Drupal\Tests\BrowserTestBase;
+use Drupal\language\Entity\ConfigurableLanguage;
 
 /**
  * Provides the base class for web tests for Simple sitemap.

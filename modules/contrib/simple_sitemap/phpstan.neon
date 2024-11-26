@@ -9,8 +9,6 @@ parameters:
     ignoreErrors:
         # new static() is a best practice in Drupal, so we cannot fix that.
         - "#^Unsafe usage of new static#"
-        # The paragraphs module is not required.
-        - '#^Class Drupal\\paragraphs\\ParagraphInterface not found\.$#'
         # See https://www.drupal.org/project/simple_sitemap/issues/3344735
         - message: '#^Variable \$path on left side of \?\? always exists and is not nullable\.$#'
           paths:

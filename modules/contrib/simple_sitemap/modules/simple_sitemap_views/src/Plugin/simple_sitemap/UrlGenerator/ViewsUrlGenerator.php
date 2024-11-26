@@ -213,7 +213,6 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
         $this->cleanRouteParameters($url, $args);
       }
 
-      $path = $url->getInternalPath();
       // Destroy a view instance.
       $view->destroy();
     }
@@ -227,22 +226,16 @@ class ViewsUrlGenerator extends EntityUrlGeneratorBase {
       throw new SkipElementException($e->getMessage());
     }
 
-    return [
-      'url' => $url,
-      'lastmod' => NULL,
-      'priority' => $settings['priority'] ?? NULL,
-      'changefreq' => !empty($settings['changefreq']) ? $settings['changefreq'] : NULL,
-      'images' => [],
-      // Additional info useful in hooks.
-      'meta' => [
-        'path' => $path,
-        'view_info' => [
-          'view_id' => $view_id,
-          'display_id' => $display_id,
-          'arguments' => $args,
-        ],
-      ],
+    $path_data = $this->constructPathData($url, $settings);
+
+    // Additional info useful in hooks.
+    $path_data['meta']['view_info'] = [
+      'view_id' => $view_id,
+      'display_id' => $display_id,
+      'arguments' => $args,
     ];
+
+    return $path_data;
   }
 
   /**

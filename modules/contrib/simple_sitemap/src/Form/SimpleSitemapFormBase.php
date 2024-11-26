@@ -4,16 +4,18 @@ namespace Drupal\simple_sitemap\Form;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Form\ConfigFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Settings;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Base class for Simple XML Sitemap forms.
  */
 abstract class SimpleSitemapFormBase extends ConfigFormBase {
+
+  use AutowireTrait;
 
   /**
    * The sitemap generator service.
@@ -62,19 +64,6 @@ abstract class SimpleSitemapFormBase extends ConfigFormBase {
     $this->formHelper = $form_helper;
 
     parent::__construct($config_factory, $typedConfigManager);
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('simple_sitemap.generator'),
-      $container->get('simple_sitemap.settings'),
-      $container->get('simple_sitemap.form_helper')
-    );
   }
 
   /**

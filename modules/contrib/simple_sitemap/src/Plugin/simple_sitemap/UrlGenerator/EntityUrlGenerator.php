@@ -260,34 +260,14 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
       throw new SkipElementException();
     }
 
-    $entity_settings = $entity_settings[$this->sitemap->id()];
-    $url_object = $entity->toUrl()->setAbsolute();
+    $url = $entity->toUrl();
 
     // Do not include external paths.
-    if (!$url_object->isRouted()) {
+    if (!$url->isRouted()) {
       throw new SkipElementException();
     }
 
-    return [
-      'url' => $url_object,
-      'lastmod' => method_exists($entity, 'getChangedTime')
-        ? date('c', $entity->getChangedTime())
-        : NULL,
-      'priority' => $entity_settings['priority'] ?? NULL,
-      'changefreq' => !empty($entity_settings['changefreq']) ? $entity_settings['changefreq'] : NULL,
-      'images' => !empty($entity_settings['include_images'])
-        ? $this->getEntityImageData($entity)
-        : [],
-
-        // Additional info useful in hooks.
-      'meta' => [
-        'path' => $url_object->getInternalPath(),
-        'entity_info' => [
-          'entity_type' => $entity->getEntityTypeId(),
-          'id' => $entity->id(),
-        ],
-      ],
-    ];
+    return $this->constructPathData($url, $entity_settings[$this->sitemap->id()]);
   }
 
   /**
@@ -298,9 +278,9 @@ class EntityUrlGenerator extends EntityUrlGeneratorBase {
     $url_variant_sets = [];
     foreach ($path_data_sets as $path_data) {
       if (isset($path_data['url']) && $path_data['url'] instanceof Url) {
-        $url_object = $path_data['url'];
+        $url = $path_data['url'];
         unset($path_data['url']);
-        $url_variant_sets[] = $this->getUrlVariants($path_data, $url_object);
+        $url_variant_sets[] = $this->getUrlVariants($path_data, $url);
       }
     }
 

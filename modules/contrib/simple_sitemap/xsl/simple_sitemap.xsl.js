@@ -1,6 +1,6 @@
 /**
  * @file
- * Alters jquery.tablesorter behaviour.
+ * Alters jquery.tablesorter behavior.
  */
 
 (($) => {

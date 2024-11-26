@@ -8,7 +8,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Path\PathValidatorInterface;
 use Drupal\simple_sitemap\Manager\Generator;
 use Drupal\simple_sitemap\Settings;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Provides form to manage custom links.
@@ -54,20 +53,6 @@ class CustomLinksForm extends SimpleSitemapFormBase {
       $form_helper
     );
     $this->pathValidator = $path_validator;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('config.factory'),
-      $container->get('config.typed'),
-      $container->get('simple_sitemap.generator'),
-      $container->get('simple_sitemap.settings'),
-      $container->get('simple_sitemap.form_helper'),
-      $container->get('path.validator')
-    );
   }
 
   /**
@@ -133,7 +118,7 @@ class CustomLinksForm extends SimpleSitemapFormBase {
         if (!$this->pathValidator->getUrlIfValidWithoutAccessCheck($link_config['path'])
           // Path validator does not see a double slash as an error. Catching
           // this to prevent breaking path generation.
-          || strpos($link_config['path'], '//') !== FALSE) {
+          || str_contains($link_config['path'], '//')) {
           $form_state->setError($form['variants'][$variant]['custom_links'], $this->t('<strong>@sitemap, line @line</strong>: The path <em>@path</em> does not exist.', $placeholders));
         }
 
