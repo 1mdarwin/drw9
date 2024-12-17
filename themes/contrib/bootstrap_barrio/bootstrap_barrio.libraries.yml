@@ -181,6 +181,11 @@ sidebar_collapse:
     component:
       css/components/sidebar-collapse.css: {}
 
+tabledrag:
+  version: VERSION
+  js:
+    js/tabledrag.js: {}
+
 tabs:
   version: VERSION
   css:

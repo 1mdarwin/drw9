@@ -28,7 +28,7 @@
 
     {% block content %}
       {% if not clean %}
-        <div{{ region_attributes.addClass(classes) }}>
+        <div{{ region_attributes.addClass(classes).removeClass('full-width') }}>
       {% endif %}
           {{ content }}
       {% if not clean %}

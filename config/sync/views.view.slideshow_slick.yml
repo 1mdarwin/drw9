@@ -387,7 +387,6 @@ display:
             field_image: '0'
           optionset: default
           class: ''
-          id: ''
           image: field_image
           link: ''
           overlay: ''
@@ -395,11 +394,12 @@ display:
           vanilla: false
           layout: ''
           cache: 0
-          skin: grid
-          style: ''
           grid: '1'
           grid_medium: '1'
           grid_small: '1'
+          style: ''
+          id: ''
+          skin: grid
           overridables:
             arrows: arrows
             autoplay: autoplay

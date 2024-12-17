@@ -2,7 +2,7 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 
 # The human readable name.
-name: Container
+name: Title
 
 # Status can be: "experimental", "stable", "deprecated", "obsolete".
 status: stable
@@ -16,29 +16,27 @@ props:
       type: Drupal\Core\Template\Attribute
       title: Attributes
       description: Wrapper attributes.
+    label:
+      type: string
     html_tag:
       type: string
-      title: HTML Tag
-      default: section
-    background_image:
-      type: string
-      title: Background Image
-    background_color:
-      type: string
-      title: Background Color
-    full_width:
-      type: boolean
-      title: Full Width
-    container:
-      type: boolean
-      title: Container
+      title: HTML tag for title
+      # Limit the available options by using enums.
+      enum:
+        - h1
+        - h2
+        - h3
+        - h4
+        - h5
+        - h6
+        - span
+      # Provide a default value
+      default: h2
 
-# Slots always hold arbitrary markup. We know that beforehand, so no need for
-# a schema for slots.
 slots:
-  # The key is the name of the slot. In your template you will use
-  # {% block content %}.
-  content:
-    title: Content
-    required: true
-    description: The content
+  title_prefix:
+    type: object
+    title: Title prefix
+  title_suffix:
+    type: object
+    title: Title suffix

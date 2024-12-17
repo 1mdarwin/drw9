@@ -16,6 +16,8 @@ libraries-extend:
     - bootstrap_barrio/drupal.node.preview
   core/drupal.message:
     - bootstrap_barrio/messages
+  core/drupal.tabledrag:
+    - bootstrap_barrio/tabledrag
 
 ckeditor_stylesheets:
   - css/components/table.css
@@ -46,12 +48,7 @@ regions:
   footer_fifth: 'Footer fifth'
   none: None
 
-# Information added by Drupal.org packaging script on 2023-12-03
-# version: '5.5.16'
-# project: 'bootstrap_barrio'
-# datestamp: 1701646129
-
-# Information added by Drupal.org packaging script on 2024-09-09
-version: '5.5.17'
+# Information added by Drupal.org packaging script on 2024-12-06
+version: '5.5.19'
 project: 'bootstrap_barrio'
-datestamp: 1725856217
+datestamp: 1733499141

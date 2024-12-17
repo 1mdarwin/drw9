@@ -2,43 +2,36 @@
 $schema: https://git.drupalcode.org/project/drupal/-/raw/HEAD/core/assets/schemas/v1/metadata.schema.json
 
 # The human readable name.
-name: Container
+name: Branding
 
 # Status can be: "experimental", "stable", "deprecated", "obsolete".
 status: stable
 
+# Use this key to organize components together.
+group: Navigation
+
 # Schema for the props. We support www.json-schema.org. Learn more about the
 # syntax there.
 props:
+  # Props are always an object with keys. Each key is a variable in your
+  # component template.
   type: object
+
   properties:
     attributes:
       type: Drupal\Core\Template\Attribute
       title: Attributes
       description: Wrapper attributes.
-    html_tag:
+    site_logo:
       type: string
-      title: HTML Tag
-      default: section
-    background_image:
+      format: iri-reference
+    url:
       type: string
-      title: Background Image
-    background_color:
+      title: Branding url
+      format: iri-reference
+    site_name:
       type: string
-      title: Background Color
-    full_width:
-      type: boolean
-      title: Full Width
-    container:
-      type: boolean
-      title: Container
-
-# Slots always hold arbitrary markup. We know that beforehand, so no need for
-# a schema for slots.
-slots:
-  # The key is the name of the slot. In your template you will use
-  # {% block content %}.
-  content:
-    title: Content
-    required: true
-    description: The content
+      title: Site name
+    site_slogan:
+      type: string
+      title: Site slogan
