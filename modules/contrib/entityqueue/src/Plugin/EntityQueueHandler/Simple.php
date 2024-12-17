@@ -5,6 +5,7 @@ namespace Drupal\entityqueue\Plugin\EntityQueueHandler;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
+use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RedirectDestinationTrait;
 use Drupal\entityqueue\Entity\EntitySubqueue;
@@ -40,6 +41,13 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
   protected $moduleHandler;
 
   /**
+   * The language manager.
+   *
+   * @var \Drupal\Core\Language\LanguageManagerInterface
+   */
+  protected $languageManager;
+
+  /**
    * Constructs a Simple queue handler object.
    *
    * @param array $configuration
@@ -52,12 +60,15 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
    *   The entity repository.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
+   *   The language manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityRepositoryInterface $entity_repository, ModuleHandlerInterface $module_handler) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityRepositoryInterface $entity_repository, ModuleHandlerInterface $module_handler, LanguageManagerInterface $language_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
     $this->entityRepository = $entity_repository;
     $this->moduleHandler = $module_handler;
+    $this->languageManager = $language_manager;
   }
 
   /**
@@ -69,7 +80,8 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
       $plugin_id,
       $plugin_definition,
       $container->get('entity.repository'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('language_manager')
     );
   }
 
@@ -91,14 +103,17 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
    * {@inheritdoc}
    */
   public function getQueueListBuilderOperations() {
-    // Simple queues have just one subqueue so we can link directly to the edit
+    // Simple queues have just one subqueue, so we can link directly to the edit
     // form.
     $subqueue = EntitySubqueue::load($this->queue->id());
     $subqueue = $this->entityRepository->getTranslationFromContext($subqueue);
     $operations['edit_subqueue'] = [
       'title' => $this->t('Edit items'),
       'weight' => -9,
-      'url' => $subqueue->toUrl('edit-form')->mergeOptions(['query' => $this->getRedirectDestination()->getAsArray()]),
+      'url' => $subqueue->toUrl('edit-form', [
+        'language' => $this->languageManager->getCurrentLanguage(),
+        'query' => $this->getRedirectDestination()->getAsArray()
+      ]),
     ];
 
     // Add a 'Translate' operation if translation is enabled for this queue.

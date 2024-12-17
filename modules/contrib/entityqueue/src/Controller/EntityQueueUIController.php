@@ -2,20 +2,20 @@
 
 namespace Drupal\entityqueue\Controller;
 
+use Drupal\Core\Access\AccessResult;
 use Drupal\Core\Ajax\AjaxHelperTrait;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\ReplaceCommand;
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatch;
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\Core\Url;
 use Drupal\entityqueue\EntityQueueInterface;
+use Drupal\entityqueue\EntityQueueRepositoryInterface;
+use Drupal\entityqueue\EntitySubqueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Drupal\Core\Ajax\AjaxResponse;
-use Drupal\Core\Ajax\ReplaceCommand;
-use Drupal\entityqueue\EntitySubqueueInterface;
-use Drupal\Core\Url;
-use Drupal\Core\Routing\RouteMatchInterface;
-use Drupal\Core\Access\AccessResult;
-use Drupal\entityqueue\EntityQueueRepositoryInterface;
 
 /**
  * Returns responses for Entityqueue UI routes.
@@ -27,18 +27,12 @@ class EntityQueueUIController extends ControllerBase {
   /**
    * The Entityqueue repository service.
    *
-   * @var EntityQueueRepositoryInterface
+   * @var \Drupal\entityqueue\EntityQueueRepositoryInterface
    */
   protected $entityQueueRepository;
 
-  /**
-   * Constructs a EntityQueueUIController object
-   *
-   * @param EntityQueueRepositoryInterface $entityqueue_respository
-   *   The Entityqueue repository service.
-   */
-  public function __construct(EntityQueueRepositoryInterface $entityqueue_respository) {
-    $this->entityQueueRepository = $entityqueue_respository;
+  public function __construct(EntityQueueRepositoryInterface $entityqueue_repository) {
+    $this->entityQueueRepository = $entityqueue_repository;
   }
 
   /**
@@ -49,7 +43,6 @@ class EntityQueueUIController extends ControllerBase {
       $container->get('entityqueue.repository')
     );
   }
-
 
   /**
    * Provides a list of all the subqueues of an entity queue.
@@ -151,14 +144,16 @@ class EntityQueueUIController extends ControllerBase {
         ];
       }
 
-      $build['table']['#rows'][$subqueue->id()] = $row;
+      if (!empty($row['operations']['data']['#links'])) {
+        $build['table']['#rows'][$subqueue->id()] = $row;
+      }
     }
 
     return $build;
   }
 
   /**
-   * Returns a form to add a new subqeue.
+   * Returns a form to add a new subqueue.
    *
    * @param \Drupal\entityqueue\EntityQueueInterface $entity_queue
    *   The queue this subqueue will be added to.

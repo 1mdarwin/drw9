@@ -5,7 +5,7 @@ package: Entityqueue
 core_version_requirement: ^9 || ^10 || ^11
 configure: entity.entity_queue.collection
 
-# Information added by Drupal.org packaging script on 2024-05-31
-version: '8.x-1.8'
+# Information added by Drupal.org packaging script on 2024-12-05
+version: '8.x-1.9'
 project: 'entityqueue'
-datestamp: 1717148268
+datestamp: 1733392708

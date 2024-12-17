@@ -54,7 +54,7 @@ class RemoveItemFromSubqueue extends ConfigurableActionBase {
   public function access($entity, AccountInterface $account = NULL, $return_as_object = FALSE) {
     /** @var \Drupal\entityqueue\EntitySubqueueInterface $subqueue */
     $subqueue = EntitySubqueue::load($this->configuration['subqueue']);
-    $access = $subqueue->access('update');
+    $access = $subqueue->access('update', $account, TRUE);
     return $return_as_object ? $access : $access->isAllowed();
   }
 
