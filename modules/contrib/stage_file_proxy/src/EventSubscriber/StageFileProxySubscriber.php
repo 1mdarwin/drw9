@@ -4,6 +4,7 @@ namespace Drupal\stage_file_proxy\EventSubscriber;
 
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\PageCache\ResponsePolicy\KillSwitch;
 use Drupal\Core\Routing\TrustedRedirectResponse;
 use Drupal\Core\StreamWrapper\StreamWrapperManager;
 use Drupal\Core\Url;
@@ -36,6 +37,8 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
    *   The config factory.
    * @param \Symfony\Component\HttpFoundation\RequestStack $requestStack
    *   The request stack.
+   * @param \Drupal\Core\PageCache\ResponsePolicy\KillSwitch $pageCacheKillSwitch
+   *   The page cache kill switch.
    */
   public function __construct(
     protected DownloadManagerInterface $manager,
@@ -43,6 +46,7 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
     protected EventDispatcherInterface $eventDispatcher,
     protected ConfigFactoryInterface $configFactory,
     protected RequestStack $requestStack,
+    protected KillSwitch $pageCacheKillSwitch,
   ) {
   }
 
@@ -162,6 +166,7 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
       ];
 
       if ($config->get('hotlink')) {
+        $relative_path = UrlHelper::encodePath($relative_path);
         $location = Url::fromUri("$server/$remote_file_dir/$relative_path", [
           'query' => $query_parameters,
           'absolute' => TRUE,
@@ -176,6 +181,10 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
           'query' => $query_parameters,
           'absolute' => TRUE,
         ])->toString();
+
+        // Ensure the redirect isn't cached by page_cache module.
+        $this->pageCacheKillSwitch->trigger();
+
         // Use default cache control: must-revalidate, no-cache, private.
         $event->setResponse(new RedirectResponse($location));
       }

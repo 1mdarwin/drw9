@@ -15,6 +15,7 @@ use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Download manager.
@@ -32,6 +33,7 @@ final class DownloadManager implements DownloadManagerInterface {
     protected LoggerInterface $logger,
     protected ConfigFactoryInterface $configFactory,
     protected LockBackendInterface $lock,
+    protected RequestStack $requestStack,
   ) {
   }
 
@@ -138,7 +140,9 @@ final class DownloadManager implements DownloadManagerInterface {
    * {@inheritdoc}
    */
   public function filePublicPath(): string {
-    return PublicStream::basePath();
+    $filesDir = PublicStream::baseUrl();
+    $host = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost();
+    return str_replace($host . '/', '', $filesDir);
   }
 
   /**

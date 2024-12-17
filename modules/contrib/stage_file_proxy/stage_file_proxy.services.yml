@@ -8,12 +8,14 @@ services:
     arguments:
       $logger: '@logger.channel.stage_file_proxy'
       $lock: '@lock'
+      $requestStack: '@request_stack'
   Drupal\stage_file_proxy\DownloadManagerInterface: '@stage_file_proxy.download_manager'
 
   Drupal\stage_file_proxy\EventSubscriber\ImageDownloadControllerSubscriber: ~
   Drupal\stage_file_proxy\EventSubscriber\StageFileProxySubscriber:
     arguments:
       $logger: '@logger.channel.stage_file_proxy'
+      $pageCacheKillSwitch: '@page_cache_kill_switch'
 
   logger.channel.stage_file_proxy:
     parent: logger.channel_base
