@@ -13,6 +13,7 @@ use Drupal\Core\Session\AccountInterface;
 use Drupal\views\ViewExecutable;
 use Drupal\entityqueue\Entity\EntityQueue;
 use Drupal\entityqueue\Entity\EntitySubqueue;
+use Drupal\views\Plugin\views\query\QueryPluginBase;
 
 /**
  * Implements hook_entity_field_access().
@@ -32,7 +33,7 @@ function entityqueue_entity_field_access($operation, FieldDefinitionInterface $f
 /**
  * Implements hook_views_pre_render().
  *
- * Add contexual links to views before rendering.
+ * Add contextual links to views before rendering.
  */
 function entityqueue_views_pre_render(ViewExecutable $view) {
   // Do not add contextual link on view preview.
@@ -89,7 +90,7 @@ function entityqueue_views_pre_render(ViewExecutable $view) {
 /**
  * Implements hook_contextual_links_view_alter().
  *
- * Change Entityqueue on views into offcanvas links if available.
+ * Change Entityqueue on views into off-canvas links if available.
  */
 function entityqueue_contextual_links_view_alter(&$element, $items) {
   if (\Drupal::moduleHandler()->moduleExists('settings_tray') && isset($element['#links']['entityentity-subqueueedit-form'])) {
@@ -125,5 +126,41 @@ function entityqueue_entity_delete(EntityInterface $entity) {
         $subqueue->removeItem($entity)->save();
       }
     }
+  }
+}
+
+/**
+ * Implements hook_views_query_alter().
+ */
+function entityqueue_views_query_alter(ViewExecutable $view, QueryPluginBase $query) {
+  if (!\Drupal::moduleHandler()->moduleExists('workspaces')) {
+    return;
+  }
+
+  $joins = $view->getHandlers('relationship');
+  $join_ids = \array_keys($joins);
+  if (\in_array('entityqueue_relationship', $join_ids, TRUE)) {
+    $entity_type_id = 'entity_subqueue';
+    $entity_type = \Drupal::entityTypeManager()->getDefinition($entity_type_id);
+    $keys = $entity_type->getKeys();
+
+    $revision_table = 'entity_subqueue_revision';
+    /** @var $subquery \Drupal\Core\Database\Query\SelectInterface */
+    $subquery = $query->getConnection()->select($revision_table);
+    $subquery->addExpression("MAX($revision_table.{$keys['revision']})", $keys['revision']);
+    if (\Drupal::service('workspaces.manager')->hasActiveWorkspace()) {
+      $subquery->condition('workspace', \Drupal::service('workspaces.manager')->getActiveWorkspace()->id());
+    }
+    else {
+      $subquery->condition('revision_default', 1);
+    }
+
+    // The table joined in the relationship handler changes based on whether
+    // a workspaces is active or not, so use the corresponding table here too.
+    $query_table_aliases = \array_keys($query->getTableQueue());
+    $query_base_table = $query_table_aliases[1];
+    $group_id = $query->setWhereGroup('OR');
+    $query->addWhere($group_id, "$query_base_table.{$keys['revision']}", $subquery, 'IN');
+    $query->addWhere($group_id, "$query_base_table.{$keys['revision']}", NULL, "IS NULL");
   }
 }

@@ -33,7 +33,7 @@ entityqueue.entity_queue.*:
       mapping:
         min_size:
           type: integer
-          label: 'Minimun queue size'
+          label: 'Minimum queue size'
         max_size:
           type: integer
           label: 'Maximum queue size'

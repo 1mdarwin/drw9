@@ -33,7 +33,7 @@ function entityqueue_views_data_alter(array &$data) {
     }
   }
 
-  foreach ($entity_types as $entity_type_id => $entity_type) {
+  foreach ($entity_types as $entity_type) {
     $field_name = 'items';
     $field_storage = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('entity_subqueue')[$field_name];
     $target_base_table = $entity_type->getDataTable() ?: $entity_type->getBaseTable();

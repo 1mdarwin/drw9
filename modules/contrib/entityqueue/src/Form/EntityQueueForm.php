@@ -4,6 +4,7 @@ namespace Drupal\entityqueue\Form;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\NestedArray;
 use Drupal\Core\Entity\BundleEntityFormBase;
 use Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -11,6 +12,7 @@ use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Field\Plugin\Field\FieldType\EntityReferenceItem;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\SubformState;
+use Drupal\Core\Render\Element;
 use Drupal\entityqueue\EntityQueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -138,7 +140,7 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#name' => 'handler_change',
       '#value' => $this->t('Change type'),
       '#limit_validation_errors' => [],
-      '#submit' => [[get_called_class(), 'settingsAjaxSubmit']],
+      '#submit' => [[static::class, 'settingsAjaxSubmit']],
       '#attributes' => ['class' => ['js-hide']],
       '#ajax' => [
         'callback' => '::settingsAjax',
@@ -177,7 +179,7 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#type' => 'container',
       '#attributes' => ['class' => ['form--inline', 'clearfix']],
       '#process' => [
-        [EntityReferenceItem::class, 'formProcessMergeParent'],
+        [static::class, 'formProcessMergeParent'],
       ],
     ];
     $form['queue_settings']['size']['min_size'] = [
@@ -242,8 +244,8 @@ class EntityQueueForm extends BundleEntityFormBase {
     $form['entity_settings']['settings'] = [
       '#type' => 'container',
       '#process' => [
-        [EntityReferenceItem::class, 'fieldSettingsAjaxProcess'],
-        [EntityReferenceItem::class, 'formProcessMergeParent'],
+        [static::class, 'fieldSettingsAjaxProcess'],
+        [static::class, 'formProcessMergeParent'],
       ],
       '#element_validate' => [[get_class($this), 'entityReferenceSelectionSettingsValidate']],
     ];
@@ -331,6 +333,60 @@ class EntityQueueForm extends BundleEntityFormBase {
       $form_state->set('handler_plugin', $handler_plugin);
     }
     return $handler_plugin;
+  }
+
+  /**
+   * Render API callback: Processes the field settings form.
+   *
+   * @see static::fieldSettingsForm()
+   */
+  public static function fieldSettingsAjaxProcess($form, FormStateInterface $form_state) {
+    static::fieldSettingsAjaxProcessElement($form, $form);
+    return $form;
+  }
+
+  /**
+   * Adds the field settings to AJAX form elements.
+   *
+   * @see static::fieldSettingsAjaxProcess()
+   */
+  public static function fieldSettingsAjaxProcessElement(&$element, $main_form) {
+    // Elements are marked as TRUE ('#ajax' => TRUE,), so not empty.
+    if (!empty($element['#ajax'])) {
+      $element['#ajax'] = [
+        'callback' => [static::class, 'fieldSettingsAjax'],
+        'wrapper' => $main_form['#id'],
+        'element' => $main_form['#array_parents'],
+      ];
+    }
+
+    foreach (Element::children($element) as $key) {
+      static::fieldSettingsAjaxProcessElement($element[$key], $main_form);
+    }
+  }
+
+  /**
+   * Ajax callback for the handler settings form.
+   *
+   * @see static::fieldSettingsForm()
+   */
+  public static function fieldSettingsAjax($form, FormStateInterface $form_state) {
+    return NestedArray::getValue($form, $form_state->getTriggeringElement()['#ajax']['element']);
+  }
+
+  /**
+   * Render API callback that moves entity reference elements up a level.
+   *
+   * The elements (i.e. 'handler_settings') are moved for easier processing by
+   * the validation and submission handlers.
+   *
+   * @see _entity_reference_field_settings_process()
+   */
+  public static function formProcessMergeParent($element) {
+    $parents = $element['#parents'];
+    array_pop($parents);
+    $element['#parents'] = $parents;
+    return $element;
   }
 
   /**

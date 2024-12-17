@@ -13,7 +13,7 @@ use Drupal\entityqueue\EntityQueueHandlerBase;
  *   title = @Translation("Test handler")
  * )
  */
-class Test extends EntityQueueHandlerBase {
+class TestQueue extends EntityQueueHandlerBase {
 
   /**
    * {@inheritdoc}

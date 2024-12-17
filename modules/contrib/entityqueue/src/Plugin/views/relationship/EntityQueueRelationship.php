@@ -4,6 +4,7 @@ namespace Drupal\entityqueue\Plugin\views\relationship;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entityqueue\Entity\EntityQueue;
 use Drupal\views\Plugin\views\display\DisplayPluginBase;
@@ -33,6 +34,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
    * @var \Drupal\views\Plugin\ViewsHandlerManager
    */
   protected $joinManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Constructs an EntityQueueRelationship object.
@@ -46,9 +48,10 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
    * @param \Drupal\views\Plugin\ViewsHandlerManager $join_manager
    *   The views plugin join manager.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ViewsHandlerManager $join_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ViewsHandlerManager $join_manager, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->joinManager = $join_manager;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -59,7 +62,8 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.views.join')
+      $container->get('plugin.manager.views.join'),
+      $container->get('entity_type.manager'),
     );
   }
 
@@ -153,6 +157,44 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
    * {@inheritdoc}
    */
   public function query() {
+    $this->addBundleWhereCondition();
+
+    if (\Drupal::moduleHandler()->moduleExists('workspaces') && \Drupal::service('workspaces.manager')->hasActiveWorkspace()) {
+      $field_name = 'items';
+      $field_storage = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('entity_subqueue')[$field_name];
+      $table_mapping = $this->entityTypeManager->getStorage('entity_subqueue')->getTableMapping();
+      $this->addBaseJoins($table_mapping->getDedicatedRevisionTableName($field_storage));
+
+      // Add the join to the workspace association.
+      $definition = [
+        'table' => 'workspace_association',
+        'field' => 'target_entity_revision_id',
+        'left_table' => $this->definition['field table'],
+        'left_field' => 'revision_id',
+        'extra' => [
+          [
+            'field' => 'target_entity_type_id',
+            'value' => 'entity_subqueue',
+          ],
+          [
+            'field' => 'workspace',
+            'value' => \Drupal::service('workspaces.manager')->getActiveWorkspace()->id(),
+          ],
+        ],
+        'type' => 'LEFT',
+      ];
+
+      $join = $this->joinManager->createInstance('standard', $definition);
+      $join->adjusted = TRUE;
+      $alias = 'entity_subqueue_workspace_association';
+      $this->query->addRelationship($alias, $join, $this->definition['field table']);
+      return;
+    }
+
+    $this->addBaseJoins($this->definition['field table']);
+  }
+
+  protected function addBundleWhereCondition(): void {
     // Add a 'where' condition if needed.
     if (!empty($this->definition['extra'])) {
       $bundles = [];
@@ -170,7 +212,9 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
         ];
       }
     }
+  }
 
+  protected function addBaseJoins($items_field_table) {
     // Now - let's build the query.
     // @todo We can't simply call parent::query() because the parent class does
     //   not handle the 'join_id' configuration correctly, so we can't use our
@@ -185,7 +229,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
     $first = [
       'left_table' => $this->tableAlias,
       'left_field' => $left_field,
-      'table' => $this->definition['field table'],
+      'table' => $items_field_table,
       'field' => $this->definition['field field'],
       'adjusted' => TRUE,
       'entity_type' => isset($views_data['table']['entity type']) ? $views_data['table']['entity type'] : NULL,
@@ -202,7 +246,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
     // relationships to integers and strings IDs from the same table properly.
     $first_join = $this->joinManager->createInstance('casted_field_join', $first);
 
-    $this->first_alias = $this->query->addTable($this->definition['field table'], $this->relationship, $first_join);
+    $this->first_alias = $this->query->addTable($this->definition['field table'], $this->relationship, $first_join, $items_field_table);
 
     // Second, relate the field table to the entity specified using
     // the entity id on the field table and the entity's id field.

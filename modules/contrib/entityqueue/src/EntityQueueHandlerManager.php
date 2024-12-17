@@ -25,7 +25,7 @@ class EntityQueueHandlerManager extends DefaultPluginManager {
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
     parent::__construct('Plugin/EntityQueueHandler', $namespaces, $module_handler, NULL, 'Drupal\entityqueue\Annotation\EntityQueueHandler');
 
-    $this->setCacheBackend($cache_backend, 'entityqueuehandler');
+    $this->setCacheBackend($cache_backend, 'entityqueue_handler');
   }
 
   /**
