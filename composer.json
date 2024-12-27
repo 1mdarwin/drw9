@@ -31,10 +31,10 @@
         "drupal/captcha": "^2.0",
         "drupal/config_filter": "1.13",
         "drupal/config_split": "1.9",
-        "drupal/core": "^10.3",
+        "drupal/core": "10.4.0",
         "drupal/core-composer-scaffold": "^10.2",
         "drupal/core-project-message": "^10.2",
-        "drupal/core-recommended": "^10.3",
+        "drupal/core-recommended": "10.4.0",
         "drupal/core-vendor-hardening": "^10.2",
         "drupal/ctools": "^4.0.4",
         "drupal/devel": "^5.0",
@@ -67,7 +67,7 @@
         "npm-asset/blazy": "^1.8",
         "npm-asset/dropzone": "^5.7.4",
         "oomphinc/composer-installers-extender": "^1.1 || ^2",
-        "symfony/finder": "~v6.4.0"
+        "symfony/finder": "^6.4"
     },
     "conflict": {
         "drupal/drupal": "*"
