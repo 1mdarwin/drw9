@@ -5,3 +5,7 @@ big_pipe.js' checkMutation() does not check
 Source: https://www.drupal.org/files/issues/2024-01-21/drupal-big_pipe_does_not_check_before_using_node_object-3416141.patch
 
 
+Individual admin pages no longer
+Source: https://www.drupal.org/files/issues/2024-12-28/3494938-add-report-module-and-theme-to-routes.patch
+
+
