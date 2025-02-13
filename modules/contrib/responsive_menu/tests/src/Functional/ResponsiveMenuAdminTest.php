@@ -18,7 +18,10 @@ class ResponsiveMenuAdminTest extends BrowserTestBase {
    *
    * @var array
    */
-  protected static $modules = ['responsive_menu_test'];
+  protected static $modules = [
+    'system',
+    'responsive_menu_test'
+  ];
 
   /**
    * {@inheritdoc}

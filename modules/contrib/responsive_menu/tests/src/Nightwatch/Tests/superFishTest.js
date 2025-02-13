@@ -27,7 +27,6 @@ module.exports = {
       .expect.element('input[id="edit-superfish"]').to.be.selected
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
       .drupalRelativeURL('/node/1')
     browser
       .assert.cssClassPresent('#horizontal-menu', 'sf-js-enabled')
@@ -51,7 +50,6 @@ module.exports = {
       .setValue('input[id="edit-superfish-speed-out"]', 700)
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
       .drupalRelativeURL('/node/1')
       .waitForElementVisible('body', 1000)
     browser

@@ -27,7 +27,6 @@ module.exports = {
       .click('select[id="edit-position"] option[value="contextual"]')
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
       .drupalRelativeURL('/node/2')
       .resizeWindow(400, 800)
     browser
@@ -53,7 +52,6 @@ module.exports = {
       .click('select[id="edit-position"] option[value="contextual"]')
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
       .drupalRelativeURL('/ar/node/2')
       .resizeWindow(400, 800)
     browser
