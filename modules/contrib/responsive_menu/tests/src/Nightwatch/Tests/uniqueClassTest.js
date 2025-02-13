@@ -39,7 +39,6 @@ module.exports = {
       .setValue('#edit-off-canvas-menus', 'test')
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
     browser
       .expect.element('.layout-container').text.not.to.contain('Warning: Invalid argument supplied for foreach()')
     browser

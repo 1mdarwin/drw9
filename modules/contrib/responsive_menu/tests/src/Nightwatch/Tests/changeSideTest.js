@@ -40,7 +40,6 @@ module.exports = {
       .click('select[id="edit-position"] option[value="right"]')
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
       .drupalRelativeURL('/node/1')
       .resizeWindow(400, 800)
     browser

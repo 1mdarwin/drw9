@@ -39,7 +39,6 @@ module.exports = {
       .expect.element('input[id="edit-modify-viewport"]').to.not.be.selected
     browser
       .submitForm('#responsive-menu-settings')
-      .waitForElementVisible('body', 1000)
       .drupalRelativeURL('/node/2')
     // Confirm the metatag does not change.
     browser
