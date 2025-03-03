@@ -18,6 +18,7 @@ menuparent
 midp
 minwidth
 multicolumn
+mymodule
 netfront
 Nikolay
 pathlevels
@@ -52,6 +53,7 @@ Supersubs
 supersubs
 symbian
 touchbh
+touchdh
 touchbp
 touchua
 touchual

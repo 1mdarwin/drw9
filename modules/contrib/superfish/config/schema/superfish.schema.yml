@@ -45,6 +45,9 @@ block.settings.superfish:*:
     touchbh:
       type: integer
       label: 'sf-Touchscreen behavior'
+    touchdh:
+      type: integer
+      label: 'sf-Touchscreen Disable hover'
     touchbp:
       type: integer
       label: 'sf-Touchscreen Breakpoint'
@@ -76,7 +79,7 @@ block.settings.superfish:*:
       type: integer
       label: 'sf-Smallscreen type'
     smallset:
-      type: integer
+      type: string
       label: 'sf-Smallscreen select title'
     smallasa:
       type: integer
