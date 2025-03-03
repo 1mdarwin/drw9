@@ -20,7 +20,6 @@
 #}
 
 {% set classes = [] %}
-{% apply spaceless %}
 {% for item in menu_items %}
 
   {% if item.children is not empty %}
@@ -30,20 +29,20 @@
     {% endif %}
   {% endif %}
 
-  <li{{ item.attributes }}>
+  <li{{ item.attributes.addClass(item_class) }} role="none">
     {% if item.multicolumn_column %}
     <div class="sf-multicolumn-column">
     {% endif %}
     {% if item.children is not empty %}
-      {{ item.link_menuparent }}
+      {{ item.link_menuparent|merge({'#attributes': {'role': 'menuitem', 'aria-haspopup': 'true', 'aria-expanded': 'false'}}) }}
     {% else %}
-      {{ item.link }}
+      {{ item.link|merge({'#attributes': {'role': 'menuitem'}}) }}
     {% endif %}
-    {% if item.multicolumn_wrapper %}<ul class="sf-multicolumn">
-    <li class="sf-multicolumn-wrapper {{ item.item_class }}">
+    {% if item.multicolumn_wrapper %}<ul class="sf-multicolumn" role="menu">
+    <li class="sf-multicolumn-wrapper {{ item.item_class }}" role="none">
     {% endif %}
     {% if item.children is not empty %}
-      {% if item.multicolumn_content %}<ol>{% else %}<ul>{% endif %}
+      {% if item.multicolumn_content %}<ol role="menu">{% else %}<ul role="menu">{% endif %}
       {{ item.children }}
       {% if item.multicolumn_content %}</ol>{% else %}</ul>{% endif %}
     {% endif %}
@@ -52,4 +51,3 @@
   </li>
 
 {% endfor %}
-{% endapply %}

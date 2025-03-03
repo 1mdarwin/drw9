@@ -137,6 +137,10 @@
           });
           // Doing the same and making sure all the sub-menus are off-screen (hidden).
           accordion.children('ul').removeAttr('style').not('.sf-hidden').addClass('sf-hidden');
+          accordion.find('ul').each(function(){
+            $(this).removeAttr('style').not('.sf-hidden').addClass('sf-hidden');
+          });
+
           // Creating the accordion toggle switch.
           var toggle = '<div class="sf-accordion-toggle ' + styleClass + '"><a href="#" id="' + toggleID + '"><span>' + options.title + '</span></a></div>';
 
@@ -247,7 +251,7 @@
           // Creating the <option> elements.
           var newMenu = toSelect(refinedMenu, 1),
           // Creating the <select> element and assigning an ID and class name.
-          selectList = $('<select' + classes + ' id="' + menuID + '-select"/>')
+          selectList = $('<select ' + classes + ' id="' + menuID + '-select"/>')
           // Attaching the title and the items to the <select> element.
           .html('<option>' + options.title + '</option>' + newMenu)
           // Attaching an event then.
