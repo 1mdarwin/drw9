@@ -1,0 +1,12 @@
+name: Twig Input Filter
+description: 'Provides a text filter that renders using the Twig template engine.'
+core_version_requirement: ^8 || ^9 || ^10
+type: module
+
+dependencies:
+  - drupal:filter
+
+# Information added by Drupal.org packaging script on 2023-01-29
+version: '2.0.2'
+project: 'twig'
+datestamp: 1674980610
