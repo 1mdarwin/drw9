@@ -4146,26 +4146,27 @@
         },
         {
             "name": "drupal/twig-twig",
-            "version": "2.0.2",
+            "version": "2.0.3",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/twig.git",
-                "reference": "2.0.2"
+                "reference": "2.0.3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/twig-2.0.2.zip",
-                "reference": "2.0.2",
-                "shasum": "2a3f945ac913f2b5c5f82510edf0a2137b20ab54"
+                "url": "https://ftp.drupal.org/files/projects/twig-2.0.3.zip",
+                "reference": "2.0.3",
+                "shasum": "e28ef43fea3950623cfbbf9c7f2659df84894b64"
             },
             "require": {
-                "drupal/core": "^8 || ^9 || ^10"
+                "drupal/core": "^10.3 || ^11.0",
+                "php": ">=8.1"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.2",
-                    "datestamp": "1674980609",
+                    "version": "2.0.3",
+                    "datestamp": "1744144456",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4194,6 +4195,7 @@
                     "homepage": "https://www.drupal.org/user/161913"
                 }
             ],
+            "description": "Provides a text filter that renders using the Twig template engine.",
             "homepage": "https://www.drupal.org/project/twig",
             "support": {
                 "source": "https://git.drupalcode.org/project/twig"
