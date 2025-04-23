@@ -140,9 +140,11 @@ final class DownloadManager implements DownloadManagerInterface {
    * {@inheritdoc}
    */
   public function filePublicPath(): string {
+    $request = $this->requestStack->getCurrentRequest();
     $filesDir = PublicStream::baseUrl();
-    $host = $this->requestStack->getCurrentRequest()->getSchemeAndHttpHost();
-    return str_replace($host . '/', '', $filesDir);
+    $host = $request->getSchemeAndHttpHost();
+    $basePath = $request->getBasePath();
+    return str_replace($host . $basePath . '/', '', $filesDir);
   }
 
   /**
