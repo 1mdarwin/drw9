@@ -7,7 +7,7 @@ core_version_requirement: ^9 || ^10 || ^11
 dependencies:
   - drupal:block
 
-# Information added by Drupal.org packaging script on 2024-11-02
-version: '4.0.0'
+# Information added by Drupal.org packaging script on 2025-04-23
+version: '4.0.1'
 project: 'block_class'
-datestamp: 1730520925
+datestamp: 1745422613

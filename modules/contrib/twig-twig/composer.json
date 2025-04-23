@@ -1,0 +1,12 @@
+{
+    "name": "drupal/twig-twig",
+    "description": "Provides a text filter that renders using the Twig template engine.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "minimum-stability": "dev",
+    "homepage": "https://www.drupal.org/project/twig",
+    "require": {
+        "drupal/core": "^10.3 || ^11.0",
+        "php": ">=8.1"
+    }
+}

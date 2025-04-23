@@ -446,6 +446,9 @@ class BlockClassHelperService {
 
       $attribute_value = trim($attribute[1]);
 
+      // Sanitize to ensure a valid and safe value.
+      $attribute_value = Html::cleanCssIdentifier($attribute_value);
+
       // Insert the attributes.
       $variables['attributes'][$attribute_key][] = $attribute_value;
     }
@@ -472,6 +475,9 @@ class BlockClassHelperService {
       unset($variables['attributes']['id']);
       return;
     }
+
+    // Sanitize to ensure a valid and safe identifier.
+    $replaced_id = Html::cleanCssIdentifier($replaced_id);
 
     // Update the ID.
     $variables['attributes']['id'] = $replaced_id;
@@ -685,7 +691,7 @@ class BlockClassHelperService {
       // Add another item button in the last field.
       $form['class']['third_party_settings']['block_class']['add_another_item'] = [
         '#type' => 'button',
-        '#value' => 'Add another class',
+        '#value' => $this->t('Add another class'),
       ];
 
       // Add the class to identity the "add another item" button.
@@ -694,7 +700,7 @@ class BlockClassHelperService {
       // Add remove item button in the last field.
       $form['class']['third_party_settings']['block_class']['remove_item'] = [
         '#type' => 'button',
-        '#value' => 'Remove last added class',
+        '#value' => $this->t('Remove last added class'),
       ];
 
       // Add the class to identity the "Remove item" button.
@@ -877,7 +883,7 @@ class BlockClassHelperService {
       // Add the button to add another attribute item.
       $form['multiple_attributes']['add_another_attribute'] = [
         '#type' => 'button',
-        '#value' => 'Add another attribute',
+        '#value' => $this->t('Add another attribute'),
       ];
 
       $form['multiple_attributes']['add_another_attribute']['#attributes']['class'][] = 'block-class-add-another-attribute';
@@ -885,7 +891,7 @@ class BlockClassHelperService {
       // Add the button to remove an attribute item.
       $form['multiple_attributes']['remove_attribute'] = [
         '#type' => 'button',
-        '#value' => 'Remove last added attribute',
+        '#value' => $this->t('Remove last added attribute'),
       ];
 
       $form['multiple_attributes']['remove_attribute']['#attributes']['class'][] = 'block-class-remove-attribute';

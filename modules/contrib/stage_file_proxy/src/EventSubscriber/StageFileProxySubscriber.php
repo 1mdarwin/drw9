@@ -62,6 +62,11 @@ class StageFileProxySubscriber implements EventSubscriberInterface {
     // Get the origin server.
     $server = $config->get('origin');
 
+    if (str_ends_with($server, '/')) {
+      $this->logger->error('Origin cannot end in /.');
+      $server = rtrim($server, '/ ');
+    }
+
     // Quit if no origin given.
     if (!$server) {
       return;
