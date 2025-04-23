@@ -10,6 +10,21 @@ global-styling:
       css/animate.min.css: {}
       css/fontawesome/css/fontawesome-all.min.css: {}
       css/colors.css: {}
+librefranklin:
+  css:
+    base:
+      '//fonts.googleapis.com/css?family=Libre+Franklin:400,400i,700': { external: true }
+
+opensans:
+  css:
+    base:
+      '//fonts.googleapis.com/css?family=Open+Sans:400,400i,700': { external: true }
+
+lato:
+  css:
+    base:
+      '//fonts.googleapis.com/css?family=Lato:400,400i,700': { external: true }
+
 bootstrap:
   js:
     /libraries/popper.js/dist/umd/popper.min.js: { weight: -19 }
