@@ -900,6 +900,11 @@ footer p{
 .menupie li, .menupie li>a{
   display: inline !important;
   text-transform: none;
+  color: white;
+}
+.menupie li>a:hover{
+  color: #ff5722;
+  text-decoration: none;
 }
 .copyright{
   border-top: thin dashed #2D4059;
