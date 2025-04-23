@@ -442,6 +442,11 @@ function block_class_update_20017() {
   $config = \Drupal::configFactory()->getEditable('block_class.settings');
 
   $block_classes_stored = $config->get('block_classes_stored');
+  // Classes may have already been converted.
+  if (!is_string($block_classes_stored)) {
+    return;
+  }
+
   $block_classes_stored = Json::decode($block_classes_stored);
 
   if (empty($block_classes_stored)) {
