@@ -4012,17 +4012,17 @@
         },
         {
             "name": "drupal/superfish",
-            "version": "1.10.0",
+            "version": "1.11.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/superfish.git",
-                "reference": "8.x-1.10"
+                "reference": "8.x-1.11"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/superfish-8.x-1.10.zip",
-                "reference": "8.x-1.10",
-                "shasum": "e8ae338e68f4833a75116406f659f527630860f2"
+                "url": "https://ftp.drupal.org/files/projects/superfish-8.x-1.11.zip",
+                "reference": "8.x-1.11",
+                "shasum": "3fb212cc1884e6dac1d1deef6c5ee7e87fb1b1f7"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11",
@@ -4031,8 +4031,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.10",
-                    "datestamp": "1740354162",
+                    "version": "8.x-1.11",
+                    "datestamp": "1744888197",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -5341,16 +5341,16 @@
         },
         {
             "name": "lobsterr/drupal-superfish",
-            "version": "2.3.2",
+            "version": "2.3.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LOBsTerr/drupal-superfish.git",
-                "reference": "82c926d73d10e35a10449e61a02a532a55b58c7f"
+                "reference": "0ecc145be2a72027982ae86c60caf451a9fbb851"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LOBsTerr/drupal-superfish/zipball/82c926d73d10e35a10449e61a02a532a55b58c7f",
-                "reference": "82c926d73d10e35a10449e61a02a532a55b58c7f",
+                "url": "https://api.github.com/repos/LOBsTerr/drupal-superfish/zipball/0ecc145be2a72027982ae86c60caf451a9fbb851",
+                "reference": "0ecc145be2a72027982ae86c60caf451a9fbb851",
                 "shasum": ""
             },
             "type": "drupal-library",
@@ -5380,7 +5380,7 @@
                 "issues": "https://github.com/LOBsTerr/drupal-superfish/issues",
                 "source": "https://github.com/LOBsTerr/drupal-superfish"
             },
-            "time": "2025-02-23T01:00:39+00:00"
+            "time": "2025-04-23T12:52:31+00:00"
         },
         {
             "name": "masterminds/html5",

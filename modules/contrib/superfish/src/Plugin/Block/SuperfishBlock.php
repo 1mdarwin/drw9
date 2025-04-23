@@ -1401,17 +1401,16 @@ class SuperfishBlock extends SystemMenuBlock {
 
                   // Use the custom list of UA strings.
                   case 1:
-                    $ssual = $this->configuration['smallual'];
-                    $ssual = mb_strtolower($ssual);
+                    $ssual = mb_strtolower($this->configuration['smallual']);
                     $ssuac = [];
                     if (strpos($ssual, '*')) {
                       $ssual = explode('*', $ssual);
                       foreach ($ssual as $ua) {
-                        $ssuac[] = (strpos($http_user_agent, $ua)) ? 1 : 0;
+                        $ssuac[] = strpos($http_user_agent, $ua) ? 1 : 0;
                       }
                     }
                     else {
-                      $ssuac[] = (strpos($http_user_agent, $ssual)) ? 1 : 0;
+                      $ssuac[] = strpos($http_user_agent, $ssual) ? 1 : 0;
                     }
                     if (in_array(1, $ssuac)) {
                       $plugins['smallscreen']['mode'] = 'always_active';
@@ -1438,8 +1437,8 @@ class SuperfishBlock extends SystemMenuBlock {
           $ich = $this->configuration['smallich'];
 
           $plugins['smallscreen']['type'] = 'select';
-          $plugins['smallscreen']['addSelected'] = ($asa == 1) ? TRUE : '';
-          $plugins['smallscreen']['menuClasses'] = ($cmc == 1) ? TRUE : '';
+          $plugins['smallscreen']['addSelected'] = $asa == 1 ? TRUE : '';
+          $plugins['smallscreen']['menuClasses'] = $cmc == 1 ? TRUE : '';
           if ($chc == 1) {
             $plugins['smallscreen']['hyperlinkClasses'] = TRUE;
           }
@@ -1500,15 +1499,15 @@ class SuperfishBlock extends SystemMenuBlock {
       $title = '';
       switch ($type) {
         case 0:
-          $title = $this->configuration['smallset'];
+          $title = !empty($this->configuration['smallset']) ? $this->configuration['smallset'] : $this->label();
           break;
 
         case 1:
-          $title = $this->configuration['smallamt'];
+          $title = !empty($this->configuration['smallamt']) ? $this->configuration['smallamt'] : '';
           break;
 
       }
-      $plugins['smallscreen']['title'] = $title ? $title : $this->label();
+      $plugins['smallscreen']['title'] = $title;
     }
 
     // Menu block ID.
