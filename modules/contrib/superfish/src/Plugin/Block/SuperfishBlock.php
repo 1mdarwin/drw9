@@ -101,7 +101,7 @@ class SuperfishBlock extends SystemMenuBlock {
     ];
     $description = sprintf('<em>(%s: %s)</em>',
       $this->t('Default'),
-      $this->t('None')
+      $this->t('Default')
     );
     $form['sf']['superfish_style'] = [
       '#type' => 'select',
@@ -109,12 +109,12 @@ class SuperfishBlock extends SystemMenuBlock {
       '#description' => $description,
       '#default_value' => $this->configuration['style'],
       '#options' => [
-        'none' => $this->t('None'),
         'default' => $this->t('Default'),
         'black' => $this->t('Black'),
         'blue' => $this->t('Blue'),
         'coffee' => $this->t('Coffee'),
         'white' => $this->t('White'),
+        'none' => $this->t('None'),
       ],
     ];
     $form['sf']['superfish_arrow'] = [
@@ -480,7 +480,7 @@ class SuperfishBlock extends SystemMenuBlock {
       '#maxlength' => 1000,
       '#states' => [
         'enabled' => [
-          ':input[name="superfish_smallcmc"]' => [
+          ':input[name="settings[plugins][sf-smallscreen][sf-smallscreen-select][sf-smallscreen-select-more][superfish_smallcmc]"]' => [
             'checked' => TRUE,
           ],
         ],
@@ -511,7 +511,7 @@ class SuperfishBlock extends SystemMenuBlock {
       '#maxlength' => 1000,
       '#states' => [
         'enabled' => [
-          ':input[name="superfish_smallchc"]' => [
+          ':input[name="settings[plugins][sf-smallscreen][sf-smallscreen-select][sf-smallscreen-select-more][superfish_smallchc]"]' => [
             'checked' => TRUE,
           ],
         ],
@@ -541,7 +541,7 @@ class SuperfishBlock extends SystemMenuBlock {
     $description = sprintf('%s <em>(%s: %s)</em><br>%s: <em>%s</em>.',
       $this->t('By default the caption of the accordion toggle switch will be the name of the parent menu or the title of this block, you can change this by setting a custom title.'),
       $this->t('Default'),
-      $this->t('empty'),
+      $this->t('Menu title'),
       $this->t('Example'),
       $this->t('Menu')
     );
@@ -901,8 +901,6 @@ class SuperfishBlock extends SystemMenuBlock {
   public function blockSubmit($form, FormStateInterface $form_state) {
     parent::blockSubmit($form, $form_state);
 
-    $this->configuration['level'] = (int) $form_state->getValue('level');
-    $this->configuration['depth'] = (int) $form_state->getValue('depth');
     $this->configuration['menu_type'] = $form_state->getValue([
       'sf',
       'superfish_type',
@@ -1157,6 +1155,10 @@ class SuperfishBlock extends SystemMenuBlock {
       'sf-custom-classes',
       'superfish_hlclass',
     ]);
+
+    if ($this->configuration['style'] == 'none' && empty($this->configuration['smallamt'])) {
+      $this->messenger()->addWarning("You have selected the 'None' style option, and the 'Accordion menu title' field is empty. As a result, the accordion buttons will remain invisible unless you apply custom styling");
+    }
   }
 
   /**
@@ -1166,11 +1168,78 @@ class SuperfishBlock extends SystemMenuBlock {
 
     $build = [];
 
+    // Menu block ID.
+    $menu_name = $this->getDerivativeId();
+
+    // Menu tree.
+    $level = $this->configuration['level'];
+
+    // Menu display depth.
+    $depth = $this->configuration['depth'];
+
+    /*
+     * By not setting any expanded parents we don't limit the loading of the
+     * subtrees.
+     * Calling MenuLinkTreeInterface::getCurrentRouteMenuTreeParameters we
+     * would be doing so.
+     * We don't actually need the parents expanded as we do different rendering.
+     */
+    $maxdepth = NULL;
+    if ($depth) {
+      $maxdepth = min($level + ($depth - 1), $this->menuTree->maxDepth());
+    }
+
+    $parameters = (new MenuTreeParameters())
+      ->setMinDepth($level)
+      ->setMaxDepth($maxdepth)
+      ->setActiveTrail($this->menuActiveTrail->getActiveTrailIds($menu_name));
+
+    // For menu blocks with start level greater than 1, only show menu items
+    // from the current active trail. Adjust the root according to the current
+    // position in the menu in order to determine if we can show the subtree.
+    if ($level > 1) {
+      if (count($parameters->activeTrail) >= $level) {
+        // Active trail array is child-first. Reverse it, and pull the new menu
+        // root based on the parent of the configured start level.
+        $menu_trail_ids = array_reverse(array_values($parameters->activeTrail));
+        $menu_root = $menu_trail_ids[$level - 1];
+        $parameters->setRoot($menu_root)->setMinDepth(1);
+        if ($depth > 0) {
+          $parameters->setMaxDepth(min($level - 1 + $depth - 1, $this->menuTree->maxDepth()));
+        }
+      }
+      else {
+        return $build;
+      }
+    }
+
+    $tree = $this->menuTree->load($menu_name, $parameters);
+
+    $manipulators = [
+      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
+      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
+    ];
+
+    // Alter tree manipulators.
+    $this->moduleHandler->alter('superfish_tree_manipulators', $manipulators, $menu_name);
+
+    if ($this->moduleHandler->moduleExists('menu_manipulator')) {
+      $manipulators[] = ['callable' => 'menu_manipulator.menu_tree_manipulators:filterTreeByCurrentLanguage'];
+    }
+    $tree = $this->menuTree->transform($tree, $manipulators);
+
+    // Build the original menu tree to calculate cache tags and contexts.
+    $tree_build = $this->menuTree->build($tree);
+    $build['#cache'] = $tree_build['#cache'];
+    if (empty($tree)) {
+      return $build;
+    }
+
     // Block settings which will be passed to the Superfish themes.
     $settings                         = [];
     $settings['expand_all_items']     = $this->configuration['expand_all_items'];
-    $settings['level']                = $this->configuration['level'];
-    $settings['depth']                = $this->configuration['depth'];
+    $settings['level']                = $level;
+    $settings['depth']                = $depth;
     $settings['menu_type']            = $this->configuration['menu_type'];
     $settings['style']                = $this->configuration['style'];
     $settings['expanded']             = $this->configuration['expanded'];
@@ -1187,9 +1256,9 @@ class SuperfishBlock extends SystemMenuBlock {
 
     // jQuery plugin options which will be passed to the Drupal behaviour.
     $options = [];
-    $options['pathClass'] = ($settings['menu_type'] == 'navbar') ? 'active-trail' : '';
-    $options['pathLevels'] = ($this->configuration['pathlevels'] != 1) ? $this->configuration['pathlevels'] : '';
-    $options['delay'] = ($this->configuration['delay'] != 800) ? $this->configuration['delay'] : '';
+    $options['pathClass'] = $settings['menu_type'] == 'navbar' ? 'active-trail' : '';
+    $options['pathLevels'] = $this->configuration['pathlevels'] != 1 ? $this->configuration['pathlevels'] : '';
+    $options['delay'] = $this->configuration['delay'] != 800 ? $this->configuration['delay'] : '';
     $options['animation']['opacity'] = 'show';
 
     $slide = $this->configuration['slide'];
@@ -1238,12 +1307,9 @@ class SuperfishBlock extends SystemMenuBlock {
         $options['speed'] = $speed;
       }
     }
-    if ($this->configuration['arrow'] == 0) {
-      $options['autoArrows'] = FALSE;
-    }
-    if ($this->configuration['shadow'] == 0) {
-      $options['dropShadows'] = FALSE;
-    }
+
+    $options['autoArrows'] = $this->configuration['arrow'] == 1;
+    $options['dropShadows'] = $this->configuration['shadow'] == 1;
 
     if ($this->configuration['hoverintent']) {
       $build['#attached']['library'][] = 'superfish/superfish_hoverintent';
@@ -1428,37 +1494,24 @@ class SuperfishBlock extends SystemMenuBlock {
       $type = $this->configuration['smallact'];
       switch ($type) {
         case 0:
-          $asa = $this->configuration['smallasa'];
-          $cmc = $this->configuration['smallcmc'];
-          $chc = $this->configuration['smallchc'];
-          $ecm = $this->configuration['smallecm'];
-          $ech = $this->configuration['smallech'];
-          $icm = $this->configuration['smallicm'];
-          $ich = $this->configuration['smallich'];
-
           $plugins['smallscreen']['type'] = 'select';
-          $plugins['smallscreen']['addSelected'] = $asa == 1 ? TRUE : '';
-          $plugins['smallscreen']['menuClasses'] = $cmc == 1 ? TRUE : '';
-          if ($chc == 1) {
+          $plugins['smallscreen']['addSelected'] = $this->configuration['smallasa'] == 1 ? TRUE : '';
+          if ($this->configuration['smallcmc'] == 1) {
+            $plugins['smallscreen']['menuClasses'] = TRUE;
+            $plugins['smallscreen']['excludeClass_menu'] = !empty($this->configuration['smallecm']);
+          }
+
+          if ($this->configuration['smallchc'] == 1) {
             $plugins['smallscreen']['hyperlinkClasses'] = TRUE;
+            $plugins['smallscreen']['excludeClass_hyperlink'] = !empty($this->configuration['smallech']);
           }
-          if ($cmc == 1 && !empty($ecm)) {
-            $plugins['smallscreen']['excludeClass_menu'] = $ecm;
-          }
-          if ($chc == 1 && !empty($ech)) {
-            $plugins['smallscreen']['excludeClass_hyperlink'] = $ech;
-          }
-          if (!empty($icm)) {
-            $plugins['smallscreen']['includeClass_menu'] = $icm;
-          }
-          if (!empty($ich)) {
-            $plugins['smallscreen']['includeClass_hyperlink'] = $ich;
-          }
+          $plugins['smallscreen']['includeClass_menu'] = !empty($this->configuration['smallicm']);
+          $plugins['smallscreen']['includeClass_hyperlink'] = !empty($this->configuration['smallich']);
           break;
 
         case 1:
           $ab = $this->configuration['smallabt'];
-          $plugins['smallscreen']['accordionButton'] = ($ab != 1) ? $ab : '';
+          $plugins['smallscreen']['accordionButton'] = $ab != 1 ? $ab : '';
           if ($this->t('Expand') != 'Expand') {
             $plugins['smallscreen']['expandText'] = $this->t('Expand');
           }
@@ -1479,10 +1532,9 @@ class SuperfishBlock extends SystemMenuBlock {
       $build['#attached']['library'][] = 'superfish/superfish_supersubs';
       $minwidth = $this->configuration['minwidth'];
       $maxwidth = $this->configuration['maxwidth'];
-      $plugins['supersubs']['minWidth'] = ($minwidth != 12) ? $minwidth : '';
-      $plugins['supersubs']['maxWidth'] = ($maxwidth != 27) ? $maxwidth : '';
-      if (empty($plugins['supersubs']['minWidth']) &&
-          empty($plugins['supersubs']['maxWidth'])) {
+      $plugins['supersubs']['minWidth'] = $minwidth != 12 ? $minwidth : '';
+      $plugins['supersubs']['maxWidth'] = $maxwidth != 27 ? $maxwidth : '';
+      if (empty($plugins['supersubs']['minWidth']) && empty($plugins['supersubs']['maxWidth'])) {
         $plugins['supersubs'] = TRUE;
       }
     }
@@ -1499,75 +1551,16 @@ class SuperfishBlock extends SystemMenuBlock {
       $title = '';
       switch ($type) {
         case 0:
-          $title = !empty($this->configuration['smallset']) ? $this->configuration['smallset'] : $this->label();
+          $title = $this->configuration['smallset'] ?? $this->label();
           break;
 
         case 1:
-          $title = !empty($this->configuration['smallamt']) ? $this->configuration['smallamt'] : '';
+          $title = $this->configuration['smallamt'] ?? '';
           break;
 
       }
       $plugins['smallscreen']['title'] = $title;
     }
-
-    // Menu block ID.
-    $menu_name = $this->getDerivativeId();
-
-    // Menu tree.
-    $level = $this->configuration['level'];
-    // Menu display depth.
-    $depth = $settings['depth'];
-
-    /*
-     * By not setting any expanded parents we don't limit the loading of the
-     * subtrees.
-     * Calling MenuLinkTreeInterface::getCurrentRouteMenuTreeParameters we
-     * would be doing so.
-     * We don't actually need the parents expanded as we do different rendering.
-     */
-    if ($depth) {
-      $maxdepth = min($level + ($depth - 1), $this->menuTree->maxDepth());
-    }
-    else {
-      $maxdepth = NULL;
-    }
-    $parameters = (new MenuTreeParameters())
-      ->setMinDepth($level)
-      ->setMaxDepth($maxdepth)
-      ->setActiveTrail($this->menuActiveTrail->getActiveTrailIds($menu_name));
-
-    // For menu blocks with start level greater than 1, only show menu items
-    // from the current active trail. Adjust the root according to the current
-    // position in the menu in order to determine if we can show the subtree.
-    if ($level > 1) {
-      if (count($parameters->activeTrail) >= $level) {
-        // Active trail array is child-first. Reverse it, and pull the new menu
-        // root based on the parent of the configured start level.
-        $menu_trail_ids = array_reverse(array_values($parameters->activeTrail));
-        $menu_root = $menu_trail_ids[$level - 1];
-        $parameters->setRoot($menu_root)->setMinDepth(1);
-        if ($depth > 0) {
-          $parameters->setMaxDepth(min($level - 1 + $depth - 1, $this->menuTree->maxDepth()));
-        }
-      }
-      else {
-        return [];
-      }
-    }
-
-    $tree = $this->menuTree->load($menu_name, $parameters);
-    $manipulators = [
-      ['callable' => 'menu.default_tree_manipulators:checkAccess'],
-      ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
-    ];
-
-    // Alter tree manipulators.
-    $this->moduleHandler->alter('superfish_tree_manipulators', $manipulators, $menu_name);
-
-    if ($this->moduleHandler->moduleExists('menu_manipulator')) {
-      $manipulators[] = ['callable' => 'menu_manipulator.menu_tree_manipulators:filterTreeByCurrentLanguage'];
-    }
-    $tree = $this->menuTree->transform($tree, $manipulators);
 
     // Unique HTML ID.
     $id = Html::getUniqueId('superfish-' . $menu_name);
@@ -1589,9 +1582,6 @@ class SuperfishBlock extends SystemMenuBlock {
       '#tree' => $tree,
       '#settings' => $settings,
     ];
-    // Build the original menu tree to calculate cache tags and contexts.
-    $tree_build = $this->menuTree->build($tree);
-    $build['#cache'] = $tree_build['#cache'];
 
     return $build;
   }
@@ -1604,7 +1594,7 @@ class SuperfishBlock extends SystemMenuBlock {
       'level' => 1,
       'depth' => 0,
       'menu_type' => 'horizontal',
-      'style' => 'none',
+      'style' => 'default',
       'arrow' => 1,
       'shadow' => 1,
       'speed' => 'fast',
@@ -1633,7 +1623,7 @@ class SuperfishBlock extends SystemMenuBlock {
       'smallech' => '',
       'smallicm' => '',
       'smallich' => '',
-      'smallamt' => '',
+      'smallamt' => $this->getPluginDefinition()['admin_label'],
       'smallabt' => 1,
       'supersubs' => 1,
       'minwidth' => 12,

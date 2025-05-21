@@ -40,12 +40,15 @@ function template_preprocess_superfish(array &$variables) {
   ];
 
   $direction = \Drupal::languageManager()->getCurrentLanguage()->getDirection();
-  $menu_classes = ['menu', 'sf-menu'];
+  $menu_classes = [
+    'menu',
+    'sf-menu',
+  ];
   $menu_classes[] = 'sf-' . $element['#menu_name'];
   $menu_classes[] = 'sf-' . $element['#settings']['menu_type'];
   $menu_classes[] = 'sf-style-' . $element['#settings']['style'];
 
-  $menu_classes[] = ($direction === LanguageInterface::DIRECTION_RTL) ? 'rtl' : '';
+  $menu_classes[] = $direction === LanguageInterface::DIRECTION_RTL ? 'rtl' : '';
   if (strpos($element['#settings']['ulclass'], ' ') !== FALSE) {
     $l = explode(' ', $element['#settings']['ulclass']);
     foreach ($l as $c) {
@@ -98,6 +101,14 @@ function template_preprocess_superfish_menu_items(array &$variables) {
   }
 
   $active_trails = \Drupal::service('menu.active_trail')->getActiveTrailIds($element['#menu_name']);
+  $counter = 1;
+  $total_count = count($menu);
+
+  $host = \Drupal::request()->getHttpHost();
+  $request_uri = \Drupal::request()->getRequestUri();
+  $is_front_page = \Drupal::service('path.matcher')->isFrontPage();
+  $current_url = Url::fromRoute('<current>');
+  $current_path = $current_url->toString();
 
   foreach ($menu as $menu_item) {
     // Menu link properties.
@@ -125,10 +136,6 @@ function template_preprocess_superfish_menu_items(array &$variables) {
 
     if ($item['url']->isRouted()) {
       // Adding the "is-active" class.
-      $host = \Drupal::request()->getHttpHost();
-      $request_uri = \Drupal::request()->getRequestUri();
-      $current_url = Url::fromRoute('<current>');
-      $current_path = $current_url->toString();
       $link_url = $item['url']->toString();
       // Anchor links.
       if (strpos($link_url, '#') !== FALSE) {
@@ -136,11 +143,13 @@ function template_preprocess_superfish_menu_items(array &$variables) {
         $link_url = $link_url[0];
       }
 
-      if ($link_url == $current_path || $link_url == $request_uri ||
-          $link_url == $host . $request_uri) {
+      if ($link_url == $current_path ||
+        $link_url == $request_uri ||
+        $link_url == $host . $request_uri
+      ) {
         $link_class[] = 'is-active';
       }
-      $no_link = $item['url']->getRouteName() === '<nolink>' ? TRUE : FALSE;
+      $no_link = $item['url']->getRouteName() === '<nolink>';
     }
 
     // Adding the necessary "active-trail" class.
@@ -148,14 +157,15 @@ function template_preprocess_superfish_menu_items(array &$variables) {
         array_key_exists($item['id'], $active_trails) ||
         ($item['url']->isRouted() &&
           $item['url']->getRouteName() == '<front>' &&
-        \Drupal::service('path.matcher')->isFrontPage())) {
+          $is_front_page)) {
       $item_class[] = 'active-trail';
     }
 
     // Add menu link depth classes to the <li> element and its link.
     if ($settings['itemdepth']) {
-      $link_class[] = 'sf-depth-' . $item['depth'];
-      $item_class[] = 'sf-depth-' . $item['depth'];
+      $item_depth_class = 'sf-depth-' . $item['depth'];
+      $link_class[] = $item_depth_class;
+      $item_class[] = $item_depth_class;
     }
     // Indicates a cloned parent, i.e. does not exist in the actual menu tree.
     $item_class[] = $element['#cloned_parent'] ? 'sf-clone-parent' : '';
@@ -205,8 +215,17 @@ function template_preprocess_superfish_menu_items(array &$variables) {
       $item['options']['attributes']['title'] = '';
     }
 
+    // We want to be sure, that at least one child is accessible.
+    $subtree_is_accessible = FALSE;
+    foreach ($menu_item->subtree as $subtree_item) {
+      if ($subtree_item->access->isAllowed()) {
+        $subtree_is_accessible = TRUE;
+        break;
+      }
+    }
+
     // Sub-menu.
-    if ($item['hasChildren'] && $item['subtree'] && $item['expanded']) {
+    if ($subtree_is_accessible && $item['hasChildren'] && $item['subtree'] && $item['expanded']) {
 
       // Multi-column sub-menus.
       if ($settings['multicolumn']) {
@@ -243,11 +262,21 @@ function template_preprocess_superfish_menu_items(array &$variables) {
       $item_class[] = 'sf-no-children';
     }
 
+    // First loop. For added first/last classes for li items.
+    if ($counter == 1) {
+      $item_class[] = 'sf-first';
+    }
+
+    if ($counter == $total_count) {
+      $item_class[] = 'sf-last';
+    }
+    $counter++;
+
     // Preparing <li> classes for the theme.
     $item_class = implode(' ', superfish_array_filter($item_class));
 
     // Merging link classes.
-    if (isset($item['options']['attributes']['class'])) {
+    if (!empty($item['options']['attributes']['class'])) {
       $link_class_current = $item['options']['attributes']['class'];
       if (!is_array($link_class_current)) {
         $link_class_current = [$link_class_current];
@@ -262,6 +291,7 @@ function template_preprocess_superfish_menu_items(array &$variables) {
     // Dirty fix! to only add a "menuparent" class.
     $item['options_menuparent'] = $item['options'];
     $item['options_menuparent']['attributes']['class'][] = 'menuparent';
+
     if ($no_link) {
       $item['options_menuparent']['attributes']['class'][] = 'nolink';
       $item['options']['attributes']['class'][] = 'nolink';

@@ -4,7 +4,7 @@ description: 'Adds jQuery Superfish plugin to menu blocks.'
 package: User interface
 core_version_requirement: ^9 || ^10 || ^11
 
-# Information added by Drupal.org packaging script on 2025-04-17
-version: '8.x-1.11'
+# Information added by Drupal.org packaging script on 2025-05-07
+version: '8.x-1.12'
 project: 'superfish'
-datestamp: 1744888198
+datestamp: 1746619908
