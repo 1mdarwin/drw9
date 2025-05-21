@@ -51,6 +51,7 @@
         "drupal/paragraphs": "^1.17",
         "drupal/pathauto": "^1.9",
         "drupal/profile": "^1.7",
+        "drupal/redirect": "^1.11",
         "drupal/responsive_menu": "^4.4",
         "drupal/simple_sitemap": "^4.1.1",
         "drupal/slick": "^3.0",
