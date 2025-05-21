@@ -94,7 +94,7 @@ block.settings.superfish:*:
       type: integer
       label: 'sf-Smallscreen select copy link classes'
     smallech:
-      type: integer
+      type: string
       label: 'sf-Smallscreen select exclude link classes'
     smallicm:
       type: string
