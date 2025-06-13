@@ -923,7 +923,7 @@ function _hex2rgba( $color, $opacity ) {
 function _color_luminance( $hex, $percent ) {
   $hex = preg_replace( '/[^0-9a-f]/i', '', $hex );
   $new_hex = '#';
-  if ($hex !== null && strlen($hex) < 6) {
+  if (!empty($hex) && strlen($hex) < 6) {
     $hex = $hex[0] . $hex[0] . $hex[1] . $hex[1] . $hex[2] . $hex[2];
   }
   for ($i = 0; $i < 3; $i++) {
@@ -972,7 +972,7 @@ function _getContrastColor($hexColor, $white = '#fff', $dark = '#000') {
 }
 
 function _get_color($color, $colors) {
-  if (in_array($color, $colors)) {
+  if (!empty($colors[$color])) {
     return $colors[$color];
   }
   return $color;

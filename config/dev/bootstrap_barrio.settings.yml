@@ -85,6 +85,7 @@ bootstrap_barrio_navbar_flyout: false
 bootstrap_barrio_navbar_slide: false
 bootstrap_barrio_navbar_offcanvas: ''
 bootstrap_barrio_messages_widget: toasts
+bootstrap_barrio_messages_widget_toast_delay: 10000
 bootstrap_barrio_float_label: '0'
 bootstrap_barrio_checkbox: ''
 bootstrap_barrio_navbar_top_affix: 0

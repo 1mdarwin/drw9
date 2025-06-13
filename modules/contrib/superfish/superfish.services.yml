@@ -1,0 +1,4 @@
+services:
+  superfish.translatable_menu_link_manipulator:
+    class: 'Drupal\superfish\Menu\TranslatableMenuLinkManipulator'
+    arguments: ['@menu_link.static.overrides']

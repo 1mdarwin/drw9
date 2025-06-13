@@ -26,7 +26,7 @@ This module allows for integration of jQuery Superfish plug-in with Drupal CMS.
 
 This module requires the following outside of Drupal core:
 
-- Superfish library - https://github.com/mehrpadin/Superfish-for-Drupal/
+- Superfish library - https://github.com/LOBsTerr/drupal-superfish
 
 
 ###RECOMMENDED MODULES

@@ -1533,17 +1533,17 @@
         },
         {
             "name": "drupal/admin_toolbar",
-            "version": "3.5.3",
+            "version": "3.6.1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/admin_toolbar.git",
-                "reference": "3.5.3"
+                "reference": "3.6.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/admin_toolbar-3.5.3.zip",
-                "reference": "3.5.3",
-                "shasum": "363cdd6e6ca47983900f40793edf9a8b26f132bb"
+                "url": "https://ftp.drupal.org/files/projects/admin_toolbar-3.6.1.zip",
+                "reference": "3.6.1",
+                "shasum": "40e8874bdf100de90e0eec6984be14f0ec7765b0"
             },
             "require": {
                 "drupal/core": "^9.5 || ^10 || ^11"
@@ -1554,8 +1554,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.5.3",
-                    "datestamp": "1740156799",
+                    "version": "3.6.1",
+                    "datestamp": "1749079734",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1789,17 +1789,17 @@
         },
         {
             "name": "drupal/bootstrap_barrio",
-            "version": "5.5.19",
+            "version": "5.5.20",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/bootstrap_barrio.git",
-                "reference": "5.5.19"
+                "reference": "5.5.20"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/bootstrap_barrio-5.5.19.zip",
-                "reference": "5.5.19",
-                "shasum": "636a96b4d9b1e8b055ec8925ff8b133e1cf11019"
+                "url": "https://ftp.drupal.org/files/projects/bootstrap_barrio-5.5.20.zip",
+                "reference": "5.5.20",
+                "shasum": "1aa1dcd370eece14f61bed105398bf55565cc7a3"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.0",
@@ -1808,8 +1808,8 @@
             "type": "drupal-theme",
             "extra": {
                 "drupal": {
-                    "version": "5.5.19",
-                    "datestamp": "1733499138",
+                    "version": "5.5.20",
+                    "datestamp": "1749525785",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -1823,12 +1823,12 @@
             "authors": [
                 {
                     "name": "Alberto Siles",
-                    "homepage": "https://www.drupal.org/user/827704",
+                    "homepage": "https://www.drupal.org/user/3520894",
                     "email": "alberto@siles.pe"
                 },
                 {
-                    "name": "ricardo.castaneda",
-                    "homepage": "https://www.drupal.org/user/3520894"
+                    "name": "hatuhay",
+                    "homepage": "https://www.drupal.org/user/827704"
                 },
                 {
                     "name": "WillAcon",
@@ -3348,17 +3348,17 @@
         },
         {
             "name": "drupal/metatag",
-            "version": "2.1.0",
+            "version": "2.1.1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/metatag.git",
-                "reference": "2.1.0"
+                "reference": "2.1.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/metatag-2.1.0.zip",
-                "reference": "2.1.0",
-                "shasum": "c28fe2fdac68a9370a6af6cbafff4425dd5148f3"
+                "url": "https://ftp.drupal.org/files/projects/metatag-2.1.1.zip",
+                "reference": "2.1.1",
+                "shasum": "94f272db388cbf1e4df775a2677f8c35818c9382"
             },
             "require": {
                 "drupal/core": "^9.4 || ^10 || ^11",
@@ -3366,7 +3366,7 @@
                 "php": ">=8.0"
             },
             "require-dev": {
-                "drupal/forum": "*",
+                "drupal/forum": "1.x-dev",
                 "drupal/hal": "^1 || ^2 || ^9",
                 "drupal/metatag_dc": "*",
                 "drupal/metatag_open_graph": "*",
@@ -3378,8 +3378,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.1.0",
-                    "datestamp": "1731004042",
+                    "version": "2.1.1",
+                    "datestamp": "1748539484",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4068,27 +4068,27 @@
         },
         {
             "name": "drupal/superfish",
-            "version": "1.12.0",
+            "version": "1.13.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/superfish.git",
-                "reference": "8.x-1.12"
+                "reference": "8.x-1.13"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/superfish-8.x-1.12.zip",
-                "reference": "8.x-1.12",
-                "shasum": "9bd3b0109c2108a596a6910fd89a01f1b95bee07"
+                "url": "https://ftp.drupal.org/files/projects/superfish-8.x-1.13.zip",
+                "reference": "8.x-1.13",
+                "shasum": "c35230d4f2159d2967baf78c010abe81a74b5b70"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11",
-                "lobsterr/drupal-superfish": "2.3.7"
+                "lobsterr/drupal-superfish": "2.3.10"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.12",
-                    "datestamp": "1746619906",
+                    "version": "8.x-1.13",
+                    "datestamp": "1748422583",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4259,17 +4259,17 @@
         },
         {
             "name": "drupal/twig_tweak",
-            "version": "3.4.0",
+            "version": "3.4.1",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/twig_tweak.git",
-                "reference": "3.4.0"
+                "reference": "3.4.1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/twig_tweak-3.4.0.zip",
-                "reference": "3.4.0",
-                "shasum": "1f47f71b4cfbad97fff11db1adc72c311bb1645e"
+                "url": "https://ftp.drupal.org/files/projects/twig_tweak-3.4.1.zip",
+                "reference": "3.4.1",
+                "shasum": "ceaa5ea8f357ce8827c728f22871265f0f7cd74f"
             },
             "require": {
                 "drupal/core": "^10.3 || ^11.0",
@@ -4283,8 +4283,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "3.4.0",
-                    "datestamp": "1721562308",
+                    "version": "3.4.1",
+                    "datestamp": "1748530577",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -5399,16 +5399,16 @@
         },
         {
             "name": "lobsterr/drupal-superfish",
-            "version": "2.3.7",
+            "version": "2.3.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LOBsTerr/drupal-superfish.git",
-                "reference": "37a05c81947716b49e091deefc61d69b05945df1"
+                "reference": "618cb095efa3c95ae64c34f626dda6c3a642bfac"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LOBsTerr/drupal-superfish/zipball/37a05c81947716b49e091deefc61d69b05945df1",
-                "reference": "37a05c81947716b49e091deefc61d69b05945df1",
+                "url": "https://api.github.com/repos/LOBsTerr/drupal-superfish/zipball/618cb095efa3c95ae64c34f626dda6c3a642bfac",
+                "reference": "618cb095efa3c95ae64c34f626dda6c3a642bfac",
                 "shasum": ""
             },
             "type": "drupal-library",
@@ -5438,7 +5438,7 @@
                 "issues": "https://github.com/LOBsTerr/drupal-superfish/issues",
                 "source": "https://github.com/LOBsTerr/drupal-superfish"
             },
-            "time": "2025-04-25T11:01:42+00:00"
+            "time": "2025-05-28T08:48:57+00:00"
         },
         {
             "name": "masterminds/html5",
@@ -9128,16 +9128,16 @@
         },
         {
             "name": "twbs/bootstrap",
-            "version": "v5.3.3",
+            "version": "v5.3.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/twbs/bootstrap.git",
-                "reference": "6e1f75f420f68e1d52733b8e407fc7c3766c9dba"
+                "reference": "f849680d16a9695c9a6c9c062d6cff55ddcf071e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/6e1f75f420f68e1d52733b8e407fc7c3766c9dba",
-                "reference": "6e1f75f420f68e1d52733b8e407fc7c3766c9dba",
+                "url": "https://api.github.com/repos/twbs/bootstrap/zipball/f849680d16a9695c9a6c9c062d6cff55ddcf071e",
+                "reference": "f849680d16a9695c9a6c9c062d6cff55ddcf071e",
                 "shasum": ""
             },
             "replace": {
@@ -9172,9 +9172,9 @@
             ],
             "support": {
                 "issues": "https://github.com/twbs/bootstrap/issues",
-                "source": "https://github.com/twbs/bootstrap/tree/v5.3.3"
+                "source": "https://github.com/twbs/bootstrap/tree/v5.3.6"
             },
-            "time": "2024-02-20T15:14:29+00:00"
+            "time": "2025-05-05T19:21:55+00:00"
         },
         {
             "name": "twig/twig",
