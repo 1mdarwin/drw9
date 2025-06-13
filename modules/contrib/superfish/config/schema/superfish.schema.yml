@@ -144,6 +144,12 @@ block.settings.superfish:*:
     link_depth_class:
       type: integer
       label: 'Add item depth classes to menu items and their hyperlinks'
+    link_text_prefix:
+      type: string
+      label: 'Add prefix to the link text'
+    link_text_suffix:
+      type: string
+      label: 'Add suffix to the link text'
     custom_list_class:
       type: string
       label: 'Class for the main UL'

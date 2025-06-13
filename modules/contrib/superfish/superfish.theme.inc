@@ -43,16 +43,16 @@ function template_preprocess_superfish(array &$variables) {
   $menu_classes = [
     'menu',
     'sf-menu',
+    'sf-' . $element['#menu_name'],
+    'sf-' . $element['#settings']['menu_type'],
+    'sf-style-' . $element['#settings']['style'],
   ];
-  $menu_classes[] = 'sf-' . $element['#menu_name'];
-  $menu_classes[] = 'sf-' . $element['#settings']['menu_type'];
-  $menu_classes[] = 'sf-style-' . $element['#settings']['style'];
 
   $menu_classes[] = $direction === LanguageInterface::DIRECTION_RTL ? 'rtl' : '';
   if (strpos($element['#settings']['ulclass'], ' ') !== FALSE) {
-    $l = explode(' ', $element['#settings']['ulclass']);
-    foreach ($l as $c) {
-      $menu_classes[] = Html::cleanCssIdentifier($c);
+    $ul_classes = explode(' ', $element['#settings']['ulclass']);
+    foreach ($ul_classes as $cclass) {
+      $menu_classes[] = Html::cleanCssIdentifier($cclass);
     }
   }
   else {
@@ -298,13 +298,13 @@ function template_preprocess_superfish_menu_items(array &$variables) {
     }
     $link_element = [
       '#type' => 'link',
-      '#title' => new FormattableMarkup($link_text, $link_text_replace),
+      '#title' => new FormattableMarkup($settings['link_text_prefix'] . $link_text . $settings['link_text_suffix'], $link_text_replace),
       '#url' => $item['url'],
       '#options' => $item['options'],
     ];
     $link_element_menuparent = [
       '#type' => 'link',
-      '#title' => new FormattableMarkup($link_text, $link_text_replace),
+      '#title' => new FormattableMarkup($settings['link_text_prefix'] . $link_text . $settings['link_text_suffix'], $link_text_replace),
       '#url' => $item['url'],
       '#options' => $item['options_menuparent'],
     ];

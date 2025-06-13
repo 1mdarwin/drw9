@@ -733,6 +733,18 @@ class SuperfishBlock extends SystemMenuBlock {
       '#title' => $title,
       '#default_value' => $this->configuration['link_depth_class'],
     ];
+    $form['sf-advanced']['sf-hyperlinks']['superfish_link_text_prefix'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Add prefix to the link text.'),
+      '#description' => $this->t('Any text to display before the link text. You may include HTML.'),
+      '#default_value' => $this->configuration['link_text_prefix'],
+    ];
+    $form['sf-advanced']['sf-hyperlinks']['superfish_link_text_suffix'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Add suffix to the link text.'),
+      '#description' => $this->t('Any text to display after the link text. You may include HTML.'),
+      '#default_value' => $this->configuration['link_text_suffix'],
+    ];
     $form['sf-advanced']['sf-custom-classes'] = [
       '#type' => 'details',
       '#title' => $this->t('Custom classes'),
@@ -1140,6 +1152,16 @@ class SuperfishBlock extends SystemMenuBlock {
       'sf-hyperlinks',
       'superfish_itemdepth',
     ]);
+    $this->configuration['link_text_prefix'] = $form_state->getValue([
+      'sf-advanced',
+      'sf-hyperlinks',
+      'superfish_link_text_prefix',
+    ]);
+    $this->configuration['link_text_suffix'] = $form_state->getValue([
+      'sf-advanced',
+      'sf-hyperlinks',
+      'superfish_link_text_suffix',
+    ]);
     $this->configuration['custom_list_class'] = $form_state->getValue([
       'sf-advanced',
       'sf-custom-classes',
@@ -1220,8 +1242,12 @@ class SuperfishBlock extends SystemMenuBlock {
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
     ];
 
+    if ($this->moduleHandler->moduleExists('translatable_menu_link_uri')) {
+      $manipulators[] = ['callable' => 'superfish.translatable_menu_link_manipulator:transform'];
+    }
+
     // Alter tree manipulators.
-    $this->moduleHandler->alter('superfish_tree_manipulators', $manipulators, $menu_name);
+    $this->moduleHandler->alter('superfish_tree_manipulators', $manipulators, $menu_name, $tree);
 
     if ($this->moduleHandler->moduleExists('menu_manipulator')) {
       $manipulators[] = ['callable' => 'menu_manipulator.menu_tree_manipulators:filterTreeByCurrentLanguage'];
@@ -1244,6 +1270,8 @@ class SuperfishBlock extends SystemMenuBlock {
     $settings['style']                = $this->configuration['style'];
     $settings['expanded']             = $this->configuration['expanded'];
     $settings['itemdepth']            = $this->configuration['link_depth_class'];
+    $settings['link_text_prefix']     = $this->configuration['link_text_prefix'];
+    $settings['link_text_suffix']     = $this->configuration['link_text_suffix'];
     $settings['ulclass']              = $this->configuration['custom_list_class'];
     $settings['liclass']              = $this->configuration['custom_item_class'];
     $settings['hlclass']              = $this->configuration['custom_link_class'];
@@ -1251,7 +1279,7 @@ class SuperfishBlock extends SystemMenuBlock {
     $settings['hide_linkdescription'] = $this->configuration['hide_linkdescription'];
     $settings['add_linkdescription']  = $this->configuration['add_linkdescription'];
     $settings['multicolumn']          = $this->configuration['multicolumn'];
-    $settings['multicolumn_depth']    = ($this->configuration['menu_type'] == 'navbar' && $this->configuration['multicolumn_depth'] == 1) ? 2 : $this->configuration['multicolumn_depth'];
+    $settings['multicolumn_depth']    = $this->configuration['menu_type'] == 'navbar' && $this->configuration['multicolumn_depth'] == 1 ? 2 : $this->configuration['multicolumn_depth'];
     $settings['multicolumn_levels']   = $this->configuration['multicolumn_levels'] + $settings['multicolumn_depth'];
 
     // jQuery plugin options which will be passed to the Drupal behaviour.
@@ -1325,7 +1353,7 @@ class SuperfishBlock extends SystemMenuBlock {
     if ($touchscreen) {
       $build['#attached']['library'][] = 'superfish/superfish_touchscreen';
       $behaviour = $this->configuration['touchbh'];
-      $plugins['touchscreen']['behaviour'] = ($behaviour != 2) ? $behaviour : '';
+      $plugins['touchscreen']['behaviour'] = $behaviour != 2 ? $behaviour : '';
       $plugins['touchscreen']['disableHover'] = $this->configuration['touchdh'];
       $plugins['touchscreen']['cloneParent'] = $this->configuration['clone_parent'];
       switch ($touchscreen) {
@@ -1336,7 +1364,7 @@ class SuperfishBlock extends SystemMenuBlock {
         case 2:
           $plugins['touchscreen']['mode'] = 'window_width';
           $tsbp = $this->configuration['touchbp'];
-          $plugins['touchscreen']['breakpoint'] = ($tsbp != 768) ? (float) $tsbp : '';
+          $plugins['touchscreen']['breakpoint'] = $tsbp != 768 ? (float) $tsbp : '';
           break;
 
         case 3:
@@ -1385,11 +1413,11 @@ class SuperfishBlock extends SystemMenuBlock {
                     if (strpos($tsual, '*')) {
                       $tsual = explode('*', $tsual);
                       foreach ($tsual as $ua) {
-                        $tsuac[] = (strpos($http_user_agent, $ua)) ? 1 : 0;
+                        $tsuac[] = strpos($http_user_agent, $ua) ? 1 : 0;
                       }
                     }
                     else {
-                      $tsuac[] = (strpos($http_user_agent, $tsual)) ? 1 : 0;
+                      $tsuac[] = strpos($http_user_agent, $tsual) ? 1 : 0;
                     }
                     if (in_array(1, $tsuac)) {
                       $plugins['touchscreen']['mode'] = 'always_active';
@@ -1637,6 +1665,8 @@ class SuperfishBlock extends SystemMenuBlock {
       'hide_linkdescription' => 0,
       'add_linkdescription' => 0,
       'link_depth_class' => 1,
+      'link_text_prefix' => '',
+      'link_text_suffix' => '',
       'custom_list_class' => '',
       'custom_item_class' => '',
       'custom_link_class' => '',

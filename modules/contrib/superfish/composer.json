@@ -31,6 +31,6 @@
   },
   "license": "GPL-2.0-or-later",
   "require": {
-    "lobsterr/drupal-superfish": "2.3.7"
+    "lobsterr/drupal-superfish": "2.3.10"
   }
 }
