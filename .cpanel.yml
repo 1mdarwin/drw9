@@ -3,4 +3,5 @@ deployment:
   tasks:
     - export DEPLOYPATH=/home/drwsoluc/public_html/
     - /bin/rm -R $DEPLOYPATH/config/sync/*.yml
+    - /bin/rm -R $DEPLOYPATH/core
     - /bin/cp -R * $DEPLOYPATH
