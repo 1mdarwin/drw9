@@ -1372,6 +1372,12 @@ $ignoreErrors[] = [
 ];
 $ignoreErrors[] = [
 	// identifier: variable.undefined
+	'message' => '#^Variable \\$dynamic_cache might not be defined\\.$#',
+	'count' => 1,
+	'path' => __DIR__ . '/modules/jsonapi/tests/src/Functional/ResourceTestBase.php',
+];
+$ignoreErrors[] = [
+	// identifier: variable.undefined
 	'message' => '#^Variable \\$parseable_invalid_request_body might not be defined\\.$#',
 	'count' => 2,
 	'path' => __DIR__ . '/modules/jsonapi/tests/src/Functional/ResourceTestBase.php',
@@ -3068,6 +3074,12 @@ in drupal\\:10\\.3\\.0 and is removed from drupal\\:11\\.0\\.0\\. There is no
   replacement and test discovery will be handled differently in PHPUnit 10\\.$#',
 	'count' => 1,
 	'path' => __DIR__ . '/tests/TestSuites/UnitTestSuite.php',
+];
+$ignoreErrors[] = [
+	'message' => '#^Variable \\$render_start might not be defined\\.$#',
+	'identifier' => 'variable.undefined',
+	'count' => 1,
+	'path' => __DIR__ . '/lib/Drupal/Core/Render/Renderer.php',
 ];
 
 return ['parameters' => ['ignoreErrors' => $ignoreErrors]];
