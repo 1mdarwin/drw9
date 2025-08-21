@@ -85,7 +85,6 @@ bootstrap_barrio_navbar_flyout: false
 bootstrap_barrio_navbar_slide: false
 bootstrap_barrio_navbar_offcanvas: ''
 bootstrap_barrio_messages_widget: alerts
-bootstrap_barrio_messages_widget_toast_delay: 10000
 bootstrap_barrio_float_label: '0'
 bootstrap_barrio_checkbox: ''
 bootstrap_barrio_navbar_top_affix: 0
@@ -94,8 +93,8 @@ bootstrap_barrio_sidebar_first_affix: 0
 bootstrap_barrio_sidebar_second_affix: 0
 bootstrap_barrio_scroll_spy: ''
 bootstrap_barrio_google_fonts: ''
-bootstrap_barrio_bootstrap_icons: 1
-bootstrap_barrio_icons: fontawesome
+bootstrap_barrio_bootstrap_icons: 0
+bootstrap_barrio_icons: ''
 bootstrap_barrio_system_messages: messages_white
 bootstrap_barrio_table_style: table-striped
 bootstrap_barrio_table_hover: 1
