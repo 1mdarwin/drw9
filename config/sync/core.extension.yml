@@ -16,7 +16,6 @@ module:
   ckeditor5: 0
   comment: 0
   config: 0
-  config_filter: 0
   config_split: 0
   config_translation: 0
   contextual: 0
@@ -81,7 +80,6 @@ module:
   webform_templates: 0
   webform_ui: 0
   widget: 0
-  extlink: 1
   menu_link_content: 1
   pathauto: 1
   webform_bootstrap: 1

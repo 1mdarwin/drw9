@@ -3,6 +3,7 @@
 namespace Drupal\libraries\StreamWrapper;
 
 use Drupal\Core\StreamWrapper\LocalStream;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a stream wrapper for asset libraries.
@@ -12,6 +13,7 @@ use Drupal\Core\StreamWrapper\LocalStream;
  */
 class AssetLibrariesStream extends LocalStream {
 
+  use StringTranslationTrait;
   use LocalHiddenStreamTrait;
   use PrivateStreamTrait;
 
@@ -19,14 +21,14 @@ class AssetLibrariesStream extends LocalStream {
    * {@inheritdoc}
    */
   public function getName() {
-    return t('Assets');
+    return $this->t('Assets');
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDescription() {
-    return t('Provides access to asset library files.');
+    return $this->t('Provides access to asset library files.');
   }
 
   /**
