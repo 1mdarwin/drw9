@@ -3,6 +3,7 @@
 namespace Drupal\libraries\StreamWrapper;
 
 use Drupal\Core\StreamWrapper\LocalStream;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 
 /**
  * Provides a stream wrapper for PHP file libraries.
@@ -11,6 +12,7 @@ use Drupal\Core\StreamWrapper\LocalStream;
  * 'php-file-library://guzzle/src/functions_include.php'.
  */
 class PhpFileLibrariesStream extends LocalStream {
+  use StringTranslationTrait;
 
   use LocalHiddenStreamTrait;
   use PrivateStreamTrait;
@@ -19,14 +21,14 @@ class PhpFileLibrariesStream extends LocalStream {
    * {@inheritdoc}
    */
   public function getName() {
-    return t('PHP library files');
+    return $this->t('PHP library files');
   }
 
   /**
    * {@inheritdoc}
    */
   public function getDescription() {
-    return t('Provides access to PHP library files.');
+    return $this->t('Provides access to PHP library files.');
   }
 
   /**

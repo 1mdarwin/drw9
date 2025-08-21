@@ -9,7 +9,7 @@ library_dependencies:
   - test_asset_library
   - test_asset_multiple_library
 
-# Information added by Drupal.org packaging script on 2024-08-30
-version: '4.0.5'
+# Information added by Drupal.org packaging script on 2025-06-30
+version: '4.1.0'
 project: 'libraries'
-datestamp: 1725052150
+datestamp: 1751287504
