@@ -125,7 +125,8 @@ function _extlink_get_settings_from_config(Config $config): array {
 
   return [
     'extTarget'           => ((isset($settings['extlink_target'])) ? $settings['extlink_target'] : FALSE),
-    'extTargetAppendNewWindowLabel' => t('(opens in a new window)'),
+    'extTargetAppendNewWindowDisplay' => ((isset($settings['extlink_target_display_default_title'])) ? $settings['extlink_target_display_default_title'] : FALSE),
+    'extTargetAppendNewWindowLabel' => ((isset($settings['extlink_target_default_title_text'])) ? $settings['extlink_target_default_title_text'] : '(opens in a new window)'),
     'extTargetNoOverride' => ((isset($settings['extlink_target_no_override'])) ? $settings['extlink_target_no_override'] : FALSE),
     'extNofollow'         => ((isset($settings['extlink_nofollow'])) ? $settings['extlink_nofollow'] : FALSE),
     'extTitleNoOverride'  => ((isset($settings['extlink_title_no_override'])) ? $settings['extlink_title_no_override'] : FALSE),
@@ -156,7 +157,7 @@ function _extlink_get_settings_from_config(Config $config): array {
     'extAdditionalMailtoClasses'    => implode(' ', $additional_mailto_classes),
     'extAdditionalTelClasses'    => implode(' ', $additional_tel_classes),
     'extFaTelClasses'  => implode(' ', $fa_tel_classes),
-    'whitelistedDomains'  => $config->get('whitelisted_domains'),
+    'allowedDomains'  => $config->get('allowed_domains'),
     'extExcludeNoreferrer' => $settings['extlink_exclude_noreferrer'] ?? '',
   ];
 }

@@ -73,7 +73,7 @@ class EntityQueueUIController extends ControllerBase {
    * @return array
    *   Array of page elements to render.
    */
-  public function subqueueListForEntity(RouteMatchInterface $route_match, $entity_type_id = NULL, EntityInterface $entity = NULL) {
+  public function subqueueListForEntity(RouteMatchInterface $route_match, $entity_type_id = NULL, ?EntityInterface $entity = NULL) {
     if (!$entity) {
       $entity = $route_match->getParameter($entity_type_id);
     }

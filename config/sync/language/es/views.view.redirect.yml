@@ -1,0 +1,68 @@
+label: Redirección
+description: 'Lista de redirecciones'
+display:
+  default:
+    display_title: Master
+    display_options:
+      exposed_form:
+        options:
+          submit_button: Filter
+          reset_button_label: Reset
+          exposed_sorts_label: 'Sort by'
+          sort_asc_label: Asc
+          sort_desc_label: Desc
+      pager:
+        options:
+          tags:
+            previous: '‹ previous'
+            next: 'next ›'
+            first: '« first'
+            last: 'last »'
+          expose:
+            items_per_page_label: 'Items per page'
+            items_per_page_options_all_label: '- All -'
+            offset_label: Offset
+      fields:
+        redirect_bulk_form:
+          action_title: 'Con selección'
+        redirect_source__path:
+          label: Desde
+          separator: ', '
+        created:
+          label: Creado
+      filters:
+        redirect_source__path:
+          expose:
+            label: Desde
+        redirect_redirect__uri:
+          expose:
+            label: Para
+        status_code:
+          expose:
+            label: 'Código de estado'
+          group_info:
+            label: 'Código de estado'
+            group_items:
+              1:
+                title: '300 Múltiples posibilidades'
+              2:
+                title: '301 Movido permanentemente'
+              3:
+                title: '302 Encontrado'
+              4:
+                title: '303 Ver otra ubicación'
+              5:
+                title: '304 No modificado'
+              6:
+                title: '305 Usar proxy'
+              7:
+                title: '307 Redirección temporal'
+        language:
+          expose:
+            label: 'Lenguaje original'
+      title: Redirección
+      empty:
+        area_text_custom:
+          content: 'Todavía no hay ninguna redirección.'
+  page_1:
+    display_title: Page

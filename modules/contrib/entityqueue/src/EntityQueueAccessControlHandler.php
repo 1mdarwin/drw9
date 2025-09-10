@@ -22,21 +22,14 @@ class EntityQueueAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'access content');
-
-      break;
-
       case 'update':
+        return AccessResult::allowedIfHasPermissions($account, ["update {$entity->id()} entityqueue", 'manipulate all entityqueues', 'administer entityqueue'], 'OR');
+      case 'configure':
       case 'enable':
       case 'disable':
-        return AccessResult::allowedIfHasPermissions($account, ["update {$entity->id()} entityqueue", 'manipulate all entityqueues', 'administer entityqueue'], 'OR');
-
-      break;
-
+        return AccessResult::allowedIfHasPermission($account, 'administer entityqueue');
       case 'delete':
-        return AccessResult::allowedIfHasPermissions($account, ["delete {$entity->id()} entityqueue", 'manipulate all entityqueues', 'administer entityqueue'], 'OR');
-
-      break;
-
+        return AccessResult::allowedIfHasPermissions($account, ["delete {$entity->id()} entityqueue", 'administer entityqueue'], 'OR');
       default:
         // No opinion.
         return AccessResult::neutral();

@@ -88,7 +88,7 @@ class EntitySubqueue extends EditorialContentEntityBase implements EntitySubqueu
   /**
    * {@inheritdoc}
    */
-  public function access($operation = 'view', AccountInterface $account = NULL, $return_as_object = FALSE) {
+  public function access($operation = 'view', ?AccountInterface $account = NULL, $return_as_object = FALSE) {
     if ($operation == 'create') {
       return parent::access($operation, $account, $return_as_object);
     }

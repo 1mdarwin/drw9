@@ -239,6 +239,29 @@ class ExtlinkAdminSettingsForm extends ConfigFormBase {
       ],
     ];
 
+    $form['extlink_target_display_default_title'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Display default text in title'),
+      '#default_value' => $config->get('extlink_target_display_default_title'),
+      '#states' => [
+        'visible' => [
+          ':input[name="extlink_target"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
+    $form['extlink_target_default_title_text'] = [
+      '#type' => 'textfield',
+      '#title' => $this->t('Default title text for new window links'),
+      '#default_value' => $config->get('extlink_target_default_title_text') ?: '(opens in a new window)',
+      '#description' => $this->t("Example: (opens in a new window).") ,
+      '#states' => [
+        'visible' => [
+          ':input[name="extlink_target_display_default_title"]' => ['checked' => TRUE],
+        ],
+      ],
+    ];
+
     $form['extlink_title_no_override'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Do not alter the title attribute on links.'),
@@ -318,12 +341,12 @@ class ExtlinkAdminSettingsForm extends ConfigFormBase {
       '#description' => $this->t('Custom CSS classes that will be added onto every external tel link.'),
     ];
 
-    $form['whitelisted_domains'] = [
+    $form['allowed_domains'] = [
       '#type' => 'textarea',
-      '#title' => $this->t('Whitelisted domains.'),
+      '#title' => $this->t('Allowed domains.'),
       '#maxlength' => NULL,
-      '#default_value' => implode(PHP_EOL, (array) $config->get('whitelisted_domains')),
-      '#description' => $this->t('Enter a line-separated list of whitelisted domains (ie "example.com").'),
+      '#default_value' => implode(PHP_EOL, (array) $config->get('allowed_domains')),
+      '#description' => $this->t('Enter a line-separated list of allowed domains (ie "example.com").'),
     ];
 
     $patterns = [
@@ -429,9 +452,9 @@ class ExtlinkAdminSettingsForm extends ConfigFormBase {
   public function submitForm(array &$form, FormStateInterface $form_state): void {
     $values = $form_state->getValues();
 
-    $whitelisted_domains = explode(PHP_EOL, $values['whitelisted_domains']);
-    $whitelisted_domains = array_map('trim', $whitelisted_domains);
-    $whitelisted_domains = array_filter($whitelisted_domains, function ($value) {
+    $allowed_domains = explode(PHP_EOL, $values['allowed_domains']);
+    $allowed_domains = array_map('trim', $allowed_domains);
+    $allowed_domains = array_filter($allowed_domains, function ($value) {
       return !empty($value);
     });
 
@@ -445,6 +468,8 @@ class ExtlinkAdminSettingsForm extends ConfigFormBase {
       ->set('extlink_hide_icons', $values['extlink_hide_icons'])
       ->set('extlink_target', $values['extlink_target'])
       ->set('extlink_target_no_override', $values['extlink_target_no_override'])
+      ->set('extlink_target_display_default_title', $values['extlink_target_display_default_title'])
+      ->set('extlink_target_default_title_text', $values['extlink_target_default_title_text'])
       ->set('extlink_title_no_override', $values['extlink_title_no_override'])
       ->set('extlink_nofollow', $values['extlink_nofollow'])
       ->set('extlink_noreferrer', $values['extlink_noreferrer'])
@@ -470,7 +495,7 @@ class ExtlinkAdminSettingsForm extends ConfigFormBase {
       ->set('extlink_font_awesome_classes.links', $values['extlink_font_awesome_classes']['links'])
       ->set('extlink_font_awesome_classes.mailto', $values['extlink_font_awesome_classes']['mailto'])
       ->set('extlink_font_awesome_classes.tel', $values['extlink_font_awesome_classes']['tel'])
-      ->set('whitelisted_domains', $whitelisted_domains)
+      ->set('allowed_domains', $allowed_domains)
       ->set('extlink_exclude_noreferrer', $values['extlink_exclude_noreferrer'])
       ->save();
 

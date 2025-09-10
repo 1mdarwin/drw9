@@ -55,9 +55,9 @@ content:
     weight: 100
     region: content
   share_everywhere:
-    weight: 10
     settings: {  }
     third_party_settings: {  }
+    weight: 10
     region: content
   taxonomy_vocabulary_2:
     type: entity_reference_label

@@ -157,15 +157,28 @@ class EntityQueueListBuilder extends ConfigEntityListBuilder {
     $operations = parent::getDefaultOperations($entity);
 
     if (isset($operations['edit'])) {
-      $operations['edit']['title'] = $this->t('Configure');
+      // We are using the Edit tab for Configure page, so we need to check
+      // access to the configure operation.
+      if (!$entity->access('configure')) {
+        unset($operations['edit']);
+      }
+      else {
+        $operations['edit']['title'] = $this->t('Configure');
+      }
     }
 
     // Add AJAX functionality to enable/disable operations.
     foreach (['enable', 'disable'] as $op) {
       if (isset($operations[$op])) {
-        $operations[$op]['url'] = $entity->toUrl($op);
-        // Enable and disable operations should use AJAX.
-        $operations[$op]['attributes']['class'][] = 'use-ajax';
+        // Check the enable/disable access to prepare or hide the operations.
+        if (!$entity->access($op)) {
+          unset($operations[$op]);
+        }
+        else {
+          $operations[$op]['url'] = $entity->toUrl($op);
+          // Enable and disable operations should use AJAX.
+          $operations[$op]['attributes']['class'][] = 'use-ajax';
+        }
       }
     }
 

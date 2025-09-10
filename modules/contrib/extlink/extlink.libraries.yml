@@ -1,5 +1,4 @@
 drupal.extlink:
-  version: VERSION
   js:
     js/extlink.js: {}
   css:
@@ -11,6 +10,6 @@ drupal.extlink:
 
 extlink.settings:
   js:
-    /extlink/settings.js: { type: external, preprocess: false }
+    /extlink/settings.js: { type: external, preprocess: false, minified: true }
   dependencies:
     - core/drupalSettings

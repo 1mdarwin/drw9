@@ -97,7 +97,7 @@ class ValidateD6SettingsMigrationTest extends MigrateDrupal6TestBase {
     $this->assertFalse($config->get('extlink_target_no_override'));
     $this->assertFalse($config->get('extlink_use_external_js_file'));
     $this->assertFalse($config->get('extlink_use_font_awesome'));
-    $this->assertSame([], $config->get('whitelisted_domains'));
+    $this->assertSame([], $config->get('allowed_domains'));
   }
 
 }
