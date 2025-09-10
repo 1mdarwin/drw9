@@ -20,7 +20,7 @@ entity.entity_queue.edit_form:
     _entity_form: 'entity_queue.edit'
     _title: 'Edit Entity Queue'
   requirements:
-    _permission: 'administer entityqueue'
+    _entity_access: entity_queue.configure
 
 entity.entity_queue.delete_form:
   path: '/admin/structure/entityqueue/{entity_queue}/delete'
@@ -28,7 +28,7 @@ entity.entity_queue.delete_form:
     _entity_form: 'entity_queue.delete'
     _title: 'Delete Entity Queue'
   requirements:
-    _permission: 'administer entityqueue'
+    _entity_access: entity_queue.delete
 
 entity.entity_queue.enable:
   path: '/admin/structure/entityqueue/{entity_queue}/enable'

@@ -7,6 +7,7 @@ dependencies:
     - editor
     - media
     - slick
+    - twig
 _core:
   default_config_hash: WNeK5FbcY8pXgEpbD_KgRzlF1-5PL3BJXwqaBctPTqw
 name: 'Full HTML'
@@ -67,6 +68,12 @@ filters:
     status: true
     weight: 12
     settings: {  }
+  filter_twig:
+    id: filter_twig
+    provider: twig
+    status: true
+    weight: -22
+    settings: {  }
   filter_url:
     id: filter_url
     provider: filter
@@ -99,6 +106,7 @@ filters:
         title: '0'
       optionset: default
       layout: ''
+      admin_uri: '/admin/config/content/formats/manage/full_html?destination=/admin/config/content/formats&ajax_form=1&_wrapper_format=drupal_ajax'
       background: false
       box_caption: ''
       box_caption_custom: ''

@@ -99,7 +99,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
   /**
    * {@inheritdoc}
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, array &$options = NULL) {
+  public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL) {
     parent::init($view, $display, $options);
 
     // Add an extra condition to limit results based on the queue selection.

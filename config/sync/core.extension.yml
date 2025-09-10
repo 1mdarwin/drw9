@@ -54,6 +54,7 @@ module:
   page_cache: 0
   path: 0
   path_alias: 0
+  redirect: 0
   responsive_image: 0
   search: 0
   shortcut: 0
@@ -69,6 +70,8 @@ module:
   text: 0
   token: 0
   toolbar: 0
+  twig: 0
+  twig_tweak: 0
   update: 0
   user: 0
   views_infinite_scroll: 0
@@ -80,6 +83,7 @@ module:
   webform_templates: 0
   webform_ui: 0
   widget: 0
+  extlink: 1
   menu_link_content: 1
   pathauto: 1
   webform_bootstrap: 1

@@ -57,6 +57,11 @@ class EntityQueuePermissions {
       'dependencies' => [$queue->getConfigDependencyKey() => [$queue->getConfigDependencyName()]],
     ];
 
+    $permissions["delete $queue_id entityqueue"] = [
+      'title' => $this->t('Delete %queue queue', ['%queue' => $queue->label()]),
+      'description' => $this->t('Access to delete the %queue queue.', ['%queue' => $queue->label()]),
+    ];
+
     return $permissions;
   }
 
