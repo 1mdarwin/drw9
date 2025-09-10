@@ -19,7 +19,7 @@ function extlink_install(): void {
 /**
  * Add extlink and mailto icon labels to the default configuration.
  */
-function extlink_update_8101() {
+function extlink_update_8101(): void {
   $config_factory = \Drupal::configFactory();
   $config = $config_factory->getEditable('extlink.settings');
   $config->set('extlink_label', '(link is external)');
@@ -120,5 +120,26 @@ function extlink_update_8109(): void {
   \Drupal::configFactory()
     ->getEditable('extlink.settings')
     ->set('extlink_title_no_override', FALSE)
+    ->save();
+}
+
+/**
+ * Replace whitelist keys.
+ */
+function extlink_update_200001(): void {
+  $config = \Drupal::configFactory()->getEditable('extlink.settings');
+  $list = $config->get('whitelisted_domains');
+  $config->clear('whitelisted_domains');
+  $config->set('allowed_domains', $list)->save();
+}
+
+/**
+ * Add new configuration for new window config.
+ */
+function extlink_update_200002(): void {
+  \Drupal::configFactory()
+    ->getEditable('extlink.settings')
+    ->set('extlink_target_display_default_title', TRUE)
+    ->set('extlink_target_default_title_text', '(opens in a new window)')
     ->save();
 }

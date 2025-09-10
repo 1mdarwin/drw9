@@ -64,7 +64,7 @@ process:
   extlink_use_font_awesome:
     - plugin: default_value
       default_value: false
-  whitelisted_domains:
+  allowed_domains:
     - plugin: default_value
       default_value: { }
 destination:

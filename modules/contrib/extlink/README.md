@@ -6,6 +6,8 @@
  * Requirements
  * Installation
  * Configuration
+ * A note about the CSS
+ * Using custom icons
  * Maintainers
 
 ## INTRODUCTION
@@ -56,6 +58,27 @@ separately. To do this:
 
 Note that you DO NOT need to make an extlink.css file. Specifying the file
 in the .info.yml file is enough to tell Drupal not to load the original file.
+
+## USING CUSTOM ICONS
+
+1. Create a custom JS file in your theme or module, e.g. js/extlink-overrides.js.
+2. In that file do something like:
+   ```
+     (function ($, Drupal) {
+       Drupal.theme.extlink_fa_mailto = function (options) {
+       // Your custom markup instead of the default
+       return '<span class="fa fa-envelope custom-mailto"></span>';
+       };
+     })(jQuery, Drupal);
+   ```
+Available functions to override
+
+* Drupal.theme.extlink_fa_mailto
+* Drupal.theme.extlink_fa_extlink
+* Drupal.theme.extlink_fa_tel
+* Drupal.theme.extlink_mailto
+* Drupal.theme.extlink_extlink
+* Drupal.theme.extlink_tel
 
 ## MAINTAINERS
 

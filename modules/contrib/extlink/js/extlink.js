@@ -33,12 +33,12 @@
       subdomains = subdomain.replace('.', '\\.');
     }
 
-    // Whitelisted domains.
-    let whitelistedDomains = false;
-    if (drupalSettings.data.extlink.whitelistedDomains) {
-      whitelistedDomains = [];
-      for (let i = 0; i < drupalSettings.data.extlink.whitelistedDomains.length; i++) {
-        whitelistedDomains.push(new RegExp(`^https?:\\/\\/${drupalSettings.data.extlink.whitelistedDomains[i].replace(/(\r\n|\n|\r)/gm, '')}.*$`, 'i'));
+    // Allowed domains.
+    let allowedDomains = false;
+    if (drupalSettings.data.extlink.allowedDomains) {
+      allowedDomains = [];
+      for (let i = 0; i < drupalSettings.data.extlink.allowedDomains.length; i++) {
+        allowedDomains.push(new RegExp(`^https?:\\/\\/${drupalSettings.data.extlink.allowedDomains[i].replace(/(\r\n|\n|\r)/gm, '')}.*$`, 'i'));
       }
     }
 
@@ -108,9 +108,9 @@
           !(extCssExplicit && !el.closest(extCssExplicit))
         ) {
           let match = false;
-          if (!isExtCssIncluded && whitelistedDomains) {
-            for (let i = 0; i < whitelistedDomains.length; i++) {
-              if (whitelistedDomains[i].test(url)) {
+          if (!isExtCssIncluded && allowedDomains) {
+            for (let i = 0; i < allowedDomains.length; i++) {
+              if (allowedDomains[i].test(url)) {
                 match = true;
                 break;
               }
@@ -219,9 +219,12 @@
       // Set the title attribute of all external links that opens in a new window.
       externalLinks.forEach((link, i) => {
         const oldTitle = link.getAttribute('title');
+        let newTitle = '';
 
+        if (drupalSettings.data.extlink.extTargetAppendNewWindowDisplay) {
+          newTitle = drupalSettings.data.extlink.extTargetAppendNewWindowLabel;
+        }
         // Determine new title based on drupalSettings extTarget configuration.
-        let newTitle = drupalSettings.data.extlink.extTarget ? drupalSettings.data.extlink.extTargetAppendNewWindowLabel : '';
         if (oldTitle !== null) {
           if (Drupal.extlink.hasNewWindowText(oldTitle)) {
             return;
@@ -312,6 +315,11 @@
   Drupal.extlink.combineLabels = function (labelA, labelB) {
     labelA = labelA || '';
     labelB = labelB || '';
+
+    // If either label is empty, return the other without adding a comma
+    if (!labelA.trim()) return labelB;
+    if (!labelB.trim()) return labelA;
+
     const labelANoParens = labelA.trim().replace('(', '').replace(')', '');
     const labelBNoParens = labelB.trim().replace('(', '').replace(')', '');
     if (labelA === labelANoParens) {
@@ -444,6 +452,8 @@
         } else {
           iconElement = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
           iconElement.setAttribute('focusable', 'false');
+          iconElement.setAttribute('width', '1em');
+          iconElement.setAttribute('height', '1em');
           iconElement.classList.add(className);
           iconElement.setAttribute('data-extlink-placement', iconPlacement);
           if (className === drupalSettings.data.extlink.mailtoClass) {
@@ -503,7 +513,7 @@
    *   HTML string of the Font AweSome telephone icon.
    */
   Drupal.theme.extlink_fa_tel = function (drupalSettings, iconPlacement) {
-    return `<span class="${drupalSettings.data.extlink.extFaLinkClasses}" data-extlink-placement="${iconPlacement}"></span>`;
+    return `<span class="${drupalSettings.data.extlink.extFaTelClasses}" data-extlink-placement="${iconPlacement}"></span>`;
   };
 
   /**

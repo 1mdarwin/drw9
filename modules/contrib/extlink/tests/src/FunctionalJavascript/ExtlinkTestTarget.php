@@ -11,6 +11,8 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
 
   /**
    * Checks to see if extlink adds target and rel attributes.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function testExtlinkTarget(): void {
     // Target Enabled.
@@ -25,7 +27,7 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
       'title' => 'test page',
       'body' => [
         [
-          'value' => '<p><a href="http://google.com">Google!</a></p>',
+          'value' => '<p><a href="https://google.com">Google!</a></p>',
           'format' => $this->emptyFormat->id(),
         ],
       ],
@@ -51,6 +53,8 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
 
   /**
    * Checks to see if extlink changes the target attribute.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function testExtlinkTargetNoOverride(): void {
     // Target Enabled.
@@ -66,7 +70,7 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
       'title' => 'test page',
       'body' => [
         [
-          'value' => '<p><a href="http://google.com" target="_self">Google!</a></p>',
+          'value' => '<p><a href="https://google.com" target="_self">Google!</a></p>',
           'format' => $this->emptyFormat->id(),
         ],
       ],
@@ -92,6 +96,8 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
 
   /**
    * Checks to see if extlink adds (New Window) in the title.
+   *
+   * @throws \Drupal\Core\Entity\EntityMalformedException
    */
   public function testExtlinkTargetNewWindow(): void {
     // Target enabled.
@@ -106,7 +112,7 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
       'title' => 'test page',
       'body' => [
         [
-          'value' => '<p><a href="http://google.com">Google!</a><a href="http://google.com" title="My link title">Google with title!</a></p>',
+          'value' => '<p><a href="https://google.com">Google!</a><a href="https://google.com" title="My link title">Google with title!</a></p>',
           'format' => $this->emptyFormat->id(),
         ],
       ],
@@ -141,7 +147,12 @@ class ExtlinkTestTarget extends ExtlinkTestBase {
     $this->assertTrue($link->getAttribute('rel') === 'noopener' || $link->getAttribute('rel') === 'noopener noreferrer' || $link->getAttribute('rel') === 'noreferrer noopener', 'ExtLink rel attribute is not "noopener noreferrer".');
 
     // Link should have a title '(New window)'.
-    $this->assertStringContainsString('(opens in a new window)', $link->getAttribute('title'), 'ExtLink title attribute is not "(opens in a new window)".');
+    $this->assertStringContainsString('(opens in a new window)', $link->getAttribute('title'), 'ExtLink title attribute is "(opens in a new window)".');
+
+    // Test changing default title text.
+    $this->config('extlink.settings')->set('extlink_target_default_title_text', 'This is a test')->save();
+    $this->drupalGet($node->toUrl());
+    $this->assertStringContainsString('This is a test', $link->getAttribute('title'), 'ExtLink title attribute is "This is a test".');
   }
 
 }

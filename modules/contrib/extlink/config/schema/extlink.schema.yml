@@ -16,6 +16,12 @@ extlink.settings:
     extlink_target_no_override:
       type: boolean
       label: 'Do not override target="*" if set'
+    extlink_target_display_default_title:
+      type: boolean
+      label: 'Display default text in title'
+    extlink_target_default_title_text:
+      type: string
+      label: 'Default title text for new window links'
     extlink_title_no_override:
       type: boolean
       label: 'Do not override title="" if set'
@@ -110,9 +116,9 @@ extlink.settings:
     extlink_prevent_orphan:
       type: boolean
       label: 'Prevent text wrapping separating the last word from the icon.'
-    whitelisted_domains:
+    allowed_domains:
       type: sequence
-      label: 'Whitelisted domains'
+      label: 'Allowed domains'
       sequence:
         type: string
         label: 'Domain'
