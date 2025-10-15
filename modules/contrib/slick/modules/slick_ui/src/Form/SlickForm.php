@@ -435,6 +435,14 @@ class SlickForm extends SlickFormBase {
         $type = $type == 'double' ? 'float' : $type;
 
         // Change float to integer if value is no longer float.
+        if ($name === 'slidesToShow') {
+          $type = is_numeric($settings[$name])
+            && (int) $settings[$name] == $settings[$name]
+            ? 'integer'
+            : 'float';
+        }
+
+        // Change float to integer if value is no longer float.
         if ($name == 'edgeFriction') {
           $type = $settings[$name] == '1' ? 'integer' : 'float';
         }
@@ -805,7 +813,7 @@ class SlickForm extends SlickFormBase {
       ];
 
       $elements['slidesToShow'] = [
-        'type'        => 'number',
+        'type'        => 'textfield',
         'title'       => $this->t('Slides to show'),
         'description' => $this->t('Number of slides to show at a time. If 1, it will behave like slideshow, more than 1 a carousel. Provide more if it is a thumbnail navigation with asNavFor. Only works with odd number slidesToShow counts when using centerMode (e.g.: 3, 5, 7, etc.). Not-compatible with variableWidth.'),
       ];

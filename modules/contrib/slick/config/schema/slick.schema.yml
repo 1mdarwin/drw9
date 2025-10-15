@@ -144,7 +144,7 @@ slick_optionset:
       type: string
       label: 'Slide element'
     slidesToShow:
-      type: integer
+      type: float
       label: 'Slides to show'
     slidesToScroll:
       type: integer

@@ -56,12 +56,19 @@ class BlazyAlter {
    * Implements hook_library_info_alter().
    */
   public static function libraryInfoAlter(&$libraries, $extension): void {
+    static $bajax;
+
     // @todo remove if core changed, right below core/drupal for being generic,
     // and dependency-free and a dependency for many other generic ones.
     // @todo watch out for core @todo to remove drupal namespace for debounce.
     $debounce = 'drupal.debounce';
-    if ($extension === 'core' && isset($libraries[$debounce])) {
-      $libraries[$debounce]['js']['misc/debounce.js'] = ['weight' => -16];
+    if ($extension === 'core') {
+      if (isset($libraries[$debounce])) {
+        $libraries[$debounce]['js']['misc/debounce.js'] = ['weight' => -16];
+      }
+      if (!isset($bajax) && isset($libraries['drupal.ajax'])) {
+        $bajax = TRUE;
+      }
     }
 
     if ($extension === 'media' && isset($libraries['oembed.frame'])) {
@@ -97,6 +104,11 @@ class BlazyAlter {
           $libraries['dompurify']['js'] = $js;
           $libraries['dblazy']['dependencies'][] = 'blazy/dompurify';
         }
+      }
+
+      // Add blazy/bio.ajax only if both core drupal.ajax and blazy exist.
+      if (isset($bajax) && isset($libraries['load'])) {
+        $libraries['load']['dependencies'][] = 'blazy/bio.ajax';
       }
     }
   }

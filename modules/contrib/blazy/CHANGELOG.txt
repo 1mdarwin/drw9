@@ -1,3 +1,13 @@
+
+Blazy 3.0.x-dev, 2025-07-29
+---------------------------
+- Added blazy bio.ajax library only if both core drupal.ajax and blazy exist.
+
+Blazy 3.0.x-dev, 2025-03-19
+---------------------------
+- git commit -m 'Issue #3513440 by bgreco: Responsive image preloads
+  multiple sizes'.
+
 Blazy 3.0.x-dev, 2024-10-24
 ---------------------------
 - Issue #3477901 by bburg: With Magnific Popup, next/prev buttons trigger pop up

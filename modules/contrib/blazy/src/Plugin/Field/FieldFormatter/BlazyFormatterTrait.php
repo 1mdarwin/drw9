@@ -113,7 +113,7 @@ trait BlazyFormatterTrait {
    * Returns the blazy admin service.
    */
   public function admin() {
-    return \Drupal::service('blazy.admin.formatter');
+    return $this->formatter->service('blazy.admin.formatter');
   }
 
   /**
@@ -158,6 +158,7 @@ trait BlazyFormatterTrait {
     $commons = $this->getCommonScopedFormElements();
 
     // Compat for BVEF till updated to adopt Blazy 2.10 BlazyVideoFormatter.
+    /* @phpstan-ignore-next-line */
     $scopes = method_exists($this, 'getPluginScopes')
       ? $this->getPluginScopes() : [];
 

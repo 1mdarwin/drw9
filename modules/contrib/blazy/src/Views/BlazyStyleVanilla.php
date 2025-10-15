@@ -295,6 +295,7 @@ abstract class BlazyStyleVanilla extends StylePluginBase implements BlazyStyleVa
             }
 
             if ($result
+              /* @phpstan-ignore-next-line */
               && is_array($result)
               && isset($result['rendered'])
               && !($result['rendered'] instanceof Markup)) {

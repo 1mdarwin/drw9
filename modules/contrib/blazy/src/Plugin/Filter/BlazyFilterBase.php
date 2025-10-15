@@ -93,6 +93,7 @@ abstract class BlazyFilterBase extends TextFilterBase implements BlazyFilterInte
     $this->init($settings, $text);
 
     // Allows sub-modules to add return type hints.
+    /* @phpstan-ignore-next-line */
     if (method_exists($this, 'preSettings')) {
       $this->preSettings($settings, $text);
     }

@@ -195,6 +195,7 @@ function blazy_filter_cleanup($module = 'blazy') {
   // Just to be safe and sure, reset filter_formats cache, etc.
   // @todo re-check if core deprecated this function at or by D10.
   $reset = 'drupal_static_reset';
+  /* @phpstan-ignore-next-line */
   if (is_callable($reset)) {
     $reset('filter_formats');
   }

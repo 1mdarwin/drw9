@@ -163,15 +163,16 @@ class BlazyMedia implements BlazyMediaInterface {
     // Local video, FB, Twitter, etc. is rich to be simple due to terracota,
     // can be refined later when Blazy supports more media types better.
     if ($entity instanceof MediaInterface) {
-      $view_mode = $settings['view_mode'] ?? 'default';
-      $view_mode = $blazies->get('media.view_mode', $view_mode);
-      $source_field = $blazies->get('media.source_field');
+      if ($source_field = $blazies->get('media.source_field')) {
+        $view_mode = $settings['view_mode'] ?? 'default';
+        $view_mode = $blazies->get('media.view_mode', $view_mode);
 
-      // Reset $build, except for #settings, we'll unwrap theme_field() here:
-      $build = $entity->get($source_field)->view($view_mode);
-      $build['#settings'] = $settings;
+        // Reset $build, except for #settings, we'll unwrap theme_field() here:
+        $build = $entity->get($source_field)->view($view_mode);
+        $build['#settings'] = $settings;
 
-      return isset($build[0]) ? $this->unfield($build) : $build;
+        return isset($build[0]) ? $this->unfield($build) : $build;
+      }
     }
     return [];
   }
@@ -256,6 +257,7 @@ class BlazyMedia implements BlazyMediaInterface {
    * {@inheritdoc}
    */
   public function getMetadata(MediaInterface $media, $view_mode, $langcode): array {
+    // @fixme ambiguous NULL with broken Media, see #3222843.
     $source     = $media->getSource();
     $definition = $source->getPluginDefinition();
     $source_id  = $source->getPluginId();

@@ -147,7 +147,7 @@ class SlickFormatterTest extends BlazyKernelTestBase {
    * @return array
    *   An array of tested data.
    */
-  public function providerTestGetThumbnail() {
+  public static function providerTestGetThumbnail() {
     $data[] = [
       '',
       FALSE,
@@ -184,7 +184,7 @@ class SlickFormatterTest extends BlazyKernelTestBase {
    * @return array
    *   An array of tested data.
    */
-  public function providerTestBuildSettings() {
+  public static function providerTestBuildSettings() {
     $data[] = [
       [
         'vanilla' => TRUE,
