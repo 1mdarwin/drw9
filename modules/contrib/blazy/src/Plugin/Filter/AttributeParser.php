@@ -71,6 +71,7 @@ class AttributeParser {
    */
   public static function getAttribute(\DOMElement $node, array $excludes = []): array {
     $attributes = [];
+    /* @phpstan-ignore-next-line */
     if (property_exists($node->attributes, 'length')
       && $node->attributes->length > 0) {
       foreach ($node->attributes as $attribute) {

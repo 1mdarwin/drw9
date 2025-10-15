@@ -172,7 +172,7 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
     if (!$valid && $entity && $stage && empty($settings['overlay'])) {
       if ($object = $this->blazyMedia->fromField($entity, $stage)) {
         $media = $object;
-        $valid = TRUE;
+        $valid = $media instanceof MediaInterface;
       }
     }
 

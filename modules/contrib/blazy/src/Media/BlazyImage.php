@@ -305,12 +305,18 @@ class BlazyImage {
 
   /**
    * Checks if we have image item.
-   *
-   * Both ImageItem and fake stdClass are valid, no problem.
    */
   public static function isValidItem($item): bool {
     $item = is_array($item) ? Internals::toHashtag($item, 'item', NULL) : $item;
-    return is_object($item) && (isset($item->uri) || isset($item->target_id));
+    if ($item instanceof ImageItem) {
+      return TRUE;
+    }
+
+    if (is_object($item)) {
+      // Fake image item has URI, the real one has alt and target_id.
+      return isset($item->uri) || (isset($item->target_id) && isset($item->alt));
+    }
+    return FALSE;
   }
 
   /**

@@ -73,9 +73,11 @@ class Check {
     $is_static    = $is_preview || $is_amp || $is_sandboxed;
     $is_undata    = $is_static || $is_unloading;
     $is_nojs      = $is_unload || $is_undata;
-    $is_resimage  = is_callable('responsive_image_get_mime_type');
-    $is_resimage  = $blazies->is('resimage', $is_resimage);
-    $svg_exist    = Blazy::svgSanitizerExists();
+
+    /* @phpstan-ignore-next-line */
+    $is_resimage = is_callable('responsive_image_get_mime_type');
+    $is_resimage = $blazies->is('resimage', $is_resimage);
+    $svg_exist   = Blazy::svgSanitizerExists();
 
     // When `defer` is chosen, overrides global `No JavaScript: lazy`, ensures
     // to not affect AMP, CKEditor, or other preview pages where nojs is a must.
