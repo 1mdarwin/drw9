@@ -6,12 +6,7 @@ package: Slick
 dependencies:
   - blazy:blazy (>= 3.x)
 
-# Do not remove until below issues are resolved!
-# Add a fake version so local drush and Git checkouts do not fail dependencies.
-# Also accounts for the failing PHP8.1+ with git clone or --prefer-source.
-# version: 3.x
-
-# Information added by Drupal.org packaging script on 2024-10-18
-version: '3.0.4'
+# Information added by Drupal.org packaging script on 2025-10-08
+version: '3.0.5'
 project: 'slick'
-datestamp: 1729250267
+datestamp: 1759915711

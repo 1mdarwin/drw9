@@ -177,7 +177,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
    * @return array
    *   An array of tested data.
    */
-  public function providerTestSlickBuild() {
+  public static function providerTestSlickBuild() {
     $data[] = [
       TRUE,
       [
