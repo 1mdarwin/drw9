@@ -7,7 +7,7 @@ configure: slick_devel.settings
 dependencies:
   - slick:slick (>= 3.x)
 
-# Information added by Drupal.org packaging script on 2024-04-28
-version: '2.0.1'
+# Information added by Drupal.org packaging script on 2025-10-19
+version: '2.0.2'
 project: 'slick_extras'
-datestamp: 1714298914
+datestamp: 1760846755

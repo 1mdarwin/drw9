@@ -3953,18 +3953,18 @@
         },
         {
             "name": "drupal/slick_extras",
-            "version": "2.0.1",
-            "version_normalized": "2.0.1.0",
+            "version": "2.0.2",
+            "version_normalized": "2.0.2.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/slick_extras.git",
-                "reference": "2.0.1"
+                "reference": "2.0.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/slick_extras-2.0.1.zip",
-                "reference": "2.0.1",
-                "shasum": "5c417f7259c8e468742adce76aaf292dbd784b09"
+                "url": "https://ftp.drupal.org/files/projects/slick_extras-2.0.2.zip",
+                "reference": "2.0.2",
+                "shasum": "d1950c9be894e982f544a01068e94600b97b026e"
             },
             "require": {
                 "drupal/core": ">=9.4",
@@ -3977,8 +3977,8 @@
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "2.0.1",
-                    "datestamp": "1714298912",
+                    "version": "2.0.2",
+                    "datestamp": "1760846753",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
