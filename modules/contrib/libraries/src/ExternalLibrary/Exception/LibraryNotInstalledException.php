@@ -16,20 +16,20 @@ class LibraryNotInstalledException extends \RuntimeException implements LibraryA
   /**
    * Constructs a library exception.
    *
-   * @param \Drupal\libraries\ExternalLibrary\Local\LocalLibraryInterface $library
+   * @param LocalLibraryInterface $library
    *   The library that is not installed.
    * @param string $message
    *   (optional) The exception message.
    * @param int $code
    *   (optional) The error code.
-   * @param \Exception $previous
+   * @param \Exception|null $previous
    *   (optional) The previous exception.
    */
   public function __construct(
     LocalLibraryInterface $library,
     $message = '',
     $code = 0,
-    \Exception $previous = NULL
+    ?\Exception $previous = NULL
   ) {
     $this->library = $library;
     $message = $message ?: "The library '{$this->library->getId()}' is not installed.";

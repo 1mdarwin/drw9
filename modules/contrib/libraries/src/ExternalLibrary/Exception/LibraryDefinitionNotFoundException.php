@@ -21,14 +21,14 @@ class LibraryDefinitionNotFoundException extends \RuntimeException implements Li
    *   (optional) The exception message.
    * @param int $code
    *   (optional) The error code.
-   * @param \Exception $previous
+   * @param \Exception|null $previous
    *   (optional) The previous exception.
    */
   public function __construct(
     $library_id,
     $message = '',
     $code = 0,
-    \Exception $previous = NULL
+    ?\Exception $previous = NULL
   ) {
     $this->libraryId = (string) $library_id;
     $message = $message ?: "The library definition for the library '{$this->libraryId}' could not be found.";

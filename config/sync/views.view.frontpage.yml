@@ -99,7 +99,7 @@ display:
           plugin_id: title
           label: ''
           empty: true
-          title: Welcome!
+          title: ¡Bienvenidos!
       sorts:
         sticky:
           id: sticky
