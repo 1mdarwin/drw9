@@ -6,7 +6,7 @@ package: Slick
 dependencies:
   - blazy:blazy (>= 3.x)
 
-# Information added by Drupal.org packaging script on 2025-10-08
-version: '3.0.5'
+# Information added by Drupal.org packaging script on 2025-10-19
+version: '3.0.6'
 project: 'slick'
-datestamp: 1759915711
+datestamp: 1760846721

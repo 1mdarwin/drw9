@@ -15,6 +15,7 @@
   may not be in use when using own icon font at:
   **/admin/config/media/slick/ui**
 * Uninstall Slick UI at production.
+* See Slick and Blazy UI for more optimization options.
 * Enable Drupal cache, and CSS/ JS assets aggregation.
 
 
@@ -172,6 +173,11 @@ The last is the Module feature using pure `CSS Foundation` b-grid.
 
 The total amount of Views results must be bigger than `Visible slides`,
 otherwise broken Grid, see skin Grid above for more details.
+
+**Warning!** The `rows` option is the only culprit between the supported
+versions and 1.8.1+. The value 0 vs 1 is the confusing and breaking one
+depending on the conflicting versions. Read the warning message on saving
+optionsets for details. Basically 0 for the supported one, except for JS grids.
 
 
 ### <a name="html-structure"></a>HTML STRUCTURE
