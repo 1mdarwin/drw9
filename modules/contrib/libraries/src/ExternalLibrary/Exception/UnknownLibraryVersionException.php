@@ -16,20 +16,20 @@ class UnknownLibraryVersionException extends \RuntimeException implements Librar
   /**
    * Constructs a library exception.
    *
-   * @param \Drupal\libraries\ExternalLibrary\Version\VersionedLibraryInterface $library
+   * @param VersionedLibraryInterface $library
    *   The library.
    * @param string $message
    *   (optional) The exception message.
    * @param int $code
    *   (optional) The error code.
-   * @param \Exception $previous
+   * @param \Exception|null $previous
    *   (optional) The previous exception.
    */
   public function __construct(
     VersionedLibraryInterface $library,
     $message = '',
     $code = 0,
-    \Exception $previous = NULL
+    ?\Exception $previous = NULL
   ) {
     $this->library = $library;
     $message = $message ?: "The version of library '{$this->library->getId()}' could not be detected.";

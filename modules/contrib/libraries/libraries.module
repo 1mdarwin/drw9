@@ -167,12 +167,15 @@ function libraries_get_libraries() {
  * https://www.drupal.org/node/2170763
  */
 function libraries_scan_info_files() {
-  $profile = \Drupal::service('extension.list.profile')->getPath(\Drupal::installProfile());
+  $install_profile = \Drupal::installProfile();
   $config = DrupalKernel::findSitePath(\Drupal::request());
 
   // Build a list of directories.
   $directories = \Drupal::moduleHandler()->invokeAll('libraries_info_file_paths', $args = []);
-  $directories[] = "$profile/libraries";
+  if ($install_profile) {
+    $profile = \Drupal::service('extension.list.profile')->getPath($install_profile);
+    $directories[] = "$profile/libraries";
+  }
   $directories[] = 'sites/all/libraries';
   $directories[] = 'libraries';
   $directories[] = "$config/libraries";

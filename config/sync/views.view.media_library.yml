@@ -635,7 +635,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: 'Edit {{ name }}'
+            text: 'Editar {{ nombre }}'
             make_link: true
             path: ''
             absolute: false
@@ -643,7 +643,7 @@ display:
             replace_spaces: false
             path_case: none
             trim_whitespace: false
-            alt: 'Edit {{ name }}'
+            alt: 'Editar {{ nombre }}'
             rel: ''
             link_class: media-library-item__edit
             prefix: ''
@@ -688,7 +688,7 @@ display:
           exclude: false
           alter:
             alter_text: true
-            text: 'Delete {{ name }}'
+            text: 'Borrar {{ nombre }}'
             make_link: true
             path: ''
             absolute: false
@@ -696,7 +696,7 @@ display:
             replace_spaces: false
             path_case: none
             trim_whitespace: false
-            alt: 'Delete {{ name }}'
+            alt: 'Borrar {{ nombre }}'
             rel: ''
             link_class: media-library-item__remove
             prefix: ''

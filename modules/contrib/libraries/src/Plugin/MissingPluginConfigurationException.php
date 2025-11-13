@@ -31,7 +31,7 @@ class MissingPluginConfigurationException extends PluginException {
    *   (optional) The exception message.
    * @param int $code
    *   (optional) The error code.
-   * @param \Exception $previous
+   * @param \Exception|null $previous
    *   (optional) The previous exception.
    */
   public function __construct(
@@ -41,7 +41,7 @@ class MissingPluginConfigurationException extends PluginException {
     $missing_key,
     $message = '',
     $code = 0,
-    \Exception $previous = NULL
+    ?\Exception $previous = NULL
   ) {
     $message = $message ?: "The '{$missing_key}' key is missing in the configuration of the '{$plugin_id}' plugin.";
     parent::__construct($message, $code, $previous);

@@ -65,7 +65,7 @@ class SlickSettingsForm extends BlazyConfigFormBase {
     $form['module_css'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Enable Slick module slick.theme.css'),
-      '#description'   => $this->t('Uncheck to permanently disable the module slick.theme.css, normally included along with skins.'),
+      '#description'   => $this->t('Uncheck to permanently disable the module slick.theme.css, normally included along with skins. It contains fixes to reduce headaches with minor issues.'),
       '#default_value' => $config->get('module_css'),
       '#prefix'        => $this->t("Note! Slick doesn't need Slick UI to run. It is always safe to uninstall Slick UI once done with optionsets."),
     ];
@@ -73,7 +73,7 @@ class SlickSettingsForm extends BlazyConfigFormBase {
     $form['slick_css'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Enable Slick library slick-theme.css'),
-      '#description'   => $this->t('Uncheck to permanently disable the optional slick-theme.css, normally included along with skins.'),
+      '#description'   => $this->t('Uncheck to permanently disable the optional slick-theme.css, normally included along with skins. If using custom font arrows, it then contains useless font you want to remove.'),
       '#default_value' => $config->get('slick_css'),
     ];
 

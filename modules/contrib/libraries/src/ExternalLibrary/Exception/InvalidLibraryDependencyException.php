@@ -20,15 +20,15 @@ class InvalidLibraryDependencyException extends \UnexpectedValueException implem
   /**
    * Constructs a library exception.
    *
-   * @param \Drupal\libraries\ExternalLibrary\LibraryInterface $library
+   * @param LibraryInterface $library
    *   The library with the invalid dependency.
-   * @param \Drupal\libraries\ExternalLibrary\LibraryInterface $dependency
+   * @param LibraryInterface $dependency
    *   The dependency.
    * @param string $message
    *   (optional) The exception message.
    * @param int $code
    *   (optional) The error code.
-   * @param \Exception $previous
+   * @param \Exception|null $previous
    *   (optional) The previous exception.
    */
   public function __construct(
@@ -36,7 +36,7 @@ class InvalidLibraryDependencyException extends \UnexpectedValueException implem
     LibraryInterface $dependency,
     $message = '',
     $code = 0,
-    \Exception $previous = NULL
+    ?\Exception $previous = NULL
   ) {
     $this->library = $library;
     $this->dependency = $dependency;
