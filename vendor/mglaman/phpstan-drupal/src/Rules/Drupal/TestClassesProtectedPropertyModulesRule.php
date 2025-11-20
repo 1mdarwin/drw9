@@ -9,13 +9,9 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Node\ClassPropertyNode;
 use PHPStan\Rules\Rule;
 use PHPStan\Rules\RuleErrorBuilder;
+use PHPStan\ShouldNotHappenException;
 use PHPUnit\Framework\TestCase;
-use function in_array;
-use function sprintf;
 
-/**
- * @implements Rule<ClassPropertyNode>
- */
 class TestClassesProtectedPropertyModulesRule implements Rule
 {
 
@@ -29,11 +25,17 @@ class TestClassesProtectedPropertyModulesRule implements Rule
      */
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof ClassPropertyNode);
+
+        if (!$scope->isInClass()) {
+            throw new ShouldNotHappenException();
+        }
+
         if ($node->getName() !== 'modules') {
             return [];
         }
 
-        $scopeClassReflection = $node->getClassReflection();
+        $scopeClassReflection = $scope->getClassReflection();
         if ($scopeClassReflection->isAnonymous()) {
             return [];
         }

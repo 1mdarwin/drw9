@@ -8,7 +8,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
 use function sprintf;
 
 /**
@@ -66,31 +65,31 @@ class ImplementationOfDeprecatedInterfaceRule implements Rule
 					$description = $interface->getDeprecatedDescription();
 					if (!$class->isAnonymous()) {
 						if ($description === null) {
-							$errors[] = RuleErrorBuilder::message(sprintf(
+							$errors[] = sprintf(
 								'Class %s implements deprecated interface %s.',
 								$className,
 								$interfaceName
-							))->identifier('class.implementsDeprecatedInterface')->build();
+							);
 						} else {
-							$errors[] = RuleErrorBuilder::message(sprintf(
+							$errors[] = sprintf(
 								"Class %s implements deprecated interface %s:\n%s",
 								$className,
 								$interfaceName,
 								$description
-							))->identifier('class.implementsDeprecatedInterface')->build();
+							);
 						}
 					} else {
 						if ($description === null) {
-							$errors[] = RuleErrorBuilder::message(sprintf(
+							$errors[] = sprintf(
 								'Anonymous class implements deprecated interface %s.',
 								$interfaceName
-							))->identifier('class.implementsDeprecatedInterface')->build();
+							);
 						} else {
-							$errors[] = RuleErrorBuilder::message(sprintf(
+							$errors[] = sprintf(
 								"Anonymous class implements deprecated interface %s:\n%s",
 								$interfaceName,
 								$description
-							))->identifier('class.implementsDeprecatedInterface')->build();
+							);
 						}
 					}
 				}

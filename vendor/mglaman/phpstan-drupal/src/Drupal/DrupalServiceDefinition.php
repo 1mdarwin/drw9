@@ -6,8 +6,6 @@ use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
-use function count;
-use function str_replace;
 
 class DrupalServiceDefinition
 {

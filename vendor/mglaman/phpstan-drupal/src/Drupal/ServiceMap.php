@@ -2,8 +2,6 @@
 
 namespace mglaman\PHPStanDrupal\Drupal;
 
-use function class_exists;
-
 class ServiceMap
 {
     /** @var DrupalServiceDefinition[] */
@@ -55,13 +53,6 @@ class ServiceMap
             );
             $deprecated = $serviceDefinition['deprecated'] ?? null;
             if ($deprecated) {
-                if (is_array($deprecated) && isset($deprecated['message'])) {
-                    $deprecated = $deprecated['message'];
-                }
-                $deprecated = str_replace('%service_id%', $serviceId, $deprecated);
-                if (isset($serviceDefinition['alias'])) {
-                    $deprecated = str_replace('%alias_id%', $serviceDefinition['alias'], $deprecated);
-                }
                 self::$services[$serviceId]->setDeprecated(true, $deprecated);
             }
         }

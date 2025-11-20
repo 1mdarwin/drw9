@@ -27,18 +27,7 @@ use PHPStan\Type\StaticType;
 use PHPStan\Type\Type;
 use PHPStan\Type\UnionType;
 use PHPStan\Type\VerbosityLevel;
-use function array_map;
-use function array_merge;
-use function class_exists;
-use function count;
-use function explode;
-use function preg_match;
-use function sprintf;
-use function substr_count;
 
-/**
- * @implements Rule<Node\Expr\ArrayItem>
- */
 final class RenderCallbackRule implements Rule
 {
 
@@ -68,6 +57,7 @@ final class RenderCallbackRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof Node\Expr\ArrayItem);
         $key = $node->key;
         if (!$key instanceof Node\Scalar\String_) {
             return [];
@@ -302,7 +292,7 @@ final class RenderCallbackRule implements Rule
             }
             // @see \PHPStan\Type\Constant\ConstantStringType::isCallable
             preg_match('#^([a-zA-Z_\\x7f-\\xff\\\\][a-zA-Z0-9_\\x7f-\\xff\\\\]*)::([a-zA-Z_\\x7f-\\xff][a-zA-Z0-9_\\x7f-\\xff]*)\\z#', $type->getValue(), $matches);
-            if (count($matches) === 3) {
+            if (count($matches) > 0) {
                 return new ConstantArrayType(
                     [new ConstantIntegerType(0), new ConstantIntegerType(1)],
                     [

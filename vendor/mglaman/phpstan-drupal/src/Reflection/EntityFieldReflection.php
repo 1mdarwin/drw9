@@ -4,7 +4,6 @@ namespace mglaman\PHPStanDrupal\Reflection;
 
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\PropertyReflection;
-use PHPStan\TrinaryLogic;
 use PHPStan\Type\MixedType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\Type;
@@ -117,13 +116,13 @@ class EntityFieldReflection implements PropertyReflection
         return null;
     }
 
-    public function isDeprecated(): TrinaryLogic
+    public function isDeprecated(): \PHPStan\TrinaryLogic
     {
-        return TrinaryLogic::createNo();
+        return \PHPStan\TrinaryLogic::createNo();
     }
 
-    public function isInternal(): TrinaryLogic
+    public function isInternal(): \PHPStan\TrinaryLogic
     {
-        return TrinaryLogic::createNo();
+        return \PHPStan\TrinaryLogic::createNo();
     }
 }

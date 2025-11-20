@@ -8,9 +8,6 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
 
-/**
- * @implements Rule<Node\Stmt\Class_>
- */
 abstract class DeprecatedAnnotationsRuleBase implements Rule
 {
 
@@ -39,6 +36,7 @@ abstract class DeprecatedAnnotationsRuleBase implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof Node\Stmt\Class_);
         if ($node->extends === null) {
             return [];
         }

@@ -13,7 +13,6 @@ use PHPStan\Type\IntegerType;
 use PHPStan\Type\ObjectType;
 use PHPStan\Type\StringType;
 use PHPStan\Type\Type;
-use function in_array;
 
 class EntityQueryDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -36,11 +35,7 @@ class EntityQueryDynamicReturnTypeExtension implements DynamicMethodReturnTypeEx
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $defaultReturnType = ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            $methodCall->getArgs(),
-            $methodReflection->getVariants()
-        )->getReturnType();
+        $defaultReturnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         $varType = $scope->getType($methodCall->var);
         $methodName = $methodReflection->getName();
 

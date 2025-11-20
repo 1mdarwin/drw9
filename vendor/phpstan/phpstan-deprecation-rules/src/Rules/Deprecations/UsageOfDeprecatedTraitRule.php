@@ -8,7 +8,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
 use function sprintf;
 
@@ -60,18 +59,18 @@ class UsageOfDeprecatedTraitRule implements Rule
 
 				$description = $trait->getDeprecatedDescription();
 				if ($description === null) {
-					$errors[] = RuleErrorBuilder::message(sprintf(
+					$errors[] = sprintf(
 						'Usage of deprecated trait %s in class %s.',
 						$traitName,
 						$className
-					))->identifier('traitUse.deprecated')->build();
+					);
 				} else {
-					$errors[] = RuleErrorBuilder::message(sprintf(
+					$errors[] = sprintf(
 						"Usage of deprecated trait %s in class %s:\n%s",
 						$traitName,
 						$className,
 						$description
-					))->identifier('traitUse.deprecated')->build();
+					);
 				}
 			} catch (ClassNotFoundException $e) {
 				continue;

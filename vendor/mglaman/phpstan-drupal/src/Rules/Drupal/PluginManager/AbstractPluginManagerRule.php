@@ -6,8 +6,7 @@ use PHPStan\Reflection\ClassReflection;
 use PHPStan\Rules\Rule;
 
 /**
- * @template TNodeType of \PhpParser\Node
- * @implements Rule<TNodeType>
+ * @phpstan-template TNodeType of \PhpParser\Node
  */
 abstract class AbstractPluginManagerRule implements Rule
 {

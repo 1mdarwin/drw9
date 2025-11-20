@@ -10,7 +10,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use function sprintf;
@@ -90,16 +89,16 @@ class InstantiationOfDeprecatedClassRule implements Rule
 
 			$description = $class->getDeprecatedDescription();
 			if ($description === null) {
-				$errors[] = RuleErrorBuilder::message(sprintf(
+				$errors[] = sprintf(
 					'Instantiation of deprecated class %s.',
 					$referencedClass
-				))->identifier('new.deprecated')->build();
+				);
 			} else {
-				$errors[] = RuleErrorBuilder::message(sprintf(
+				$errors[] = sprintf(
 					"Instantiation of deprecated class %s:\n%s",
 					$referencedClass,
 					$description
-				))->identifier('new.deprecated')->build();
+				);
 			}
 		}
 

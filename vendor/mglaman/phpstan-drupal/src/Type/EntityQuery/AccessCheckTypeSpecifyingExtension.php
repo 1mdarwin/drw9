@@ -40,11 +40,7 @@ final class AccessCheckTypeSpecifyingExtension implements MethodTypeSpecifyingEx
         Scope $scope,
         TypeSpecifierContext $context
     ): SpecifiedTypes {
-        $returnType = ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            [],
-            $methodReflection->getVariants()
-        )->getReturnType();
+        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         $expr = $node->var;
         if (!$returnType instanceof EntityQueryType) {
             return new SpecifiedTypes([]);

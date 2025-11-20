@@ -5,14 +5,8 @@ namespace mglaman\PHPStanDrupal\Rules\Drupal\PluginManager;
 use PhpParser\Node;
 use PhpParser\Node\Stmt\ClassMethod;
 use PHPStan\Analyser\Scope;
-use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\Type;
-use function array_map;
-use function count;
 
-/**
- * @extends AbstractPluginManagerRule<ClassMethod>
- */
 class PluginManagerSetsCacheBackendRule extends AbstractPluginManagerRule
 {
     public function getNodeType(): string
@@ -20,10 +14,18 @@ class PluginManagerSetsCacheBackendRule extends AbstractPluginManagerRule
         return ClassMethod::class;
     }
 
+    /**
+     * @param Node $node
+     * @param \PHPStan\Analyser\Scope $scope
+     * @return string[]
+     * @throws \PHPStan\ShouldNotHappenException
+     */
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof Node\Stmt\ClassMethod);
+
         if (!$scope->isInClass()) {
-            throw new ShouldNotHappenException();
+            throw new \PHPStan\ShouldNotHappenException();
         }
 
         if ($scope->isInTrait()) {
@@ -41,6 +43,7 @@ class PluginManagerSetsCacheBackendRule extends AbstractPluginManagerRule
         }
 
         $hasCacheBackendSet = false;
+        $misnamedCacheTagWarnings = [];
 
         foreach ($node->stmts ?? [] as $statement) {
             if ($statement instanceof Node\Stmt\Expression) {
@@ -64,6 +67,21 @@ class PluginManagerSetsCacheBackendRule extends AbstractPluginManagerRule
                     continue;
                 }
 
+                if (isset($setCacheBackendArgs[2])) {
+                    $cacheTagsType = $scope->getType($setCacheBackendArgs[2]->value);
+                    foreach ($cacheTagsType->getConstantArrays() as $constantArray) {
+                        foreach ($constantArray->getValueTypes() as $valueType) {
+                            foreach ($valueType->getConstantStrings() as $cacheTagConstantString) {
+                                foreach ($cacheKey as $cacheKeyValue) {
+                                    if (strpos($cacheTagConstantString->getValue(), $cacheKeyValue) === false) {
+                                        $misnamedCacheTagWarnings[] = $cacheTagConstantString->getValue();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
                 break;
             }
         }
@@ -71,6 +89,9 @@ class PluginManagerSetsCacheBackendRule extends AbstractPluginManagerRule
         $errors = [];
         if (!$hasCacheBackendSet) {
             $errors[] = 'Missing cache backend declaration for performance.';
+        }
+        foreach ($misnamedCacheTagWarnings as $cacheTagWarning) {
+            $errors[] = sprintf('%s cache tag might be unclear and does not contain the cache key in it.', $cacheTagWarning);
         }
 
         return $errors;

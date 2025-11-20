@@ -10,11 +10,7 @@ use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Type\Constant\ConstantArrayType;
 use PHPStan\Type\Constant\ConstantStringType;
 use PHPStan\Type\ObjectType;
-use function count;
 
-/**
- * @implements Rule<Node\Expr\MethodCall>
- */
 final class ConditionManagerCreateInstanceContextConfigurationRule implements Rule
 {
     public function getNodeType(): string
@@ -24,6 +20,7 @@ final class ConditionManagerCreateInstanceContextConfigurationRule implements Ru
 
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof Node\Expr\MethodCall);
         if (!$node->name instanceof Node\Identifier) {
             return [];
         }

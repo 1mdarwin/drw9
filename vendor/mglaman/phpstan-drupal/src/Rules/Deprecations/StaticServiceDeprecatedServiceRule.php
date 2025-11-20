@@ -8,9 +8,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Rules\Rule;
 
-/**
- * @implements Rule<Node\Expr\StaticCall>
- */
 final class StaticServiceDeprecatedServiceRule implements Rule
 {
 
@@ -31,6 +28,7 @@ final class StaticServiceDeprecatedServiceRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof Node\Expr\StaticCall);
         if (!$node->name instanceof Node\Identifier) {
             return [];
         }

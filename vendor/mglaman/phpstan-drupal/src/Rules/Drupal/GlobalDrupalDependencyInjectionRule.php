@@ -7,9 +7,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ExtendedMethodReflection;
 use PHPStan\Rules\Rule;
 
-/**
- * @implements Rule<Node\Expr\StaticCall>
- */
 class GlobalDrupalDependencyInjectionRule implements Rule
 {
     public function getNodeType(): string
@@ -19,6 +16,8 @@ class GlobalDrupalDependencyInjectionRule implements Rule
 
     public function processNode(Node $node, Scope $scope): array
     {
+        assert($node instanceof Node\Expr\StaticCall);
+
         // Only check static calls to \Drupal
         if (!($node->class instanceof Node\Name\FullyQualified) || (string) $node->class !== 'Drupal') {
             return [];

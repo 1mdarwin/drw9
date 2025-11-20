@@ -6,7 +6,6 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\ShouldNotHappenException;
-use function preg_match;
 
 final class PluginAnnotationContextDefinitionsRule extends DeprecatedAnnotationsRuleBase
 {

@@ -2,12 +2,6 @@
 
 namespace mglaman\PHPStanDrupal\Drupal;
 
-use RecursiveFilterIterator;
-use RecursiveIterator;
-use function array_merge;
-use function in_array;
-use function substr;
-
 /**
  * Filters a RecursiveDirectoryIterator to discover extensions.
  *
@@ -15,7 +9,7 @@ use function substr;
  *
  * @method bool isDir()
  */
-class RecursiveExtensionFilterIterator extends RecursiveFilterIterator
+class RecursiveExtensionFilterIterator extends \RecursiveFilterIterator
 {
 
     /**
@@ -71,7 +65,7 @@ class RecursiveExtensionFilterIterator extends RecursiveFilterIterator
      *   (optional) Add to the blacklist of directories that should be filtered
      *   out during the iteration.
      */
-    public function __construct(RecursiveIterator $iterator, array $blacklist = [])
+    public function __construct(\RecursiveIterator $iterator, array $blacklist = [])
     {
         parent::__construct($iterator);
         $this->blacklist = array_merge($this->blacklist, $blacklist);
@@ -80,7 +74,7 @@ class RecursiveExtensionFilterIterator extends RecursiveFilterIterator
     /**
      * {@inheritdoc}
      */
-    public function getChildren(): RecursiveFilterIterator
+    public function getChildren(): \RecursiveFilterIterator
     {
         $filter = parent::getChildren();
         if ($filter instanceof self) {

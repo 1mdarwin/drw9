@@ -13,7 +13,6 @@ use PHPStan\Reflection\ParametersAcceptorSelector;
 use PHPStan\ShouldNotHappenException;
 use PHPStan\Type\DynamicMethodReturnTypeExtension;
 use PHPStan\Type\ObjectType;
-use PHPStan\Type\Type;
 
 class EntityTypeManagerGetStorageDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -47,12 +46,8 @@ class EntityTypeManagerGetStorageDynamicReturnTypeExtension implements DynamicMe
         MethodReflection $methodReflection,
         MethodCall $methodCall,
         Scope $scope
-    ): Type {
-        $returnType = ParametersAcceptorSelector::selectFromArgs(
-            $scope,
-            $methodCall->getArgs(),
-            $methodReflection->getVariants()
-        )->getReturnType();
+    ): \PHPStan\Type\Type {
+        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
         if (!isset($methodCall->args[0])) {
             // Parameter is required.
             throw new ShouldNotHappenException();

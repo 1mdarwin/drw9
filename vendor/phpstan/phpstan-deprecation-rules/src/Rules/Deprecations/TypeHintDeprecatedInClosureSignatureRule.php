@@ -6,10 +6,8 @@ use PhpParser\Node;
 use PHPStan\Analyser\Scope;
 use PHPStan\Node\InClosureNode;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\ShouldNotHappenException;
 use function sprintf;
-use function strtolower;
 
 /**
  * @implements Rule<InClosureNode>
@@ -49,24 +47,24 @@ class TypeHintDeprecatedInClosureSignatureRule implements Rule
 		foreach ($functionSignature->getParameters() as $parameter) {
 			$deprecatedClasses = $this->deprecatedClassHelper->filterDeprecatedClasses($parameter->getType()->getReferencedClasses());
 			foreach ($deprecatedClasses as $deprecatedClass) {
-				$errors[] = RuleErrorBuilder::message(sprintf(
+				$errors[] = sprintf(
 					'Parameter $%s of anonymous function has typehint with deprecated %s %s%s',
 					$parameter->getName(),
-					strtolower($deprecatedClass->getClassTypeDescription()),
+					$this->deprecatedClassHelper->getClassType($deprecatedClass),
 					$deprecatedClass->getName(),
 					$this->deprecatedClassHelper->getClassDeprecationDescription($deprecatedClass)
-				))->identifier(sprintf('parameter.deprecated%s', $deprecatedClass->getClassTypeDescription()))->build();
+				);
 			}
 		}
 
 		$deprecatedClasses = $this->deprecatedClassHelper->filterDeprecatedClasses($functionSignature->getReturnType()->getReferencedClasses());
 		foreach ($deprecatedClasses as $deprecatedClass) {
-			$errors[] = RuleErrorBuilder::message(sprintf(
+			$errors[] = sprintf(
 				'Return type of anonymous function has typehint with deprecated %s %s%s',
-				strtolower($deprecatedClass->getClassTypeDescription()),
+				$this->deprecatedClassHelper->getClassType($deprecatedClass),
 				$deprecatedClass->getName(),
 				$this->deprecatedClassHelper->getClassDeprecationDescription($deprecatedClass)
-			))->identifier(sprintf('return.deprecated%s', $deprecatedClass->getClassTypeDescription()))->build();
+			);
 		}
 
 		return $errors;

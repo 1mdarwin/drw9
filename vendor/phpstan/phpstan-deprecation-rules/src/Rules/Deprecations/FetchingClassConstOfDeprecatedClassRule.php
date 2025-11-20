@@ -10,7 +10,6 @@ use PHPStan\Analyser\Scope;
 use PHPStan\Broker\ClassNotFoundException;
 use PHPStan\Reflection\ReflectionProvider;
 use PHPStan\Rules\Rule;
-use PHPStan\Rules\RuleErrorBuilder;
 use PHPStan\Rules\RuleLevelHelper;
 use PHPStan\Type\ErrorType;
 use PHPStan\Type\Type;
@@ -88,20 +87,18 @@ class FetchingClassConstOfDeprecatedClassRule implements Rule
 			if ($class->isDeprecated()) {
 				$classDescription = $class->getDeprecatedDescription();
 				if ($classDescription === null) {
-					$errors[] = RuleErrorBuilder::message(sprintf(
-						'Fetching class constant %s of deprecated %s %s.',
+					$errors[] = sprintf(
+						'Fetching class constant %s of deprecated class %s.',
 						$constantName,
-						strtolower($class->getClassTypeDescription()),
 						$referencedClass
-					))->identifier(sprintf('classConstant.deprecated%s', $class->getClassTypeDescription()))->build();
+					);
 				} else {
-					$errors[] = RuleErrorBuilder::message(sprintf(
-						"Fetching class constant %s of deprecated %s %s:\n%s",
+					$errors[] = sprintf(
+						"Fetching class constant %s of deprecated class %s:\n%s",
 						$constantName,
-						strtolower($class->getClassTypeDescription()),
 						$referencedClass,
 						$classDescription
-					))->identifier(sprintf('classConstant.deprecated%s', $class->getClassTypeDescription()))->build();
+					);
 				}
 			}
 
@@ -121,20 +118,18 @@ class FetchingClassConstOfDeprecatedClassRule implements Rule
 
 			$description = $constantReflection->getDeprecatedDescription();
 			if ($description === null) {
-				$errors[] = RuleErrorBuilder::message(sprintf(
-					'Fetching deprecated class constant %s of %s %s.',
+				$errors[] = sprintf(
+					'Fetching deprecated class constant %s of class %s.',
 					$constantName,
-					strtolower($class->getClassTypeDescription()),
 					$referencedClass
-				))->identifier('classConstant.deprecated')->build();
+				);
 			} else {
-				$errors[] = RuleErrorBuilder::message(sprintf(
-					"Fetching deprecated class constant %s of %s %s:\n%s",
+				$errors[] = sprintf(
+					"Fetching deprecated class constant %s of class %s:\n%s",
 					$constantName,
-					strtolower($class->getClassTypeDescription()),
 					$referencedClass,
 					$description
-				))->identifier('classConstant.deprecated')->build();
+				);
 			}
 		}
 

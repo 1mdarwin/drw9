@@ -60,6 +60,7 @@
         "drupal/superfish": "^1.7",
         "drupal/twig-twig": "^2.0",
         "drupal/twig_tweak": "^3.4",
+        "drupal/upgrade_status": "^4.3",
         "drupal/views_bootstrap": "^5.4.0",
         "drupal/views_infinite_scroll": "^2.0.0",
         "drupal/webform": "^6.2",
