@@ -7,4 +7,4 @@ deployment:
     - /bin/rm -Rf $DEPLOYPATH/modules
     - /bin/rm -Rf $DEPLOYPATH/themes
     - /bin/rm -Rf $DEPLOYPATH/vendor
-    - /bin/cp -R * $DEPLOYPATH
+    - /bin/cp -Rfa * $DEPLOYPATH
