@@ -1,5 +1,17 @@
 # Changelog
 
+### 5.4.2 - 2024/Dec/13
+
+* PHP 8.4 support
+
+### 5.4.1 - 2024/Jul/10
+
+* Allow Docker Compose v2
+
+### 5.4.0
+
+* Support Symfony 7
+
 ### 5.3.0 - 2024/Apr/1
 
 * Allow short options. Needed to pass along -vvv (#76)

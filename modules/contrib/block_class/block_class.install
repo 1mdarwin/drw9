@@ -7,13 +7,17 @@
 
 use Drupal\block\Entity\Block;
 use Drupal\Component\Serialization\Json;
+use Drupal\Core\Url;
 
 /**
  * Implements hook_install().
  */
 function block_class_install() {
   // Send a message with the documentation.
-  \Drupal::messenger()->addStatus(t('Thanks for installing Block Class. Now in the block configuration you will see a field to add your classes. If you need to see more please visit our <a href="https://www.drupal.org/docs/contributed-modules/block-class" target="blank">documentation here</a>'));
+  \Drupal::messenger()->addStatus(t('Thanks for installing <strong>Block Class</strong>!<br>When configuring a block, you can now customize the block by adding CSS classes, attributes or a custom ID.<br><a target="_blank" href="@configure_link">Configure module settings</a> or <a href="@documentation" target="blank">view documentation</a>', [
+    '@configure_link' => Url::fromRoute('block_class.settings')->toString(),
+    '@documentation' => 'https://www.drupal.org/docs/contributed-modules/block-class',
+  ]));
 }
 
 /**
@@ -468,5 +472,31 @@ function block_class_update_20018() {
   if (empty($config->get('maxlength_attributes'))) {
     $config->set('maxlength_attributes', 255);
     $config->save();
+  }
+}
+
+/**
+ * Remove invalid block_class dependencies.
+ */
+function block_class_update_20019() {
+  // Load all blocks.
+  $blocks = Block::loadMultiple();
+
+  foreach ($blocks as $block) {
+    $dependencies = $block->getDependencies();
+
+    // Skip if there's no dependency on block_class.
+    if (!isset($dependencies['module']) || !in_array('block_class', $dependencies['module'])) {
+      continue;
+    }
+
+    // Recalculate and fetch dependencies based on stored config.
+    $block->calculateDependencies();
+    $updated_dependencies = $block->getDependencies();
+
+    // Save the block with recalculated dependencies if they're are different.
+    if ($updated_dependencies != $dependencies) {
+      $block->save();
+    }
   }
 }

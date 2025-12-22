@@ -142,6 +142,7 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
             'Drupal\\Composer\\Plugin\\ProjectMessage\\' => 38,
             'Drupal\\Component\\' => 17,
             'DrupalRector\\' => 13,
+            'DrupalFinder\\' => 13,
             'DrupalCodeGenerator\\' => 20,
             'Doctrine\\Persistence\\' => 21,
             'Doctrine\\Deprecations\\' => 22,
@@ -434,6 +435,10 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         array (
             0 => __DIR__ . '/..' . '/palantirnet/drupal-rector/src',
         ),
+        'DrupalFinder\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/webflo/drupal-finder/src',
+        ),
         'DrupalCodeGenerator\\' => 
         array (
             0 => __DIR__ . '/..' . '/chi-teck/drupal-code-generator/src',
@@ -535,7 +540,6 @@ class ComposerStaticInit85aa02043d1becf0dc1b5d6dcb99ccc1
         'DateObjectError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateObjectError.php',
         'DateRangeError' => __DIR__ . '/..' . '/symfony/polyfill-php83/Resources/stubs/DateRangeError.php',
         'Drupal' => __DIR__ . '/../..' . '/core/lib/Drupal.php',
-        'DrupalFinder\\DrupalFinder' => __DIR__ . '/..' . '/webflo/drupal-finder/src/DrupalFinder.php',
         'Drupal\\Component\\Datetime\\Time' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/Datetime/Time.php',
         'Drupal\\Component\\DependencyInjection\\Container' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/DependencyInjection/Container.php',
         'Drupal\\Component\\DependencyInjection\\PhpArrayContainer' => __DIR__ . '/../..' . '/core/lib/Drupal/Component/DependencyInjection/PhpArrayContainer.php',

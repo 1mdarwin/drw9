@@ -1208,6 +1208,7 @@ EOTXT
                 || ($callable[0] instanceof Definition && !$this->definitionVariables->offsetExists($callable[0]))
             ))) {
                 $initializer = 'fn () => '.$this->dumpValue($callable[0]);
+                $this->preload[LazyClosure::class] = LazyClosure::class;
 
                 return $return.LazyClosure::getCode($initializer, $callable, $class, $this->container, $id).$tail;
             }
@@ -1843,7 +1844,15 @@ EOF;
 
                     $returnedType = '';
                     if ($value instanceof TypedReference) {
-                        $returnedType = \sprintf(': %s\%s', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE >= $value->getInvalidBehavior() ? '' : '?', str_replace(['|', '&'], ['|\\', '&\\'], $value->getType()));
+                        $type = $value->getType();
+                        $nullable = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE >= $value->getInvalidBehavior() ? '' : '?';
+
+                        if ('?' === ($type[0] ?? '')) {
+                            $type = substr($type, 1);
+                            $nullable = '?';
+                        }
+
+                        $returnedType = \sprintf(': %s\%s', $nullable, str_replace(['|', '&'], ['|\\', '&\\'], $type));
                     }
 
                     $attribute = '';

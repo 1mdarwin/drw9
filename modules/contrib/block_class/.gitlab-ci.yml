@@ -30,23 +30,37 @@ include:
 
 ################
 # Block Class: Pipeline configuration variables and custom jobs, mostly:
+#  - Broaden tests coverage to all supported core versions and max PHP.
 #  - Require jobs to pass: CSpell, PHPCS, PHPSTAN and Stylelint.
 ################
 
 variables:
-  # Broaden test coverage.
+  ################
+  # Opt in variables: Broaden tests coverage.
+  ################
   OPT_IN_TEST_PREVIOUS_MAJOR: 1
   OPT_IN_TEST_MAX_PHP: 1
   OPT_IN_TEST_PREVIOUS_MINOR: 1
   OPT_IN_TEST_NEXT_MINOR: 1
   # OPT_IN_TEST_NEXT_MAJOR: 1
+  # Speed up the execution of the Tests.
+  _PHPUNIT_CONCURRENT: 1
+  # # Convenient for debugging: Enable in issue forks for testing.
+  # _SHOW_ENVIRONMENT_VARIABLES: 1
 
 #
-# CSpell overrides and configuration.
+# CSPELL overrides and configuration.
 #
 cspell:
   # Require spellcheck to pass.
   allow_failure: false
+
+# #
+# # ESLINT overrides and configuration.
+# #
+# eslint:
+#   # Require eslint to pass.
+#   allow_failure: false
 
 #
 # PHPCS overrides and configuration.
@@ -63,7 +77,7 @@ phpstan:
   allow_failure: false
 
 #
-# Stylelint overrides and configuration.
+# STYLELINT overrides and configuration.
 #
 stylelint:
   # Require stylelint to pass.

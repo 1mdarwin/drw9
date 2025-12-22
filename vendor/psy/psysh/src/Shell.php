@@ -3,7 +3,7 @@
 /*
  * This file is part of Psy Shell.
  *
- * (c) 2012-2023 Justin Hileman
+ * (c) 2012-2025 Justin Hileman
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,15 +15,21 @@ use Psy\CodeCleaner\NoReturnValue;
 use Psy\Exception\BreakException;
 use Psy\Exception\ErrorException;
 use Psy\Exception\Exception as PsyException;
+use Psy\Exception\InterruptException;
 use Psy\Exception\RuntimeException;
 use Psy\Exception\ThrowUpException;
 use Psy\ExecutionLoop\ProcessForker;
 use Psy\ExecutionLoop\RunkitReloader;
+use Psy\ExecutionLoop\SignalHandler;
+use Psy\ExecutionLoop\UopzReloader;
 use Psy\Formatter\TraceFormatter;
 use Psy\Input\ShellInput;
 use Psy\Input\SilentInput;
 use Psy\Output\ShellOutput;
+use Psy\Readline\Readline;
+use Psy\TabCompletion\AutoCompleter;
 use Psy\TabCompletion\Matcher;
+use Psy\TabCompletion\Matcher\CommandsMatcher;
 use Psy\VarDumper\PresenterAware;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command as BaseCommand;
@@ -50,29 +56,30 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 class Shell extends Application
 {
-    const VERSION = 'v0.12.3';
+    const VERSION = 'v0.12.18';
 
-    private $config;
-    private $cleaner;
-    private $output;
-    private $originalVerbosity;
-    private $readline;
-    private $inputBuffer;
-    private $code;
-    private $codeBuffer;
-    private $codeBufferOpen;
-    private $codeStack;
-    private $stdoutBuffer;
-    private $context;
-    private $includes;
-    private $outputWantsNewline = false;
-    private $loopListeners;
-    private $autoCompleter;
-    private $matchers = [];
-    private $commandsMatcher;
-    private $lastExecSuccess = true;
-    private $nonInteractive = false;
-    private $errorReporting;
+    private Configuration $config;
+    private CodeCleaner $cleaner;
+    private OutputInterface $output;
+    private ?int $originalVerbosity = null;
+    private Readline $readline;
+    private array $inputBuffer;
+    /** @var string|false|null */
+    private $code = null;
+    private array $codeBuffer = [];
+    private bool $codeBufferOpen = false;
+    private array $codeStack;
+    private string $stdoutBuffer;
+    private Context $context;
+    private array $includes;
+    private bool $outputWantsNewline = false;
+    private array $loopListeners;
+    private ?AutoCompleter $autoCompleter = null;
+    private array $matchers = [];
+    private ?CommandsMatcher $commandsMatcher = null;
+    private bool $lastExecSuccess = true;
+    private bool $nonInteractive = false;
+    private ?int $errorReporting = null;
 
     /**
      * Create a new Psy Shell.
@@ -97,6 +104,50 @@ class Shell extends Application
 
         // Register the current shell session's config with \Psy\info
         \Psy\info($this->config);
+
+        $this->warmAutoloader();
+    }
+
+    /**
+     * Warm the autoloader by loading classes at startup.
+     *
+     * This improves tab completion by making classes available via get_declared_classes()
+     * rather than maintaining a separate list of available classes.
+     */
+    private function warmAutoloader(): void
+    {
+        $warmers = $this->config->getAutoloadWarmers();
+        if (empty($warmers)) {
+            return;
+        }
+
+        $output = $this->config->getOutput();
+        if ($output instanceof ConsoleOutput) {
+            $output = $output->getErrorOutput();
+        }
+
+        $start = \microtime(true);
+        $loadedCount = 0;
+
+        foreach ($warmers as $warmer) {
+            try {
+                $loadedCount += $warmer->warm();
+            } catch (\Throwable $e) {
+                $output->writeln($this->formatException($e), OutputInterface::VERBOSITY_DEBUG);
+            }
+        }
+
+        $message = \sprintf(
+            '<whisper>Autoload warming: loaded %d classes in %.1fms</whisper>',
+            $loadedCount,
+            (\microtime(true) - $start) * 1000
+        );
+
+        $output->writeln($message, OutputInterface::VERBOSITY_DEBUG);
+
+        if (!\class_exists('Composer\\ClassMapGenerator\\ClassMapGenerator', false)) {
+            $output->writeln('<whisper>Autoload warming works best with composer/class-map-generator installed</whisper>');
+        }
     }
 
     /**
@@ -150,7 +201,7 @@ class Shell extends Application
     /**
      * Adds a command object.
      *
-     * {@inheritdoc}
+     * @deprecated since Symfony Console 7.4, use addCommand() instead
      *
      * @param BaseCommand $command A Symfony Console Command object
      *
@@ -158,9 +209,33 @@ class Shell extends Application
      */
     public function add(BaseCommand $command): BaseCommand
     {
-        if ($ret = parent::add($command)) {
+        return $this->addCommand($command);
+    }
+
+    /**
+     * Adds a command object.
+     *
+     * @param BaseCommand|callable $command A Symfony Console Command object or callable
+     *
+     * @return BaseCommand|null The registered command, or null
+     */
+    public function addCommand($command): ?BaseCommand
+    {
+        // For Symfony Console < 7.4, use parent::add()
+        if (\method_exists(Application::class, 'addCommand')) {
+            /** @phan-suppress-next-line PhanUndeclaredStaticMethod (Symfony Console 7.4+) */
+            $ret = parent::addCommand($command);
+        } else {
+            $ret = parent::add($command);
+        }
+
+        if ($ret) {
             if ($ret instanceof ContextAware) {
                 $ret->setContext($this->context);
+            }
+
+            if ($ret instanceof CodeCleanerAware) {
+                $ret->setCodeCleaner($this->cleaner);
             }
 
             if ($ret instanceof PresenterAware) {
@@ -201,11 +276,14 @@ class Shell extends Application
         $hist = new Command\HistoryCommand();
         $hist->setReadline($this->readline);
 
-        return [
+        $doc = new Command\DocCommand();
+        $doc->setConfiguration($this->config);
+
+        $commands = [
             new Command\HelpCommand(),
             new Command\ListCommand(),
             new Command\DumpCommand(),
-            new Command\DocCommand(),
+            $doc,
             new Command\ShowCommand(),
             new Command\WtfCommand(),
             new Command\WhereamiCommand(),
@@ -214,12 +292,21 @@ class Shell extends Application
             new Command\TraceCommand(),
             new Command\BufferCommand(),
             new Command\ClearCommand(),
-            new Command\EditCommand($this->config->getRuntimeDir()),
+            new Command\EditCommand($this->config->getRuntimeDir(false)),
             // new Command\PsyVersionCommand(),
             $sudo,
             $hist,
             new Command\ExitCommand(),
         ];
+
+        // Only add yolo command if UopzReloader is supported
+        if (UopzReloader::isSupported()) {
+            $yolo = new Command\YoloCommand();
+            $yolo->setReadline($this->readline);
+            $commands[] = $yolo;
+        }
+
+        return $commands;
     }
 
     /**
@@ -229,7 +316,7 @@ class Shell extends Application
     {
         // Store the Commands Matcher for later. If more commands are added,
         // we'll update the Commands Matcher too.
-        $this->commandsMatcher = new Matcher\CommandsMatcher($this->all());
+        $this->commandsMatcher = new CommandsMatcher($this->all());
 
         return [
             $this->commandsMatcher,
@@ -257,15 +344,43 @@ class Shell extends Application
     {
         $listeners = [];
 
+        if ($inputLogger = $this->config->getInputLogger()) {
+            $listeners[] = $inputLogger;
+        }
+
         if (ProcessForker::isSupported() && $this->config->usePcntl()) {
             $listeners[] = new ProcessForker();
+        } elseif (SignalHandler::isSupported()) {
+            // Only use SignalHandler when process forking is disabled
+            // ProcessForker handles SIGINT in the parent process, which is cleaner
+            $listeners[] = new SignalHandler();
         }
 
         if (RunkitReloader::isSupported()) {
             $listeners[] = new RunkitReloader();
+        } elseif (UopzReloader::isSupported()) {
+            $listeners[] = new UopzReloader();
+        }
+
+        if ($executionLogger = $this->config->getExecutionLogger()) {
+            $listeners[] = $executionLogger;
         }
 
         return $listeners;
+    }
+
+    /**
+     * Enable or disable force-reload mode for code reloaders.
+     *
+     * Used by the `yolo` command to bypass safety warnings when reloading code.
+     */
+    public function setForceReload(bool $force): void
+    {
+        foreach ($this->loopListeners as $listener) {
+            if (\method_exists($listener, 'setForceReload')) {
+                $listener->setForceReload($force);
+            }
+        }
     }
 
     /**
@@ -327,6 +442,9 @@ class Shell extends Application
 
         try {
             return parent::run($input, $output);
+        } catch (BreakException $e) {
+            // BreakException from ProcessForker or exit() - return its exit code
+            return $e->getCode();
         } catch (\Throwable $e) {
             $this->writeException($e);
         }
@@ -374,21 +492,23 @@ class Shell extends Application
 
         $this->output->writeln($this->getHeader());
         $this->writeVersionInfo();
+        $this->writeManualUpdateInfo();
         $this->writeStartupMessage();
 
         try {
             $this->beforeRun();
             $this->loadIncludes();
             $loop = new ExecutionLoopClosure($this);
-            $loop->execute();
-            $this->afterRun();
+            $exitCode = $loop->execute();
+            $this->afterRun($exitCode ?? 0);
+
+            return $exitCode ?? 0;
         } catch (ThrowUpException $e) {
             throw $e->getPrevious();
         } catch (BreakException $e) {
             // The ProcessForker throws a BreakException to finish the main thread.
+            return $e->getCode();
         }
-
-        return 0;
     }
 
     /**
@@ -409,6 +529,7 @@ class Shell extends Application
         if (!$rawOutput && !$this->config->outputIsPiped()) {
             $this->output->writeln($this->getHeader());
             $this->writeVersionInfo();
+            $this->writeManualUpdateInfo();
             $this->writeStartupMessage();
         }
 
@@ -422,12 +543,20 @@ class Shell extends Application
             $this->getInput(false);
         }
 
-        if ($this->hasCode()) {
-            $ret = $this->execute($this->flushCode());
-            $this->writeReturnValue($ret, $rawOutput);
+        try {
+            if ($this->hasCode()) {
+                $ret = $this->execute($this->flushCode());
+                $this->writeReturnValue($ret, $rawOutput);
+            }
+        } catch (BreakException $e) {
+            // User called exit() in non-interactive mode
+            $this->afterRun($e->getCode());
+            $this->nonInteractive = false;
+
+            return $e->getCode();
         }
 
-        $this->afterRun();
+        $this->afterRun(0);
         $this->nonInteractive = false;
 
         return 0;
@@ -564,6 +693,12 @@ class Shell extends Application
     protected function beforeRun()
     {
         foreach ($this->loopListeners as $listener) {
+            if ($listener instanceof OutputAware) {
+                $listener->setOutput($this->output);
+            }
+        }
+
+        foreach ($this->loopListeners as $listener) {
             $listener->beforeRun($this);
         }
     }
@@ -624,18 +759,20 @@ class Shell extends Application
      */
     public function afterLoop()
     {
-        foreach ($this->loopListeners as $listener) {
+        foreach (\array_reverse($this->loopListeners) as $listener) {
             $listener->afterLoop($this);
         }
     }
 
     /**
      * Run execution loop listers after the shell session.
+     *
+     * @param int $exitCode Exit code from the execution loop
      */
-    protected function afterRun()
+    protected function afterRun(int $exitCode = 0)
     {
-        foreach ($this->loopListeners as $listener) {
-            $listener->afterRun($this);
+        foreach (\array_reverse($this->loopListeners) as $listener) {
+            $listener->afterRun($this, $exitCode);
         }
     }
 
@@ -846,6 +983,10 @@ class Shell extends Application
 
             $this->codeBuffer[] = $silent ? new SilentInput($code) : $code;
             $this->code = $this->cleaner->clean($this->codeBuffer, $this->config->requireSemicolons());
+
+            if (!$silent && $this->code !== false) {
+                $this->writeCleanerMessages();
+            }
         } catch (\Throwable $e) {
             // Add failed code blocks to the readline history.
             $this->addCodeBufferToHistory();
@@ -917,19 +1058,83 @@ class Shell extends Application
             throw new \InvalidArgumentException('Command not found: '.$input);
         }
 
-        $input = new ShellInput(\str_replace('\\', '\\\\', \rtrim($input, " \t\n\r\0\x0B;")));
-
-        if ($input->hasParameterOption(['--help', '-h'])) {
-            $helpCommand = $this->get('help');
-            if (!$helpCommand instanceof Command\HelpCommand) {
-                throw new RuntimeException('Invalid help command instance');
-            }
-            $helpCommand->setCommand($command);
-
-            return $helpCommand->run(new StringInput(''), $this->output);
+        if ($logger = $this->config->getLogger()) {
+            $logger->logCommand($input);
         }
 
-        return $command->run($input, $this->output);
+        $input = new ShellInput(\str_replace('\\', '\\\\', \rtrim($input, " \t\n\r\0\x0B;")));
+
+        if (!$input->hasParameterOption(['--help', '-h'])) {
+            try {
+                return $command->run($input, $this->output);
+            } catch (\Exception $e) {
+                if (!self::needsInputHelp($e)) {
+                    throw $e;
+                }
+
+                $this->writeException($e);
+
+                $this->output->writeln('--');
+                if (!$this->config->theme()->compact()) {
+                    $this->output->writeln('');
+                }
+            }
+        }
+
+        $helpCommand = $this->get('help');
+        if (!$helpCommand instanceof Command\HelpCommand) {
+            throw new RuntimeException('Invalid help command instance');
+        }
+        $helpCommand->setCommand($command);
+
+        return $helpCommand->run(new StringInput(''), $this->output);
+    }
+
+    /**
+     * Check whether a given input error would benefit from --help.
+     *
+     * @return bool
+     */
+    private static function needsInputHelp(\Exception $e): bool
+    {
+        if (!($e instanceof \RuntimeException || $e instanceof SymfonyConsoleException)) {
+            return false;
+        }
+
+        $inputErrors = [
+            'Not enough arguments',
+            'option does not accept a value',
+            'option does not exist',
+            'option requires a value',
+        ];
+
+        $msg = $e->getMessage();
+        foreach ($inputErrors as $errorMsg) {
+            if (\strpos($msg, $errorMsg) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Whisper messages from CodeCleaner passes.
+     */
+    private function writeCleanerMessages(): void
+    {
+        if (!isset($this->output)) {
+            return;
+        }
+
+        $output = $this->output;
+        if ($output instanceof ConsoleOutput) {
+            $output = $output->getErrorOutput();
+        }
+
+        foreach ($this->cleaner->getMessages() as $message) {
+            $output->writeln(\sprintf('<whisper>%s</whisper>', OutputFormatter::escape($message)));
+        }
     }
 
     /**
@@ -976,6 +1181,8 @@ class Shell extends Application
 
             return $code;
         }
+
+        return null;
     }
 
     /**
@@ -1044,6 +1251,8 @@ class Shell extends Application
         if ($namespace = $this->cleaner->getNamespace()) {
             return \implode('\\', $namespace);
         }
+
+        return null;
     }
 
     /**
@@ -1053,8 +1262,10 @@ class Shell extends Application
      *
      * @param string $out
      * @param int    $phase Output buffering phase
+     *
+     * @return string Empty string
      */
-    public function writeStdout(string $out, int $phase = \PHP_OUTPUT_HANDLER_END)
+    public function writeStdout(string $out, int $phase = \PHP_OUTPUT_HANDLER_END): string
     {
         if ($phase & \PHP_OUTPUT_HANDLER_START) {
             if ($this->output instanceof ShellOutput) {
@@ -1093,6 +1304,8 @@ class Shell extends Application
                 $this->output->stopPaging();
             }
         }
+
+        return '';
     }
 
     /**
@@ -1210,6 +1423,8 @@ class Shell extends Application
 
         if ($e instanceof BreakException) {
             return \sprintf('%s<info> INFO </info> %s.', $indent, \rtrim($e->getRawMessage(), '.'));
+        } elseif ($e instanceof InterruptException) {
+            return \sprintf('%s<warning> INTERRUPT </warning> %s.', $indent, $e->getRawMessage());
         } elseif ($e instanceof PsyException) {
             $message = $e->getLine() > 1
                 ? \sprintf('%s in %s on line %d', $e->getRawMessage(), $e->getFile(), $e->getLine())
@@ -1261,10 +1476,13 @@ class Shell extends Application
                 case \E_USER_NOTICE:
                 case \E_USER_DEPRECATED:
                 case \E_DEPRECATED:
-                case \E_STRICT:
                     return 'warning';
 
                 default:
+                    if ((\PHP_VERSION_ID < 80400) && $severity === \E_STRICT) {
+                        return 'warning';
+                    }
+
                     return 'error';
             }
         } else {
@@ -1301,8 +1519,10 @@ class Shell extends Application
                         return 'User Deprecated';
                     case \E_DEPRECATED:
                         return 'Deprecated';
-                    case \E_STRICT:
-                        return 'Strict';
+                    default:
+                        if ((\PHP_VERSION_ID < 80400) && $severity === \E_STRICT) {
+                            return 'Strict';
+                        }
                 }
             }
         }
@@ -1340,6 +1560,11 @@ class Shell extends Application
     public function execute(string $code, bool $throwExceptions = false)
     {
         $this->setCode($code, true);
+
+        if ($logger = $this->config->getLogger()) {
+            $logger->logExecute($code);
+        }
+
         $closure = new ExecutionClosure($this);
 
         if ($throwExceptions) {
@@ -1348,6 +1573,9 @@ class Shell extends Application
 
         try {
             return $closure->execute();
+        } catch (BreakException $_e) {
+            // Re-throw BreakException so it can propagate exit codes
+            throw $_e;
         } catch (\Throwable $_e) {
             $this->writeException($_e);
         }
@@ -1425,6 +1653,8 @@ class Shell extends Application
         if ($name = $input->getFirstArgument()) {
             return $this->get($name);
         }
+
+        return null;
     }
 
     /**
@@ -1539,11 +1769,23 @@ class Shell extends Application
     /**
      * Get a PHP manual database instance.
      *
+     * @deprecated Use getManual() instead for unified access to all manual formats
+     *
      * @return \PDO|null
      */
     public function getManualDb()
     {
         return $this->config->getManualDb();
+    }
+
+    /**
+     * Get a PHP manual loader.
+     *
+     * @return Manual\ManualInterface|null
+     */
+    public function getManual()
+    {
+        return $this->config->getManual();
     }
 
     /**
@@ -1601,6 +1843,25 @@ class Shell extends Application
             }
         } catch (\InvalidArgumentException $e) {
             $this->output->writeln($e->getMessage());
+        }
+    }
+
+    /**
+     * Check for manual updates and write notification if available.
+     */
+    protected function writeManualUpdateInfo()
+    {
+        if (\PHP_SAPI !== 'cli') {
+            return;
+        }
+
+        try {
+            $checker = $this->config->getManualChecker();
+            if ($checker && !$checker->isLatest()) {
+                $this->output->writeln(\sprintf('<whisper>New PHP manual is available (latest: %s). Update with `doc --update-manual`</whisper>', $checker->getLatest()));
+            }
+        } catch (\Exception $e) {
+            // Silently ignore manual update check failures
         }
     }
 
