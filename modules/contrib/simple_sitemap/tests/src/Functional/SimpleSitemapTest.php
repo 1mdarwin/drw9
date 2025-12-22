@@ -13,7 +13,7 @@ use Drupal\simple_sitemap\Queue\QueueWorker;
  *
  * @group simple_sitemap
  */
-class SimplesitemapTest extends SimplesitemapTestBase {
+class SimpleSitemapTest extends SimpleSitemapTestBase {
 
   /**
    * Verify sitemap.xml has the link to the front page after first generation.

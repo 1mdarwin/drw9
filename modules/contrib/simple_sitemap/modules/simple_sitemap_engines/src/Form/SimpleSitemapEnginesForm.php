@@ -21,7 +21,7 @@ use Drupal\simple_sitemap_engines\Entity\SimpleSitemapEngine;
 /**
  * Form for managing search engine submission settings.
  */
-class SimplesitemapEnginesForm extends ConfigFormBase {
+class SimpleSitemapEnginesForm extends ConfigFormBase {
 
   use AutowireTrait;
 
@@ -54,7 +54,7 @@ class SimplesitemapEnginesForm extends ConfigFormBase {
   protected $state;
 
   /**
-   * SimplesitemapEnginesForm constructor.
+   * SimpleSitemapEnginesForm constructor.
    *
    * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   The config factory service.

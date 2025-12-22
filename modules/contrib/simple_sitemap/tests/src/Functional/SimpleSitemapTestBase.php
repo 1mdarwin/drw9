@@ -9,7 +9,7 @@ use Drupal\language\Entity\ConfigurableLanguage;
 /**
  * Provides the base class for web tests for Simple sitemap.
  */
-abstract class SimplesitemapTestBase extends BrowserTestBase {
+abstract class SimpleSitemapTestBase extends BrowserTestBase {
 
   use StringTranslationTrait;
 
@@ -67,11 +67,9 @@ abstract class SimplesitemapTestBase extends BrowserTestBase {
   protected $defaultSitemapUrl = 'sitemap.xml';
 
   /**
-   * Use the stable9 theme.
-   *
-   * @var string
+   * {@inheritdoc}
    */
-  protected $defaultTheme = 'stable9';
+  protected $defaultTheme = 'stark';
 
   /**
    * {@inheritdoc}
