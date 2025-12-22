@@ -1,9 +1,9 @@
 name: Tests
 on:
   push:
-    branches: [main]
+    branches: [1.x]
   pull_request:
-    branches: [main]
+    branches: [1.x]
   schedule:
     - cron: 0 0 * * *
 
@@ -14,10 +14,9 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
-          - "8.0"
           - "8.1"
           - "8.2"
+          - "8.3"
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
@@ -29,7 +28,7 @@ jobs:
           tools: composer:v2
           extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd
       - name: "Install dependencies"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
       - name: "PHPCS"
         run: "php vendor/bin/phpcs"
       - name: "PHPStan"
@@ -42,23 +41,16 @@ jobs:
       matrix:
         experimental: [false]
         php-version:
-          - "7.4"
+          - "8.1"
+          - "8.2"
+          - "8.3"
         drupal:
-          - "^9.0"
+          - "^10"
         include:
-          - php-version: "8.0"
+          - php-version: "8.1"
             drupal: "^9.0"
             experimental: false
-          - php-version: "8.1"
-            drupal: "^10.0"
-            experimental: false
-          - php-version: "8.1"
-            drupal: "~10.1.0"
-            experimental: false
-          - php-version: "8.2"
-            drupal: "^10.0"
-            experimental: false
-          - php-version: "8.2"
+          - php-version: "8.3"
             drupal: "11.x-dev"
             experimental: true
     steps:
@@ -71,13 +63,13 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           tools: composer:v2
           extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd
-      - name: "Upgrade to drupal/core:${{ matrix.drupal }}"
+      - name: "Set drupal/core to ${{ matrix.drupal }}"
         run: "composer require drupal/core-recommended:${{ matrix.drupal }} --with-all-dependencies --dev --no-update"
-        if: ${{ matrix.drupal == '^10.0' || matrix.drupal == '11.x-dev' }}
       - name: "Add phpspec/prophecy-phpunit"
         run: "composer require phpspec/prophecy-phpunit:^2 --dev --no-update"
+        if: ${{ matrix.drupal == '^9.0' }}
       - name: "Install dependencies"
-        uses: "ramsey/composer-install@v2"
+        uses: "ramsey/composer-install@v3"
       - name: "PHPUnit"
         run: "php vendor/bin/phpunit"
 
@@ -92,16 +84,17 @@ jobs:
       matrix:
         experimental: [false]
         php-version:
-          - "7.4"
+          - "8.1"
+          - "8.2"
         drupal:
-          - "^9.0"
+          - "^10"
         include:
-          - php-version: "8.0"
+          - php-version: "8.1"
             drupal: "^9.0"
             experimental: false
-          - php-version: "8.2"
-            drupal: "11.x-dev"
-            experimental: true
+          - php-version: "8.3"
+            drupal: "~11.1"
+            experimental: false
     steps:
       - name: "Checkout"
         uses: "actions/checkout@v4"
@@ -113,7 +106,7 @@ jobs:
           tools: composer:v2
           extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
       - name: Setup Drupal
-        uses: bluehorndigital/setup-drupal@v1.0.4
+        uses: bluehorndigital/setup-drupal@v1.1.0
         with:
           version: ${{ matrix.drupal }}
           path: ~/drupal
@@ -128,7 +121,7 @@ jobs:
       - name: "require phpstan-drupal"
         run: |
           cd ~/drupal
-          COMPOSER_MEMORY_LIMIT=-1 composer require mglaman/phpstan-drupal "${{ steps.branch_alias.outputs.VERSION_ALIAS }} as 1.2.99" phpstan/extension-installer --with-all-dependencies
+          COMPOSER_MEMORY_LIMIT=-1 composer require phpstan/phpstan:"^1" mglaman/phpstan-drupal "${{ steps.branch_alias.outputs.VERSION_ALIAS }} as 1.99.99" phpstan/extension-installer --with-all-dependencies
           cp $GITHUB_WORKSPACE/tests/fixtures/config/drupal-phpstan.neon phpstan.neon
       - name: "Test core/install.php"
         run: |
@@ -167,11 +160,15 @@ jobs:
       matrix:
         experimental: [false]
         php-version:
-          - "7.4"
+          - "8.1"
+          - "8.2"
         drupal:
-          - "^9.0"
+          - "^10"
         include:
-          - php-version: "8.2"
+          - php-version: "8.1"
+            drupal: "^9.0"
+            experimental: false
+          - php-version: "8.3"
             drupal: "11.x-dev"
             experimental: true
     steps:
@@ -185,7 +182,7 @@ jobs:
           tools: composer:v2
           extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, bcmath, gd, exif, iconv
       - name: Setup Drupal
-        uses: bluehorndigital/setup-drupal@v1.0.4
+        uses: bluehorndigital/setup-drupal@v1.1.0
         with:
           version: ${{ matrix.drupal }}
           path: ~/drupal
@@ -206,58 +203,3 @@ jobs:
         run: |
           cd ~/drupal
           ./vendor/bin/phpstan analyze web/core/modules/dynamic_page_cache --debug
-
-  core_baseline:
-    needs:
-      - lint
-      - tests
-    continue-on-error: true
-    runs-on: "ubuntu-latest"
-    name: "Drupal core HEAD baseline check"
-    steps:
-      - name: "Checkout"
-        uses: "actions/checkout@v4"
-      - name: "set the version alias for self"
-        run: |
-          if [ "${{ github.event_name }}" == 'pull_request' ]; then
-            echo "VERSION_ALIAS=dev-"${{ github.sha }}"" >> $GITHUB_OUTPUT
-          else
-            echo "VERSION_ALIAS=dev-main" >> $GITHUB_OUTPUT
-          fi
-        id: branch_alias
-      - name: determine phpstan cache directory
-        run: echo PHPSTAN_TMP_DIR=$(php -r "print sys_get_temp_dir() . '/phpstan';") >> $GITHUB_OUTPUT
-        id: phpstan_tmp_dir
-      - name: cache phpstan
-        uses: actions/cache@v3
-        with:
-          path: ${{ steps.phpstan_tmp_dir.outputs.PHPSTAN_TMP_DIR }}
-          key: ${{ runner.os }}-phpstan-core-baseline
-          restore-keys: ${{ runner.os }}-phpstan-core-baseline
-      - name: "Install PHP"
-        uses: "shivammathur/setup-php@v2"
-        with:
-          coverage: "none"
-          php-version: "8.2"
-          tools: composer:v2
-          extensions: dom, curl, libxml, mbstring, zip, pdo, mysql, pdo_mysql, gd, apcu
-      - name: "Checkout Drupal core"
-        run: |
-         cd ${{ runner.temp }}
-         git clone https://git.drupalcode.org/project/drupal.git
-         cd drupal
-         composer config repositories.0 composer https://packages.drupal.org/8
-         composer config repositories.1 path $GITHUB_WORKSPACE
-
-      - name: "Install Drupal core dependencies"
-        uses: "ramsey/composer-install@v2"
-        with:
-          working-directory: "${{ runner.temp }}/drupal"
-      - name: "require phpstan-drupal"
-        run: |
-          cd ${{ runner.temp }}/drupal
-          composer require --dev mglaman/phpstan-drupal "${{ steps.branch_alias.outputs.VERSION_ALIAS }} as 1.1.99" --with-all-dependencies
-      - name: "Check baseline"
-        run: |
-          cd ${{ runner.temp }}/drupal
-          ./vendor/bin/phpstan analyze --configuration=core/phpstan.neon.dist

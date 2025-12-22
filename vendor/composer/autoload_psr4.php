@@ -72,6 +72,7 @@ return array(
     'Drupal\\Composer\\Plugin\\ProjectMessage\\' => array($vendorDir . '/drupal/core-project-message'),
     'Drupal\\Component\\' => array($baseDir . '/core/lib/Drupal/Component'),
     'DrupalRector\\' => array($vendorDir . '/palantirnet/drupal-rector/src'),
+    'DrupalFinder\\' => array($vendorDir . '/webflo/drupal-finder/src'),
     'DrupalCodeGenerator\\' => array($vendorDir . '/chi-teck/drupal-code-generator/src'),
     'Doctrine\\Persistence\\' => array($vendorDir . '/doctrine/persistence/src/Persistence'),
     'Doctrine\\Deprecations\\' => array($vendorDir . '/doctrine/deprecations/src'),

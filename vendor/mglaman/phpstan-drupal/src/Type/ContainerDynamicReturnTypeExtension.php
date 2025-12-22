@@ -13,6 +13,8 @@ use PHPStan\Type\NullType;
 use PHPStan\Type\Type;
 use PHPStan\Type\TypeCombinator;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use function count;
+use function in_array;
 
 class ContainerDynamicReturnTypeExtension implements DynamicMethodReturnTypeExtension
 {
@@ -41,7 +43,11 @@ class ContainerDynamicReturnTypeExtension implements DynamicMethodReturnTypeExte
         MethodCall $methodCall,
         Scope $scope
     ): Type {
-        $returnType = ParametersAcceptorSelector::selectSingle($methodReflection->getVariants())->getReturnType();
+        $returnType = ParametersAcceptorSelector::selectFromArgs(
+            $scope,
+            $methodCall->getArgs(),
+            $methodReflection->getVariants()
+        )->getReturnType();
         $methodName = $methodReflection->getName();
 
         if ($methodName === 'has') {
