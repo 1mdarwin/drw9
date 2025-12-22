@@ -5,22 +5,13 @@ namespace Drupal\block_class\Service;
 use Drupal\block_class\Constants\BlockClassConstants;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\Html;
-use Drupal\Component\Uuid\UuidInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
-use Drupal\Core\Database\Connection;
 use Drupal\Core\Entity\EntityFormInterface;
-use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
-use Drupal\Core\Extension\ModuleExtensionList;
-use Drupal\Core\Language\LanguageManagerInterface;
-use Drupal\Core\Path\CurrentPathStack;
-use Drupal\Core\Path\PathMatcherInterface;
-use Drupal\Core\Session\AccountProxy;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\Url;
-use Drupal\path_alias\AliasManagerInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Block Class Service Class.
@@ -30,34 +21,6 @@ class BlockClassHelperService {
   use StringTranslationTrait;
 
   /**
-   * The UUID service.
-   *
-   * @var \Drupal\Component\Uuid\UuidInterface
-   */
-  protected $uuidService;
-
-  /**
-   * The language manager.
-   *
-   * @var \Drupal\Core\Language\LanguageManagerInterface
-   */
-  protected $languageManager;
-
-  /**
-   * Path Matcher.
-   *
-   * @var \Drupal\Core\Path\PathMatcherInterface
-   */
-  protected $pathMatcher;
-
-  /**
-   * The current request.
-   *
-   * @var \Symfony\Component\HttpFoundation\Request
-   */
-  protected $request;
-
-  /**
    * The config factory.
    *
    * @var \Drupal\Core\Config\ConfigFactoryInterface
@@ -65,37 +28,9 @@ class BlockClassHelperService {
   protected $configFactory;
 
   /**
-   * The database connection.
+   * The current user.
    *
-   * @var \Drupal\Core\Database\Connection
-   */
-  protected $database;
-
-  /**
-   * The path alias manager.
-   *
-   * @var \Drupal\path_alias\AliasManagerInterface
-   */
-  protected $aliasManager;
-
-  /**
-   * The current path.
-   *
-   * @var \Drupal\Core\Path\CurrentPathStack
-   */
-  protected $currentPath;
-
-  /**
-   * Drupal\Core\Entity\EntityRepositoryInterface service.
-   *
-   * @var \Drupal\Core\Entity\EntityRepositoryInterface
-   */
-  protected $entityRepository;
-
-  /**
-   * Drupal\Core\Session\AccountProxy definition.
-   *
-   * @var \Drupal\Core\Session\AccountProxy
+   * @var \Drupal\Core\Session\AccountProxyInterface
    */
   protected $currentUser;
 
@@ -107,36 +42,12 @@ class BlockClassHelperService {
   protected $entityTypeManager;
 
   /**
-   * The list of available modules.
-   *
-   * @var \Drupal\Core\Extension\ModuleExtensionList
-   */
-  protected $extensionListModule;
-
-  /**
-   * The block entity.
-   *
-   * @var useDrupal\block\Entity\Block
-   */
-  protected $blockEntity;
-
-  /**
    * Construct of Block Class service.
    */
-  public function __construct(LanguageManagerInterface $language_manager, ConfigFactoryInterface $config_factory, Connection $database, RequestStack $request_stack, PathMatcherInterface $path_matcher, UuidInterface $uuid_service, AliasManagerInterface $alias_manager, CurrentPathStack $current_path, EntityRepositoryInterface $entityRepository, AccountProxy $currentUser, EntityTypeManagerInterface $entity_manager, ModuleExtensionList $extension_list_module) {
-    $this->languageManager = $language_manager;
-    $this->pathMatcher = $path_matcher;
-    $this->request = $request_stack->getCurrentRequest();
+  public function __construct(ConfigFactoryInterface $config_factory, AccountProxyInterface $current_user, EntityTypeManagerInterface $entity_manager) {
     $this->configFactory = $config_factory;
-    $this->database = $database;
-    $this->uuidService = $uuid_service;
-    $this->aliasManager = $alias_manager;
-    $this->currentPath = $current_path;
-    $this->entityRepository = $entityRepository;
-    $this->currentUser = $currentUser;
+    $this->currentUser = $current_user;
     $this->entityTypeManager = $entity_manager;
-    $this->blockEntity = $this->entityTypeManager->getStorage('block');
-    $this->extensionListModule = $extension_list_module;
   }
 
   /**
@@ -158,6 +69,10 @@ class BlockClassHelperService {
       $entity->unsetThirdPartySetting('block_class', 'replaced_id');
     }
 
+    // Ensure dependencies are updated, until a better solution could be found,
+    // by avoiding to set empty values in config in 'blockClassFormValidate'.
+    $entity->calculateDependencies();
+
     // Get the config object.
     $config = $this->configFactory->getEditable('block_class.settings');
 
@@ -169,21 +84,14 @@ class BlockClassHelperService {
 
     // Only process non-empty values.
     if (!empty($block_classes)) {
-
       switch ($default_case) {
-
         case 'uppercase':
-
           $block_classes = strtoupper($block_classes);
-
           break;
 
         case 'lowercase':
-
           $block_classes = strtolower($block_classes);
-
           break;
-
       }
 
       // Set the Third Party Settings.
@@ -193,7 +101,7 @@ class BlockClassHelperService {
       $config = $this->configFactory->getEditable('block_class.settings');
 
       // Get the current classes stored.
-      $block_classes_stored = $config->get('block_classes_stored');
+      $block_classes_stored = $config->get('block_classes_stored') ?? [];
 
       // Get the current class and export to array.
       $current_block_classes = explode(' ', $block_classes ?? '');
@@ -398,7 +306,7 @@ class BlockClassHelperService {
 
     // Load the block by ID.
     /** @var \Drupal\block\BlockInterface $block */
-    $block = $this->blockEntity->load($variables['elements']['#id']);
+    $block = $this->entityTypeManager->getStorage('block')->load($variables['elements']['#id']);
 
     // If there is no block with this ID, skip.
     if (is_null($block)) {
@@ -446,9 +354,9 @@ class BlockClassHelperService {
 
       $attribute_value = trim($attribute[1]);
 
-      // Sanitize to ensure a valid and safe value.
-      $attribute_value = Html::cleanCssIdentifier($attribute_value);
-
+      // Sanitize plain text to ensure a valid and safe value. Allow values
+      // starting with numbers for attributes as well.
+      $attribute_value = Html::escape($attribute_value);
       // Insert the attributes.
       $variables['attributes'][$attribute_key][] = $attribute_value;
     }
@@ -553,7 +461,7 @@ class BlockClassHelperService {
     $qty_classes_per_block = 10;
 
     // Get config object.
-    $config = $this->configFactory->getEditable('block_class.settings');
+    $config = $this->configFactory->get('block_class.settings');
 
     if (!empty($config->get('qty_classes_per_block'))) {
       $qty_classes_per_block = $config->get('qty_classes_per_block');
@@ -564,11 +472,8 @@ class BlockClassHelperService {
 
     $url_used_items_list = Url::fromRoute('block_class.class_list')->toString();
 
-    // Put the default help text.
-    $help_text = $this->t('Customize the styling of this block by adding CSS classes.');
-
-    // Put the Modal with all items used.
-    $help_text .= ' <div class="show-items-used">' . $this->t('<a href="@url_used_items_list@" class="use-ajax" data-dialog-options="{&quot;width&quot;:800}" data-dialog-type="modal">See all the classes used</a>.</div>', [
+    // Put the default help text with a link to the modal list all classes.
+    $help_text = $this->t('Customize the styling of this block by adding CSS classes, <a href="@url_used_items_list@" class="use-ajax" data-dialog-options="{&quot;width&quot;:800}" data-dialog-type="modal">see all defined classes</a>.', [
       '@url_used_items_list@' => $url_used_items_list,
     ]);
 
@@ -606,8 +511,6 @@ class BlockClassHelperService {
       $maxlength_block_class_field = $config->get('maxlength_block_class_field');
     }
 
-    $image_path = '/' . $this->extensionListModule->getPath('block_class') . '/images/';
-
     if ($config->get('field_type') == 'textfield') {
 
       // Remove the help text in the field group because the field will have
@@ -617,9 +520,10 @@ class BlockClassHelperService {
       $form['class']['third_party_settings']['block_class']['classes'] = [
         '#type' => $field_type,
         '#title' => $this->t('CSS class(es)'),
-        '#description' => $this->t('Customize the styling of this block by adding CSS classes. Separate multiple classes by spaces. The maxlength configured is @maxlength_block_class_field@. If necessary you can <a href="/admin/config/content/block-class/settings">update it here</a>. This class will appear in the first level of block. <a href="@image_path@/example-1.png">See an example</a>', [
-          '@maxlength_block_class_field@' => $maxlength_block_class_field,
-          '@image_path@' => $image_path,
+        '#description' => $this->t('Customize the styling of this block by adding CSS classes, separated by spaces.<br>The current field maxlength is @maxlength_block_class_field and can be configured in <a target="_blank" href="@url_settings_page">Block Class Settings</a>.<br>The configured classes will be displayed in the first level of the block, see screenshot example of <a target="_blank" href="@image_url">editing the values of a CSS classes field</a>.', [
+          '@maxlength_block_class_field' => $maxlength_block_class_field,
+          '@url_settings_page' => $url_settings_page,
+          '@image_url' => 'https://www.drupal.org/files/block_class-edit-field-css-classes1a.png',
         ]),
         '#default_value' => $block->getThirdPartySetting('block_class', 'classes'),
         '#maxlength' => $maxlength_block_class_field,
@@ -712,9 +616,9 @@ class BlockClassHelperService {
         $help_text_qty_items = '';
       }
 
-      $help_text_qty_items .= ' ' . $this->t('The maximum of classes per block is @qty_classes_per_block@ but if you need you can update this value in the <a href="@url_settings_page@">settings page</a>', [
-        '@qty_classes_per_block@' => $qty_classes_per_block,
-        '@url_settings_page@' => $url_settings_page,
+      $help_text_qty_items .= ' ' . $this->t('The maximum of classes per block is @qty_classes_per_block but if you need you can update this value in the <a href="@url_settings_page">settings page</a>', [
+        '@qty_classes_per_block' => $qty_classes_per_block,
+        '@url_settings_page' => $url_settings_page,
       ]);
 
       $form['class']['third_party_settings']['block_class']['help_text_qty_items'] = [
@@ -741,7 +645,7 @@ class BlockClassHelperService {
         '#type' => 'details',
         '#title' => $this->t('ID'),
         '#open' => TRUE,
-        '#description' => $this->t("Customize the block id"),
+        '#description' => $this->t("Customize the unique HTML ID of this block."),
         '#attributes' => [
           'class' => [
             'replaced-id-details',
@@ -759,8 +663,8 @@ class BlockClassHelperService {
       $form['replaced_id']['third_party_settings']['block_class']['replaced_id'] = [
         '#type' => 'textfield',
         '#title' => $this->t('ID'),
-        '#description' => $this->t("If you put a value here it'll replace the block's id. Use @none_key@ to remove the default block id", [
-          '@none_key@' => '<none>',
+        '#description' => $this->t("If a value is entered, it will replace the default block HTML ID.<br>Use @none_key to remove the default block ID or any HTML ID attribute from the block.", [
+          '@none_key' => '<none>',
         ]),
         '#default_value' => $block->getThirdPartySetting('block_class', 'replaced_id'),
         '#maxlength' => $maxlength_id,
@@ -812,12 +716,11 @@ class BlockClassHelperService {
         // Get the URL of route with the attribute list used.
         $url_used_attribute_list = Url::fromRoute('block_class.attribute_list')->toString();
 
-        // Create the help text for the multiple attribute fields.
-        $help_text = $this->t('Customize the this block by adding attributes. E.g. "data-block-type"="admin"');
-
-        // Update the help text with the Modal to show this for the user.
-        $help_text .= ' - <div class="show-items-used">' . $this->t('<a href="@url_used_attribute_list@" class="use-ajax" data-dialog-options="{&quot;width&quot;:800}" data-dialog-type="modal">See all the attributes used</a>.', [
-          '@url_used_attribute_list@' => $url_used_attribute_list,
+        // Create the help text for the multiple attribute fields with the Modal
+        // to list the defined attributes.
+        $help_text = $this->t('Customize this block by adding custom attributes. E.g. "data-block-type"="admin", <a href="@url_used_attribute_list" class="use-ajax" data-dialog-options="{&quot;width&quot;:800}" data-dialog-type="modal">see all defined attributes</a>.<br>See a screenshot of an example of <a target="_blank" href="@image_url">attribute with value displayed in the HTML of a Block</a>.', [
+          '@url_used_attribute_list' => $url_used_attribute_list,
+          '@image_url' => 'https://www.drupal.org/files/block_class-view-attribute-value1a.png',
         ]);
 
         // Create the field group for multiple attributes.
@@ -1185,12 +1088,12 @@ class BlockClassHelperService {
         $url_settings_page = Url::fromRoute('block_class.settings')->toString();
 
         // If there is a special chat return the error for the user.
-        $form_state->setErrorByName('multiple_attributes][third_party_settings][block_class][attribute_' . $index . '][attribute_key_' . $index, $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page@">settings page</a>', [
-          '@url_settings_page@' => $url_settings_page,
+        $form_state->setErrorByName('multiple_attributes][third_party_settings][block_class][attribute_' . $index . '][attribute_key_' . $index, $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page">settings page</a>', [
+          '@url_settings_page' => $url_settings_page,
         ]));
 
-        $form_state->setErrorByName('multiple_attributes][third_party_settings][block_class][attribute_' . $index . '][attribute_value_' . $index, $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page@">settings page</a>', [
-          '@url_settings_page@' => $url_settings_page,
+        $form_state->setErrorByName('multiple_attributes][third_party_settings][block_class][attribute_' . $index . '][attribute_value_' . $index, $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page">settings page</a>', [
+          '@url_settings_page' => $url_settings_page,
         ]));
       }
 
@@ -1247,8 +1150,8 @@ class BlockClassHelperService {
       $url_settings_page = Url::fromRoute('block_class.settings')->toString();
 
       // If there is a special chat return the error for the user.
-      $form_state->setErrorByName('replaced_id][third_party_settings][block_class][replaced_id', $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page@">settings page</a>', [
-        '@url_settings_page@' => $url_settings_page,
+      $form_state->setErrorByName('replaced_id][third_party_settings][block_class][replaced_id', $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page">settings page</a>', [
+        '@url_settings_page' => $url_settings_page,
       ]));
 
     }
@@ -1274,8 +1177,9 @@ class BlockClassHelperService {
 
     // If this $id_replacement is present in the array means that the
     // $id_replacement is already in use in another block. Send a message for
-    // the user.
-    if (!empty($id_found) && $id_found != $block_id) {
+    // the user. Skip the validation for '<none>' to allow multiple blocks to
+    // remove the default block ID.
+    if (!empty($id_found) && $id_found != $block_id && $id_replacement != '<none>') {
 
       // Trigger the form set error with this message.
       $form_state->setErrorByName('replaced_id][third_party_settings][block_class][replaced_id', $this->t('This ID: @id_replacement@ is already in use by another block: @block_id_found@', [
@@ -1332,8 +1236,8 @@ class BlockClassHelperService {
           $url_settings_page = Url::fromRoute('block_class.settings')->toString();
 
           // If there is a special chat return the error for the user.
-          $form_state->setErrorByName('class][third_party_settings][block_class][' . $key, $this->t('Special chars is not enabled. To enable this, go to the <a href="@url_settings_page@">settings page</a>', [
-            '@url_settings_page@' => $url_settings_page,
+          $form_state->setErrorByName('class][third_party_settings][block_class][' . $key, $this->t('Special chars is currently <em>disabled</em> and can be enabled in the <a target="_blank" href="@url_settings_page">Block Class Settings</a>', [
+            '@url_settings_page' => $url_settings_page,
           ]));
 
         }

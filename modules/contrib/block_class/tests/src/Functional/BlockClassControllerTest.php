@@ -50,6 +50,10 @@ class BlockClassControllerTest extends BrowserTestBase {
 
   /**
    * Test backend admin configuration and listing pages.
+   *
+   * @see \Drupal\block_class\Controller\BlockClassController::index()
+   *
+   * @covers \Drupal\block_class\Controller\BlockClassController::index
    */
   public function testBlockClassAdminPages(): void {
     /** @var \Drupal\Tests\WebAssert $assert */
@@ -67,10 +71,12 @@ class BlockClassControllerTest extends BrowserTestBase {
 
     // Check module admin tasks links.
     $assert->responseContains('<h3>Block Class administration pages</h3>');
-    // Check the 'Help' link (to the current page) is displayed.
-    $assert->elementExists('xpath', '//ul[@class="links"]//a[contains(@href, "/admin/block-class/help") and (text()=\'Help\')]');
-    // Check the permissions link is displaying properly (#3412155).
-    $assert->elementExists('xpath', '//ul[@class="links"]//a[contains(@href, "/admin/people/permissions/module/block_class") and (text()=\'Configure Block Class permissions\')]');
+
+    // Use a regex to check in the response HTML code that module admin links
+    // are displayed with the expected tags, CSS classes, label and order.
+    // This should help detecting changes to module's menu links and whether it
+    // breaks the code of the admin tasks links on the help page.
+    $assert->responseMatches('/<ul class="links">[\r\n ]*<li><a href=".*\/admin\/config\/content\/block-class\/settings" title="Settings">Block Class Settings<\/a><\/li><li><a href=".*\/admin\/config\/content\/block-class\/list" title="List">List Block Classes<\/a><\/li><li><a href=".*\/admin\/config\/content\/block-class\/bulk-operations" title="Bulk Operations">Bulk Operations<\/a><\/li><li><a href=".*\/admin\/block-class\/help" title="Help">Help<\/a><\/li><li><a href=".*\/admin\/people\/permissions\/module\/block_class">Configure Block Class permissions<\/a><\/li>[\r\n ]*<\/ul>/');
   }
 
 }

@@ -54,24 +54,25 @@ class BlockClassSettingsForm extends ConfigFormBase {
     ];
 
     $form['global_settings']['general']['enable_auto_complete'] = [
-      '#title' => $this->t('Enable auto-complete'),
+      '#title' => $this->t('Enable autocomplete'),
+      '#description' => $this->t('If checked, the CSS class and attribute fields will autocomplete existing classes and values'),
       '#type' => 'checkbox',
       '#default_value' => $config->get('enable_auto_complete'),
     ];
 
     $form['global_settings']['general']['enable_special_chars'] = [
-      '#title' => $this->t('Enable special chars'),
+      '#title' => $this->t('Enable special characters'),
       '#type' => 'checkbox',
-      '#description' => $this->t('If checked will be possible to insert special chars in the class, like #$%&. If unchecked will be allow letters, numbers, hyphen and underlines'),
+      '#description' => $this->t('If checked, special characters will be allowed. If unchecked, only letters, numbers, hyphens and underscores will be allowed.'),
       '#default_value' => $config->get('enable_special_chars'),
     ];
 
     $form['global_settings']['general']['default_case'] = [
       '#title' => $this->t('Default Case'),
       '#type' => 'select',
-      '#description' => $this->t('If you select "Uppercase and Lowercase" but cases will be accepted. If you select "Uppercase" all classes will be added using uppercase and if you select "Lowercase" all classes added will be added using lowercase.'),
+      '#description' => $this->t('Select:<ul><li>"Uppercase and Lowercase" for both cases to be accepted.</li><li>"Uppercase" for all values to be saved using uppercase.</li><li>"Lowercase" for all values to be saved using lowercase.</li></ul>'),
       '#options' => [
-        'standard' => $this->t('Uppercase and Lowercase (Standard)'),
+        'standard' => $this->t('Uppercase and Lowercase (Default)'),
         'uppercase' => $this->t('Uppercase'),
         'lowercase' => $this->t('Lowercase'),
       ],
@@ -95,7 +96,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
       '#type' => 'select',
       '#options' => [
         'multiple_textfields' => $this->t('Multiple textfields'),
-        'textfield' => $this->t('textfield'),
+        'textfield' => $this->t('Textfield'),
       ],
       '#default_value' => $field_type,
     ];
@@ -131,7 +132,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['class']['maxlength_block_class_field'] = [
       '#title' => $this->t('Maxlength'),
       '#type' => 'number',
-      '#description' => $this->t('This will be the default maxlength value for the "maxlength" field. The default is 255.'),
+      '#description' => $this->t('The maximum length ("maxlength") value of the CSS class field, defaults to <em>255</em>.'),
       '#default_value' => $maxlength_block_class_field,
     ];
 
@@ -147,6 +148,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['class']['weight_class'] = [
       '#title' => $this->t('Weight'),
       '#type' => 'number',
+      '#description' => $this->t('Override the weight of the class field on the block configuration page.'),
       '#default_value' => $weight_class,
     ];
 
@@ -184,7 +186,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['attributes']['maxlength_attributes'] = [
       '#title' => $this->t('Maxlength'),
       '#type' => 'number',
-      '#description' => $this->t('This will be the default maxlength value for the attributes field'),
+      '#description' => $this->t('The maximum length ("maxlength") value of the attribute field, defaults to <em>255</em>.'),
       '#default_value' => $config->get('maxlength_attributes'),
       '#states' => [
         'visible' => [
@@ -205,6 +207,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['attributes']['weight_attributes'] = [
       '#title' => $this->t('Weight'),
       '#type' => 'number',
+      '#description' => $this->t('Override the weight of the attribute field on the block configuration page.'),
       '#default_value' => $weight_attributes,
       '#states' => [
         'visible' => [
@@ -220,7 +223,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     ];
 
     $form['global_settings']['id']['enable_id_replacement'] = [
-      '#title' => $this->t('Enable id replacement'),
+      '#title' => $this->t('Enable ID replacement'),
       '#type' => 'checkbox',
       '#default_value' => $config->get('enable_id_replacement'),
     ];
@@ -234,7 +237,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['id']['maxlength_id'] = [
       '#title' => $this->t('Maxlength'),
       '#type' => 'number',
-      '#description' => $this->t('This will be the default maxlength value for the replacement id field'),
+      '#description' => $this->t('The maximum length ("maxlength") value of the ID field, defaults to <em>255</em>.'),
       '#default_value' => $maxlength_id,
       '#states' => [
         'visible' => [
@@ -255,6 +258,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['id']['weight_id'] = [
       '#title' => $this->t('Weight'),
       '#type' => 'number',
+      '#description' => $this->t('Override the weight of the ID field on the block configuration page.'),
       '#default_value' => $weight_id,
       '#states' => [
         'visible' => [
@@ -278,7 +282,7 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['block_class_list']['items_per_page'] = [
       '#title' => $this->t('Items per page'),
       '#type' => 'number',
-      '#description' => $this->t('This number will be used in the pagination to define the items per page'),
+      '#description' => $this->t('This number will be used in the pagination to define the number of items per page, defaults to <em>50</em>.'),
       '#default_value' => $items_per_page,
     ];
 
@@ -291,7 +295,9 @@ class BlockClassSettingsForm extends ConfigFormBase {
     $form['global_settings']['advanced']['filter_html_clean_css_identifier'] = [
       '#title' => $this->t('Filter to HTML Clean CSS Identifier'),
       '#type' => 'textarea',
-      '#description' => $this->t('You can use this field to insert the configuration of <a href="https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Html.php/function/Html%3A%3AcleanCssIdentifier/">Filter to HTML Clean CSS Identifier</a>. You can insert to replace special chars in the class. Use key|value format, and one per line. E.g.<br>#|-<br>%|-'),
+      '#description' => $this->t('This field can be used to insert the configuration of <a href="@api_doc_url">Filter to HTML Clean CSS Identifier</a>. It can be used to insert or replace special characters in the class.<br>Use key|value format, and one per line. E.g.<br>#|-<br>%|-', [
+        '@api_doc_url' => 'https://api.drupal.org/api/drupal/core%21lib%21Drupal%21Component%21Utility%21Html.php/function/Html%3A%3AcleanCssIdentifier/',
+      ]),
       '#default_value' => $config->get('filter_html_clean_css_identifier'),
     ];
 

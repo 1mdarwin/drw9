@@ -4,14 +4,11 @@ namespace Drupal\block_class\Controller;
 
 use Drupal\block\Entity\Block;
 use Drupal\Component\Serialization\Json;
-use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Component\Utility\Html;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Extension\ExtensionList;
-use Drupal\Core\Routing\RouteMatchInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 /**
  * Controller routines for help routes.
@@ -47,25 +44,37 @@ class BlockClassController extends ControllerBase {
   protected $requestStack;
 
   /**
-   * Creates a new HelpController.
+   * The module admin links helper.
+   *
+   * @var \Drupal\system\ModuleAdminLinksHelper
    */
-  public function __construct(RouteMatchInterface $route_match, ExtensionList $extension_list_module, ConfigFactoryInterface $config_factory, RequestStack $requestStack) {
-    $this->routeMatch = $route_match;
-    $this->extensionListModule = $extension_list_module;
-    $this->configFactory = $config_factory;
-    $this->requestStack = $requestStack;
-  }
+  protected $moduleAdminLinksHelper;
+
+  /**
+   * The user module permissions link helper.
+   *
+   * @var \Drupal\user\ModulePermissionsLinkHelper
+   */
+  protected $modulePermissionsLinkHelper;
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
-    return new static(
-      $container->get('current_route_match'),
-      $container->get('extension.list.module'),
-      $container->get('config.factory'),
-      $container->get('request_stack')
-    );
+    $instance = parent::create($container);
+    $instance->routeMatch = $container->get('current_route_match');
+    $instance->extensionListModule = $container->get('extension.list.module');
+    $instance->configFactory = $container->get('config.factory');
+    $instance->requestStack = $container->get('request_stack');
+
+    // @todo Remove deprecated code when support for core:10.2 is dropped.
+    if (!version_compare(\Drupal::VERSION, '10.2', '<')) {
+      // For Drupal versions >= 10.2.
+      $instance->moduleAdminLinksHelper = $container->get('system.module_admin_links_helper');
+      $instance->modulePermissionsLinkHelper = $container->get('user.module_permissions_link_helper');
+    }
+
+    return $instance;
   }
 
   /**
@@ -90,33 +99,39 @@ class BlockClassController extends ControllerBase {
 
     $build['top'] = $helperMarkup;
 
-    // Fix compatibility support with versions >= 10.2 which use a string
-    // instead of an array for the second argument.
+    // Get module's information array.
     $extension_info = $this->extensionListModule->getExtensionInfo($projectMachineName);
-    $second_argument = (version_compare(\Drupal::VERSION, '10.2', '<')) ? $extension_info : $extension_info['name'];
 
     // Only print list of administration pages if the project in question has
     // any such pages associated with it.
-    // @phpstan-ignore-next-line
-    $adminTasks = system_get_module_admin_tasks($projectMachineName, $second_argument);
+    if (version_compare(\Drupal::VERSION, '10.2', '<')) {
+      // @phpstan-ignore-next-line
+      $admin_tasks = system_get_module_admin_tasks($projectMachineName, $extension_info);
+    }
+    else {
+      $admin_tasks = $this->moduleAdminLinksHelper->getModuleAdminLinks($projectMachineName);
+      // Fix compatibility support with versions >= 10.2 which use a string
+      // instead of an array for the second argument.
+      if ($perms_link = $this->modulePermissionsLinkHelper->getModulePermissionsLink($projectMachineName, $extension_info['name'])) {
+        array_push($admin_tasks, $perms_link);
+      }
+    }
 
-    if (empty($adminTasks)) {
+    if (empty($admin_tasks)) {
       return $build;
     }
 
-    $links = [];
+    // Remove the first menu link item provided by the module which is the
+    // parent 'Block Class' link and has the same url path as its first child
+    // settings form page.
+    array_shift($admin_tasks);
 
-    foreach ($adminTasks as $adminTask) {
-
-      $link['url'] = $adminTask['url'];
-
-      $link['title'] = $adminTask['title'];
-
-      if ($link['url']->getRouteName() === 'block_class.settings') {
-        $link['title'] = 'Block Class Settings';
-      }
-
-      $links[] = $link;
+    // Rename some link titles for better clarity.
+    if ($admin_tasks[0]['url']->getRouteName() === 'block_class.settings') {
+      $admin_tasks[0]['title'] = $this->t('Block Class Settings');
+    }
+    if ($admin_tasks[1]['url']->getRouteName() === 'block_class.list') {
+      $admin_tasks[1]['title'] = $this->t('List Block Classes');
     }
 
     $build['links'] = [
@@ -125,7 +140,7 @@ class BlockClassController extends ControllerBase {
         'level' => 'h3',
         'text' => $this->t('@project_name administration pages', ['@project_name' => $projectName]),
       ],
-      '#links' => $links,
+      '#links' => $admin_tasks,
     ];
 
     return $build;
@@ -214,12 +229,12 @@ class BlockClassController extends ControllerBase {
       $attributes = str_replace(PHP_EOL, '<br>', $attributes);
 
       $table .= '<tr>';
-      $table .= '<td>' . '<a href="/admin/structure/block/manage/' . $block->id() . '">' . $block->label() . '</a></td>';
+      $table .= '<td><a href="/admin/structure/block/manage/' . $block->id() . '">' . $block->label() . '</a></td>';
       $table .= '<td>' . $block_class . '</td>';
       $table .= '<td>' . $attributes . '</td>';
-      $table .= '<td>' . '<a href="/admin/structure/block/manage/' . $block->id() . '">' . $this->t('Edit') . '</a></td>';
-      $table .= '<td>' . '<a href="/admin/config/content/block-class/delete/' . $block->id() . '">' . $this->t('Delete') . '</a></td>';
-      $table .= '<td>' . '<a href="/admin/config/content/block-class/delete-attribute/' . $block->id() . '">' . $this->t('Delete Attributes') . '</a></td>';
+      $table .= '<td><a href="/admin/structure/block/manage/' . $block->id() . '">' . $this->t('Edit') . '</a></td>';
+      $table .= '<td><a href="/admin/config/content/block-class/delete/' . $block->id() . '">' . $this->t('Delete') . '</a></td>';
+      $table .= '<td><a href="/admin/config/content/block-class/delete-attribute/' . $block->id() . '">' . $this->t('Delete Attributes') . '</a></td>';
       $table .= '</tr>';
 
       $index++;
@@ -342,17 +357,39 @@ class BlockClassController extends ControllerBase {
   }
 
   /**
+   * Retrieves suggestions for block class autocompletion.
+   *
+   * @param \Symfony\Component\HttpFoundation\Request $request
+   *   The current request.
+   * @param array $stored_items
+   *   The stored items for autocompletion.
+   *
+   * @return \Symfony\Component\HttpFoundation\JsonResponse
+   *   A JSON response containing autocomplete suggestions.
+   *
+   * @see \Drupal\block\Controller\CategoryAutocompleteController::autocomplete()
+   */
+  public function handleAutocompleteHelper(Request $request, array $stored_items) {
+    $typed_query = $request->query->get('q');
+    $matches = [];
+    foreach ($stored_items as $stored_item) {
+      if (stripos($stored_item, $typed_query) === 0) {
+        $matches[] = ['value' => $stored_item, 'label' => Html::escape($stored_item)];
+      }
+    }
+    // Return in JSON Response.
+    return new JsonResponse($matches);
+  }
+
+  /**
    * Handle Auto Complete.
    *
    * @return \Symfony\Component\HttpFoundation\JsonResponse
    *   Json Response.
    */
   public function handleAutocomplete(Request $request) {
-    $config = $this->configFactory->getEditable('block_class.settings');
-    $block_classes_stored = $config->get('block_classes_stored');
-
-    // Return in JSON Response.
-    return new JsonResponse($block_classes_stored);
+    $block_classes_stored = $this->config('block_class.settings')->get('block_classes_stored');
+    return $this->handleAutocompleteHelper($request, $block_classes_stored);
   }
 
   /**
@@ -362,24 +399,13 @@ class BlockClassController extends ControllerBase {
    *   Json Response.
    */
   public function handleAutocompleteAttributes(Request $request) {
-
-    $attribute_keys_stored = [];
-
-    $config = $this->configFactory->getEditable('block_class.settings');
-
-    // Get config object.
-    if (!empty($config->get('attribute_keys_stored'))) {
-      $attribute_keys_stored = $config->get('attribute_keys_stored');
-    }
-
+    $attribute_keys_stored = $this->config('block_class.settings')->get('attribute_keys_stored');
     // Get the array.
     $attribute_keys_stored = Json::decode($attribute_keys_stored);
-
     // Get the array values and id in the keys.
     $attribute_keys_stored = array_values($attribute_keys_stored);
 
-    // Return in JSON Response.
-    return new JsonResponse($attribute_keys_stored);
+    return $this->handleAutocompleteHelper($request, $attribute_keys_stored);
   }
 
   /**
@@ -389,24 +415,13 @@ class BlockClassController extends ControllerBase {
    *   Json Response.
    */
   public function handleAutocompleteAttributeValues(Request $request) {
-
-    $attribute_value_stored = [];
-
-    $config = $this->configFactory->getEditable('block_class.settings');
-
-    // Get config object.
-    if (!empty($config->get('attribute_value_stored'))) {
-      $attribute_value_stored = $config->get('attribute_value_stored');
-    }
-
+    $attribute_value_stored = $this->config('block_class.settings')->get('attribute_value_stored');
     // Get the array.
     $attribute_value_stored = Json::decode($attribute_value_stored);
-
     // Get the array values and id in the keys.
     $attribute_value_stored = array_values($attribute_value_stored);
 
-    // Return in JSON Response.
-    return new JsonResponse($attribute_value_stored);
+    return $this->handleAutocompleteHelper($request, $attribute_value_stored);
   }
 
 }
