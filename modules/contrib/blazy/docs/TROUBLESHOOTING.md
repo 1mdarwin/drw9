@@ -119,7 +119,30 @@ Be sure to add one. If not, add regular CSS `width: 100%` and `min-height` to
 the blurred image if doable with your design.
 
 ### <a name="aspect-ratio"></a> 8. ASPECT RATIO
-**UPDATE 18/07/2023**:
+**UPDATE 2026/05/01**:
+
+Modern CSS aspect-ratio is implemented at 3.0.17, a cleaner alternative for
+padding hack. Fluid will delegate its calculated aspect-ratio into regular
+fixed one if found, otherwise will fallback to regular padding hack. It has not
+been thoroughly reviewed against sub-modules like GridStack, etc., but a good
+start. Responsive image will still use regular padding hacks due to various
+sizes till further patches or works if any backers.
+
+**Steps**:
+* Enable the option at Blazy UI > **Use modern CSS aspect-ratio**.
+
+  It will replace BC padding hacks with modern CSS aspect-ratio if supported
+  by the browsers, and has predefined CSS rules by convention at
+  `blazy.ratio.css`.
+* Fill in the formatter **Aspect ratio** option.
+* Should you need to customize it, override
+`css/components/blazy.ratio-modern.css` or `blazy/ratio.modern`.
+
+**References**:
+* [caniuse.com](https://caniuse.com/?search=aspect-ratio)
+* [msdn](https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio)
+
+**UPDATE 2023/07/18**:
 
 Aspect ratio **Fluid** will now calculate dimensions to match the fixed ones
 (1:1, 2:3, etc.) automatically to avoid JS works specific for non-responsive
@@ -129,7 +152,8 @@ images. Useful if you are not sure. To add more aspect ratios:
   ``$blazies->set('css.ratio', ['7:8', '6:5'], TRUE);``
 
   The `TRUE` flag ensures to append, not nullify, the existing ones:
-  ``['1:1', '3:2', '4:3', '8:5', '16:9']``
+
+  ``['1:1', '3:2', '4:3', '8:5', '9:16', '16:9', '16:10', '21:9']``
 
   See `blazy.api.php` for the available `hook_alter`. Always clear caches
   whenever adding or removing procedural functions.
@@ -139,7 +163,7 @@ images. Useful if you are not sure. To add more aspect ratios:
   * [/admin/config/media/image-styles](/admin/config/media/image-styles)
   * [Aspect ratio template](#aspect-ratio-template)
 + Choose Aspect ratio **Fluid** so that your custom aspect ratios are
-  automacally in use.
+  automacally in use if any match.
 
 
 Relevant to make aspect ratio `Fluid` option prioritize these ratios for pure

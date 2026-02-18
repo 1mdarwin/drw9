@@ -8,7 +8,7 @@ use Drupal\blazy\Views\BlazyStylePluginBase;
 use Drupal\blazy\internals\Internals;
 
 /**
- * Blazy Views Test style plugin.
+ * Blazy Views Test style plugin, see 3395575.
  *
  * @ingroup views_style_plugins
  *

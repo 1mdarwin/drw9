@@ -11,11 +11,19 @@ use Drupal\slick_ui\Form\SlickForm;
 
 /**
  * Tests the Slick manager methods.
- *
- * @coversDefaultClass \Drupal\slick\SlickManager
- *
- * @group slick
  */
+/**
+ * A D12 compat, please update or ignore.
+ *
+ * @phpstan-ignore-next-line
+ */
+#[Group('blazy')]
+/**
+ * A D12 compat, please update or ignore.
+ *
+ * @phpstan-ignore-next-line
+ */
+#[RunTestsInSeparateProcesses]
 class SlickManagerTest extends BlazyKernelTestBase {
 
   use SlickUnitTestTrait;
@@ -83,8 +91,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
 
   /**
    * Tests cases for various methods.
-   *
-   * @covers ::attach
    */
   public function testSlickManagerMethods() {
     $manager = $this->slickManager;
@@ -115,11 +121,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
    * @param mixed|bool|string $expected
    *   The expected output.
    *
-   * @covers ::slick
-   * @covers ::preRenderSlick
-   * @covers ::buildGrid
-   * @covers ::build
-   * @covers ::preRenderSlickWrapper
    * @dataProvider providerTestSlickBuild
    */
   public function testBuild($items, array $settings, array $options, $expected) {
@@ -222,8 +223,6 @@ class SlickManagerTest extends BlazyKernelTestBase {
 
   /**
    * Tests for \Drupal\slick_ui\Form\SlickForm.
-   *
-   * @covers \Drupal\slick_ui\Form\SlickForm::typecastOptionset
    */
   public function testSlickForm() {
     $settings = [];

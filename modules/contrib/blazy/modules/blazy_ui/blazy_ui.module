@@ -17,10 +17,9 @@ function blazy_ui_help($route_name) {
       'TROUBLESHOOTING',
       'ROADMAP',
       'FAQ',
-      'CONTRIBUTION',
-      'ASPECT_RATIO',
-      'ISSUE_TEMPLATE',
       'CHANGES',
+      'ASPECT_RATIO',
+      'CONTRIBUTION',
     ];
 
     $output = '';

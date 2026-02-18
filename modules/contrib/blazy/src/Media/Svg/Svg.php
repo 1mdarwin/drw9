@@ -198,8 +198,8 @@ class Svg extends BlazyFile implements SvgInterface {
         }
 
         if ($width && $height) {
-          $dom->documentElement->setAttribute('height', (int) $height);
-          $dom->documentElement->setAttribute('width', (int) $width);
+          $dom->documentElement->setAttribute('height', (string) $height);
+          $dom->documentElement->setAttribute('width', (string) $width);
         }
 
         // Credits: svg_formatter module.

@@ -4,12 +4,10 @@
 parameters:
   # level 5 is still experimental, stick it to 4 at most for now.
   # See https://github.com/phpstan/phpstan/issues/105
-  level: 4
+  level: 5
   paths:
     - src
-    # - tests/src
-  excludePaths:
-    - 'tests/src'
+    - tests/src
   # https://phpstan.org/user-guide/ignoring-errors#reporting-unused-ignores
   reportUnmatchedIgnoredErrors: false
   treatPhpDocTypesAsCertain: false

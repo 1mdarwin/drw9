@@ -31,6 +31,7 @@ class Preloader {
     $images  = array_filter($blazies->get('images', []));
     $sources = $blazies->get('resimage.sources', []);
 
+    // @todo refine to just a hero image, not always 0 for sliders.
     if (empty($images) || empty($images[0]['uri'])) {
       return;
     }
@@ -60,7 +61,8 @@ class Preloader {
     }
 
     $style = $blazies->get('image.style');
-    $func = function ($item, $entity = NULL, $delta = 0) use (&$settings, $blazies, $style) {
+
+    $func = function ($item, $entity, $delta = 0) use (&$settings, $blazies, $style) {
       $options  = ['entity' => $entity, 'settings' => $settings];
       $image    = BlazyImage::item($item, $options);
       $uri      = BlazyFile::uri($image);
@@ -91,6 +93,8 @@ class Preloader {
 
     $empties = $images = [];
     foreach ($items as $key => $item) {
+      $image = [];
+
       // Priotize image file, then Media, etc.
       $entity = is_object($item) && isset($item->entity) ? $item->entity : NULL;
       if (!$entity) {
@@ -99,6 +103,7 @@ class Preloader {
 
       // Respects empty URI to keep indices intact for correct mixed media.
       $image = $func($item, $entity, $key);
+
       $images[] = $image;
 
       if (empty($image['uri'])) {
@@ -109,6 +114,7 @@ class Preloader {
     $empty = count($empties) == count($images);
     $images = $empty ? array_filter($images) : $images;
 
+    // This is also required by BlazyResponsiveImage::sources().
     $blazies->set('images', $images);
 
     // Checks for [Responsive] image dimensions and sources for formatters
@@ -134,17 +140,17 @@ class Preloader {
    * Generates preload urls.
    */
   private static function generate(array $images, array $sources, $blazies): \Generator {
-    // Suppress useless warning of likely failing initial image generation.
-    // Better than checking file exists.
-    $mime = @mime_content_type($images[0]['uri']);
-    [$type] = array_map('trim', explode('/', $mime, 2));
+    $loading = $blazies->get('image.loading', 'lazy');
+    $heroes = in_array($loading, ['slider', 'unlazy']);
+    $priority = $blazies->use('bg', FALSE) && $heroes;
 
-    $link = function ($url, $uri, $item = NULL, $valid = FALSE) use ($mime, $type): array {
+    $link = function ($url, $uri, $item, $valid, $hero): array {
+      // Suppress useless warning of likely failing initial image generation.
+      // Better than checking file exists.
       // Each field may have different mime types for each image just like URIs.
-      $mime = @mime_content_type($uri) ?: $mime;
-      if ($item) {
-        $item_type = $item['type'] ?? NULL;
-        $mime = $item_type ? $item_type->value() : $mime;
+      $mime = @mime_content_type($uri) ?: '';
+      if ($item && $item_type = $item['type'] ?? NULL) {
+        $mime = $item_type->value() ?: $mime;
       }
 
       [$type] = array_map('trim', explode('/', $mime, 2));
@@ -167,6 +173,11 @@ class Preloader {
         }
       }
 
+      // Only if BG and a hero image, set the fetchpriority.
+      if ($hero) {
+        $attrs['fetchpriority'] = 'high';
+      }
+
       // Checks for external URI.
       if (UrlHelper::isExternal($uri ?: $url)) {
         $attrs['crossorigin'] = TRUE;
@@ -183,32 +194,38 @@ class Preloader {
 
     // Responsive image with multiple sources.
     if ($sources) {
-      foreach ($sources as $source) {
-        $uri   = $source['uri'];
-        $url   = $source['fallback'];
-        $valid = $source['valid'];
+      foreach ($sources as $delta => $source) {
+        $uri   = $source['uri'] ?? NULL;
+        $url   = $source['fallback'] ?? NULL;
+        $valid = $source['valid'] ?? FALSE;
+        $start = $delta == $blazies->get('initial', -1);
+        $hero  = $priority && $start;
 
         // Preloading 1px data URI makes no sense, see if image_url exists.
-        $data_uri = Blazy::isDataUri($url);
-        if ($data_uri && $url2 = $source['url'] ?? NULL) {
-          $url = $url2;
+        if ($url) {
+          $data_uri = Blazy::isDataUri($url);
+          if ($data_uri && $url2 = $source['url'] ?? NULL) {
+            $url = $url2;
+          }
         }
 
-        foreach ($source['items'] as $item) {
-          yield empty($item['srcset']) ? NULL : $link($url, $uri, $item, $valid);
+        foreach ($source['items'] as $source_item) {
+          yield empty($source_item['srcset']) || !$start ? NULL : $link($url, $uri, $source_item, $valid, $hero);
         }
       }
     }
     else {
       // Regular plain old images.
-      foreach ($images as $image) {
+      foreach ($images as $delta => $image) {
         // Indices might be preserved even empty/ failing URI, etc.
         $uri   = $image['uri'] ?? NULL;
         $url   = $image['url'] ?? NULL;
         $valid = $image['valid'] ?? FALSE;
+        $start = $delta == $blazies->get('initial', -1);
+        $hero  = $priority && $start;
 
         // URI might be empty with mixed media, but indices are preserved.
-        yield $uri && $url ? $link($url, $uri, NULL, $valid) : NULL;
+        yield $uri && $url && $start ? $link($url, $uri, NULL, $valid, $hero) : NULL;
       }
     }
   }

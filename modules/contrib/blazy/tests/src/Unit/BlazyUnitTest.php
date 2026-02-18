@@ -11,9 +11,7 @@ use Drupal\blazy\Theme\Attributes;
 use Drupal\blazy\Theme\BlazyTheme;
 
 /**
- * @coversDefaultClass \Drupal\blazy\Blazy
- *
- * @group blazy
+ * Testing Blazy class.
  */
 class BlazyUnitTest extends UnitTestCase {
 
@@ -40,9 +38,6 @@ class BlazyUnitTest extends UnitTestCase {
    * @param mixed|bool|int $expected
    *   The expected output.
    *
-   * @covers ::buildIframe
-   * @covers \Drupal\blazy\Blazy::init
-   * @covers \Drupal\blazy\BlazyDefault::entitySettings
    * @dataProvider providerTestBuildIframe
    */
   public function testBuildIframe(array $data, $expected) {
@@ -100,10 +95,6 @@ class BlazyUnitTest extends UnitTestCase {
    * @param bool $expected_iframe
    *   Whether to expect an iframe, or not.
    *
-   * @covers \Drupal\blazy\Blazy::init
-   * @covers \Drupal\blazy\Theme\BlazyTheme::blazy
-   * @covers \Drupal\blazy\Media\BlazyImage::prepare
-   * @covers \Drupal\blazy\BlazyDefault::entitySettings
    * @dataProvider providerPreprocessBlazy
    */
   public function testPreprocessBlazy(array $settings, $item, $expected_image, $expected_iframe) {
@@ -127,7 +118,7 @@ class BlazyUnitTest extends UnitTestCase {
       $settings = array_merge(BlazyDefault::entitySettings(), $settings);
     }
 
-    $variables['element']['#item'] = $item == TRUE ? $this->testItem : NULL;
+    $variables['element']['#item'] = $item == TRUE ? $this->mockItem : NULL;
     $variables['element']['#settings'] = $settings;
 
     BlazyTheme::blazy($variables);
@@ -209,9 +200,6 @@ class BlazyUnitTest extends UnitTestCase {
    * @param array $settings
    *   The settings being tested.
    *
-   * @covers \Drupal\blazy\BlazyManager::preRenderBlazy
-   * @covers \Drupal\blazy\Theme\Lightbox::build
-   * @covers \Drupal\blazy\Theme\Lightbox::buildCaptions
    * @dataProvider providerTestPreRenderImageLightbox
    */
   public function todoTestPreRenderImageLightbox(array $settings = []) {

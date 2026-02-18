@@ -156,6 +156,13 @@ ratio:
   dependencies:
     - blazy/base
 
+ratio.modern:
+  css:
+    component:
+      css/components/blazy.ratio-modern.css: {}
+  dependencies:
+    - blazy/ratio
+
 # CSS grids.
 style:
   css:

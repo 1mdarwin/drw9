@@ -9,11 +9,19 @@ use GuzzleHttp\Exception\GuzzleException;
 
 /**
  * Tests the Blazy image formatter.
- *
- * @coversDefaultClass \Drupal\blazy\Plugin\Field\FieldFormatter\BlazyImageFormatter
- *
- * @group blazy
  */
+/**
+ * A D12 compat, please update or ignore.
+ *
+ * @phpstan-ignore-next-line
+ */
+#[Group('blazy')]
+/**
+ * A D12 compat, please update or ignore.
+ *
+ * @phpstan-ignore-next-line
+ */
+#[RunTestsInSeparateProcesses]
 class BlazyFormatterTest extends BlazyKernelTestBase {
 
   /**
@@ -57,10 +65,11 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     $build = $this->display->build($entity);
 
     $this->assertInstanceOf('\Drupal\Core\Field\FieldItemListInterface', $this->testItems, 'Field implements interface.');
+    /** @phpstan-ignore-next-line */
     $this->assertInstanceOf('\Drupal\blazy\BlazyManagerInterface', $this->formatterInstance->blazyManager(), 'BlazyManager implements interface.');
 
     // Tests cache tags matching entity ::getCacheTags().
-    /* @phpstan-ignore-next-line */
+    /** @phpstan-ignore-next-line */
     $item = $entity->get($this->testFieldName);
     $field = $build[$this->testFieldName];
 
@@ -76,7 +85,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
 
     $settings0 = $this->blazyManager->toHashtag($field[0]['#build']);
     $blazies0 = $settings0['blazies'];
-    $file0 = $item[0]->entity;
+    $file0 = $item[0]->entity ?? NULL;
     $tag0 = $blazies0->get('cache.metadata.tags');
     $this->assertContains($file0->getCacheTags()[0], $tag0, 'First image cache tags is as expected');
 
@@ -122,7 +131,8 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
    * Tests the Blazy formatter view display.
    */
   public function testFormatterViewDisplay() {
-    $formatter_settings = $this->formatterInstance->buildSettings();
+    $build['#settings'] = Blazy::init();
+    $formatter_settings = $this->formatterInstance->buildSettings($build, NULL);
     $this->assertArrayHasKey('blazies', $formatter_settings);
 
     $blazies = $formatter_settings['blazies'];
@@ -133,7 +143,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
     // 1. Tests formatter settings.
     $build = $this->display->build($this->entity);
 
-    /* @phpstan-ignore-next-line */
+    /** @phpstan-ignore-next-line */
     $result = $this->entity->get($this->testFieldName)
       ->view(['type' => 'blazy']);
 
@@ -204,7 +214,6 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
    * @param bool $expected
    *   The expected output.
    *
-   * @covers ::view
    * @dataProvider providerTestBlazyMedia
    */
   public function testBlazyMedia($input_url, $expected) {
@@ -234,7 +243,7 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
         'view_mode'    => 'default',
       ];
 
-      $blazies->set('media', $info)
+      $blazies->set('media', $info, TRUE)
         ->set('image.uri', $this->uri);
 
       $build = $this->display->build($entity);
@@ -269,9 +278,9 @@ class BlazyFormatterTest extends BlazyKernelTestBase {
    */
   public static function providerTestBlazyMedia() {
     return [
-      ['', TRUE],
+      ['', FALSE],
       ['https://xyz123.com/x/123', FALSE],
-      ['user', TRUE],
+      ['https://www.youtube.com/watch?v=6G5_70PqodU', TRUE],
     ];
   }
 

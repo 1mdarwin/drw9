@@ -53,6 +53,12 @@ blazy.settings:
     max_region_count:
       type: integer
       label: 'Max region count'
+    privacy_consent:
+      type: boolean
+      label: 'Use Privacy-Enhanced YouTube domain'
+    ratio_modern:
+      type: boolean
+      label: 'Use modern CSS aspect-ratio'
     blazy:
       type: mapping
       label: Blazy

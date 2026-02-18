@@ -143,8 +143,8 @@ class Blazy extends BlazyBase {
   /**
    * Sanitize media input URL.
    */
-  public static function sanitizeInputUrl($input): ?string {
-    return Sanitize::inputUrl($input);
+  public static function sanitizeInputUrl($input, $privacy = FALSE): ?string {
+    return Sanitize::inputUrl($input, $privacy);
   }
 
   /**

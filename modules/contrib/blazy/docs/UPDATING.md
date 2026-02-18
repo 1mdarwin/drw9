@@ -23,8 +23,10 @@ composer require drupal/blazy:^3.0 -W -n
 ````
 composer require drupal/slick_extras:^2.0 drupal/slick_views:^3.0 drupal/slick:^3.0 drupal/blazy:^3.0 -W -n
 ````
-This is what parallel upgrade is -- composer require them all once. Remove or add more sub-modules as needed. Change version numbers accordingly for each upgarde. `-W -n` is not required, but handy and quick. In plain words: no fuss,
-just download themj all with dependencies, if any. Specifing the number is
+This is what parallel upgrade is -- composer require them all once. Remove or
+add more sub-modules as needed. Change version numbers accordingly for each
+upgarde. `-W -n` is not required, but handy and quick. In plain words: no fuss,
+just download them all with dependencies, if any. Specifing the number is
 crucial on any branch upgrade, not required on minor version update.
 
 ### WITH DRUSH

@@ -11,9 +11,6 @@ use Drupal\blazy\Form\BlazyAdminFormatter;
 
 /**
  * Tests the Blazy admin formatter form.
- *
- * @coversDefaultClass \Drupal\blazy\Form\BlazyAdminFormatter
- * @group blazy
  */
 class BlazyAdminFormatterUnitTest extends UnitTestCase {
 
@@ -62,14 +59,8 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::buildSettingsForm
-   * @covers ::openingForm
-   * @covers ::fieldableForm
-   * @covers ::imageStyleForm
-   * @covers ::mediaSwitchForm
-   * @covers ::gridForm
-   * @covers ::closingForm
-   * @covers ::finalizeForm
+   * Tests settings form.
+   *
    * @dataProvider providerTestBuildSettingsForm
    */
   public function testBuildSettingsForm($vanilla) {

@@ -10,6 +10,7 @@
  * [Installing libraries via Composer](#composer)
  * [Configuration](#configuration)
  * [theme_blazy()](#theme-blazy)
+ * [Hero media](#heroes)
  * [Multimedia galleries](#galleries)
  * [Lightboxes](#lightboxes)
  * [SVG](#svg)
@@ -98,22 +99,6 @@ supported by Blazy can use Blazy, or Slick formatters if applicable instead.
 We do not have separate formatters when its prime functionality is embedding
 a lightbox, or superceded by Blazy.
 
-Blazy provides a versatile and reusable formatter for a few known lightboxes
-with extra advantages:
-
-lazyloading, grid, multi-serving images, Responsive image,
-CSS background, captioning, etc.
-
-Including making those lightboxes available for free at Views Field for
-File entity, Media and Blazy Filter for inline images.
-
-If you are developing lightboxes and using Blazy, I would humbly invite you
-to give Blazy a try, and consider joining forces with Blazy, and help improve it
-for the above-mentioned advantages. We are also continuously improving and
-solidifying the API to make advanced usages a lot easier, and DX friendly.
-Currently, of course, not perfect, but have been proven to play nice with at
-least 7 lightboxes, and likely more.
-
 
 ### SIMILAR MODULES
 [Lazyloader](https://www.drupal.org/project/lazyloader)
@@ -156,248 +141,69 @@ Visit the following to configure and make use of Blazy:
 
    Use `Blazy Grid` as standalone blocks, or pages.
 
-
-### <a name="theme-blazy"> </a>THEME_BLAZY()
-Since 2.17, on your permissions at [Blazy UI Use theme_blazy()](/admin/help/blazy_ui),
-`theme_blazy()` is now capable to replace sub-modules `theme_ITEM()` contents,
-e.g.: `theme_slick_slide()`, `theme_splide_slide()`, `theme_mason_box()`, etc.
-At 3.x, we'll no longer ask for permissions, please be sure to test it out to
-spot the problems earlier, or migrate your overrides earlier.
-
-The `theme_blazy()` has been used all along, the only difference is captions
-which are now included as inherent part of `theme_blazy()` including thumbnail
-captions seen at sliders.
-
-Repeat, not replacing their established `theme_ITEM()`, just their contents when
-we all have dups with IMAGE/MEDIA + CAPTIONS constructs. It is not a novel
-thing, see `block.html.twig` with its variants, etc.
-Not a sudden course of actions, it was carefully planned since
-[2.x-RC1](https://git.drupalcode.org/project/blazy/-/blob/8.x-2.0-rc1/src/BlazyManager.php#L180), 4 years ago from 2023, and never made it till 2.17.
-
-If you see no difference, nothing to do. If any, be sure it is not caused by
-your non-updated overrides which should be updated prior to blazy:3.x.
-Only report if this is caused by blazy's mistake. Kindly provide markup
-comparison, or helpful screenshots, to spot the issues better.
-
-#### Profits:
-+ Tons of dups are reduced which is part of Blazy's job descriptions above.
-+ Minimal maintenance for many of Blazy sub-modules.
-+ More cool kid features like hoverable effects, etc. will be easier to apply.
-+ When Blazy supports extra captions like File description for SVG, it will be
-  available immediately to all once, rather than updating each modules to
-  support it due their hard-coded natures.
-
-#### Non-profits:
-+ Overrides should be taken seriously from now on, or as always. Perhaps CSS
-  overrides are the safest. Or at most a `hook_theme_suggestions_alter()`.
-+ One blazy stupid mistake, including your override, kills em all. We'll work
-  it out at Bugs reports if blazy's. It happens, and the world does not end yet.
-
-#### Custom work migrations from theme_ITEM() into theme_blazy():
-+ `THEME_preprocess_blazy()`
-+ `hook_blazy_caption_alter(array &$element, array $settings, array $context)`
-+ For more `hook_alter`: `grep -r ">alter(" ./blazy`, or see `blazy.api.php`
-+ Use `settings.blazies` object to provoke HTML changes conditionally via the
-  provided settings alters. Samples are in `blazy.api.php`, more in sub-modules.
-+ If you can bear a headache, replace or decorate Blazy services.
-+ As last resorts, override `blazy.html.twig`. Headaches are yours in the long
-  run. FYI, even the author, me, never touch this file in any custom works.
-  The above suffices at 100% own cases.
-
-### <a name="galleries"> </a> USAGES: BLAZY FOR MULTIMEDIA GALLERY VIA VIEWS UI
-#### Using **Blazy Grid**
-1. Add a Views style **Blazy Grid** for entities containing Media or Image.
-2. Add a Blazy formatter for the Media or Image field.
-3. Add any lightbox under **Media switcher** option.
-4. Limit the values to 1 under **Multiple field settings** > **Display**, if
-   any multi-value field.
-
-#### Without **Blazy Grid**
-If you can't use **Blazy Grid** for a reason, maybe having a table, HTML list,
-etc., try the following:
-
-1. Add a CSS class under **Advanced > CSS class** for any reasonable supported/
-   supportive lightbox in the format **blazy--LIGHTBOX-gallery**, e.g.:
-   + **blazy--colorbox-gallery**
-   + **blazy--flybox-gallery**
-   + **blazy--intense-gallery**
-   + **blazy--mfp-gallery** (Magnific Popup)
-   + **blazy--photoswipe-gallery**
-   + **blazy--slick-lightbox-gallery**
-   + **blazy--splidebox-gallery**
-   + **blazy--zooming-gallery**
-
-  Note the double dashes BEM modifier "**--**", just to make sure we are on the
-  same page that you are intentionally creating a blazy LIGHTBOX gallery.
-  All this is taken care of if using **Blazy Grid** under **Format**.
-  The View container will then have the following attributes:
-
-  `class="blazy blazy--LIGHTBOX-gallery ..." data-blazy data-LIGHTBOX-gallery`
-
-2. Add a Blazy formatter for the Media or Image field.
-3. Add the relevant lightbox under **Media switcher** option based on the given
-   CSS class at #1.
-
-#### Bonus
-* With [Splidebox](https://drupal.org/project/splidebox), this can be used to
-  have simple profile, author, product, portfolio, etc. grids containing links
-  to display them directly on the same page as ajaxified lightboxes.
-* With [IO](https://drupal.org/project/io), this can be used to have simple
-  and modern Views infinite pagers as grid displays.
-* With the new 2.17 `theme_blazy()` as a replacement for sub-modules
-  `theme_ITEM()` contents, it will be easier to have hoverable product effects
-  like seen at many commercial e-commerce themes.
-
-
-#### <a name="views-gotchas"> </a>VIEWS GOTCHAS
-Be sure to leave `Use field template` under `Style settings` unchecked.
-If checked, the gallery is locked to a single entity, that is no Views gallery,
-but gallery per field. The same applies when using Blazy formatter with VIS/IO
-pager, alike, or inside Slick Carousel, GridStack, etc. If confusing, just
-toggle this option, and you'll know which works. Only checked if Blazy formatter
-is a standalone output from Views so to use field template in this case.
-
-Check out the relevant sub-module docs for details.
-
-***
-## <a name="lightboxes"> </a>LIGHTBOXES
-All lightbox integrations are optional. Meaning if the relevant modules and or
-libraries are not present, nothing will show up under `Media switch` option.
-Except for the new default **Flybox** since 2.17.
-
-Clear cache if they do not appear as options due to being permanently cached.
-
-Most lightboxes, not all, supports (responsive) image, (local|remote) video.
-Known lightboxes which has supports for Responsive image:
-* Colorbox, Magnific popup, Slick Lightbox, Splidebox, Blazy PhotoSwipe.
-* Magnific Popup/ Splidebox also supports picture.
-* Splidebox also supports AJAX contents.
-* Others might not.
-
-### Blazy has two builtin minimal lightboxes:
-* **Blazybox**, seen at Intense, IO Browser, Slick Browser, ElevateZoomPlus,
-  etc. Normally used as a fallback when the lightbox doesn't support multimedia.
-* **Flybox**, a non-disruptive lightbox aka picture in picture window, as an
-  option under Media Switcher since 2.17. It was meant for (remote) video,
-  audio, soundcloud, not images. Best with non grid elements to allow viewers
-  browsing the rest of page while watching videos, or listening to audios, as in
-  picture in picture mode. Please create an issue to sponsor the potentials.
-  **Potentials**:
-  + Auto-pop/flyout the Flybox when the element is visible like for ads, etc.
-  + Merge Flybox with Zooming, ElevateZoomPlus, and other lightboxes.
-
-
-### Lightbox requirements
-* Colorbox, PhotoSwipe, etc. requires both modules and their libraries present.
-* Magnific Popup, requires only libraries to be present:
-  + `/libraries/magnific-popup/dist/jquery.magnific-popup.min.js`
-  The reason for no modules are being required because no special settings, nor
-  re-usable options to bother provided by them. Aside from the fact, Blazy has
-  its own loader aka initializer for advanced features like multimedia (remote
-  |local video), or (responsive|picture) image, fieldable captions, etc. which
-  are not (fully) shipped/ supported by these modules.
-
-### <a name="dompurify"> </a> Lightbox captions with DOMPurify
-Install DOMPurify using composer, see [COMPOSER](#composer) section:
-
-* `composer require npm-asset/dompurify`
-
-* Or, if you prefer, you can download DOMPurify directly from:
-  [DOMPurify](https://github.com/cure53/DOMPurify/releases/latest)
-
-  From the above link, you can download a zip or tar.gz archive file.
-  To avoid security issues, please only install the dist directory, and
-  nothing else from the archive. The composer command above will install
-  the whole package.
-
-Blazy lightboxes allows you to place a caption within lightboxes.
-If you wish to use HTML in your captions, you must install the DOMPurify
-library. In your `libraries` folder, you will need, either one:
-* `DOMPurify/dist/purify.min.js`
-* `dompurify/dist/purify.min.js`
-
-If using Colorbox module, be sure to use their supported path to avoid dup
-folders. Blazy will pick up whichever available, no problem.
-
-The DOMPurify library is optional. Without DOMPurify, Blazy (sub)-modules
-will just sanitize all captions server-side, or the very basic ones.
-
-***
-## <a name="svg"> </a>SVG
-Install the SVG Sanitizer using composer, see [COMPOSER](#composer) section:
-
-`composer require enshrined/svg-sanitize`
-
-[Read more](https://github.com/darylldoyle/svg-sanitizer)
-
-Blazy does not want to ship it in its `composer.json` for serious reasons,
-and will disable the option for Inline SVG if not installed.
-
-Since 2.17, the formatter **Blazy Image with VEF (deprecated)** was re-purposed
-to support SVG files, instead. The name is now **Blazy File**.
-Core **Image** widget doesn't support SVG files, to upload SVG use **File**:
-* [/admin/structure/types/manage/page/fields](/admin/structure/types/manage/page/fields)
-  + *Add a new field > Reference > File* for simple needs.
-  + Enable *Description field* for SVG captions.
-  + Alternatively, choose *Reference > Other > File* for more complex needs.
-* [/admin/structure/types/manage/page/fields](/admin/structure/types/manage/project/page)
-  + Choose **Blazy File**, and adjust anything accordingly.
-
-The **Blazy File** can also be used for Image when SVG extension is available,
-otherwise just use **Blazy Image** instead. It is kept distinct so to have
-relevant form items specific for SVG files.
-
-This is the most basic SVG in core without installing another module, and
-Blazy can display it just fine either as inline SVG, or embedded SVG in IMG.
-
-For more robust solutions, consider: SVG Image Field, SVG Image, etc.
-
-**FYI**
-* The latter will override all core formatters and widgets which makes it hard
-  to uninstall without deleting many things when you have images anywhere.
-  Blazy works fine with this module all along.
-* The SVG form options owe credits to `SVG Image Field` module. And to honor it,
-  **Blazy File** provides supports for its field type so to have Grid, and
-  various Blazy features, including SVG carousels, etc. It is still WIP, but
-  just fine.
-* The SVG title element owes credits to `SVG Formatter`.
-* If the SVG is smaller than the expected, try adding `width: 100%` to it.
-
-***
-## <a name="webp"> </a>WEBP
-Drupal 9.2 has supports for WEBP conversions at Image styles admin page via
-**Convert WEBP**. Only if you are concerned about old browsers, Blazy supports
-it via a polyfill at Blazy UI under **No JavaScript**, be sure to NOT check it.
-
-**Benefits**:
-* Modern browsers will continue using clean IMG without being forced to use
-  unnecessary PICTURE for the entire WEBP extensions.
-* Old browsers will have a PICTURE if they don't support WEBP.
-
 ***
 ## <a name="features"> </a>FEATURES
-* Works absurdly fine at IE9 for Blazy 2.6.
-* Works without JavaScript within/without JavaScript browsers.
-* Works with AMP, or static/ archived sites, e.g.: Tome, HTTrack, etc.
-* Supports modern Native lazyload since [incubation](https://drupal.org/node/3104542)
-  before Firefox or core had it, or old `data-[src|srcset]` since eons. Must be
+* **Deep Integration**:
+
+  Seamlessly works with Core Media, Views, Paragraphs, and Media contrib
+  modules. Supports Image, Responsive image, (local|remote|iframe) videos, SVG,
+  DIV (CSS backgrounds), either inline, fields, views, or within lightboxes.
+  * Field formatters: Blazy with Media, Paragraphs, and entities integrations.
+  * Instagram, Pinterest, Twitter, Youtube, Vimeo, Soundcloud, Facebook
+    within some lightboxes.
+* **LCP & CLS Management**:
+
+  Engineered for a **"CLS-zero" strategy**, our framework integrates
+  **sophisticated preloading** alongside native `fetchpriority` and `decoding`
+  to systematically eliminate LCP discovery delays. We provide rigorous
+  optimization for every asset—from **standard images**, **CSS backgrounds**
+  and **responsive picture elements** to **optimized video posters**. While we
+  leverage modern CSS `aspect-ratio` for layout stability, we maintain a refined
+  **padding-bottom fallback** to ensure backward compatibility (BC) without
+  sacrificing precision.
+* **Intelligent Lazy-loading**:
+
+  Supports modern Native lazyload since [incubation](https://drupal.org/node/3104542)
+  before Firefox or core had it, or old `data-[src|srcset]` since eons.
+  Sophisticated preloading via the Blazy engine  for images, CSS backgrounds,
+  iframes, SVG, HTML5 video, audio, and HTML media. Must be
   noted very clearly due to some thought Blazy was retarded from core.
-* Lightboxes: Colorbox, Magnific Popup, Splidebox, PhotoSwipe, etc. with
-  multimedia lightboxes.
-* Supports Image, Responsive image, (local|remote|iframe) videos, SVG, DIV
-  either inline, fields, views, or within lightboxes.
-* Supports Instagram, Pinterest, Twitter, Youtube, Vimeo, Soundcloud, Facebook
-  within some lightboxes, since 2.17.
-* Multi-serving lazyloaded images, including multi-breakpoint CSS backgrounds.
-* Field formatters: Blazy with Media integration.
-* Blazy Grid formatter and Views style for multi-value Image, Media and Text:
-  CSS3 Columns, Grid Foundation, Flexbox, Native Grid.
-* Supports inline galleries, and grid or CSS3 Masonry via Blazy Filter.
-  Enable Blazy Filter at **/admin/config/content/formats**.
-* Simple shortcodes for inline galleries, check out **/filter/tips**.
-* Delay loading for below-fold images until 100px (configurable) before they are
-  visible at viewport.
-* A simple effortless CSS loading indicator.
+  * Supports WEBP.
+  * Works absurdly fine at IE9 for Blazy 2.6.
+  * Works without JavaScript within/without JavaScript browsers.
+  * Works with AMP, or static/ archived sites, e.g.: Tome, HTTrack, etc.
+  * Multi-serving lazyloaded images, including multi-breakpoint CSS backgrounds.
+  * Delay loading for below-fold images until 100px (configurable) before they
+    are visible at viewport.
+  * A simple effortless CSS loading indicator.
+* **Privacy & GDPR Compliance**:
+
+  Utilizes a **Two-Click Media Loader** via the "Image to Iframe" option.
+  No third-party tracking scripts are initialized until the user actively
+  engages with the play button—satisfying strict **GDPR and ePrivacy**
+  requirements.
+* **Developer Friendly**:
+
+  Features a "Vanilla" mode and a
+  [robust API](https://git.drupalcode.org/project/blazy/blob/3.0.x/blazy.api.php)
+  for custom/theme implementations.
+* **Robust content supports:**
+
+  HTML, responsive image/ picture, responsive iframe, SVG, video, audio and
+  third party contents.
+* **Inline & lightbox mixed-media:**
+
+  A single **Media switcher** option for various interactions: image to content,
+  iframe, and (quasi-)lightboxes: Slick lightbox, Colorbox, PhotoSwipe, Flybox,
+  Magnific Popup, Zooming, etc.
+* **Advanced Gallery Grids:**
+
+  * Blazy Grid formatter and Views style for multi-value Image, Media and Text:
+    CSS3 Columns, Grid Foundation, Flexbox, Native Grid.
+  * Supports inline galleries, and grid or CSS3 Masonry via Blazy Filter.
+    Enable Blazy Filter at **/admin/config/content/formats**.
+  * Simple shortcodes for inline galleries, check out **/filter/tips**.
+
 * It doesn't take over all images, so it can be enabled as needed via Blazy
   formatter, or its supporting modules.
 
