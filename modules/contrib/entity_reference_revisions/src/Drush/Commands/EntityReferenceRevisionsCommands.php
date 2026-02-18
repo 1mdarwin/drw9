@@ -1,53 +1,47 @@
 <?php
 
-namespace Drupal\entity_reference_revisions\Commands;
+namespace Drupal\entity_reference_revisions\Drush\Commands;
 
+use Consolidation\AnnotatedCommand\Hooks\HookManager;
 use Drupal\entity_reference_revisions\EntityReferenceRevisionsOrphanPurger;
+use Drush\Attributes as CLI;
+use Drush\Commands\AutowireTrait;
 use Drush\Commands\DrushCommands;
-use Drush\Drush;
 use Drush\Utils\StringUtils;
 
 /**
  * A Drush commandfile.
  */
-class EntityReferenceRevisionsCommands extends DrushCommands {
+final class EntityReferenceRevisionsCommands extends DrushCommands {
 
-  /**
-   * The purger service.
-   *
-   * @var \Drupal\entity_reference_revisions\EntityReferenceRevisionsOrphanPurger
-   */
-  protected $purger;
+  use AutowireTrait;
 
   /**
    * Constructs a ERRCommands object.
    *
    * @param \Drupal\entity_reference_revisions\EntityReferenceRevisionsOrphanPurger $purger
    */
-  public function __construct(EntityReferenceRevisionsOrphanPurger $purger) {
-    $this->purger = $purger;
+  public function __construct(
+    protected EntityReferenceRevisionsOrphanPurger $purger
+  ) {
+    parent::__construct();
   }
 
   /**
    * Orphan composite revision deletion.
-   *
-   * @param $types
-   *   A comma delimited list of entity types to check for orphans. Omit to
-   *   choose from a list.
-   * @usage drush err:purge paragraph
-   *   Purge orphaned paragraphs.
-   *
-   * @command err:purge
-   * @aliases errp
    */
+  #[CLI\Command(name: 'err:purge', aliases: ['errp'])]
+  #[CLI\Argument(name: 'types', description: 'A comma delimited list of entity types to check for orphans. Omit to choose from a list.')]
+  #[CLI\Usage(name: 'drush err:purge paragraph', description: 'Purge orphaned paragraphs.')]
   public function purge($types) {
     $this->purger->setBatch(StringUtils::csvToArray($types));
     drush_backend_batch_process();
   }
 
   /**
-   * @hook interact err:purge
+   * Interact hook for err:purge command.
    */
+  #[CLI\Hook(type: HookManager::INTERACT, target: 'err:purge')]
   public function interact($input, $output) {
     if (empty($input->getArgument('types'))) {
       $choices = [];
