@@ -8,9 +8,7 @@ use Drupal\blazy\Blazy;
 use Drupal\blazy\Theme\Grid;
 
 /**
- * @coversDefaultClass \Drupal\blazy\Theme\Grid
- *
- * @group blazy
+ * Testing Blazy Grid.
  */
 class BlazyGridUnitTest extends UnitTestCase {
 
@@ -18,8 +16,6 @@ class BlazyGridUnitTest extends UnitTestCase {
 
   /**
    * Tests \Drupal\blazy\Theme\Grid::build().
-   *
-   * @covers ::build
    */
   public function testBuild() {
     $settings                = Blazy::init();

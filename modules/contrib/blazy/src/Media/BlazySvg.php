@@ -108,9 +108,9 @@ class BlazySvg {
     // embedded SVG in IMG. But width/height is more relevant.
     if (!$width && isset($svg['viewBox'])) {
       [,, $_width, $_height] = array_map('trim', explode(' ', $svg['viewBox']));
-      $width = ceil($_width);
+      $width = ceil((int) $_width);
       /* @phpstan-ignore-next-line */
-      $height = ceil($_height);
+      $height = ceil((int) $_height);
     }
 
     return ['width' => $width, 'height' => $height];

@@ -25,6 +25,8 @@ abstract class BlazyViewsTestBase extends ViewsKernelTestBase {
 
   /**
    * {@inheritdoc}
+   *
+   * @var array<string>
    */
   protected static $modules = [
     'system',

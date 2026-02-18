@@ -17,7 +17,7 @@ class BlazyDefault {
    *
    * These are related to convention in css/blazy.ratio.css.
    */
-  const RATIO = ['1:1', '3:2', '4:3', '8:5', '16:9'];
+  const RATIO = ['1:1', '3:2', '4:3', '8:5', '9:16', '16:9', '16:10', '21:9'];
 
   /**
    * Defines constant for the supported text tags.
@@ -298,7 +298,9 @@ class BlazyDefault {
       'visible_class'       => FALSE,
       'noscript'            => FALSE,
       'placeholder'         => '',
+      'privacy_consent'     => FALSE,
       'unstyled_extensions' => '',
+      'ratio_modern'        => FALSE,
     ];
   }
 
@@ -401,6 +403,7 @@ class BlazyDefault {
       'media',
       'mfp',
       'ratio',
+      'ratio.modern',
     ]);
     return array_merge($components, array_keys(self::dyComponents()));
   }

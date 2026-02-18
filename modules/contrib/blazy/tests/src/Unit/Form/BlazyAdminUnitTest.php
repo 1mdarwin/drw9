@@ -9,9 +9,6 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Tests the Blazy admin form.
- *
- * @coversDefaultClass \Drupal\blazy\Form\BlazyAdmin
- * @group blazy
  */
 class BlazyAdminUnitTest extends UnitTestCase {
 
@@ -30,11 +27,7 @@ class BlazyAdminUnitTest extends UnitTestCase {
   }
 
   /**
-   * @covers ::create
-   * @covers ::__construct
-   * @covers ::getEntityDisplayRepository
-   * @covers ::getTypedConfig
-   * @covers ::blazyManager
+   * Test Blazy admin constructor.
    */
   public function testBlazyAdminCreate() {
     $container = $this->createMock(ContainerInterface::class);

@@ -7,9 +7,7 @@ use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\blazy\Blazy;
 
 /**
- * @coversDefaultClass \Drupal\blazy\BlazyMedia
- *
- * @group blazy
+ * Testing Blazy Media.
  */
 class BlazyMediaUnitTest extends UnitTestCase {
 
@@ -28,7 +26,6 @@ class BlazyMediaUnitTest extends UnitTestCase {
   /**
    * Tests \Drupal\blazy\Media\BlazyMedia::view().
    *
-   * @covers ::view
    * @dataProvider providerTestBlazyMediaBuild
    */
   public function testBlazyMediaBuild($markup) {
@@ -56,7 +53,7 @@ class BlazyMediaUnitTest extends UnitTestCase {
     $markup['#attached'] = [];
     $markup['#cache']    = [];
 
-    /** @var \Drupal\Core\Entity\ContentEntityInterface $entity */
+    // Mocking \Drupal\Core\Entity\ContentEntityInterface.
     $entity = $this->createMock('\Drupal\Core\Entity\ContentEntityInterface');
     $field_definition = $this->createMock('\Drupal\Core\Field\FieldDefinitionInterface');
 
@@ -64,24 +61,21 @@ class BlazyMediaUnitTest extends UnitTestCase {
 
     // Since 2.17.
     $this->blazyMedia = $this->createMock('\Drupal\blazy\Media\BlazyMediaInterface');
-    // @phpstan-ignore-next-line
     $items->expects($this->any())
       ->method('getFieldDefinition')
       ->willReturn($field_definition);
-    // @phpstan-ignore-next-line
     $items->expects($this->any())
       ->method('view')
       ->with($view_mode)
       ->willReturn($markup);
-    // @phpstan-ignore-next-line
     $items->expects($this->any())
       ->method('getEntity')
       ->willReturn($entity);
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $entity->expects($this->any())
       ->method('get')
       ->with($source_field)
-      ->will($this->returnValue($items));
+      ->willReturn($items);
 
     $data = [
       '#entity' => $entity,

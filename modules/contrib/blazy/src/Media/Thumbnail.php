@@ -5,6 +5,7 @@ namespace Drupal\blazy\Media;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\blazy\Theme\Attributes;
 use Drupal\blazy\internals\Internals;
+use Drupal\blazy\Utility\CheckItem;
 
 /**
  * Provides thumbnail-related methods.
@@ -83,11 +84,16 @@ class Thumbnail {
       return [];
     }
 
+    // @todo move it out of here, required by vanilla Splide navigation.
+    CheckItem::unstyled($settings, $uri);
+    $blazies = $settings['blazies'];
+
     // Thumbnails can use image styles, except for SVG for now.
     // @todo check for any modules (ImageMagick) which convert SVG to image,
     // and remove this check if present, leaving it for external URL + data URI.
     $unstyled = $blazies->is('unstyled');
     $valid = $blazies->get('image.valid') ?: BlazyFile::isValidUri($uri);
+
     if ($valid && !$blazies->is('svg')) {
       $unstyled = FALSE;
     }
@@ -109,8 +115,9 @@ class Thumbnail {
       '#item'       => $item,
       '#alt'        => $alt,
       '#attributes' => [
-        'decoding' => 'async',
-        'loading'  => $blazies->get('delta', 0) < $delta ? 'eager' : 'lazy',
+        'decoding'      => 'async',
+        'loading'       => $blazies->get('delta', 0) < $delta ? 'eager' : 'lazy',
+        'fetchpriority' => 'low',
       ],
     ];
 

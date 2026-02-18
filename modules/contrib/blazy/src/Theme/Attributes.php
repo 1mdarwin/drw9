@@ -388,10 +388,15 @@ class Attributes {
    *   If a background image.
    */
   public static function lazy(array &$attributes, $blazies, $bg = FALSE): void {
-    $trusted = $blazies->get('image.trusted');
     if ($url = $blazies->get('image.url')) {
+      $trusted = $blazies->get('image.trusted');
       $url = $trusted ? $url : UrlHelper::stripDangerousProtocols($url);
       $unlazy = Internals::isUnlazy($blazies);
+
+      // Makes query selector easier for filter.
+      if ($blazies->get('filter')) {
+        $attributes['class'][] = 'b-filter';
+      }
 
       // Native, or unlazy, has .blazy--nojs at container to fix issues, if any.
       if (!$unlazy) {
@@ -400,14 +405,10 @@ class Attributes {
         $attribute = $blazies->get('lazy.attribute', 'src');
         $attributes['data-' . $attribute] = $url;
       }
-
-      // Makes query selector easier for filter.
-      if ($blazies->get('filter')) {
-        $attributes['class'][] = 'b-filter';
-      }
-
-      if ($bg && $unlazy) {
-        self::inlineStyle($attributes, 'background-image: url(' . $url . ');');
+      else {
+        if ($bg) {
+          self::inlineStyle($attributes, 'background-image: url(' . $url . ');');
+        }
       }
     }
   }
@@ -540,16 +541,32 @@ class Attributes {
   }
 
   /**
-   * Provide common attributes for IMG, IFRAME, VIDEO, etc. elements.
+   * Provide common attributes for IMG and IFRAME/VIDEO elements.
+   *
+   * @todo at 2022/2 core has no loading Responsive.
    */
   private static function common(array &$attributes, $blazies): void {
     $attributes['class'][] = 'media__element';
     $loading = $blazies->get('image.loading', 'lazy');
 
-    // @todo at 2022/2 core has no loading Responsive.
-    $excludes = in_array($loading, ['slider', 'unlazy']);
-    if ($blazies->get('image.width') && !$excludes) {
-      $attributes['loading'] = $loading;
+    // The fetchpriority is mostly relevant with slider architecture, and
+    // applicable to limited media: IMG and IFRAME. Just a hint, not mandatory.
+    // This option is limited to CWV:LCP hero image, and can be applied to
+    // non-slider hero image with `unlazy` option. Major browser supports are
+    // massive as per 2026/1/3.
+    // Slick/Splide can also display a single hero image.
+    // Only one image can have fetchpriority=high on a page. That is why it is
+    // limited only to the designated LCP as a hero image.
+    // See https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Attributes/fetchpriority
+    if (in_array($loading, ['slider', 'unlazy'])) {
+      // A hero image needs a high priority. Hidden images should be deferred.
+      $attributes['fetchpriority'] = $blazies->is('lcp') ? 'high' : 'low';
+    }
+    else {
+      // Ensures dimensions set.
+      if ($blazies->get('image.width')) {
+        $attributes['loading'] = $loading;
+      }
     }
   }
 
@@ -595,8 +612,11 @@ class Attributes {
       $attributes['title'] = $title;
     }
 
+    // LCP images should be sync or without decoding.
     // https://developer.mozilla.org/en-US/docs/Web/API/HTMLImageElement/decode.
-    $attributes['decoding'] = 'async';
+    if (!$blazies->is('lcp')) {
+      $attributes['decoding'] = 'async';
+    }
 
     // Preserves UUID for sub-module lookups, relevant for BlazyFilter.
     if ($uuid = $blazies->get('entity.uuid')) {

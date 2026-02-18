@@ -235,7 +235,9 @@ class BlazyOEmbed implements BlazyOEmbedInterface {
    */
   public function checkInputUrl(array &$settings, $input): ?string {
     $blazies = $settings['blazies'];
-    $input = Blazy::sanitizeInputUrl($input);
+    $privacy = $blazies->is('privacy_consent');
+    $input = Blazy::sanitizeInputUrl($input, $privacy);
+
     $blazies->set('media.input_url', $input);
     return $input;
   }

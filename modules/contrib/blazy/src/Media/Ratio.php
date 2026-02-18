@@ -84,12 +84,21 @@ class Ratio {
       return $output;
     }
 
+    $mapped_ratios = array_combine(
+      $ratios,
+      array_map(fn($r) => ($a = explode(':', $r))[0] / $a[1], $ratios)
+    );
+
     $width  = (int) $width;
     $height = (int) $height;
 
     try {
-      $check  = self::toRatio($width, $height);
-      $result = ($width / $check) . ':' . ($height / $check);
+      $result = self::resolve(
+       $width,
+       $height,
+       $mapped_ratios,
+       $force
+      );
 
       if (in_array($result, $ratios) || $force) {
         $output = $result;
@@ -106,15 +115,48 @@ class Ratio {
   }
 
   /**
+   * Reduced to the exact ratio.
+   */
+  private static function gcd(int $a, int $b): int {
+    while ($b !== 0) {
+      [$a, $b] = [$b, $a % $b];
+    }
+    return $a;
+  }
+
+  /**
    * Provides a computed image ratio aka fluid ratio.
    */
-  private static function toRatio($width, $height) {
-    if ($width == 0 || $height == 0) {
-      return abs(max(abs($width), abs($height)));
+  private static function resolve(
+    int $width,
+    int $height,
+    array $ratios,
+    bool $force = FALSE,
+    float $tolerance = 0.03,
+  ): ?string {
+    // Exact ratio.
+    $ratio = $width / $height;
+
+    // Find the closest predefined ratio.
+    $closest_label = NULL;
+    $min_diff = PHP_FLOAT_MAX;
+
+    foreach ($ratios as $label => $known_ratio) {
+      $diff = abs($ratio - $known_ratio);
+      if ($diff < $min_diff) {
+        $min_diff = $diff;
+        $closest_label = $label;
+      }
     }
 
-    $result = $width % $height;
-    return ($result != 0) ? self::toRatio($height, $result) : abs($height);
+    // If close enough, return known ratio.
+    if ($min_diff <= $tolerance) {
+      return $closest_label;
+    }
+
+    // Otherwise return reduced exact ratio.
+    $gcd = self::gcd($width, $height);
+    return $force ? ($width / $gcd) . ':' . ($height / $gcd) : NULL;
   }
 
 }

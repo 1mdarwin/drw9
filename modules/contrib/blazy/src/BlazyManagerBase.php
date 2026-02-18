@@ -198,6 +198,7 @@ abstract class BlazyManagerBase extends BlazyBase implements BlazyManagerBaseInt
       ->set('language.current', $language)
       ->set('libs.animate', $fx)
       ->set('libs.blur', $is_blur)
+      ->set('libs.ratio__modern', !empty($ui['ratio_modern']))
       ->set('lightbox.plugins', $lightboxes)
       ->set('ui', $ui)
       ->set('use.blur', $is_blur)

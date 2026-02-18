@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\FunctionalJavascript;
 
 use Drupal\Core\Language\LanguageInterface;
@@ -10,15 +12,24 @@ use Drupal\FunctionalJavascriptTests\WebDriverTestBase;
 use Drupal\Tests\blazy\Traits\BlazyCreationTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 use Drupal\blazy\Blazy;
-use Drupal\filter\Entity\FilterFormat;
 use Drupal\filter\FilterPluginCollection;
 use Drupal\filter\FilterProcessResult;
 
 /**
  * Tests the Blazy Filter JavaScript using Selenium, or Chromedriver.
- *
- * @group blazy
  */
+/**
+ * A D12 compat, please update or ignore.
+ *
+ * @phpstan-ignore-next-line
+ */
+#[Group('blazy')]
+/**
+ * A D12 compat, please update or ignore.
+ *
+ * @phpstan-ignore-next-line
+ */
+#[RunTestsInSeparateProcesses]
 class BlazyFilterJavaScriptTest extends WebDriverTestBase {
 
   use BlazyUnitTestTrait;
@@ -36,6 +47,13 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
 
   /**
    * {@inheritdoc}
+   */
+  protected $imagePath;
+
+  /**
+   * {@inheritdoc}
+   *
+   * @var array<string>
    */
   protected static $modules = [
     'field',
@@ -64,28 +82,23 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
     $this->blazyOembed            = $this->container->get('blazy.oembed');
     $this->blazyManager           = $this->container->get('blazy.manager');
     $this->testPluginId           = 'blazy_filter';
-    $this->maxParagraphs          = 280;
+    $this->maxParagraphs          = 120;
 
-    // Create a text format.
-    $full_html = FilterFormat::create([
-      'format' => 'full_html',
-      'name' => 'Full HTML',
-      'weight' => 0,
-    ]);
-    $full_html->save();
-
-    // Enable the Blazy filter.
-    $this->filterFormatFull = FilterFormat::load('full_html');
-    $this->filterFormatFull->setFilterConfig('blazy_filter', [
-      'status' => TRUE,
-      'settings' => [
-        'filter_tags' => [
-          'img' => 'img',
-          'iframe' => 'iframe',
+    $this->setupFilterFormat();
+    if ($this->filterFormatFull) {
+      $this->filterFormatFull->setFilterConfig('blazy_filter', [
+        'status' => TRUE,
+        'settings' => [
+          'filter_tags' => [
+            'img' => 'img',
+            'iframe' => 'iframe',
+          ],
         ],
-      ],
-    ]);
-    $this->filterFormatFull->save();
+      ]);
+      $this->filterFormatFull->save();
+    }
+
+    $this->imagePath = $this->getImagePath(TRUE);
 
     $this->setUpRealImage();
   }
@@ -94,9 +107,9 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
    * Test the Blazy filter has media-wrapper--blazy for IMG and IFRAME elements.
    */
   public function testFilterDisplay() {
-    $image_path = $this->getImagePath(TRUE);
+    $text = $this->dummyText();
     $settings = Blazy::init();
-    $settings['extra_text'] = $text = $this->dummyText();
+    $settings['extra_text'] = $text;
 
     $this->setUpContentTypeTest($this->bundle);
     $this->setUpContentWithItems($this->bundle, $settings);
@@ -110,14 +123,20 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
     // since the testing browser Chrome support it, it is irrelevant.
     // @todo $this->assertSession()->elementNotExists('css', '.b-loaded');
     // Capture the initial page load moment.
-    $this->createScreenshot($image_path . '/1_blazy_filter_initial.png');
+    $this->createScreenshot($this->imagePath . '/1_blazy_filter_initial.png');
+
+    // Wait a moment.
+    $this->getSession()->wait(6000);
     $this->assertSession()->elementExists('css', '.b-lazy');
 
     // Trigger Blazy to load images by scrolling down window.
     $session->executeScript('window.scrollTo(0, document.body.scrollHeight);');
 
+    // Wait a moment.
+    $this->getSession()->wait(6000);
+
     // Capture the loading moment after scrolling down the window.
-    $this->createScreenshot($image_path . '/2_blazy_filter_loading.png');
+    $this->createScreenshot($this->imagePath . '/2_blazy_filter_loading.png');
 
     // Verifies that our filter works identified by media-wrapper--blazy class.
     $this->assertSession()->elementExists('css', '.media-wrapper--blazy');
@@ -146,13 +165,13 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
     $this->assertSession()->elementNotContains('css', '.media-wrapper--blazy', 'data-unblazy');
 
     // Verifies that one of the images is there once loaded.
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $loaded = $this->assertSession()->waitForElement('css', '.b-loaded');
     $this->assertNotEmpty($loaded);
 
     // Capture the loaded moment.
     // The screenshots are at sites/default/files/simpletest/blazy.
-    $this->createScreenshot($image_path . '/3_blazy_filter_loaded.png');
+    $this->createScreenshot($this->imagePath . '/3_blazy_filter_loaded.png');
 
     // Verifies the library is loaded.
     ['result' => $result, 'html' => $html] = $this->applyFilter($text);
@@ -172,7 +191,7 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
    * @param string $langcode
    *   The language code of the text to be filtered.
    *
-   * @return \Drupal\filter\FilterProcessResult
+   * @return array
    *   The filtered text, wrapped in a FilterProcessResult object, and possibly
    *   with associated assets, cacheability metadata and placeholders.
    */
@@ -269,6 +288,7 @@ class BlazyFilterJavaScriptTest extends WebDriverTestBase {
 <area alt="Step 1" href="/node/1" coords="158,224,314,317,315,377,156,469,109,346,0" shape="polygon">
 <area alt="Step 2" href="/node/2" coords="377,85,380,268,327,299,168,208,241,100,0" shape="polygon">
 </map>';
+    $text .= '<img src="https://drupal.org/files/One.gif" width="350" height="162502" />';
     $text .= '</div>';
 
     return $text;

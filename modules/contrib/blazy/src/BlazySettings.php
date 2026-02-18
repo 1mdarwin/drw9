@@ -55,11 +55,11 @@ class BlazySettings implements \Countable {
    *
    * @param string $key
    *   The storage key, if empty, similar to self::storage().
-   * @param string $default_value
+   * @param mixed $default_value
    *   The storage default_value.
    *
    * @return mixed
-   *   A mixed value (array, string, bool, null, etc.).
+   *   A mixed value (array, string, bool, null, int, etc.).
    */
   public function get($key = NULL, $default_value = NULL) {
     if (empty($key)) {

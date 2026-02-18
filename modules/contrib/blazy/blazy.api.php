@@ -464,6 +464,7 @@ function hook_blazy_settings_alter(array &$build, $object) {
   // account/ calculated automatically only if Aspect ratio Fluid is chosen.
   // The benefit is removing the need to use padding hack inline styles for
   // your own custom CSS rules so to have cleaner markups.
+  // The TRUE parameter ensures you merge, not nullify the existing ones.
   $blazies->set('css.ratio', ['7:8', '6:5'], TRUE);
 
   // Overrides one pixel placeholder on particular pages relevant if using Views

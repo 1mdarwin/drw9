@@ -82,6 +82,7 @@ class Placeholder {
         'class' => ['b-blur'],
         'data-b-blur' => "$store::$id::$mime::$url",
         'decoding' => 'async',
+        'fetchpriority' => 'low',
       ],
     ] + $dimensions;
 

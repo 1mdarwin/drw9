@@ -7,9 +7,7 @@ use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
 
 /**
- * @coversDefaultClass \Drupal\blazy\BlazyManager
- *
- * @group blazy
+ * Testing \Drupal\blazy\BlazyManager.
  */
 class BlazyManagerUnitTest extends UnitTestCase {
 
@@ -29,12 +27,6 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
   /**
    * Tests cases for various methods.
-   *
-   * @covers ::entityTypeManager
-   * @covers ::moduleHandler
-   * @covers ::renderer
-   * @covers ::cache
-   * @covers ::configFactory
    */
   public function testBlazyManagerServiceInstances() {
     $this->assertInstanceOf('\Drupal\blazy\Asset\LibrariesInterface', $this->blazyManager->libraries());
@@ -48,11 +40,9 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
   /**
    * Tests cases for config.
-   *
-   * @covers ::config
    */
   public function testConfigLoad() {
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('config')
       ->with('blazy')
@@ -60,7 +50,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
     $blazy = $this->blazyManager->config('blazy');
     $this->assertArrayHasKey('loadInvisible', $blazy);
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('config')
       ->with('admin_css')
@@ -69,14 +59,11 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
   /**
    * Tests cases for config.
-   *
-   * @covers ::load
-   * @covers ::loadMultiple
    */
   public function testEntityLoadImageStyle() {
     $styles = $this->setUpImageStyle();
     $ids = array_keys($styles);
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('loadMultiple')
       ->with('image_style')
@@ -84,7 +71,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
     $multiple = $this->blazyManager->loadMultiple('image_style', $ids);
     $this->assertArrayHasKey('large', $multiple);
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('load')
       ->with('large')
@@ -97,7 +84,6 @@ class BlazyManagerUnitTest extends UnitTestCase {
   /**
    * Tests for \Drupal\blazy\BlazyManager::getBlazy().
    *
-   * @covers ::getBlazy
    * @dataProvider providerTestGetBlazy
    */
   public function testGetBlazy($uri, $content, $expected_image, $expected_render) {
@@ -107,7 +93,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
     $build['#settings']['uri'] = $uri;
 
     $theme = ['#theme' => 'blazy', '#build' => []];
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('getBlazy')
       ->willReturn($expected_image ? $theme : []);
@@ -149,7 +135,6 @@ class BlazyManagerUnitTest extends UnitTestCase {
   /**
    * Tests cases for attachments.
    *
-   * @covers ::attach
    * @depends testConfigLoad
    */
   public function testAttach() {
@@ -161,14 +146,14 @@ class BlazyManagerUnitTest extends UnitTestCase {
       'ratio'        => 'fluid',
       'style'        => 'column',
     ];
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('attach')
       ->with($attach)
       ->willReturn(['drupalSettings' => ['blazy' => []]]);
 
     $attachments = $this->blazyManager->attach($attach);
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('attach')
       ->with($attach)
@@ -178,11 +163,9 @@ class BlazyManagerUnitTest extends UnitTestCase {
 
   /**
    * Tests cases for lightboxes.
-   *
-   * @covers ::getLightboxes
    */
   public function testGetLightboxes() {
-    // @phpstan-ignore-next-line
+    /** @phpstan-ignore-next-line */
     $this->blazyManager->expects($this->any())
       ->method('getLightboxes')
       ->willReturn([]);

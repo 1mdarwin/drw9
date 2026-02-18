@@ -135,11 +135,29 @@ class BlazyConfigForm extends BlazyConfigFormBase {
       '#default_value' => $config->get('use_oembed'),
     ];
 
+    $form['privacy_consent'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Use Privacy-Enhanced YouTube domain (WIP, not working, Experimental)'),
+      '#description'   => $this->t('Keep it disabled till further fixes/patches. If enabled, YouTube videos will load via www.youtube-nocookie.com. This prevents YouTube from storing tracking cookies until the user plays the video, aiding GDPR compliance. The current media player fairly complies with GDPR, this feature should make it even more compliant.'),
+      '#default_value' => $config->get('privacy_consent'),
+    ];
+
     $form['lazy_html'] = [
       '#type'          => 'checkbox',
       '#title'         => $this->t('Lazy load HTML (Experimental)'),
       '#description'   => $this->t('When theme_blazy() does not understand a media output, it will print it as HTML as is. This HTML is normally a paragraph size. Check this to lazy load such HTML content (normally heavy third party contents, like oembed Instagram, Pinterest, etc.), no AJAX, otherwise printed as is. A new feature since 2.17, not battle-tested. Potential issues are with the attached libraries, and other various Blazy features. Please disable and report if any issues.'),
       '#default_value' => $config->get('lazy_html'),
+    ];
+
+    $form['ratio_modern'] = [
+      '#type'          => 'checkbox',
+      '#title'         => $this->t('Use modern CSS aspect-ratio (Experimental)'),
+      '#description'   => $this->t("Will use the modern CSS aspect-ratio if supported. Disable if any issues, see <a href=':ui'>Blazy help</a>, <a href=':url'>caniuse.com</a>, or <a href=':msdn'>learn more</a>.", [
+        ':ui' => $help . '#aspect-ratio',
+        ':url' => 'https://caniuse.com/?search=aspect-ratio',
+        ':msdn' => 'https://developer.mozilla.org/en-US/docs/Web/CSS/aspect-ratio',
+      ]),
+      '#default_value' => $config->get('ratio_modern'),
     ];
 
     $form['use_encodedbox'] = [
@@ -396,6 +414,8 @@ class BlazyConfigForm extends BlazyConfigFormBase {
       ->set('unstyled_extensions', $form_state->getValue('unstyled_extensions'))
       ->set('use_encodedbox', $form_state->getValue('use_encodedbox'))
       ->set('use_oembed', $form_state->getValue('use_oembed'))
+      ->set('privacy_consent', $form_state->getValue('privacy_consent'))
+      ->set('ratio_modern', $form_state->getValue('ratio_modern'))
       ->set('max_region_count', $form_state->getValue('max_region_count'))
       ->set('blazy.loadInvisible', $form_state->getValue([
         'blazy',

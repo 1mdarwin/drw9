@@ -82,11 +82,11 @@
   {% set attributes = attributes.setAttribute('aria-live', 'polite') %}
 
   {% set label = blazies.media.label %}
-  {% set play_title = 'Load and play video.'|t %}
+  {% set play_title = 'Load "@provider" and play video. Third-party cookies and data tracking may apply.'|t({'@provider': blazies.media.provider}) %}
   {% set close_title = 'Stop and close video.'|t %}
 
   {% if label %}
-    {% set play_title = 'Load and play the video "@label".'|t({'@label': label}) %}
+    {% set play_title = 'Load "@provider" and play the video "@label". Third-party cookies and data tracking may apply.'|t({'@label': label, '@provider': blazies.media.provider}) %}
     {% set close_title = 'Stop and close the video "@label".'|t({'@label': label}) %}
   {% endif %}
 

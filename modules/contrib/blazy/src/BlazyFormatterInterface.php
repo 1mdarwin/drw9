@@ -12,7 +12,7 @@ interface BlazyFormatterInterface extends BlazyManagerInterface {
    *
    * @param array $settings
    *   The array containing: field-related settings.
-   * @param object $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The Drupal\Core\Field\FieldItemListInterface items.
    */
   public function fieldSettings(array &$settings, $items): void;
@@ -22,7 +22,7 @@ interface BlazyFormatterInterface extends BlazyManagerInterface {
    *
    * @param array $build
    *   The array containing: settings, or potential optionset for extensions.
-   * @param object $items
+   * @param \Drupal\Core\Field\FieldItemListInterface|null $items
    *   The Drupal\Core\Field\FieldItemListInterface items.
    */
   public function buildSettings(array &$build, $items);
@@ -32,7 +32,7 @@ interface BlazyFormatterInterface extends BlazyManagerInterface {
    *
    * @param array $settings
    *   The array containing: grid settings, in the least.
-   * @param object $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The Drupal\Core\Field\FieldItemListInterface items.
    */
   public function minimalSettings(array &$settings, $items): void;
@@ -42,7 +42,7 @@ interface BlazyFormatterInterface extends BlazyManagerInterface {
    *
    * @param array $build
    *   The array containing: settings, or potential optionset for extensions.
-   * @param object $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The Drupal\Core\Field\FieldItemListInterface items.
    * @param array $entities
    *   The optional entities array, not available for non-entities: text, image.
@@ -59,7 +59,7 @@ interface BlazyFormatterInterface extends BlazyManagerInterface {
    *
    * @param array $build
    *   The array containing: settings, or potential optionset for extensions.
-   * @param object $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The Drupal\Core\Field\FieldItemListInterface items.
    * @param array $entities
    *   The optional entities array, not available for non-entities: text, image.
@@ -71,7 +71,7 @@ interface BlazyFormatterInterface extends BlazyManagerInterface {
    *
    * @param array $build
    *   The array containing: items, settings, or a potential optionset.
-   * @param object $items
+   * @param \Drupal\Core\Field\FieldItemListInterface $items
    *   The Drupal\Core\Field\FieldItemListInterface items.
    * @param array $entities
    *   The optional entities array, not available for non-entities: text, image.

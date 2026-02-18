@@ -76,8 +76,8 @@ class Multimedia extends Settings {
   /**
    * Alias for Youtube::fromEmbed().
    */
-  public static function youtube($input): ?string {
-    return Youtube::fromEmbed($input);
+  public static function youtube($input, $privacy = FALSE): ?string {
+    return Youtube::fromEmbed($input, $privacy);
   }
 
   /**

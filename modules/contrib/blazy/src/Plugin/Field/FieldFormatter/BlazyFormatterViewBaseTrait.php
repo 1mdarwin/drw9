@@ -50,6 +50,7 @@ trait BlazyFormatterViewBaseTrait {
     /* @phpstan-ignore-next-line */
     if (method_exists($this, 'buildElements')) {
       // @todo remove $langcode at 3.x:
+      /* @phpstan-ignore-next-line */
       $this->buildElements($build, $items, $langcode);
     }
 
