@@ -2,18 +2,19 @@ uuid: cc33c176-0c21-4f48-a113-8019ca3ce5d9
 langcode: es
 status: true
 dependencies:
+  config:
+    - node.type.portafolio
   module:
     - language
     - node
 id: content_portafolio
 label: 'Content - Portafolio'
 type: 'canonical_entities:node'
-pattern: 'portafolio/[node:title]'
+pattern: '/portafolio/[node:title]'
 selection_criteria:
   8e97a31b-1795-4bc7-8a29-34ddbf64ca07:
     id: 'entity_bundle:node'
     negate: false
-    uuid: 8e97a31b-1795-4bc7-8a29-34ddbf64ca07
     context_mapping:
       node: node
     bundles:
@@ -21,7 +22,6 @@ selection_criteria:
   bc97d0be-4c2f-43f5-a363-ffb863092314:
     id: language
     negate: false
-    uuid: bc97d0be-4c2f-43f5-a363-ffb863092314
     context_mapping:
       language: 'node:langcode:language'
     langcodes:
