@@ -8,12 +8,11 @@ dependencies:
 id: user_default
 label: 'User - default'
 type: 'canonical_entities:user'
-pattern: 'user/[user:name]'
+pattern: '/user/[user:name]'
 selection_criteria:
   271fe327-6c5c-47a8-8e49-9247370a579b:
     id: language
     negate: false
-    uuid: 271fe327-6c5c-47a8-8e49-9247370a579b
     context_mapping:
       language: 'user:langcode:language'
     langcodes:

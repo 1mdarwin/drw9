@@ -6,14 +6,13 @@ dependencies:
     - language
     - user
 id: user
-label: 'User - default'
+label: 'User - default1'
 type: 'canonical_entities:user'
-pattern: 'usuario/[user:name]'
+pattern: '/usuario/[user:name]'
 selection_criteria:
   33ed3578-7ea9-4e7c-bf7f-328abeedc7e7:
     id: language
     negate: false
-    uuid: 33ed3578-7ea9-4e7c-bf7f-328abeedc7e7
     context_mapping:
       language: 'user:langcode:language'
     langcodes:
