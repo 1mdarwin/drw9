@@ -4299,26 +4299,29 @@
         },
         {
             "name": "drupal/views_bootstrap",
-            "version": "5.4.1",
+            "version": "5.5.2",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/views_bootstrap.git",
-                "reference": "5.4.1"
+                "reference": "5.5.2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/views_bootstrap-5.4.1.zip",
-                "reference": "5.4.1",
-                "shasum": "0b1248be659d069e52be7821875a24b9e78a3484"
+                "url": "https://ftp.drupal.org/files/projects/views_bootstrap-5.5.2.zip",
+                "reference": "5.5.2",
+                "shasum": "65286a2b797bb3afbc49d6c843c419afb986ba9c"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11"
             },
+            "require-dev": {
+                "drupal/viewsreference": "^2.0"
+            },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "5.4.1",
-                    "datestamp": "1722552101",
+                    "version": "5.5.2",
+                    "datestamp": "1785534233",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -4351,10 +4354,11 @@
                     "homepage": "https://www.drupal.org/user/2674989"
                 }
             ],
-            "description": "Allows for different styles to be used in views to work with Bootstrap 4 components.",
+            "description": "Allows for different styles to be used in views to work with Bootstrap 5 components.",
             "homepage": "https://www.drupal.org/project/views_bootstrap",
             "support": {
-                "source": "https://git.drupalcode.org/project/views_bootstrap"
+                "source": "https://git.drupalcode.org/project/views_bootstrap",
+                "issues": "https://www.drupal.org/project/issues/views_bootstrap"
             }
         },
         {
