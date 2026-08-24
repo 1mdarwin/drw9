@@ -207,11 +207,16 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         // the path segments "." and ".." are interpreted as relative reference when resolving a URI; see http://tools.ietf.org/html/rfc3986#section-3.3
         // so we need to encode them as they are not used for this purpose here
         // otherwise we would generate a URI that, when followed by a user agent (e.g. browser), does not match this route
-        $url = strtr($url, ['/../' => '/%2E%2E/', '/./' => '/%2E/']);
-        if (str_ends_with($url, '/..')) {
-            $url = substr($url, 0, -2).'%2E%2E';
-        } elseif (str_ends_with($url, '/.')) {
-            $url = substr($url, 0, -1).'%2E';
+        if (str_contains($url, '/.')) {
+            $segments = explode('/', $url);
+            foreach ($segments as $i => $segment) {
+                if ('.' === $segment) {
+                    $segments[$i] = '%2E';
+                } elseif ('..' === $segment) {
+                    $segments[$i] = '%2E%2E';
+                }
+            }
+            $url = implode('/', $segments);
         }
 
         $schemeAuthority = '';
@@ -277,13 +282,21 @@ class UrlGenerator implements UrlGeneratorInterface, ConfigurableRequirementsInt
         // add a query string if needed
         $extra = array_udiff_assoc(array_diff_key($parameters, $variables), $defaults, static fn ($a, $b) => $a == $b ? 0 : 1);
 
-        array_walk_recursive($extra, $caster = static function (&$v) use (&$caster) {
+        $seen = [];
+        array_walk_recursive($extra, $caster = static function (&$v) use (&$caster, &$seen, $name) {
             if (\is_object($v)) {
+                if (isset($seen[$id = spl_object_id($v)])) {
+                    throw new InvalidParameterException(\sprintf('Parameters for route "%s" cannot contain a circular reference (in object of class "%s").', $name, get_debug_type($v)));
+                }
                 if ($vars = get_object_vars($v)) {
+                    $seen[$id] = true;
                     array_walk_recursive($vars, $caster);
+                    unset($seen[$id]);
                     $v = $vars;
                 } elseif (method_exists($v, '__toString')) {
                     $v = (string) $v;
+                } else {
+                    $v = [];
                 }
             }
         });

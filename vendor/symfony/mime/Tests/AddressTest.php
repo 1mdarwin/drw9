@@ -38,6 +38,19 @@ class AddressTest extends TestCase
         new Address('fab   pot@symfony.com');
     }
 
+    public function testConstructorWithUnquotedAtSignInLocalPart()
+    {
+        $this->expectException(RfcComplianceException::class);
+        $this->expectExceptionMessage('Email "em@il@example.test" does not comply with addr-spec of RFC 2822.');
+        new Address('em@il@example.test');
+    }
+
+    public function testConstructorWithQuotedAtSignInLocalPart()
+    {
+        $a = new Address('"em@il"@example.test');
+        $this->assertSame('"em@il"@example.test', $a->getAddress());
+    }
+
     /**
      * @dataProvider provideAddressesWithControlCharacters
      */
@@ -181,5 +194,20 @@ class AddressTest extends TestCase
     {
         $address = new Address('fabien@symfony.com', 'Fabien, "Potencier');
         $this->assertSame('"Fabien, \"Potencier" <fabien@symfony.com>', $address->toString());
+    }
+
+    public function testEncodeNameIfNameContainsBackslashes()
+    {
+        $address = new Address('fabien@symfony.com', 'Fabien \ "Potencier');
+        $this->assertSame('"Fabien \\\\ \"Potencier" <fabien@symfony.com>', $address->toString());
+
+        $address = new Address('fabien@symfony.com', 'Fabien\\');
+        $this->assertSame('"Fabien\\\\" <fabien@symfony.com>', $address->toString());
+    }
+
+    public function testEncodeNameIfNameIsNotValidUtf8()
+    {
+        $address = new Address('fabien@symfony.com', "Fabien \xB1 \\ Potencier");
+        $this->assertSame("\"Fabien \xB1 \\\\ Potencier\" <fabien@symfony.com>", $address->toString());
     }
 }
