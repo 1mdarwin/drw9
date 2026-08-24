@@ -122,7 +122,7 @@ class Parser
 
     private function getState(): ParserState
     {
-        return $this->state ?? $this->state = new ParserState();
+        return $this->state ??= new ParserState();
     }
 
     private function doParse(string $value, int $flags): mixed
@@ -200,6 +200,8 @@ class Parser
                         $subTag,
                         $this->parseBlock($this->getRealCurrentLineNb() + 1, $this->getNextEmbedBlock(null, true), $flags)
                     );
+                } elseif (self::preg_match('/^'.self::TAG_PATTERN.' +'.self::BLOCK_SCALAR_HEADER_PATTERN.'$/', $values['value'])) {
+                    $data[] = $this->parseValue($values['value'], $flags, $context);
                 } else {
                     if (
                         isset($values['leadspaces'])
@@ -259,6 +261,12 @@ class Parser
                     $allowOverwrite = true;
                     if (isset($values['value'][0]) && '*' === $values['value'][0]) {
                         $refName = substr(rtrim($values['value']), 1);
+
+                        // remove comments
+                        if (self::preg_match('/[ \t]+#/', $refName, $match, \PREG_OFFSET_CAPTURE)) {
+                            $refName = substr($refName, 0, $match[0][1]);
+                        }
+
                         if (!\array_key_exists($refName, $this->refs)) {
                             if (false !== $pos = array_search($refName, $this->refsBeingParsed, true)) {
                                 throw new ParseException(\sprintf('Circular reference [%s] detected for reference "%s".', implode(', ', array_merge(\array_slice($this->refsBeingParsed, $pos), [$refName])), $refName), $this->currentLineNb + 1, $this->currentLine, $this->filename);
@@ -738,10 +746,11 @@ class Parser
     private function parseValue(string $value, int $flags, string $context): mixed
     {
         if (str_starts_with($value, '*')) {
-            if (false !== $pos = strpos($value, '#')) {
-                $value = substr($value, 1, $pos - 2);
-            } else {
-                $value = substr($value, 1);
+            $value = substr($value, 1);
+
+            // remove comments
+            if (self::preg_match('/[ \t]+#/', $value, $match, \PREG_OFFSET_CAPTURE)) {
+                $value = substr($value, 0, $match[0][1]);
             }
 
             if (!\array_key_exists($value, $this->refs)) {
@@ -1040,7 +1049,7 @@ class Parser
             $value = $trimmedValue;
 
             // remove end of the document marker (...)
-            $value = preg_replace('#\.\.\.[ \t]*+$#', '', $value);
+            $value = preg_replace('#\.\.\.\s*+$#', '', $value);
         }
 
         return $value;
@@ -1184,7 +1193,7 @@ class Parser
             if ($this->isCurrentLineBlank()) {
                 $previousLineWasNewline = true;
                 $previousLineWasTerminatedWithBackslash = false;
-            } elseif ('\\' === $this->currentLine[-1]) {
+            } elseif ('"' === $quotation && 1 === (\strlen($this->currentLine) - \strlen(rtrim($this->currentLine, '\\'))) % 2) {
                 $previousLineWasNewline = false;
                 $previousLineWasTerminatedWithBackslash = true;
             } else {
@@ -1218,6 +1227,18 @@ class Parser
 
         if ($cursor === $offset) {
             throw new ParseException('Malformed unquoted YAML string.');
+        }
+
+        return substr($this->currentLine, $offset, $cursor - $offset);
+    }
+
+    private function lexInlineAnchorOrAlias(int &$cursor): string
+    {
+        $offset = $cursor;
+        ++$cursor;
+
+        while ($cursor < \strlen($this->currentLine) && !\in_array($this->currentLine[$cursor], [' ', "\t", ',', '[', ']', '{', '}'], true)) {
+            ++$cursor;
         }
 
         return substr($this->currentLine, $offset, $cursor - $offset);
@@ -1257,6 +1278,10 @@ class Parser
                         break;
                     case '[':
                         $value .= $this->lexInlineSequence($cursor, false);
+                        break;
+                    case '&':
+                    case '*':
+                        $value .= $this->lexInlineAnchorOrAlias($cursor);
                         break;
                     case $closingTag:
                         $value .= $this->currentLine[$cursor];
