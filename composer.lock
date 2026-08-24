@@ -2634,26 +2634,32 @@
         },
         {
             "name": "drupal/entityqueue",
-            "version": "1.10.0",
+            "version": "1.12.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/entityqueue.git",
-                "reference": "8.x-1.10"
+                "reference": "8.x-1.12"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/entityqueue-8.x-1.10.zip",
-                "reference": "8.x-1.10",
-                "shasum": "ef001f661267af9700e725f36e4fc384c18be345"
+                "url": "https://ftp.drupal.org/files/projects/entityqueue-8.x-1.12.zip",
+                "reference": "8.x-1.12",
+                "shasum": "618b758abf1175bf63f461944c26deb38e408dd0"
             },
             "require": {
-                "drupal/core": "^9 || ^10 || ^11"
+                "drupal/core": "^10.2 || ^11 || ^12"
+            },
+            "require-dev": {
+                "drupal/eca": "*",
+                "drupal/entity_browser": "*",
+                "drupal/inline_entity_form": "*",
+                "drupal/rules": "*"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.10",
-                    "datestamp": "1757318201",
+                    "version": "8.x-1.12",
+                    "datestamp": "1784059695",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"

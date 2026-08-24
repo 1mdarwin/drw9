@@ -1,17 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\entityqueue\Kernel;
 
 use Drupal\entityqueue\Entity\EntitySubqueue;
 use Drupal\KernelTests\KernelTestBase;
 use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests cache tags of entity queues.
  *
  * @group entityqueue
  */
+#[RunTestsInSeparateProcesses]
 class EntityQueueCacheTagsTest extends KernelTestBase {
 
   use ContentTypeCreationTrait;
@@ -20,7 +24,17 @@ class EntityQueueCacheTagsTest extends KernelTestBase {
   /**
    * {@inheritdoc}
    */
-  protected static $modules = ['field', 'filter', 'node', 'text', 'user', 'system', 'views', 'entityqueue', 'entityqueue_test'];
+  protected static $modules = [
+    'field',
+    'filter',
+    'node',
+    'text',
+    'user',
+    'system',
+    'views',
+    'entityqueue',
+    'entityqueue_test',
+  ];
 
   /**
    * {@inheritdoc}
@@ -71,15 +85,18 @@ class EntityQueueCacheTagsTest extends KernelTestBase {
     $renderer = $this->container->get('bare_html_page_renderer');
     $response = $renderer->renderBarePage($build, '', 'maintenance_page');
 
-    $this->assertEqualsCanonicalizing([
-      'config:entityqueue.entity_queue.simple_queue',
-      'config:views.view.simple_queue_listing',
-      'entity_subqueue:simple_queue',
-      'entity_subqueue_list',
-      'node:1',
-      'node:2',
-      'node_list',
-    ], $response->getCacheableMetadata()->getCacheTags());
+    $this->assertEqualsCanonicalizing(
+      [
+        'config:entityqueue.entity_queue.simple_queue',
+        'config:views.view.simple_queue_listing',
+        'entity_subqueue:simple_queue',
+        'entity_subqueue_list',
+        'node:1',
+        'node:2',
+        'node_list',
+      ],
+      $response->getCacheableMetadata()->getCacheTags()
+    );
   }
 
 }

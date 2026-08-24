@@ -5,10 +5,15 @@
  * Post update functions for Entityqueue.
  */
 
+declare(strict_types=1);
+
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Config\Entity\ConfigEntityUpdater;
+use Drupal\Core\Entity\Display\EntityFormDisplayInterface;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\user\Entity\Role;
+use Drupal\views\Entity\View;
 
 /**
  * Update subqueues to be revisionable and translatable.
@@ -111,7 +116,7 @@ function entityqueue_post_update_remove_reverse_in_admin_setting() {
     $queue_settings['reverse'] = FALSE;
     $queue_config->set('queue_settings', $queue_settings);
 
-    $queue_config->save(TRUE);
+    DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => $queue_config->save(), fn() => $queue_config->save(TRUE));
   }
 }
 
@@ -128,6 +133,81 @@ function entityqueue_post_update_revoke_stale_permissions(&$sandbox = NULL) {
     foreach ($invalid_permissions as $invalid_permission) {
       if (str_ends_with($invalid_permission, ' entityqueue')) {
         $role->revokePermission($invalid_permission);
+        $needs_update = TRUE;
+      }
+    }
+
+    return $needs_update;
+  });
+}
+
+/**
+ * Normalize the relationship 'limit_queue' and drop stale filter options.
+ */
+function entityqueue_post_update_relationship_limit_queue_list(&$sandbox = NULL) {
+  \Drupal::classResolver(ConfigEntityUpdater::class)->update($sandbox, 'view', function (View $view): bool {
+    $displays = $view->get('display');
+    $needs_update = FALSE;
+
+    foreach ($displays as $display_id => $display) {
+      foreach ($display['display_options']['relationships'] ?? [] as $relationship_id => $relationship) {
+        if (($relationship['plugin_id'] ?? NULL) !== 'entity_queue') {
+          continue;
+        }
+
+        $current = $relationship['limit_queue'] ?? NULL;
+
+        // Already a plain list, nothing to convert.
+        if (is_array($current) && array_is_list($current)) {
+          continue;
+        }
+
+        // The 'limit_queue' schema is a sequence, so normalize the value to a
+        // list. Pre-1.11 config held a single queue ID as a scalar; a queue
+        // saved through the 1.11 UI held a checkboxes-style array keyed by
+        // queue ID. Both are invalid under the sequence schema.
+        $normalized = is_array($current) ? array_values(array_filter($current)) : ($current ? [$current] : []);
+        $displays[$display_id]['display_options']['relationships'][$relationship_id]['limit_queue'] = $normalized;
+        $needs_update = TRUE;
+      }
+
+      // Old entityqueue versions gave the 'entity_queue_in_queue' filter a
+      // 'limit_queue' option, and early Drupal 8 stored handler options nested
+      // under 'options'. That key is not part of the filter schema now, so it
+      // fails schema validation when the view is re-saved (for example by the
+      // relationship conversion above). Drop the stale 'options' wrapper, but
+      // only when 'limit_queue' is all it holds, so nothing else is lost.
+      foreach ($display['display_options']['filters'] ?? [] as $filter_id => $filter) {
+        if (($filter['plugin_id'] ?? NULL) !== 'entity_queue_in_queue') {
+          continue;
+        }
+
+        if (isset($filter['options']) && is_array($filter['options']) && array_keys($filter['options']) === ['limit_queue']) {
+          unset($displays[$display_id]['display_options']['filters'][$filter_id]['options']);
+          $needs_update = TRUE;
+        }
+      }
+    }
+
+    if ($needs_update) {
+      $view->set('display', $displays);
+    }
+
+    return $needs_update;
+  });
+}
+
+/**
+ * Add the 'show_publish_status' setting to entityqueue dragtable widgets.
+ */
+function entityqueue_post_update_add_publish_status_widget_setting(&$sandbox = NULL) {
+  \Drupal::classResolver(ConfigEntityUpdater::class)->update($sandbox, 'entity_form_display', function (EntityFormDisplayInterface $form_display): bool {
+    $needs_update = FALSE;
+
+    foreach ($form_display->getComponents() as $name => $component) {
+      if (($component['type'] ?? NULL) === 'entityqueue_dragtable' && !isset($component['settings']['show_publish_status'])) {
+        $component['settings']['show_publish_status'] = 'unpublished';
+        $form_display->setComponent($name, $component);
         $needs_update = TRUE;
       }
     }

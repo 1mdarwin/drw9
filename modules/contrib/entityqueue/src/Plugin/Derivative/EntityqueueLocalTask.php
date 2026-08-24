@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Plugin\Derivative;
 
 use Drupal\Component\Plugin\Derivative\DeriverBase;
@@ -23,14 +25,6 @@ class EntityqueueLocalTask extends DeriverBase implements ContainerDeriverInterf
    */
   protected $entityTypeManager;
 
-  /**
-   * Creates an EntityqueueLocalTask object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
-   * @param \Drupal\Core\StringTranslation\TranslationInterface $string_translation
-   *   The translation manager.
-   */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, TranslationInterface $string_translation) {
     $this->entityTypeManager = $entity_type_manager;
     $this->stringTranslation = $string_translation;

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Field\EntityReferenceFieldItemList;
@@ -18,7 +20,8 @@ class EntitySubqueueItemsFieldItemList extends EntityReferenceFieldItemList {
 
     // Check if the queue is available and is reversed.
     if ($queue && $queue->isReversed()) {
-      // If the queue is reversed, new items should be added to the top of the queue.
+      // If the queue is reversed, new items should be added
+      // to the top of the queue.
       $item = $this->createItem(0, $value);
       array_unshift($this->list, $item);
       return $item;

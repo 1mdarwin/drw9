@@ -1,8 +1,9 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Entity;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EditorialContentEntityBase;
 use Drupal\Core\Entity\EntityChangedTrait;
 use Drupal\Core\Entity\EntityInterface;
@@ -38,6 +39,7 @@ use Drupal\user\EntityOwnerTrait;
  *       "edit" = "Drupal\entityqueue\Form\EntitySubqueueForm",
  *       "delete" = "\Drupal\entityqueue\Form\EntitySubqueueDeleteForm",
  *     },
+ *     "inline_form" = "Drupal\entityqueue\Form\EntitySubqueueInlineForm",
  *     "access" = "Drupal\entityqueue\EntitySubqueueAccessControlHandler",
  *     "route_provider" = {
  *       "html" = "Drupal\entityqueue\Routing\EntitySubqueueRouteProvider",
@@ -106,6 +108,15 @@ class EntitySubqueue extends EditorialContentEntityBase implements EntitySubqueu
 
     /** @var \Drupal\entityqueue\EntityQueueInterface $queue */
     $queue = $this->getQueue();
+
+    // The 'name' field is the subqueue ID and has no form widget, so code paths
+    // that bypass the subqueue forms (Default Content, migrations, direct API
+    // saves) can leave it empty. Let the queue handler name the subqueue so the
+    // insert never dies on a missing ID.
+    // @see https://www.drupal.org/project/entityqueue/issues/3054945
+    if ($this->get('name')->isEmpty()) {
+      $this->set('name', $queue->getHandlerPlugin()->getSubqueueName($this));
+    }
     $max_size = $queue->getMaximumSize();
 
     // Remove extra items from the front of the queue if the maximum size is

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Access\AccessResult;
@@ -23,21 +25,34 @@ class EntitySubqueueAccessControlHandler extends EntityAccessControlHandler {
     switch ($operation) {
       case 'view':
         return AccessResult::allowedIfHasPermission($account, 'access content');
-      break;
 
       case 'update':
-        return AccessResult::allowedIfHasPermissions($account, ["update {$entity->bundle()} entityqueue", 'manipulate all entityqueues', 'administer entityqueue'], 'OR');
-      break;
+        return AccessResult::allowedIfHasPermissions(
+          $account,
+          [
+            "update {$entity->bundle()} entityqueue",
+            'manipulate all entityqueues',
+            'administer entityqueue',
+          ],
+          'OR'
+        );
 
       case 'delete':
         $can_delete_subqueue = AccessResult::allowedIf(!$entity->getQueue()->getHandlerPlugin()->hasAutomatedSubqueues());
 
-        $access_result = AccessResult::allowedIfHasPermissions($account, ["delete {$entity->bundle()} entityqueue", 'manipulate all entityqueues', 'administer entityqueue'], 'OR')
+        $access_result = AccessResult::allowedIfHasPermissions(
+          $account,
+          [
+            "delete {$entity->bundle()} entityqueue",
+            'manipulate all entityqueues',
+            'administer entityqueue',
+          ],
+          'OR'
+        )
           ->andIf($can_delete_subqueue)
           ->addCacheableDependency($entity->getQueue());
 
         return $access_result;
-      break;
 
       default:
         // No opinion.
@@ -49,7 +64,15 @@ class EntitySubqueueAccessControlHandler extends EntityAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkCreateAccess(AccountInterface $account, array $context, $entity_bundle = NULL) {
-    $access_result = AccessResult::allowedIfHasPermissions($account, ["create {$entity_bundle} entityqueue", 'manipulate all entityqueues', 'administer entityqueue'], 'OR');
+    $access_result = AccessResult::allowedIfHasPermissions(
+      $account,
+      [
+        "create {$entity_bundle} entityqueue",
+        'manipulate all entityqueues',
+        'administer entityqueue',
+      ],
+      'OR'
+    );
 
     if ($entity_bundle) {
       $queue = EntityQueue::load($entity_bundle);

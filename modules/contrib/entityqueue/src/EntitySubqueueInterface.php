@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Entity\ContentEntityInterface;
@@ -56,7 +58,7 @@ interface EntitySubqueueInterface extends ContentEntityInterface, EntityChangedI
    * Checks whether the subqueue has a given item.
    *
    * @param \Drupal\Core\Entity\EntityInterface $entity
-   *   An entity object
+   *   An entity object.
    *
    * @return bool
    *   TRUE if the item was found, FALSE otherwise.

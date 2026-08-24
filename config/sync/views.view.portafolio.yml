@@ -779,7 +779,8 @@ display:
           entity_type: node
           plugin_id: entity_queue
           required: true
-          limit_queue: portafolio
+          limit_queue:
+            - portafolio
       use_more: true
       use_more_always: true
       use_more_text: more

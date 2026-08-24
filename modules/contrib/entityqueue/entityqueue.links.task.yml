@@ -2,6 +2,19 @@ entityqueue.entities:
   class: \Drupal\Core\Menu\LocalTaskDefault
   deriver: \Drupal\entityqueue\Plugin\Derivative\EntityqueueLocalTask
 
+# Queue-level tabs. These share the base route used by Field UI for subqueues
+# (the queue edit form), so the 'Manage fields', 'Manage form display' and
+# 'Manage display' tabs sit alongside them.
+entity.entity_queue.subqueue_list:
+  route_name: entity.entity_queue.subqueue_list
+  base_route: entity.entity_queue.edit_form
+  title: 'Subqueues'
+  weight: -10
+entity.entity_queue.edit_form:
+  route_name: entity.entity_queue.edit_form
+  base_route: entity.entity_queue.edit_form
+  title: 'Configure'
+
 entity.entity_subqueue.canonical:
   route_name: entity.entity_subqueue.canonical
   base_route: entity.entity_subqueue.canonical

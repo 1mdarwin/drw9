@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\entityqueue\Kernel;
 
 use Drupal\entity_test\Entity\EntityTest;
@@ -8,12 +10,14 @@ use Drupal\entityqueue\Entity\EntitySubqueue;
 use Drupal\KernelTests\Core\Entity\EntityKernelTestBase;
 use Drupal\Tests\node\Traits\ContentTypeCreationTrait;
 use Drupal\Tests\node\Traits\NodeCreationTrait;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests entity subqueue API.
  *
  * @group entityqueue
  */
+#[RunTestsInSeparateProcesses]
 class EntitySubQueueAPITest extends EntityKernelTestBase {
 
   use ContentTypeCreationTrait;
@@ -37,7 +41,7 @@ class EntitySubQueueAPITest extends EntityKernelTestBase {
   /**
    * Tests the entity subqueue API.
    */
-  public function testSubqueueAPI() {
+  public function testSubqueueApi() {
     $id = $this->randomMachineName();
     $queue = EntityQueue::create([
       'id' => $id,

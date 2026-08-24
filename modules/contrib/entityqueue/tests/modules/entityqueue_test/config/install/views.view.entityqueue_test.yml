@@ -165,7 +165,7 @@ display:
           group_type: group
           admin_label: 'Content queue'
           required: false
-          limit_queue: null
+          limit_queue: {  }
           entity_type: node
           plugin_id: entity_queue
       arguments: {  }

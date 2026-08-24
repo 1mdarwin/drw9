@@ -1,0 +1,42 @@
+/**
+ * @file
+ * Styles for the entityqueue draggable table widget.
+ */
+
+/* Keep the 'add item' autocomplete and its button on one aligned row. Admin
+ * themes lay out '.form--inline' assuming each field has a label above it and
+ * offset the button accordingly; this field has no label, so align the row
+ * directly instead. */
+.field--widget-entityqueue-dragtable .field-actions > .form--inline {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5em;
+}
+.field--widget-entityqueue-dragtable .field-actions > .form--inline > .form-item,
+.field--widget-entityqueue-dragtable .field-actions > .form--inline > .field-add-more-submit {
+  float: none;
+  margin: 0;
+}
+
+/* Publication-status pill for a queued item. Geometry and colors follow the
+ * admin theme's own status badges through its '--admin-*' tokens, so the pill
+ * looks native there; the fallbacks keep it a legible pill on admin themes
+ * that do not define those tokens. */
+.entityqueue-item-status {
+  display: inline-block;
+  padding: 0.125em 0.75em;
+  vertical-align: 0.125em;
+  border: 1px solid transparent;
+  border-radius: var(--admin-radius-l, 0.75rem);
+  font-size: var(--admin-font-size-2xs, 0.75rem);
+  font-weight: var(--admin-font-weight-semibold, 600);
+}
+.entityqueue-item-status--unpublished {
+  color: var(--admin-color-text-error, #b01c1c);
+  background-color: var(--admin-color-bg-error, #fce9e9);
+}
+.entityqueue-item-status--published {
+  color: var(--admin-color-text-success, #1d6844);
+  background-color: var(--admin-color-bg-success, #e7f6ee);
+}

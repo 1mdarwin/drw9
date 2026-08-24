@@ -6,29 +6,17 @@ entity.entity_queue.collection:
   requirements:
     _permission: 'administer entityqueue+manipulate entityqueues+manipulate all entityqueues'
 
-entity.entity_queue.add_form:
-  path: '/admin/structure/entityqueue/add'
-  defaults:
-    _entity_form: 'entity_queue.add'
-    _title: 'Add Entity Queue'
-  requirements:
-    _permission: 'administer entityqueue'
-
-entity.entity_queue.edit_form:
+entity.entity_queue.canonical:
   path: '/admin/structure/entityqueue/{entity_queue}'
   defaults:
-    _entity_form: 'entity_queue.edit'
-    _title: 'Edit Entity Queue'
+    _controller: '\Drupal\entityqueue\Controller\EntityQueueUIController::queueCanonicalRedirect'
+    _title_callback: '\Drupal\Core\Entity\Controller\EntityController::title'
+  options:
+    parameters:
+      entity_queue:
+        type: entity:entity_queue
   requirements:
-    _entity_access: entity_queue.configure
-
-entity.entity_queue.delete_form:
-  path: '/admin/structure/entityqueue/{entity_queue}/delete'
-  defaults:
-    _entity_form: 'entity_queue.delete'
-    _title: 'Delete Entity Queue'
-  requirements:
-    _entity_access: entity_queue.delete
+    _entity_access: entity_queue.update
 
 entity.entity_queue.enable:
   path: '/admin/structure/entityqueue/{entity_queue}/enable'

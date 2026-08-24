@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Controller;
 
 use Drupal\Core\Access\AccessResult;
@@ -11,11 +13,14 @@ use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Routing\RouteMatch;
 use Drupal\Core\Routing\RouteMatchInterface;
 use Drupal\Core\Url;
+use Drupal\entityqueue\Entity\EntitySubqueue;
 use Drupal\entityqueue\EntityQueueInterface;
 use Drupal\entityqueue\EntityQueueRepositoryInterface;
 use Drupal\entityqueue\EntitySubqueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Returns responses for Entityqueue UI routes.
@@ -42,6 +47,31 @@ class EntityQueueUIController extends ControllerBase {
     return new static(
       $container->get('entityqueue.repository')
     );
+  }
+
+  /**
+   * Redirects to the canonical URL of an entity queue.
+   *
+   * @param \Drupal\entityqueue\EntityQueueInterface $entity_queue
+   *   The entity queue.
+   *
+   * @return \Symfony\Component\HttpFoundation\RedirectResponse
+   *   A redirect response object.
+   */
+  public function queueCanonicalRedirect(EntityQueueInterface $entity_queue) {
+    $handler = $entity_queue->getHandlerPlugin();
+    if ($handler->supportsMultipleSubqueues()) {
+      $url = $entity_queue->toUrl('subqueue-list');
+    }
+    else {
+      $subqueue = EntitySubqueue::load($entity_queue->id());
+      if (!$subqueue) {
+        throw new NotFoundHttpException();
+      }
+      $url = $subqueue->toUrl('edit-form');
+    }
+
+    return new RedirectResponse($url->toString());
   }
 
   /**
@@ -103,7 +133,11 @@ class EntityQueueUIController extends ControllerBase {
       // Check if entity is in queue.
       $subqueue_items = $subqueue->get('items')->getValue();
       if (in_array($entity->id(), array_column($subqueue_items, 'target_id'), TRUE)) {
-        $url = Url::fromRoute('entity.entity_subqueue.remove_item', ['entity_queue' => $queues[$subqueue->bundle()]->id(), 'entity_subqueue' => $subqueue_id, 'entity' => $entity->id()]);
+        $url = Url::fromRoute('entity.entity_subqueue.remove_item', [
+          'entity_queue' => $queues[$subqueue->bundle()]->id(),
+          'entity_subqueue' => $subqueue_id,
+          'entity' => $entity->id(),
+        ]);
         if ($url->access()) {
           $row['operations']['data']['#links']['remove-item'] = [
             'title' => $this->t('Remove from queue'),
@@ -115,7 +149,11 @@ class EntityQueueUIController extends ControllerBase {
         }
       }
       else {
-        $url = Url::fromRoute('entity.entity_subqueue.add_item', ['entity_queue' => $queues[$subqueue->bundle()]->id(), 'entity_subqueue' => $subqueue_id, 'entity' => $entity->id()]);
+        $url = Url::fromRoute('entity.entity_subqueue.add_item', [
+          'entity_queue' => $queues[$subqueue->bundle()]->id(),
+          'entity_subqueue' => $subqueue_id,
+          'entity' => $entity->id(),
+        ]);
         if ($url->access()) {
           $row['operations']['data']['#links']['add-item'] = [
             'title' => $this->t('Add to queue'),
@@ -211,7 +249,7 @@ class EntityQueueUIController extends ControllerBase {
    *   back to the current page.
    */
   public function subqueueAjaxOperation(EntitySubqueueInterface $entity_subqueue, $op, Request $request) {
-    $entity_id = $request->get('entity');
+    $entity_id = $request->attributes->get('entity');
     $entity = $this->entityTypeManager()->getStorage($entity_subqueue->getQueue()->getTargetEntityTypeId())->load($entity_id);
 
     // Perform the operation.
@@ -235,7 +273,7 @@ class EntityQueueUIController extends ControllerBase {
         $content['errors'] = [
           '#theme' => 'status_messages',
           '#message_list' => [
-            'error' => [$this->t('The operation could not be performed for the following reasons:')]
+            'error' => [$this->t('The operation could not be performed for the following reasons:')],
           ],
           '#status_headings' => [
             'error' => $this->t('Error message'),

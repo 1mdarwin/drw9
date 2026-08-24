@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Component\Plugin\DerivativeInspectionInterface;
@@ -33,6 +35,7 @@ interface EntityQueueHandlerInterface extends PluginFormInterface, ConfigurableI
    * Whether or not the handler supports multiple subqueues.
    *
    * @return bool
+   *   TRUE if handler supports multiple subqueues, FALSE otherwise.
    */
   public function supportsMultipleSubqueues();
 
@@ -43,8 +46,24 @@ interface EntityQueueHandlerInterface extends PluginFormInterface, ConfigurableI
    * edited, or if they can be created or deleted through the UI or API calls.
    *
    * @return bool
+   *   TRUE if handler has automated subqueues, FALSE otherwise.
    */
   public function hasAutomatedSubqueues();
+
+  /**
+   * Builds the machine name (ID) for a subqueue of this queue.
+   *
+   * Called when a subqueue is saved without a name, so the handler can name it
+   * according to its own scheme. Simple queues use the queue ID; queues with
+   * user-managed subqueues derive a unique name from the title.
+   *
+   * @param \Drupal\entityqueue\EntitySubqueueInterface $subqueue
+   *   The subqueue that needs a machine name.
+   *
+   * @return string
+   *   The machine name to use as the subqueue ID.
+   */
+  public function getSubqueueName(EntitySubqueueInterface $subqueue): string;
 
   /**
    * Gets this queue handler's list builder operations.
@@ -54,6 +73,18 @@ interface EntityQueueHandlerInterface extends PluginFormInterface, ConfigurableI
    *   \Drupal\Core\Entity\EntityListBuilderInterface::getOperations()
    */
   public function getQueueListBuilderOperations();
+
+  /**
+   * Gets the primary operation for managing this queue's items.
+   *
+   * This mirrors the primary action from ::getQueueListBuilderOperations():
+   * queues with multiple subqueues point to the subqueue list, while simple
+   * queues point directly to their single subqueue.
+   *
+   * @return array
+   *   An array with 'title', 'url' (a \Drupal\Core\Url) and 'weight' keys.
+   */
+  public function getItemsOperation();
 
   /**
    * Acts on an entity queue before the presave hook is invoked.

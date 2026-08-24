@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue_smartqueue\Plugin\views\argument;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -8,6 +10,8 @@ use Drupal\views\Plugin\views\argument\StringArgument;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Provides a smart queue argument handler for views.
+ *
  * @ingroup views_argument_handlers
  *
  * @ViewsArgument("entityqueue_smartqueue_name")
@@ -21,18 +25,6 @@ class EntityQueueSmartQueueArgument extends StringArgument {
    */
   protected $entityTypeManager;
 
-  /**
-   * Constructs a EntityQueueSmartQueueArgument object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
-   *   The entity type manager.
-   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->entityTypeManager = $entity_manager;
@@ -87,7 +79,7 @@ class EntityQueueSmartQueueArgument extends StringArgument {
    */
   public function setArgument($arg) {
     $queue = $this->options['smartqueue'];
-    if ($arg && strpos($arg, $queue) !== 0) {
+    if ($arg && $queue && !str_starts_with((string) $arg, $queue)) {
       $arg = $queue . '__' . $arg;
     }
     return parent::setArgument($arg);

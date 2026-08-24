@@ -10,3 +10,14 @@ services:
   entityqueue.repository:
     class: Drupal\entityqueue\EntityQueueRepository
     arguments: ['@entity_type.manager']
+  entityqueue.subqueue_route_processor:
+    class: Drupal\entityqueue\RouteProcessor\EntitySubqueueRouteProcessor
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: route_processor_outbound }
+  Drupal\entityqueue\Hook\EntityqueueHooks:
+    class: Drupal\entityqueue\Hook\EntityqueueHooks
+    arguments: ['@module_handler', '@entity_type.manager', '@current_route_match', '@plugin.manager.menu.local_task']
+  Drupal\entityqueue\Hook\EntityqueueViewsHooks:
+    class: Drupal\entityqueue\Hook\EntityqueueViewsHooks
+    arguments: ['@entity_type.manager', '@entity_field.manager']

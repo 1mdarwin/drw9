@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Form;
 
 use Drupal\Component\Datetime\TimeInterface;
@@ -12,6 +14,7 @@ use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\ElementInfoManagerInterface;
 use Drupal\entity_browser\Plugin\Field\FieldWidget\EntityReferenceBrowserWidget;
+use Drupal\entityqueue\EntitySubqueueInterface;
 use Drupal\inline_entity_form\Plugin\Field\FieldWidget\InlineEntityFormBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -46,18 +49,6 @@ class EntitySubqueueForm extends ContentEntityForm {
     );
   }
 
-  /**
-   * Constructs a EntitySubqueueForm.
-   *
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository service.
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
-   *   The entity type bundle service.
-   * @param \Drupal\Component\Datetime\TimeInterface $time
-   *   The time service.
-   * @param \Drupal\Core\Render\ElementInfoManagerInterface $element_info
-   *   The element info manager.
-   */
   public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info, TimeInterface $time, ElementInfoManagerInterface $element_info) {
     parent::__construct($entity_repository, $entity_type_bundle_info, $time);
 
@@ -68,6 +59,15 @@ class EntitySubqueueForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   public function form(array $form, FormStateInterface $form_state) {
+    $queue = $this->entity->getQueue();
+    if ($description = $queue->getDescription()) {
+      $form['description'] = [
+        '#type' => 'item',
+        '#title' => $this->t('Description'),
+        '#plain_text' => $description,
+      ];
+    }
+
     $form = parent::form($form, $form_state);
 
     if ($this->operation === 'add') {
@@ -92,23 +92,37 @@ class EntitySubqueueForm extends ContentEntityForm {
     $form['#prefix'] = '<div id="' . $wrapper_id . '">';
     $form['#suffix'] = '</div>';
 
-    // @todo Use the 'Machine name' field widget when
-    //   https://www.drupal.org/node/2685749 is committed.
-    $element_info = $this->elementInfo->getInfo('machine_name');
-    $form['name'] = [
+    $form['name'] = static::buildMachineNameElement($this->entity, $this->elementInfo);
+
+    return $form;
+  }
+
+  /**
+   * Builds the machine name form element for the subqueue 'name' field.
+   *
+   * The 'name' base field is the subqueue ID and has no form widget, so both
+   * the standalone form and the inline entity form add this element to let the
+   * ID be set from the title. It is optional: when left empty,
+   * EntitySubqueue::preSave() generates a machine name from the title.
+   *
+   * @todo Use the 'Machine name' field widget when
+   *   https://www.drupal.org/node/2685749 is committed.
+   */
+  public static function buildMachineNameElement(EntitySubqueueInterface $entity, ElementInfoManagerInterface $element_info): array {
+    $info = $element_info->getInfo('machine_name');
+    return [
       '#type' => 'machine_name',
-      '#default_value' => $this->entity->id(),
+      '#default_value' => $entity->id(),
       '#source_field' => 'title',
-      '#process' => array_merge([[get_class($this), 'processMachineNameSource']], $element_info['#process']),
+      '#process' => array_merge([[static::class, 'processMachineNameSource']], $info['#process']),
       '#machine_name' => [
         'exists' => '\Drupal\entityqueue\Entity\EntitySubqueue::load',
       ],
-      '#disabled' => !$this->entity->isNew(),
+      '#required' => FALSE,
+      '#disabled' => !$entity->isNew(),
       '#weight' => -5,
-      '#access' => !$this->entity->getQueue()->getHandlerPlugin()->hasAutomatedSubqueues(),
+      '#access' => !$entity->getQueue()->getHandlerPlugin()->hasAutomatedSubqueues(),
     ];
-
-    return $form;
   }
 
   /**
@@ -117,7 +131,12 @@ class EntitySubqueueForm extends ContentEntityForm {
    * This method is assigned as a #process callback in formElement() method.
    */
   public static function processMachineNameSource($element, FormStateInterface $form_state, $form) {
-    $source_field_state = WidgetBase::getWidgetState($form['#parents'], $element['#source_field'], $form_state);
+    // The source (title) field sits next to this element, so derive the field
+    // parents by dropping the last key ('name') from this element's parents.
+    // This keeps the source wiring correct whether the element is at the top of
+    // the standalone form or nested inside an inline entity form.
+    $field_parents = array_slice($element['#parents'], 0, -1);
+    $source_field_state = WidgetBase::getWidgetState($field_parents, $element['#source_field'], $form_state);
 
     // Hide the field widget if the source field is not configured properly or
     // if it doesn't exist in the form.
@@ -198,25 +217,23 @@ class EntitySubqueueForm extends ContentEntityForm {
 
       $subqueue_items = $entity->get('items');
       $items_widget->extractFormValues($subqueue_items, $form, $form_state);
-      $items_values = $subqueue_items->getValue();
 
       switch ($op) {
         case 'reverse':
-          $subqueue_items->setValue(array_reverse($items_values));
+          $entity->reverseItems();
           break;
 
         case 'shuffle':
-          shuffle($items_values);
-          $subqueue_items->setValue($items_values);
+          $entity->shuffleItems();
           break;
 
         case 'clear':
-          // Set the items count to zero.
+          // Also reset the widget's item count so it renders no rows.
           $parents = NestedArray::getValue($form, $path)['widget']['#field_parents'];
           $field_state = WidgetBase::getWidgetState($parents, 'items', $form_state);
           $field_state['items_count'] = 0;
           WidgetBase::setWidgetState($parents, 'items', $form_state, $field_state);
-          $subqueue_items->setValue(NULL);
+          $entity->clearItems();
           break;
       }
 
@@ -279,25 +296,45 @@ class EntitySubqueueForm extends ContentEntityForm {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $subqueue = $this->entity;
-    $status = $subqueue->save();
+    $status = (int) $subqueue->save();
 
     $edit_link = $subqueue->toLink($this->t('Edit'), 'edit-form')->toString();
     if ($status == SAVED_UPDATED) {
-      $this->messenger()->addMessage($this->t('The entity subqueue %label has been updated.', ['%label' => $subqueue->label()]));
-      $this->logger('entityqueue')->notice('The entity subqueue %label has been updated.', ['%label' => $subqueue->label(), 'link' => $edit_link]);
+      $this->messenger()->addMessage($this->t('The entity subqueue %label has been updated.', [
+        '%label' => $subqueue->label(),
+      ]));
+      $this->logger('entityqueue')->notice('The entity subqueue %label has been updated.', [
+        '%label' => $subqueue->label(),
+        'link' => $edit_link,
+      ]);
     }
     else {
-      $this->messenger()->addMessage($this->t('The entity subqueue %label has been added.', ['%label' => $subqueue->label()]));
-      $this->logger('entityqueue')->notice('The entity subqueue %label has been added.', ['%label' => $subqueue->label(), 'link' => $edit_link]);
+      $this->messenger()->addMessage($this->t('The entity subqueue %label has been added.', [
+        '%label' => $subqueue->label(),
+      ]));
+      $this->logger('entityqueue')->notice('The entity subqueue %label has been added.', [
+        '%label' => $subqueue->label(),
+        'link' => $edit_link,
+      ]);
     }
 
+    // Keep users on an accessible post-save page in order of preference.
+    $account = $this->currentUser();
     $queue = $subqueue->getQueue();
+    $redirect_candidates = [$subqueue->toUrl('edit-form')];
     if ($queue->getHandlerPlugin()->supportsMultipleSubqueues()) {
-      $form_state->setRedirectUrl($queue->toUrl('subqueue-list'));
+      $redirect_candidates[] = $queue->toUrl('subqueue-list');
     }
-    else {
-      $form_state->setRedirectUrl($queue->toUrl('collection'));
+    $redirect_candidates[] = $queue->toUrl('collection');
+
+    foreach ($redirect_candidates as $redirect_candidate) {
+      if ($redirect_candidate->access($account)) {
+        $form_state->setRedirectUrl($redirect_candidate);
+        break;
+      }
     }
+
+    return $status;
   }
 
 }

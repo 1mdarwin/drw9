@@ -1,5 +1,6 @@
-entityqueue.entity_queue.plugin.entityqueue_smartqueue:
-  type: mapping
+entityqueue_handler_configuration.smartqueue:
+  type: entityqueue_handler_configuration
+  label: 'Smart queue handler configuration'
   mapping:
     entity_type:
       type: string
@@ -11,3 +12,12 @@ entityqueue.entity_queue.plugin.entityqueue_smartqueue:
       sequence:
         type: string
         label: 'Bundle'
+
+views.argument.entityqueue_smartqueue_name:
+  type: views_argument
+  label: 'Smart queue name'
+  mapping:
+    smartqueue:
+      type: string
+      label: 'Smart queue ID'
+      nullable: true
