@@ -1,0 +1,15 @@
+services:
+  Drupal\entityqueue_smartqueue\Hook\EntityqueueSmartqueueHooks:
+    class: Drupal\entityqueue_smartqueue\Hook\EntityqueueSmartqueueHooks
+    arguments: ['@entity_type.manager', '@entity_field.manager', '@router.builder', '@plugin.manager.menu.local_task']
+
+  entityqueue_smartqueue.route_subscriber:
+    class: Drupal\entityqueue_smartqueue\Routing\SmartQueueRoutes
+    arguments: ['@entity_type.manager']
+    tags:
+      - { name: event_subscriber }
+
+  entityqueue_smartqueue.access.subqueue:
+    class: Drupal\entityqueue_smartqueue\Access\SubqueueAccessCheck
+    tags:
+      - { name: access_check, applies_to: _entityqueue_smartqueue_subqueue }

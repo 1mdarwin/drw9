@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\entityqueue\Entity\EntityQueue;
@@ -16,6 +18,7 @@ class EntityQueuePermissions {
    * Returns an array of queue permissions.
    *
    * @return array
+   *   An array of permissions.
    */
   public function permissions() {
     $perms = [];
@@ -34,6 +37,7 @@ class EntityQueuePermissions {
    *   An EntityQueue entity.
    *
    * @return array
+   *   An array of permissions for the queue.
    */
   public function buildPermissions(EntityQueue $queue) {
     $queue_id = $queue->id();

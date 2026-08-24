@@ -1,12 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
- * Class EntityQueueRepository.
+ * Provides repository helpers for entity queues.
+ *
+ * This class discovers and loads entity queues that can hold a given entity.
  */
 class EntityQueueRepository implements EntityQueueRepositoryInterface {
 
@@ -17,9 +21,6 @@ class EntityQueueRepository implements EntityQueueRepositoryInterface {
    */
   protected $entityTypeManager;
 
-  /**
-   * Constructs a new EntityQueueRepository object.
-   */
   public function __construct(EntityTypeManagerInterface $entity_type_manager) {
     $this->entityTypeManager = $entity_type_manager;
   }

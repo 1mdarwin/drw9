@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -61,8 +64,9 @@ class EntitySubqueueListBuilder extends EntityListBuilder {
   }
 
   /**
-   * Loads entity IDs using a pager sorted by the entity id and optionally
-   * filtered by bundle.
+   * Loads entity IDs using a pager.
+   *
+   * Sorted by the entity ID and optionally filtered by bundle.
    *
    * @return array
    *   An array of entity IDs.
@@ -107,8 +111,8 @@ class EntitySubqueueListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
-    $operations = parent::getDefaultOperations($entity);
+  public function getDefaultOperations(EntityInterface $entity, ?CacheableMetadata $cacheability = NULL) {
+    $operations = parent::getDefaultOperations(...func_get_args());
 
     $operations['edit']['title'] = $this->t('Edit items');
 

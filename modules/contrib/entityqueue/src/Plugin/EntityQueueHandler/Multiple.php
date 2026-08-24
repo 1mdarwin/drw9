@@ -1,10 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Plugin\EntityQueueHandler;
 
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\entityqueue\Attribute\EntityQueueHandler;
 use Drupal\entityqueue\EntityQueueHandlerBase;
 use Drupal\entityqueue\EntityQueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -18,6 +22,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Provides the ability to add many subqueues to a single queue."),
  * )
  */
+#[EntityQueueHandler(
+  id: 'multiple',
+  title: new TranslatableMarkup('Multiple subqueues'),
+  description: new TranslatableMarkup('Provides the ability to add many subqueues to a single queue.'),
+)]
 class Multiple extends EntityQueueHandlerBase implements ContainerFactoryPluginInterface {
 
   /**
@@ -27,18 +36,6 @@ class Multiple extends EntityQueueHandlerBase implements ContainerFactoryPluginI
    */
   protected $entityTypeManager;
 
-  /**
-   * Constructs a Multiple queue handler object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 

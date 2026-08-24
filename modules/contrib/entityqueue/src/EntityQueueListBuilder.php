@@ -1,8 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Config\Entity\ConfigEntityListBuilder;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -27,14 +30,6 @@ class EntityQueueListBuilder extends ConfigEntityListBuilder {
    */
   protected $limit = FALSE;
 
-  /**
-   * Constructs a new class instance.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeInterface $entity_type
-   *   The entity type definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity manager.
-   */
   public function __construct(EntityTypeInterface $entity_type, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($entity_type, $entity_type_manager->getStorage($entity_type->id()));
 
@@ -44,7 +39,10 @@ class EntityQueueListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public static function createInstance(ContainerInterface $container, EntityTypeInterface $entity_type) {
+  public static function createInstance(
+    ContainerInterface $container,
+    EntityTypeInterface $entity_type,
+  ) {
     return new static(
       $entity_type,
       $container->get('entity_type.manager')
@@ -152,9 +150,9 @@ class EntityQueueListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
+  public function getDefaultOperations(EntityInterface $entity, ?CacheableMetadata $cacheability = NULL) {
     assert($entity instanceof EntityQueueInterface);
-    $operations = parent::getDefaultOperations($entity);
+    $operations = parent::getDefaultOperations(...func_get_args());
 
     if (isset($operations['edit'])) {
       // We are using the Edit tab for Configure page, so we need to check

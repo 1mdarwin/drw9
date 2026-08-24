@@ -1,11 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Entity\EntityInterface;
 
 /**
- * Interface EntityQueueRepositoryInterface.
+ * Provides repository helpers for entity queues.
+ *
+ * This interface defines methods to discover queues that can hold a given
+ * entity.
  */
 interface EntityQueueRepositoryInterface {
 

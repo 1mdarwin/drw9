@@ -5,6 +5,9 @@
  * Install, update and uninstall functions for the Entityqueue module.
  */
 
+declare(strict_types=1);
+
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
 
@@ -35,7 +38,7 @@ function entityqueue_update_8001() {
     // Remove outdated properties.
     $config->clear('min_size')->clear('max_size')->clear('act_as_queue')->clear('target_type');
 
-    $config->save(TRUE);
+    DeprecationHelper::backwardsCompatibleCall(\Drupal::VERSION, '11.4.0', fn() => $config->save(), fn() => $config->save(TRUE));
   }
 }
 

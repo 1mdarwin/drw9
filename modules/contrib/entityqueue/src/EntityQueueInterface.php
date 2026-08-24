@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
@@ -13,6 +15,7 @@ interface EntityQueueInterface extends ConfigEntityInterface {
    * Gets the EntityQueueHandler plugin ID.
    *
    * @return string
+   *   The handler plugin ID.
    */
   public function getHandler();
 
@@ -38,6 +41,7 @@ interface EntityQueueInterface extends ConfigEntityInterface {
    * Gets the EntityQueueHandler plugin object.
    *
    * @return EntityQueueHandlerInterface
+   *   The handler plugin instance.
    */
   public function getHandlerPlugin();
 
@@ -60,9 +64,18 @@ interface EntityQueueInterface extends ConfigEntityInterface {
   public function getTargetEntityTypeId();
 
   /**
+   * Gets the description.
+   *
+   * @return ?string
+   *   The description.
+   */
+  public function getDescription();
+
+  /**
    * Gets the minimum number of items that this queue can hold.
    *
    * @return int
+   *   The minimum queue size.
    */
   public function getMinimumSize();
 
@@ -70,6 +83,7 @@ interface EntityQueueInterface extends ConfigEntityInterface {
    * Gets the maximum number of items that this queue can hold.
    *
    * @return int
+   *   The maximum queue size.
    */
   public function getMaximumSize();
 
@@ -82,6 +96,7 @@ interface EntityQueueInterface extends ConfigEntityInterface {
    * exceed the maximum size will be removed from the top instead.
    *
    * @return bool
+   *   TRUE if the queue acts as a queue, FALSE otherwise.
    */
   public function getActAsQueue();
 
@@ -93,6 +108,7 @@ interface EntityQueueInterface extends ConfigEntityInterface {
    * of the queue instead.
    *
    * @return bool
+   *   TRUE if the queue is reversed, FALSE otherwise.
    */
   public function isReversed();
 

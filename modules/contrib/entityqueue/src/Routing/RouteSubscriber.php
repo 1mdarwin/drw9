@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Routing;
 
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -20,12 +22,6 @@ class RouteSubscriber extends RouteSubscriberBase {
    */
   protected $entityTypeManager;
 
-  /**
-   * Constructs a new RouteSubscriber object.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_manager
-   *   The entity type manager.
-   */
   public function __construct(EntityTypeManagerInterface $entity_manager) {
     $this->entityTypeManager = $entity_manager;
   }
@@ -34,18 +30,12 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
-      // Try to get the route from the current collection.
-      $link_template = $entity_type->getLinkTemplate('canonical');
-      if (strpos($link_template, '/') !== FALSE) {
-        $base_path = '/' . $link_template;
+    foreach (array_keys($this->entityTypeManager->getDefinitions()) as $entity_type_id) {
+      // Only entity types with a canonical route can host a subqueue route.
+      if (!$entity_route = $collection->get("entity.$entity_type_id.canonical")) {
+        continue;
       }
-      else {
-        if (!$entity_route = $collection->get("entity.$entity_type_id.canonical")) {
-          continue;
-        }
-        $base_path = $entity_route->getPath();
-      }
+      $base_path = $entity_route->getPath();
 
       // Inherit admin route status from edit route, if exists.
       $is_admin = FALSE;

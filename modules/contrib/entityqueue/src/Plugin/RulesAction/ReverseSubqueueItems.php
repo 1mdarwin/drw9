@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Plugin\RulesAction;
 
 use Drupal\entityqueue\Entity\EntitySubqueue;

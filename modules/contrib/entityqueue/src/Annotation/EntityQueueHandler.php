@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Annotation;
 
 use Drupal\Component\Annotation\Plugin;
@@ -28,9 +30,9 @@ class EntityQueueHandler extends Plugin {
   /**
    * The human-readable name of the queue handler plugin.
    *
-   * @ingroup plugin_translatable
-   *
    * @var \Drupal\Core\Annotation\Translation
+   *
+   * @ingroup plugin_translatable
    */
   public $title;
 

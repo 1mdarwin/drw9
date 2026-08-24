@@ -1,16 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Plugin\views\relationship;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
-use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\entityqueue\Entity\EntityQueue;
-use Drupal\views\Plugin\views\display\DisplayPluginBase;
 use Drupal\views\Plugin\views\relationship\RelationshipPluginBase;
 use Drupal\views\Plugin\ViewsHandlerManager;
-use Drupal\views\ViewExecutable;
 use Drupal\views\Views;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -26,32 +25,16 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
   /**
    * The alias for the left table.
    */
-  public string $first_alias;
+  public string $firstAlias;
 
   /**
    * The Views join manager.
-   *
-   * @var \Drupal\views\Plugin\ViewsHandlerManager
    */
-  protected $joinManager;
-  protected EntityTypeManagerInterface $entityTypeManager;
+  protected ViewsHandlerManager $joinManager;
 
-  /**
-   * Constructs an EntityQueueRelationship object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\views\Plugin\ViewsHandlerManager $join_manager
-   *   The views plugin join manager.
-   */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, ViewsHandlerManager $join_manager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ViewsHandlerManager $join_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->joinManager = $join_manager;
-    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -62,8 +45,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
       $configuration,
       $plugin_id,
       $plugin_definition,
-      $container->get('plugin.manager.views.join'),
-      $container->get('entity_type.manager'),
+      $container->get('plugin.manager.views.join')
     );
   }
 
@@ -72,7 +54,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-    $options['limit_queue'] = ['default' => NULL];
+    $options['limit_queue'] = ['default' => []];
     return $options;
   }
 
@@ -87,10 +69,12 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
     }
 
     $form['limit_queue'] = [
-      '#type' => 'radios',
+      '#type' => 'checkboxes',
       '#title' => $this->t('Limit to a specific entity queue'),
       '#options' => $options,
-      '#default_value' => $this->options['limit_queue'],
+      // Normalize to a list so the checkboxes pre-check correctly even when
+      // config still holds the pre-update scalar value.
+      '#default_value' => $this->getLimitQueueIds(),
     ];
 
     parent::buildOptionsForm($form, $form_state);
@@ -99,16 +83,27 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
   /**
    * {@inheritdoc}
    */
-  public function init(ViewExecutable $view, DisplayPluginBase $display, ?array &$options = NULL) {
-    parent::init($view, $display, $options);
+  public function submitOptionsForm(&$form, FormStateInterface $form_state) {
+    // The checkboxes element keys every option, storing unchecked ones as a
+    // falsy value. Keep only the selected queues and store them as a plain
+    // list, which is what the 'limit_queue' sequence schema expects.
+    $options = &$form_state->getValue('options');
+    $options['limit_queue'] = array_values(array_filter($options['limit_queue']));
 
-    // Add an extra condition to limit results based on the queue selection.
-    if ($this->options['limit_queue']) {
-      $this->definition['extra'][] = [
-        'field' => 'bundle',
-        'value' => $this->options['limit_queue'],
-      ];
-    }
+    parent::submitOptionsForm($form, $form_state);
+  }
+
+  /**
+   * Returns the IDs of the queues this relationship is limited to.
+   *
+   * The 'limit_queue' option comes from a checkboxes element, which stores an
+   * unchecked box as a falsy value, so those are filtered out.
+   *
+   * @return string[]
+   *   The selected queue IDs.
+   */
+  protected function getLimitQueueIds(): array {
+    return array_values(array_filter((array) $this->options['limit_queue']));
   }
 
   /**
@@ -117,8 +112,7 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
   public function calculateDependencies() {
     $dependencies = parent::calculateDependencies();
 
-    if ($this->options['limit_queue']) {
-      $queue = EntityQueue::load($this->options['limit_queue']);
+    foreach (EntityQueue::loadMultiple($this->getLimitQueueIds()) as $queue) {
       $dependencies[$queue->getConfigDependencyKey()][] = $queue->getConfigDependencyName();
     }
 
@@ -136,11 +130,13 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
    * {@inheritdoc}
    */
   public function getCacheTags() {
+    // The config tag of each queue this relationship is limited to. Subqueue
+    // content (membership/order) invalidation is already provided by Views,
+    // which loads the referenced entity_subqueue per row and merges its cache
+    // tags into the view.
     $tags = [];
-
-    if ($this->options['limit_queue']) {
-      $queue = EntityQueue::load($this->options['limit_queue']);
-      $tags = $queue->getCacheTags();
+    foreach (EntityQueue::loadMultiple($this->getLimitQueueIds()) as $queue) {
+      $tags = Cache::mergeTags($tags, $queue->getCacheTags());
     }
 
     return $tags;
@@ -157,69 +153,42 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
    * {@inheritdoc}
    */
   public function query() {
-    $this->addBundleWhereCondition();
+    $bundles = $this->getLimitQueueIds();
 
-    if (\Drupal::moduleHandler()->moduleExists('workspaces') && \Drupal::service('workspaces.manager')->hasActiveWorkspace()) {
-      $field_name = 'items';
-      $field_storage = \Drupal::service('entity_field.manager')->getFieldStorageDefinitions('entity_subqueue')[$field_name];
-      $table_mapping = $this->entityTypeManager->getStorage('entity_subqueue')->getTableMapping();
-      $this->addBaseJoins($table_mapping->getDedicatedRevisionTableName($field_storage));
-
-      // Add the join to the workspace association.
-      $definition = [
-        'table' => 'workspace_association',
-        'field' => 'target_entity_revision_id',
-        'left_table' => $this->definition['field table'],
-        'left_field' => 'revision_id',
-        'extra' => [
-          [
-            'field' => 'target_entity_type_id',
-            'value' => 'entity_subqueue',
-          ],
-          [
-            'field' => 'workspace',
-            'value' => \Drupal::service('workspaces.manager')->getActiveWorkspace()->id(),
-          ],
-        ],
-        'type' => 'LEFT',
+    // Limit the relationship's join to the selected queues.
+    if ($bundles) {
+      $this->definition['join_extra'][] = [
+        'field' => 'bundle',
+        'value' => $bundles,
       ];
-
-      $join = $this->joinManager->createInstance('standard', $definition);
-      $join->adjusted = TRUE;
-      $alias = 'entity_subqueue_workspace_association';
-      $this->query->addRelationship($alias, $join, $this->definition['field table']);
-      return;
     }
 
-    $this->addBaseJoins($this->definition['field table']);
-  }
-
-  protected function addBundleWhereCondition(): void {
-    // Add a 'where' condition if needed.
-    if (!empty($this->definition['extra'])) {
-      $bundles = [];
-
-      // Future-proofing: support any number of selected bundles.
-      foreach ($this->definition['extra'] as $extra) {
-        if ($extra['field'] == 'bundle') {
-          $bundles[] = $extra['value'];
-        }
-      }
-      if (count($bundles) > 0) {
-        $this->definition['join_extra'][] = [
-          'field' => 'bundle',
-          'value' => $bundles,
-        ];
-      }
+    // Editing a subqueue in a workspace creates a pending revision instead of
+    // changing the live one, so the current items are in the revision field
+    // table, not the default one. In a workspace, join that table and keep only
+    // each subqueue's active revision. Outside a workspace, use the default
+    // field table.
+    $workspace_aware = $this->isWorkspaceAware();
+    if ($workspace_aware) {
+      // Put this on the join, not in a WHERE clause. With a non-required (LEFT)
+      // relationship a node that is only in an older revision of the queue
+      // should still show up as a non-member. Filtering after the join would
+      // match its old-revision row and then drop it; restricting the join means
+      // it matches no row and stays as a NULL. Revision IDs are unique across
+      // all subqueues, so an IN list picks the right rows on its own.
+      $this->definition['join_extra'][] = [
+        'field' => 'revision_id',
+        'value' => $this->getActiveRevisionIds($bundles),
+      ];
     }
-  }
 
-  protected function addBaseJoins($items_field_table) {
     // Now - let's build the query.
     // @todo We can't simply call parent::query() because the parent class does
     //   not handle the 'join_id' configuration correctly, so we can't use our
     //   custom 'casted_field_join' plugin.
     $this->ensureMyTable();
+
+    $field_table = $workspace_aware ? $this->definition['field revision table'] : $this->definition['field table'];
 
     // First, relate our base table to the current base table to the
     // field, using the base table's id field to the field's column.
@@ -229,10 +198,10 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
     $first = [
       'left_table' => $this->tableAlias,
       'left_field' => $left_field,
-      'table' => $items_field_table,
+      'table' => $field_table,
       'field' => $this->definition['field field'],
       'adjusted' => TRUE,
-      'entity_type' => isset($views_data['table']['entity type']) ? $views_data['table']['entity type'] : NULL,
+      'entity_type' => $views_data['table']['entity type'] ?? NULL,
     ];
     if (!empty($this->options['required'])) {
       $first['type'] = 'INNER';
@@ -246,12 +215,12 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
     // relationships to integers and strings IDs from the same table properly.
     $first_join = $this->joinManager->createInstance('casted_field_join', $first);
 
-    $this->first_alias = $this->query->addTable($this->definition['field table'], $this->relationship, $first_join, $items_field_table);
+    $this->firstAlias = $this->query->addTable($field_table, $this->relationship, $first_join);
 
     // Second, relate the field table to the entity specified using
     // the entity id on the field table and the entity's id field.
     $second = [
-      'left_table' => $this->first_alias,
+      'left_table' => $this->firstAlias,
       'left_field' => 'entity_id',
       'table' => $this->definition['base'],
       'field' => $this->definition['base field'],
@@ -275,6 +244,42 @@ class EntityQueueRelationship extends RelationshipPluginBase implements Cacheabl
     $alias = $this->definition['field_name'] . '_' . $this->table;
 
     $this->alias = $this->query->addRelationship($alias, $second_join, $this->definition['base'], $this->relationship);
+  }
+
+  /**
+   * Whether the relationship's query should target workspace revisions.
+   */
+  protected function isWorkspaceAware(): bool {
+    return \Drupal::moduleHandler()->moduleExists('workspaces')
+      && \Drupal::service('workspaces.manager')->hasActiveWorkspace();
+  }
+
+  /**
+   * Returns the active subqueue revision IDs for the current workspace.
+   *
+   * This relationship joins from the target entity into the subqueue's items
+   * field, which is the opposite direction from what the core Workspaces query
+   * alter handles, so it does not pick the workspace revision for us. We work
+   * it out instead: a subqueue entity query is already workspace-aware, and its
+   * result is keyed by each subqueue's active revision, which is the workspace
+   * revision for subqueues edited there and the default revision otherwise.
+   *
+   * @param string[] $bundles
+   *   The queue IDs the relationship is limited to, or an empty array for all.
+   *
+   * @return int[]
+   *   The active revision ID of each relevant subqueue.
+   */
+  protected function getActiveRevisionIds(array $bundles): array {
+    $query = \Drupal::entityQuery('entity_subqueue')->accessCheck(FALSE);
+    if ($bundles) {
+      $query->condition('queue', $bundles, 'IN');
+    }
+    $revision_ids = array_keys($query->execute());
+
+    // Guard against an empty IN list producing invalid SQL when no subqueue
+    // exists; a non-existent revision simply matches no rows.
+    return $revision_ids ?: [0];
   }
 
 }

@@ -1,0 +1,12 @@
+{
+    "name": "drupal/entityqueue",
+    "description": "Allows users to collect entities in arbitrarily ordered lists.",
+    "type": "drupal-module",
+    "license": "GPL-2.0-or-later",
+    "require-dev": {
+        "drupal/eca": "*",
+        "drupal/entity_browser": "*",
+        "drupal/inline_entity_form": "*",
+        "drupal/rules": "*"
+    }
+}

@@ -38,9 +38,8 @@
     sticky ? 'sticky-enabled',
   ]
 %}
-
-{% if responsive %}
-  <div class="table-responsive">
+{% if bs_responsive %}
+  <div class="table-responsive{{ responsive_size }}">
 {% endif %}
 
 <table{{ attributes.addClass(classes) }}>
@@ -129,6 +128,6 @@
   </tbody>
 </table>
 
-{% if responsive %}
+{% if bs_responsive %}
   </div>
 {% endif %}

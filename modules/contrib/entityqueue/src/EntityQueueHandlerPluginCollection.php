@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
@@ -17,31 +19,10 @@ class EntityQueueHandlerPluginCollection extends DefaultSingleLazyPluginCollecti
    */
   protected $queue;
 
-  /**
-   * Constructs a new EntityQueueHandlerPluginCollection.
-   *
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $manager
-   *   The manager to be used for instantiating plugins.
-   * @param string $instance_id
-   *   The ID of the plugin instance.
-   * @param array $configuration
-   *   An array of configuration.
-   * @param \Drupal\entityqueue\EntityQueueInterface $queue
-   *   The entity queue using this plugin.
-   */
   public function __construct(PluginManagerInterface $manager, $instance_id, array $configuration, EntityQueueInterface $queue) {
     $this->queue = $queue;
 
     parent::__construct($manager, $instance_id, $configuration);
-  }
-
-  /**
-   * {@inheritdoc}
-   *
-   * @return \Drupal\entityqueue\EntityQueueHandlerInterface
-   */
-  public function &get($instance_id) {
-    return parent::get($instance_id);
   }
 
   /**

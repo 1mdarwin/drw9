@@ -1323,7 +1323,8 @@ display:
           entity_type: node
           plugin_id: entity_queue
           required: true
-          limit_queue: servicios
+          limit_queue:
+            - servicios
       rendering_language: '***LANGUAGE_language_interface***'
       display_extenders: {  }
       block_description: 'Services Icons'

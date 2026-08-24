@@ -8,6 +8,10 @@ entityqueue.entity_queue.*:
     label:
       type: label
       label: 'Label'
+    description:
+      type: text
+      label: 'Description'
+      nullable: true
     handler:
       type: string
       label: 'Queue handler'
@@ -64,14 +68,69 @@ field.widget.settings.entityqueue_dragtable:
     link_to_edit_form:
       type: boolean
       label: 'Link to edit form'
+    show_publish_status:
+      type: string
+      label: 'Publication status marker'
+      constraints:
+        Choice:
+          choices:
+            - unpublished
+            - all
+            - off
 
 views.relationship.entity_queue:
   type: views_relationship
   label: 'Entity queue'
   mapping:
     limit_queue:
-      type: string
+      type: sequence
       label: 'Limit to a specific entity queue'
+      sequence:
+        type: string
+        label: 'specific entity queue'
+
+views.filter.entity_queue_in_queue:
+  type: views_filter
+  label: 'In queue'
+  mapping:
+    queue_relationship:
+      type: string
+      label: 'Limit to a specific entity queue relationship'
+
+views.sort.entity_queue_in_queue:
+  type: views_sort
+  label: 'In queue'
+  mapping:
+    queue_relationship:
+      type: string
+      label: 'Limit to a specific entity queue relationship'
+
+views.sort.entity_queue_position:
+  type: views_sort
+  label: 'Queue position'
+  mapping:
+    queue_relationship:
+      type: string
+      label: 'Limit to a specific entity queue relationship'
+
+views.field.entity_queue_position:
+  type: views_field
+  label: 'Queue position'
+  mapping:
+    queue_relationship:
+      type: string
+      label: 'Limit to a specific entity queue relationship'
+
+views.filter.entity_queue_position:
+  type: views_filter
+  label: 'Queue position'
+  mapping:
+    value:
+      type: views.filter_value.numeric
+      label: 'Value'
+    queue_relationship:
+      type: string
+      label: 'Limit to a specific entity queue relationship'
 
 action.configuration.entityqueue_add_item:
   type: mapping

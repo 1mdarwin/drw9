@@ -1,14 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Entity;
 
-use Drupal\Core\Cache\Cache;
 use Drupal\Core\Config\Entity\ConfigEntityBundleBase;
 use Drupal\Core\Entity\EntityStorageInterface;
-use Drupal\Core\Entity\EntityTypeInterface;
 use Drupal\Core\Entity\EntityWithPluginCollectionInterface;
 use Drupal\entityqueue\EntityQueueHandlerPluginCollection;
 use Drupal\entityqueue\EntityQueueInterface;
+use Drupal\views\Views;
 
 /**
  * Defines the EntityQueue entity class.
@@ -24,6 +25,9 @@ use Drupal\entityqueue\EntityQueueInterface;
  *       "delete" = "Drupal\Core\Entity\EntityDeleteForm"
  *     },
  *     "access" = "Drupal\entityqueue\EntityQueueAccessControlHandler",
+ *     "route_provider" = {
+ *       "html" = "Drupal\entityqueue\Routing\EntityQueueRouteProvider",
+ *     },
  *   },
  *   admin_permission = "administer entityqueue",
  *   config_prefix = "entity_queue",
@@ -35,7 +39,8 @@ use Drupal\entityqueue\EntityQueueInterface;
  *     "status" = "status"
  *   },
  *   links = {
- *     "edit-form" = "/admin/structure/entityqueue/{entity_queue}",
+ *     "add-form" = "/admin/structure/entityqueue/add",
+ *     "edit-form" = "/admin/structure/entityqueue/{entity_queue}/edit",
  *     "delete-form" = "/admin/structure/entityqueue/{entity_queue}/delete",
  *     "collection" = "/admin/structure/entityqueue",
  *     "enable" = "/admin/structure/entityqueue/{entity_queue}/enable",
@@ -45,6 +50,7 @@ use Drupal\entityqueue\EntityQueueInterface;
  *   config_export = {
  *     "id",
  *     "label",
+ *     "description",
  *     "handler",
  *     "handler_configuration",
  *     "entity_settings",
@@ -67,6 +73,13 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
    * @var string
    */
   protected $label;
+
+  /**
+   * The EntityQueue description.
+   *
+   * @var string
+   */
+  protected $description = NULL;
 
   /**
    * The entity selection settings used for the subqueue's 'items' field.
@@ -122,6 +135,13 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
   /**
    * {@inheritdoc}
    */
+  public function getDescription() {
+    return $this->description;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getMinimumSize() {
     return $this->queue_settings['min_size'];
   }
@@ -144,7 +164,7 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
    * {@inheritdoc}
    */
   public function isReversed() {
-    return isset($this->queue_settings['reverse']) ? $this->queue_settings['reverse'] : FALSE;
+    return $this->queue_settings['reverse'] ?? FALSE;
   }
 
   /**
@@ -257,6 +277,8 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
     parent::postSave($storage, $update);
 
     $this->getHandlerPlugin()->onQueuePostSave($this, $storage, $update);
+
+    static::clearViewsData();
   }
 
   /**
@@ -279,6 +301,8 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
     foreach ($entities as $queue) {
       $queue->getHandlerPlugin()->onQueuePostDelete($queue, $storage);
     }
+
+    static::clearViewsData();
   }
 
   /**
@@ -305,6 +329,17 @@ class EntityQueue extends ConfigEntityBundleBase implements EntityQueueInterface
       ->execute();
 
     return $ids ? static::loadMultiple($ids) : [];
+  }
+
+  /**
+   * Rebuilds the Views data so queue relationships match the current queues.
+   */
+  protected static function clearViewsData() {
+    // Adding or removing a queue changes which entityqueue relationships show
+    // up on the target entity type, and Views data is cached.
+    if (\Drupal::moduleHandler()->moduleExists('views')) {
+      Views::viewsData()->clear();
+    }
   }
 
 }

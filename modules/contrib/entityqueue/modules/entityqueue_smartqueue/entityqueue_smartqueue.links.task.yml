@@ -1,0 +1,3 @@
+entityqueue_smartqueue.tasks:
+  class: Drupal\Core\Menu\LocalTaskDefault
+  deriver: Drupal\entityqueue_smartqueue\Plugin\Derivative\EntityQueueSmartQueueTasks

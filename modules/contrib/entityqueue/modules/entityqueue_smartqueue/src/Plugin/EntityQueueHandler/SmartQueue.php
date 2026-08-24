@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue_smartqueue\Plugin\EntityQueueHandler;
 
 use Drupal\Core\Entity\EntityStorageInterface;
@@ -8,20 +10,31 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\entityqueue\Attribute\EntityQueueHandler;
 use Drupal\entityqueue\Entity\EntitySubqueue;
 use Drupal\entityqueue\EntityQueueInterface;
 use Drupal\entityqueue\Plugin\EntityQueueHandler\Multiple;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
+ * Provides automated subqueues based on entity configuration.
+ *
  * @EntityQueueHandler(
  *   id = "smartqueue",
  *   title = @Translation("Smart queue"),
  *   description = @Translation("Provides automated subqueues for each entity of a given type."),
  * )
  */
+#[EntityQueueHandler(
+  id: 'smartqueue',
+  title: new TranslatableMarkup('Smart queue'),
+  description: new TranslatableMarkup('Provides automated subqueues for each entity of a given type.'),
+)]
 class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
+
+  use StringTranslationTrait;
 
   /**
    * Provides entity type bundle info.
@@ -37,22 +50,6 @@ class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
    */
   protected $entityTypeRepository;
 
-  /**
-   * Constructs a new SmartQueue object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin_id for the plugin instance.
-   * @param string $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
-   *   The entity type manager.
-   * @param \Drupal\Core\Entity\EntityTypeRepositoryInterface $entity_type_repository
-   *   The entity type repository.
-   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
-   *   The entity type bundle info service.
-   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, EntityTypeRepositoryInterface $entity_type_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager);
     $this->entityTypeRepository = $entity_type_repository;
@@ -102,7 +99,7 @@ class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
         'wrapper' => 'smartqueue-bundle-wrapper',
         'callback' => [get_class($this), 'smartqueueSettingsAjax'],
         'method' => 'replaceWith',
-      ]
+      ],
     ];
 
     $form_state_values = $form_state->getCompleteFormState()->getValues();
@@ -187,45 +184,27 @@ class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
    */
   public function onQueuePostSave(EntityQueueInterface $queue, EntityStorageInterface $storage, $update = TRUE) {
     parent::onQueuePostSave($queue, $storage, $update);
-    $operations = [];
 
-    // Generate list of subqueues to be deleted, and add batch operations
-    // to delete them.
-    // 1. Get the existing subqueue ids.
-    $subqueue_ids = $this->entityTypeManager->getStorage('entity_subqueue')
-      ->getQuery()
-      ->accessCheck(FALSE)
-      ->condition('queue', $queue->id())
-      ->execute();
+    $operations = $this->getSubqueueSyncOperations($queue);
 
-    // 2. Get the list of relevant subqueues for this queue.
-    $subqueue_id_list = array_map(function ($subqueue_id) use ($queue) {
-      return $queue->id() . '__' . $subqueue_id;
-    }, $this->getEntityIds());
-
-    // 3. Get a diff of both, so we know which subqueues we don't need anymore.
-    $subqueue_diff = array_diff($subqueue_ids, $subqueue_id_list);
-    $subqueue_diff_chunks = array_chunk($subqueue_diff, 20);
-    foreach ($subqueue_diff_chunks as $subqueue_diff_chunk) {
-      $operations[] = [
-        [$this, 'deleteSubqueues'],
-        [$subqueue_diff_chunk],
-      ];
-    }
-
-    // Generate list of subqueues to be created, and add batch operations to
-    // create them.
-    $entity_ids = $this->getEntityIds();
-    $entity_id_chunks = array_chunk($entity_ids, 20);
-    foreach ($entity_id_chunks as $entity_id_chunk) {
-      $operations[] = [
-        [$this, 'initSubqueuesCreate'],
-        [$queue, $entity_id_chunk, $this->configuration['entity_type']],
-      ];
+    // A config import (drush config:import, a recipe, or a site install from
+    // config) runs no batch processor, so a batch queued here would never
+    // execute and the queue would end up with no subqueues. Run the operations
+    // directly in that case. The simple queue handler creates its subqueue
+    // synchronously in postSave for the same reason.
+    // @see https://www.drupal.org/project/entityqueue/issues/3238415
+    if ($queue->isSyncing()) {
+      $context = [];
+      foreach ($operations as $operation) {
+        [$callback, $args] = $operation;
+        $args[] = &$context;
+        call_user_func_array($callback, $args);
+      }
+      return;
     }
 
     $batch = [
-      'title' => t('Creating/deleting subqueues according to configuration'),
+      'title' => $this->t('Creating/deleting subqueues according to configuration'),
       'operations' => $operations,
       'finished' => [get_class($this), 'initSubqueuesFinished'],
     ];
@@ -234,10 +213,60 @@ class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
   }
 
   /**
+   * Builds the operations that sync a queue's subqueues to its configuration.
+   *
+   * @param \Drupal\entityqueue\EntityQueueInterface $queue
+   *   The entity queue.
+   *
+   * @return array
+   *   A list of operations, each a [callback, arguments] pair in the Batch API
+   *   operation format. The per-operation $context argument is appended by the
+   *   caller, either by the batch processor or by the synchronous config-import
+   *   path in onQueuePostSave().
+   */
+  protected function getSubqueueSyncOperations(EntityQueueInterface $queue) {
+    $operations = [];
+    $entity_ids = $this->getEntityIds();
+
+    // Delete the subqueues that no longer match the queue configuration.
+    // 1. Get the existing subqueue ids.
+    $subqueue_ids = $this->entityTypeManager->getStorage('entity_subqueue')
+      ->getQuery()
+      ->accessCheck(FALSE)
+      ->condition('queue', $queue->id())
+      ->execute();
+
+    // 2. Get the list of relevant subqueues for this queue.
+    $subqueue_id_list = array_map(function ($entity_id) use ($queue) {
+      return $queue->id() . '__' . $entity_id;
+    }, $entity_ids);
+
+    // 3. Diff both, so we know which subqueues we don't need anymore.
+    $subqueue_diff = array_diff($subqueue_ids, $subqueue_id_list);
+    foreach (array_chunk($subqueue_diff, 20) as $subqueue_diff_chunk) {
+      $operations[] = [
+        [$this, 'deleteSubqueues'],
+        [$subqueue_diff_chunk],
+      ];
+    }
+
+    // Create a subqueue for each configured entity.
+    foreach (array_chunk($entity_ids, 20) as $entity_id_chunk) {
+      $operations[] = [
+        [$this, 'initSubqueuesCreate'],
+        [$queue, $entity_id_chunk, $this->configuration['entity_type']],
+      ];
+    }
+
+    return $operations;
+  }
+
+  /**
    * {@inheritdoc}
    */
   public function onQueuePostDelete(EntityQueueInterface $queue, EntityStorageInterface $storage) {
-    // Create batch operation to delete all the subqueues when the parent queue is deleted.
+    // Create batch operation to delete all the subqueues when the
+    // parent queue is deleted.
     $subqueue_ids = $this->entityTypeManager->getStorage('entity_subqueue')
       ->getQuery()
       ->accessCheck(FALSE)
@@ -253,7 +282,7 @@ class SmartQueue extends Multiple implements ContainerFactoryPluginInterface {
     }
 
     $batch = [
-      'title' => t('Deleting subqueues'),
+      'title' => $this->t('Deleting subqueues'),
       'operations' => $operations,
       'finished' => [get_class($this), 'deleteSubqueuesFinished'],
     ];

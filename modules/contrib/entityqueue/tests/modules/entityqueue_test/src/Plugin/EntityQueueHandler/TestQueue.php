@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue_test\Plugin\EntityQueueHandler;
 
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\entityqueue\Attribute\EntityQueueHandler;
 use Drupal\entityqueue\EntityQueueHandlerBase;
 
 /**
@@ -13,6 +17,10 @@ use Drupal\entityqueue\EntityQueueHandlerBase;
  *   title = @Translation("Test handler")
  * )
  */
+#[EntityQueueHandler(
+  id: 'test',
+  title: new TranslatableMarkup('Test handler'),
+)]
 class TestQueue extends EntityQueueHandlerBase {
 
   /**

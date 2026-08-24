@@ -1,15 +1,19 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\entityqueue\Kernel;
 
 use Drupal\entityqueue\Entity\EntityQueue;
 use Drupal\KernelTests\KernelTestBase;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests creation, loading, updating, deleting of entity queue.
  *
  * @group entityqueue
  */
+#[RunTestsInSeparateProcesses]
 class EntityQueueCrudTest extends KernelTestBase {
 
   /**

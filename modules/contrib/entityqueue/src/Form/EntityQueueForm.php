@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Form;
 
 use Drupal\Component\Plugin\PluginManagerInterface;
@@ -60,16 +62,6 @@ class EntityQueueForm extends BundleEntityFormBase {
     );
   }
 
-  /**
-   * Constructs a EntityQueueForm.
-   *
-   * @param \Drupal\Core\Entity\EntityTypeRepositoryInterface $entity_type_repository
-   *   The entity type repository.
-   * @param \Drupal\Component\Plugin\PluginManagerInterface $entity_queue_handler_manager
-   *   The entity queue handler plugin manager.
-   * @param \Drupal\Core\Entity\EntityReferenceSelection\SelectionPluginManagerInterface $selection_manager
-   *   The selection plugin manager.
-   */
   public function __construct(EntityTypeRepositoryInterface $entity_type_repository, PluginManagerInterface $entity_queue_handler_manager, SelectionPluginManagerInterface $selection_manager) {
     $this->entityTypeRepository = $entity_type_repository;
     $this->entityQueueHandlerManager = $entity_queue_handler_manager;
@@ -115,7 +107,15 @@ class EntityQueueForm extends BundleEntityFormBase {
       '#disabled' => !$queue->isNew(),
     ];
 
+    $form['description'] = [
+      '#type' => 'textarea',
+      '#title' => $this->t('Description'),
+      '#default_value' => $queue->getDescription(),
+      '#description' => $this->t('Displays on "Edit subqueue" pages.'),
+    ];
+
     $handler_plugin = $this->getHandlerPlugin($queue, $form_state);
+
     $form['handler'] = [
       '#type' => 'radios',
       '#title' => $this->t('Queue type'),
@@ -232,11 +232,11 @@ class EntityQueueForm extends BundleEntityFormBase {
       // entity type specific plugins (e.g. 'default:node', 'default:user',
       // ...).
       if (array_key_exists($selection_group_id, $selection_plugins[$selection_group_id])) {
-        $selection_handlers_options[$selection_group_id] = Html::escape($selection_plugins[$selection_group_id][$selection_group_id]['label']);
+        $selection_handlers_options[$selection_group_id] = Html::escape((string) $selection_plugins[$selection_group_id][$selection_group_id]['label']);
       }
       elseif (array_key_exists($selection_group_id . ':' . $target_entity_type_id, $selection_plugins[$selection_group_id])) {
         $selection_group_plugin = $selection_group_id . ':' . $target_entity_type_id;
-        $selection_handlers_options[$selection_group_plugin] = Html::escape($selection_plugins[$selection_group_id][$selection_group_plugin]['base_plugin_label']);
+        $selection_handlers_options[$selection_group_plugin] = Html::escape((string) $selection_plugins[$selection_group_id][$selection_group_plugin]['base_plugin_label']);
       }
     }
     ksort($selection_handlers_options);
@@ -299,11 +299,11 @@ class EntityQueueForm extends BundleEntityFormBase {
       $form['entity_settings']['settings']['handler_settings']['target_bundles']['#required'] = FALSE;
     }
 
-    // Also, the 'auto-create' option is mostly useless and confusing in the
-    // entityqueue UI.
-    if (isset($form['entity_settings']['settings']['handler_settings']['auto_create'])) {
-      $form['entity_settings']['settings']['handler_settings']['auto_create']['#access'] = FALSE;
-    }
+    // The selection handler builds its conditional elements (auto-create
+    // bundle, sort) with #states selectors that assume the field UI form
+    // structure ('settings[handler_settings][...]'). This form embeds the same
+    // elements under 'entity_settings', so rewrite the selectors to match.
+    static::rewriteSelectionStates($form['entity_settings']['settings']['handler_settings']);
 
     return $form;
   }
@@ -430,6 +430,59 @@ class EntityQueueForm extends BundleEntityFormBase {
     if ($form_state->getValue(['entity_settings', 'handler_settings', 'target_bundles']) === []) {
       $form_state->setValue(['entity_settings', 'handler_settings', 'target_bundles'], NULL);
     }
+
+    // Auto-creating items needs a concrete destination bundle. With no bundle
+    // selected ("all bundles") the widget falls back to the entity type ID as
+    // the bundle and creates items with an invalid bundle, so require at least
+    // one. The 'auto_create_bundle' select picks among several. Bundleless
+    // entity types use the type ID as their bundle, so they are exempt.
+    if ($form_state->getValue(['entity_settings', 'handler_settings', 'auto_create'])) {
+      $target_type = $form_state->getValue(['entity_settings', 'target_type']);
+      $target_bundles = $form_state->getValue(['entity_settings', 'handler_settings', 'target_bundles']);
+      $has_bundles = \Drupal::entityTypeManager()->getDefinition($target_type)->hasKey('bundle');
+      if ($has_bundles && !is_array($target_bundles)) {
+        $form_state->setError($form['handler_settings']['target_bundles'], t('To create referenced entities, select at least one bundle to create them in.'));
+      }
+    }
+  }
+
+  /**
+   * Rewrites embedded selection settings #states selectors to this form.
+   *
+   * @param array $element
+   *   The handler settings element subtree to walk, modified in place.
+   */
+  protected static function rewriteSelectionStates(array &$element) {
+    if (isset($element['#states'])) {
+      $element['#states'] = static::rewriteStatesSelectors($element['#states']);
+    }
+    foreach (Element::children($element) as $key) {
+      static::rewriteSelectionStates($element[$key]);
+    }
+  }
+
+  /**
+   * Rewrites the 'settings[handler_settings]' name prefix in #states selectors.
+   *
+   * @param array $states
+   *   A #states array (or nested condition array).
+   *
+   * @return array
+   *   The same structure with selector keys rewritten to 'entity_settings'.
+   */
+  protected static function rewriteStatesSelectors(array $states) {
+    $result = [];
+    foreach ($states as $key => $value) {
+      if (is_string($key)) {
+        $key = str_replace(
+          ['name="settings[handler_settings]', 'name^="settings[handler_settings]'],
+          ['name="entity_settings[handler_settings]', 'name^="entity_settings[handler_settings]'],
+          $key
+        );
+      }
+      $result[$key] = is_array($value) ? static::rewriteStatesSelectors($value) : $value;
+    }
+    return $result;
   }
 
   /**
@@ -463,19 +516,31 @@ class EntityQueueForm extends BundleEntityFormBase {
    */
   public function save(array $form, FormStateInterface $form_state) {
     $queue = $this->entity;
-    $status = $queue->save();
+    $status = (int) $queue->save();
 
     $edit_link = $queue->toLink($this->t('Edit'), 'edit-form')->toString();
     if ($status == SAVED_UPDATED) {
-      $this->messenger()->addMessage($this->t('The entity queue %label has been updated.', ['%label' => $queue->label()]));
-      $this->logger('entityqueue')->notice('The entity queue %label has been updated.', ['%label' => $queue->label(), 'link' => $edit_link]);
+      $this->messenger()->addMessage($this->t('The entity queue %label has been updated.', [
+        '%label' => $queue->label(),
+      ]));
+      $this->logger('entityqueue')->notice('The entity queue %label has been updated.', [
+        '%label' => $queue->label(),
+        'link' => $edit_link,
+      ]);
     }
     else {
-      $this->messenger()->addMessage($this->t('The entity queue %label has been added.', ['%label' => $queue->label()]));
-      $this->logger('entityqueue')->notice('The entity queue %label has been added.', ['%label' => $queue->label(), 'link' => $edit_link]);
+      $this->messenger()->addMessage($this->t('The entity queue %label has been added.', [
+        '%label' => $queue->label(),
+      ]));
+      $this->logger('entityqueue')->notice('The entity queue %label has been added.', [
+        '%label' => $queue->label(),
+        'link' => $edit_link,
+      ]);
     }
 
     $form_state->setRedirectUrl($queue->toUrl('collection'));
+
+    return $status;
   }
 
 }

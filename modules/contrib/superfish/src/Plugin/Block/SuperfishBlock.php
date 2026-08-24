@@ -798,7 +798,7 @@ class SuperfishBlock extends SystemMenuBlock {
   /**
    * Overrides \Drupal\block\BlockBase::blockValidate().
    */
-  public function blockValidate($form, FormStateInterface $form_state) {
+  public function blockValidate($form, FormStateInterface $form_state): void {
     $touch = $form_state->getValue([
       'plugins',
       'sf-touchscreen',
@@ -1238,6 +1238,7 @@ class SuperfishBlock extends SystemMenuBlock {
     $tree = $this->menuTree->load($menu_name, $parameters);
 
     $manipulators = [
+      ['callable' => 'superfish.menu_tree_manipulator:filterDisabledLinks'],
       ['callable' => 'menu.default_tree_manipulators:checkAccess'],
       ['callable' => 'menu.default_tree_manipulators:generateIndexAndSort'],
     ];
@@ -1538,8 +1539,8 @@ class SuperfishBlock extends SystemMenuBlock {
           break;
 
         case 1:
-          $ab = $this->configuration['smallabt'];
-          $plugins['smallscreen']['accordionButton'] = $ab != 1 ? $ab : '';
+          $ab = (int) $this->configuration['smallabt'];
+          $plugins['smallscreen']['accordionButton'] = $ab != 1 ? $ab : 0;
           if ($this->t('Expand') != 'Expand') {
             $plugins['smallscreen']['expandText'] = $this->t('Expand');
           }

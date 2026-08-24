@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue;
 
 use Drupal\Component\Plugin\PluginBase;
@@ -24,9 +26,6 @@ abstract class EntityQueueHandlerBase extends PluginBase implements EntityQueueH
    */
   protected $queue;
 
-  /**
-   * {@inheritdoc}
-   */
   public function __construct(array $configuration, $plugin_id, array $plugin_definition) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->setConfiguration($configuration);
@@ -93,6 +92,35 @@ abstract class EntityQueueHandlerBase extends PluginBase implements EntityQueueH
   /**
    * {@inheritdoc}
    */
+  public function getSubqueueName(EntitySubqueueInterface $subqueue): string {
+    // Derive a unique machine name from the title. Mirrors the transformation
+    // the 'machine_name' form element applies: lower case, non [a-z0-9_] runs
+    // collapsed to '_', capped at 64 characters. A numeric suffix is appended
+    // until the name is free.
+    $storage = \Drupal::entityTypeManager()->getStorage($subqueue->getEntityTypeId());
+    $transliterated = \Drupal::transliteration()->transliterate((string) $subqueue->getTitle(), $subqueue->language()->getId(), '_');
+    $base = mb_strtolower($transliterated);
+    $base = preg_replace('/[^a-z0-9_]+/', '_', $base);
+    $base = trim((string) preg_replace('/_+/', '_', $base), '_');
+    if ($base === '') {
+      $base = 'subqueue';
+    }
+    $base = substr($base, 0, 64);
+
+    $candidate = $base;
+    $i = 1;
+    while ($storage->load($candidate) !== NULL) {
+      $i++;
+      $suffix = '_' . $i;
+      $candidate = substr($base, 0, 64 - strlen($suffix)) . $suffix;
+    }
+
+    return $candidate;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getQueueListBuilderOperations() {
     // Add an operation to list all subqueues by default.
     $operations['view_subqueues'] = [
@@ -102,6 +130,17 @@ abstract class EntityQueueHandlerBase extends PluginBase implements EntityQueueH
     ];
 
     return $operations;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getItemsOperation() {
+    return [
+      'title' => $this->t('Subqueues'),
+      'url' => $this->queue->toUrl('subqueue-list'),
+      'weight' => -10,
+    ];
   }
 
   /**

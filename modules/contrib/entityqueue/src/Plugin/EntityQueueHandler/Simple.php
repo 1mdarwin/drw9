@@ -1,16 +1,22 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\entityqueue\Plugin\EntityQueueHandler;
 
+use Drupal\Component\Utility\DeprecationHelper;
 use Drupal\Core\Entity\EntityRepositoryInterface;
 use Drupal\Core\Entity\EntityStorageInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Routing\RedirectDestinationTrait;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\entityqueue\Attribute\EntityQueueHandler;
 use Drupal\entityqueue\Entity\EntitySubqueue;
 use Drupal\entityqueue\EntityQueueHandlerBase;
 use Drupal\entityqueue\EntityQueueInterface;
+use Drupal\entityqueue\EntitySubqueueInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -22,6 +28,11 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  *   description = @Translation("Provides a queue with a single (fixed) subqueue."),
  * )
  */
+#[EntityQueueHandler(
+  id: 'simple',
+  title: new TranslatableMarkup('Simple queue'),
+  description: new TranslatableMarkup('Provides a queue with a single (fixed) subqueue.'),
+)]
 class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInterface {
 
   use RedirectDestinationTrait;
@@ -47,22 +58,6 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
    */
   protected $languageManager;
 
-  /**
-   * Constructs a Simple queue handler object.
-   *
-   * @param array $configuration
-   *   A configuration array containing information about the plugin instance.
-   * @param string $plugin_id
-   *   The plugin ID for the plugin instance.
-   * @param mixed $plugin_definition
-   *   The plugin implementation definition.
-   * @param \Drupal\Core\Entity\EntityRepositoryInterface $entity_repository
-   *   The entity repository.
-   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
-   *   The module handler.
-   * @param \Drupal\Core\Language\LanguageManagerInterface $language_manager
-   *   The language manager.
-   */
   public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityRepositoryInterface $entity_repository, ModuleHandlerInterface $module_handler, LanguageManagerInterface $language_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
 
@@ -102,6 +97,14 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
   /**
    * {@inheritdoc}
    */
+  public function getSubqueueName(EntitySubqueueInterface $subqueue): string {
+    // A simple queue has exactly one subqueue, identified by the queue ID.
+    return $this->queue->id();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function getQueueListBuilderOperations() {
     // Simple queues have just one subqueue, so we can link directly to the edit
     // form.
@@ -112,12 +115,18 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
       'weight' => -9,
       'url' => $subqueue->toUrl('edit-form', [
         'language' => $this->languageManager->getCurrentLanguage(),
-        'query' => $this->getRedirectDestination()->getAsArray()
+        'query' => $this->getRedirectDestination()->getAsArray(),
       ]),
     ];
 
     // Add a 'Translate' operation if translation is enabled for this queue.
-    if ($this->moduleHandler->moduleExists('content_translation') && content_translation_translate_access($subqueue)->isAllowed()) {
+    $translate_access = $this->moduleHandler->moduleExists('content_translation') && DeprecationHelper::backwardsCompatibleCall(
+      \Drupal::VERSION,
+      '11.4.0',
+      fn() => \Drupal::service('content_translation.manager')->access($subqueue),
+      fn() => content_translation_translate_access($subqueue),
+    )->isAllowed();
+    if ($translate_access) {
       $operations['translate_subqueue'] = [
         'title' => $this->t('Translate subqueue'),
         'url' => $subqueue->toUrl('drupal:content-translation-overview'),
@@ -126,6 +135,19 @@ class Simple extends EntityQueueHandlerBase implements ContainerFactoryPluginInt
     }
 
     return $operations;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function getItemsOperation() {
+    // Simple queues have just one subqueue, so link directly to its items.
+    $subqueue = EntitySubqueue::load($this->queue->id());
+    return [
+      'title' => $this->t('Edit items'),
+      'url' => $subqueue->toUrl('canonical'),
+      'weight' => -10,
+    ];
   }
 
   /**
