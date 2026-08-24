@@ -51,8 +51,8 @@ function template_preprocess_superfish(array &$variables) {
   $menu_classes[] = $direction === LanguageInterface::DIRECTION_RTL ? 'rtl' : '';
   if (strpos($element['#settings']['ulclass'], ' ') !== FALSE) {
     $ul_classes = explode(' ', $element['#settings']['ulclass']);
-    foreach ($ul_classes as $cclass) {
-      $menu_classes[] = Html::cleanCssIdentifier($cclass);
+    foreach ($ul_classes as $ul_class) {
+      $menu_classes[] = Html::cleanCssIdentifier($ul_class);
     }
   }
   else {
