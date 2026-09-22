@@ -13,7 +13,8 @@
  * @ingroup themeable
  */
 #}
-
-<ul id="{{ id }}" class="{{ menu_classes }}" role="menu" aria-label="{{ 'Menu'|t }}">
-  {{ menu_items }}
-</ul>
+<nav aria-label="{{ element['#menu_label'] }}">
+  <ul id="{{ id }}" class="{{ menu_classes }}" role="menubar" aria-label="{{ 'Menu'|t }}">
+    {{ menu_items }}
+  </ul>
+</nav>

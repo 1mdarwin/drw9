@@ -320,7 +320,7 @@ class Vectorizer implements VectorizerInterface {
    *
    * @param \DOMDocument $svg
    *   The SVG DOMDocument.
-   * @param array $rgba
+   * @param array{red:int, green:int, blue:int, alpha: int} $rgba
    *   Color array, [red: int, green: int, blue: int, alpha: int].
    * @param int $x
    *   The X coordinate.

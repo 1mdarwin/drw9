@@ -1,10 +1,10 @@
 
 ***
-## <a name="troubleshooting"></a>TROUBLESHOOTING
-Please read this before submitting issues. This 5-year+-old brief is worth
-reading to save you from headaches.
+## <a name="troubleshooting"> </a>TROUBLESHOOTING
+Please read this before submitting issues. This brief is worth reading to save
+you from headaches.
 
-If you don't find the below solve your issues, check out:
+If you don't find it solve your issues, check out:
 [Slick Gotchas](https://www.drupal.org/project/issues/search?issue_tags=slick%20gotchas)
 
 1. When upgrading from Slick v1.3.6 to later version, try to re-save options at:

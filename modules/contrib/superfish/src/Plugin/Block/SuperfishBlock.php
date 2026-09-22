@@ -3,12 +3,16 @@
 namespace Drupal\superfish\Plugin\Block;
 
 use Drupal\Component\Utility\Html;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Menu\MenuActiveTrailInterface;
 use Drupal\Core\Menu\MenuLinkTreeInterface;
 use Drupal\Core\Menu\MenuTreeParameters;
+use Drupal\superfish\Library\SuperfishLibrary;
+use Drupal\superfish\Utility\SuperfishUtility;
 use Drupal\system\Plugin\Block\SystemMenuBlock;
+use Drupal\system\MenuInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -39,6 +43,13 @@ class SuperfishBlock extends SystemMenuBlock {
   protected $moduleHandler;
 
   /**
+   * The entity type manager.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a new SuperfishBlock.
    *
    * @param array $configuration
@@ -53,11 +64,14 @@ class SuperfishBlock extends SystemMenuBlock {
    *   The active menu trail service.
    * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
    *   The module handler.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MenuLinkTreeInterface $menu_tree, MenuActiveTrailInterface $menu_active_trail, ModuleHandlerInterface $module_handler) {
+  public function __construct(array $configuration, $plugin_id, array $plugin_definition, MenuLinkTreeInterface $menu_tree, MenuActiveTrailInterface $menu_active_trail, ModuleHandlerInterface $module_handler, EntityTypeManagerInterface $entity_type_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $menu_tree, $menu_active_trail);
     $this->menuActiveTrail = $menu_active_trail;
     $this->moduleHandler = $module_handler;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -70,8 +84,22 @@ class SuperfishBlock extends SystemMenuBlock {
       $plugin_definition,
       $container->get('menu.link_tree'),
       $container->get('menu.active_trail'),
-      $container->get('module_handler')
+      $container->get('module_handler'),
+      $container->get('entity_type.manager')
     );
+  }
+
+  /**
+   * Loads a menu by its machine name.
+   *
+   * @param string $menu_name
+   *   The menu machine name.
+   *
+   * @return \Drupal\system\MenuInterface|null
+   *   The menu, or NULL if it does not exist.
+   */
+  protected function getMenu(string $menu_name): ?MenuInterface {
+    return $this->entityTypeManager->getStorage('menu')->load($menu_name);
   }
 
   /**
@@ -127,7 +155,7 @@ class SuperfishBlock extends SystemMenuBlock {
       '#title' => $this->t('Drop shadows'),
       '#default_value' => $this->configuration['shadow'],
     ];
-    if (count(superfish_effects()) == 4) {
+    if (count($this->superfishEffects()) == 4) {
       $easing_instructions = $this->t('jQuery Easing plugin is not installed.');
     }
     else {
@@ -143,7 +171,7 @@ class SuperfishBlock extends SystemMenuBlock {
       '#title' => $this->t('Slide-in effect'),
       '#description' => $description,
       '#default_value' => $this->configuration['slide'],
-      '#options' => superfish_effects(),
+      '#options' => $this->superfishEffects(),
     ];
     $form['plugins'] = [
       '#type' => 'details',
@@ -1193,6 +1221,11 @@ class SuperfishBlock extends SystemMenuBlock {
     // Menu block ID.
     $menu_name = $this->getDerivativeId();
 
+    $menu = $this->getMenu($menu_name);
+    if (!$menu) {
+      return $build;
+    }
+
     // Menu tree.
     $level = $this->configuration['level'];
 
@@ -1258,7 +1291,7 @@ class SuperfishBlock extends SystemMenuBlock {
     // Build the original menu tree to calculate cache tags and contexts.
     $tree_build = $this->menuTree->build($tree);
     $build['#cache'] = $tree_build['#cache'];
-    if (empty($tree)) {
+    if (empty($tree_build['#items'])) {
       return $build;
     }
 
@@ -1346,7 +1379,7 @@ class SuperfishBlock extends SystemMenuBlock {
     else {
       $options['disableHI'] = TRUE;
     }
-    $options = superfish_array_filter($options);
+    $options = SuperfishUtility::arrayFilter($options);
 
     // Options for Superfish sub-plugins.
     $plugins = [];
@@ -1598,7 +1631,7 @@ class SuperfishBlock extends SystemMenuBlock {
     $build['#attached']['drupalSettings']['superfish'][$id]['id'] = $id;
     $build['#attached']['drupalSettings']['superfish'][$id]['sf'] = $options ?? [];
 
-    $plugins = superfish_array_filter($plugins);
+    $plugins = SuperfishUtility::arrayFilter($plugins);
     if (!empty($plugins)) {
       $build['#attached']['drupalSettings']['superfish'][$id]['plugins'] = $plugins;
     }
@@ -1606,6 +1639,7 @@ class SuperfishBlock extends SystemMenuBlock {
     // Calling the theme.
     $build['content'] = [
       '#theme'  => 'superfish',
+      '#menu_label' => $menu->label(),
       '#menu_name' => $menu_name,
       '#html_id' => $id,
       '#tree' => $tree,
@@ -1672,6 +1706,85 @@ class SuperfishBlock extends SystemMenuBlock {
       'custom_item_class' => '',
       'custom_link_class' => '',
     ];
+  }
+
+  /**
+   * Gets a list of available slide-in effects.
+   */
+  protected function superfishEffects(): array {
+    $output = [
+      'none' => '- ' . $this->t('None') . ' -',
+      'vertical' => $this->t('Vertical'),
+      'horizontal' => $this->t('Horizontal'),
+      'diagonal' => $this->t('Diagonal'),
+    ];
+
+    if (SuperfishLibrary::path('easing')) {
+      $easing_types = [
+        'easeInSine_vertical' => 'easeInSine (' . $this->t('Vertical') . ')',
+        'easeInSine_horizontal' => 'easeInSine (' . $this->t('Horizontal') . ')',
+        'easeInSine_diagonal' => 'easeInSine (' . $this->t('Diagonal') . ')',
+        'easeInQuint_vertical' => 'easeInQuint (' . $this->t('Vertical') . ')',
+        'easeInQuint_horizontal' => 'easeInQuint (' . $this->t('Horizontal') . ')',
+        'easeInQuint_diagonal' => 'easeInQuint (' . $this->t('Diagonal') . ')',
+        'easeInQuart_vertical' => 'easeInQuart (' . $this->t('Vertical') . ')',
+        'easeInQuart_horizontal' => 'easeInQuart (' . $this->t('Horizontal') . ')',
+        'easeInQuart_diagonal' => 'easeInQuart (' . $this->t('Diagonal') . ')',
+        'easeInQuad_vertical' => 'easeInQuad (' . $this->t('Vertical') . ')',
+        'easeInQuad_horizontal' => 'easeInQuad (' . $this->t('Horizontal') . ')',
+        'easeInQuad_diagonal' => 'easeInQuad (' . $this->t('Diagonal') . ')',
+        'easeInExpo_vertical' => 'easeInExpo (' . $this->t('Vertical') . ')',
+        'easeInExpo_horizontal' => 'easeInExpo (' . $this->t('Horizontal') . ')',
+        'easeInExpo_diagonal' => 'easeInExpo (' . $this->t('Diagonal') . ')',
+        'easeInElastic_vertical' => 'easeInElastic (' . $this->t('Vertical') . ')',
+        'easeInElastic_horizontal' => 'easeInElastic (' . $this->t('Horizontal') . ')',
+        'easeInElastic_diagonal' => 'easeInElastic (' . $this->t('Diagonal') . ')',
+        'easeInCubic_vertical' => 'easeInCubic (' . $this->t('Vertical') . ')',
+        'easeInCubic_horizontal' => 'easeInCubic (' . $this->t('Horizontal') . ')',
+        'easeInCubic_diagonal' => 'easeInCubic (' . $this->t('Diagonal') . ')',
+        'easeInCirc_vertical' => 'easeInCirc (' . $this->t('Vertical') . ')',
+        'easeInCirc_horizontal' => 'easeInCirc (' . $this->t('Horizontal') . ')',
+        'easeInCirc_diagonal' => 'easeInCirc (' . $this->t('Diagonal') . ')',
+        'easeInBounce_vertical' => 'easeInBounce (' . $this->t('Vertical') . ')',
+        'easeInBounce_horizontal' => 'easeInBounce (' . $this->t('Horizontal') . ')',
+        'easeInBounce_diagonal' => 'easeInBounce (' . $this->t('Diagonal') . ')',
+        'easeInBack_vertical' => 'easeInBack (' . $this->t('Vertical') . ')',
+        'easeInBack_horizontal' => 'easeInBack (' . $this->t('Horizontal') . ')',
+        'easeInBack_diagonal' => 'easeInBack (' . $this->t('Diagonal') . ')',
+        'easeOutSine_vertical' => 'easeOutSine (' . $this->t('Vertical') . ')',
+        'easeOutSine_horizontal' => 'easeOutSine (' . $this->t('Horizontal') . ')',
+        'easeOutSine_diagonal' => 'easeOutSine (' . $this->t('Diagonal') . ')',
+        'easeOutQuint_vertical' => 'easeOutQuint (' . $this->t('Vertical') . ')',
+        'easeOutQuint_horizontal' => 'easeOutQuint (' . $this->t('Horizontal') . ')',
+        'easeOutQuint_diagonal' => 'easeOutQuint (' . $this->t('Diagonal') . ')',
+        'easeOutQuart_vertical' => 'easeOutQuart (' . $this->t('Vertical') . ')',
+        'easeOutQuart_horizontal' => 'easeOutQuart (' . $this->t('Horizontal') . ')',
+        'easeOutQuart_diagonal' => 'easeOutQuart (' . $this->t('Diagonal') . ')',
+        'easeOutQuad_vertical' => 'easeOutQuad (' . $this->t('Vertical') . ')',
+        'easeOutQuad_horizontal' => 'easeOutQuad (' . $this->t('Horizontal') . ')',
+        'easeOutQuad_diagonal' => 'easeOutQuad (' . $this->t('Diagonal') . ')',
+        'easeOutExpo_vertical' => 'easeOutExpo (' . $this->t('Vertical') . ')',
+        'easeOutExpo_horizontal' => 'easeOutExpo (' . $this->t('Horizontal') . ')',
+        'easeOutExpo_diagonal' => 'easeOutExpo (' . $this->t('Diagonal') . ')',
+        'easeOutElastic_vertical' => 'easeOutElastic (' . $this->t('Vertical') . ')',
+        'easeOutElastic_horizontal' => 'easeOutElastic (' . $this->t('Horizontal') . ')',
+        'easeOutElastic_diagonal' => 'easeOutElastic (' . $this->t('Diagonal') . ')',
+        'easeOutCubic_vertical' => 'easeOutCubic (' . $this->t('Vertical') . ')',
+        'easeOutCubic_horizontal' => 'easeOutCubic (' . $this->t('Horizontal') . ')',
+        'easeOutCubic_diagonal' => 'easeOutCubic (' . $this->t('Diagonal') . ')',
+        'easeOutCirc_vertical' => 'easeOutCirc (' . $this->t('Vertical') . ')',
+        'easeOutCirc_horizontal' => 'easeOutCirc (' . $this->t('Horizontal') . ')',
+        'easeOutCirc_diagonal' => 'easeOutCirc (' . $this->t('Diagonal') . ')',
+        'easeOutBounce_vertical' => 'easeOutBounce (' . $this->t('Vertical') . ')',
+        'easeOutBounce_horizontal' => 'easeOutBounce (' . $this->t('Horizontal') . ')',
+        'easeOutBounce_diagonal' => 'easeOutBounce (' . $this->t('Diagonal') . ')',
+        'easeOutBack_vertical' => 'easeOutBack (' . $this->t('Vertical') . ')',
+        'easeOutBack_horizontal' => 'easeOutBack (' . $this->t('Horizontal') . ')',
+        'easeOutBack_diagonal' => 'easeOutBack (' . $this->t('Diagonal') . ')',
+      ];
+      $output = array_merge($output, $easing_types);
+    }
+    return $output;
   }
 
 }

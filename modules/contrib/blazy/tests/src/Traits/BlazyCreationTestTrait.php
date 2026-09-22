@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Drupal\Tests\blazy\Traits;
 
-use Drupal\blazy\Blazy;
-use Drupal\blazy\internals\Internals;
+use Drupal\blazy\Internals\Internals;
+use Drupal\blazy\Media\Uri;
+use Drupal\blazy\Media\Url;
 use Drupal\Core\Field\BaseFieldDefinition;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\field\Entity\FieldConfig;
@@ -49,13 +50,16 @@ trait BlazyCreationTestTrait {
    *   The formatter display instance.
    */
   protected function setUpFormatterDisplay($bundle = '', array $data = []) {
+    /** @var array $settings */
     $settings   = $data['settings'] ?? [];
     $view_mode  = empty($data['view_mode']) ? 'default' : $data['view_mode'];
     $plugin_id  = empty($data['plugin_id']) ? $this->testPluginId : $data['plugin_id'];
     $field_name = empty($data['field_name']) ? $this->testFieldName : $data['field_name'];
     $display_id = $this->entityType . '.' . $bundle . '.' . $view_mode;
     $storage    = $this->blazyManager->getStorage('entity_view_display');
-    $display    = $storage->load($display_id);
+
+    /** @var \Drupal\Core\Entity\Entity\EntityViewDisplay $display */
+    $display = $storage->load($display_id);
 
     if (!$display) {
       $values = [
@@ -126,7 +130,9 @@ trait BlazyCreationTestTrait {
   protected function getFormatterInstance($plugin_id = '', $field_name = '') {
     $plugin_id  = empty($plugin_id) ? $this->testPluginId : $plugin_id;
     $field_name = empty($field_name) ? $this->testFieldName : $field_name;
-    $settings   = $this->getFormatterSettings() + $this->formatterPluginManager->getDefaultSettings($plugin_id);
+
+    /** @var array $settings */
+    $settings = $this->getFormatterSettings() + $this->formatterPluginManager->getDefaultSettings($plugin_id);
 
     if (!$this->getBlazyFieldDefinition($field_name)) {
       return NULL;
@@ -307,16 +313,17 @@ trait BlazyCreationTestTrait {
    * @param array $settings
    *   (Optional) configurable settings.
    */
-  protected function setUpContentWithEntityReference(array $settings = []) {
+  protected function setUpContentWithEntityReference(array $settings = []): void {
     $target_bundle   = $this->targetBundle;
     $bundle          = $this->bundle;
-    $fields          = empty($settings['fields']) ? [] : $settings['fields'];
-    $image_settings  = empty($settings['image_settings']) ? [] : $settings['image_settings'];
-    $entity_settings = empty($settings['entity_settings']) ? [] : $settings['entity_settings'];
-    $er_field_name   = empty($settings['entity_field_name']) ? $this->entityFieldName : $settings['entity_field_name'];
-    $er_plugin_id    = empty($settings['entity_plugin_id']) ? $this->entityPluginId : $settings['entity_plugin_id'];
+    $fields          = $settings['fields'] ?? [];
+    $image_settings  = $settings['image_settings'] ?? [];
+    $entity_settings = $settings['entity_settings'] ?? [];
+    $er_field_name   = $settings['entity_field_name'] ?? $this->entityFieldName;
+    $er_plugin_id    = $settings['entity_plugin_id'] ?? $this->entityPluginId;
 
     // Create referenced entity.
+    $referenced_data = [];
     $referenced_data['title'] = 'Referenced ' . $this->testPluginId;
 
     // Create dummy fields.
@@ -377,7 +384,7 @@ trait BlazyCreationTestTrait {
   /**
    * Set up dummy image.
    */
-  protected function setUpRealImage() {
+  protected function setUpRealImage(): void {
     /** @phpstan-ignore-next-line */
     $this->uri = $this->getImagePath();
     $item = $this->dummyItem;
@@ -388,7 +395,7 @@ trait BlazyCreationTestTrait {
       if ($item instanceof ImageItem) {
         /** @phpstan-ignore-next-line */
         $this->uri = ($entity = $item->entity) && empty($item->uri) ? $entity->getFileUri() : $item->uri;
-        $this->url = Blazy::transformRelative($this->uri);
+        $this->url = Uri::transformRelative($this->uri);
       }
     }
 
@@ -397,7 +404,7 @@ trait BlazyCreationTestTrait {
       $uri = 'public://test.png';
       $replace = Internals::fileExistsReplace();
       $this->fileSystem->copy($source, $uri, $replace);
-      $this->url = Blazy::createUrl($uri);
+      $this->url = Url::create($uri);
     }
 
     $this->testItem = $this->image = $item;
@@ -414,7 +421,7 @@ trait BlazyCreationTestTrait {
   protected function getImagePath($is_dir = FALSE) {
     $path            = $this->root . '/sites/default/files/simpletest/' . $this->testPluginId;
     $item            = $this->createDummyImage();
-    $this->dummyUrl  = Blazy::transformRelative($this->dummyUri);
+    $this->dummyUrl  = Uri::transformRelative($this->dummyUri);
     $this->dummyItem = $item;
     $this->dummyData = [
       '#settings' => $this->getFormatterSettings(),
@@ -470,13 +477,8 @@ trait BlazyCreationTestTrait {
    *   (Optional) A list of field data.
    */
   protected function setUpFieldConfig($bundle = '', array $data = []): void {
-    $bundle     = $bundle ?: $this->bundle;
-    $default    = empty($this->testFieldType) ? 'image' : $this->testFieldType;
-    $field_type = $data['field_type'] ?? $default;
-    $field_name = $data['field_name'] ?? $this->testFieldName;
-    $config     = $data[$field_name . '_settings'] ?? [];
-    $multiple   = strpos($field_name, 'mul') !== FALSE;
-    $node_type  = $this->nodeType ?? NodeType::load($bundle);
+    $bundle    = $bundle ?: $this->bundle;
+    $node_type = $this->nodeType ?? NodeType::load($bundle);
 
     if (!$node_type) {
       // This only creates the bundle, nothing else.
@@ -501,7 +503,6 @@ trait BlazyCreationTestTrait {
     $config     = $data[$field_name . '_settings'] ?? [];
     $multiple   = strpos($field_name, 'mul') !== FALSE;
     $label      = $data['label'] ?? str_replace('_', ' ', $field_name);
-    $config     = $data[$field_name . '_settings'] ?? [];
     $storage    = FieldStorageConfig::loadByName($this->entityType, $field_name);
 
     if (in_array($field_type, ['file', 'image'])) {

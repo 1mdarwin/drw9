@@ -1,6 +1,6 @@
 
 ***
-## <a name="faq"></a>FAQ
+## <a name="faq"> </a>FAQ
 
 ### PROGRAMATICALLY
 [**slick.api.php**](https://git.drupalcode.org/project/slick/blob/3.0.x/slick.api.php)
@@ -186,19 +186,7 @@ of by the module if using the provided formatters, or Views styles.
 
 
 ### CURRENT DEVELOPMENT STATUS
-A full release should be reasonable after proper feedback from the community,
-some code cleanup, and optimization where needed. Patches are very much welcome.
-
-Alpha, Beta, DEV releases are for developers only. Beware of possible breakage.
-
-However if it is broken, unless an update is explicitly required, clearing cache
-should fix most issues during DEV phases. Prior to any update, always visit:
-
-**[/admin/config/development/performance](/admin/config/development/performance)**
-
-And hit **Clear all caches** button once the new Slick is in place.
-Regenerate CSS and JS as the latest fixes may contain changes to the assets.
-Have the latest or similar release Blazy to avoid trouble in the first place.
+A stable production release is anticipated following comprehensive community feedback, final code sanitation, and performance optimization. We maintain an open-contribution model—technical patches and audits are highly encouraged.
 
 
 ### ROADMAP

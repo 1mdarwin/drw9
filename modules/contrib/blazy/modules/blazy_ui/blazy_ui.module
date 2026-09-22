@@ -12,14 +12,22 @@ function blazy_ui_help($route_name) {
   if ($route_name == 'help.page.blazy_ui') {
     $items = [
       'README',
+      'ARCHITECTURE',
+      'HEROES',
+      'GALLERIES',
+      'LIGHTBOXES',
+      'ASPECT_RATIO',
+      'MEDIA',
       'COMPOSER',
       'UPDATING',
-      'TROUBLESHOOTING',
-      'ROADMAP',
       'FAQ',
-      'CHANGES',
-      'ASPECT_RATIO',
+      'TROUBLESHOOTING',
+      'OPTIMIZATION',
+      'MANIFESTO',
+      'ROADMAP',
       'CONTRIBUTION',
+      'CHANGES',
+      'SCOPE',
     ];
 
     $output = '';

@@ -114,7 +114,7 @@ class SlickManagerTest extends BlazyKernelTestBase {
    *
    * @param bool $items
    *   Whether to provide items, or not.
-   * @param array $settings
+   * @param array<string, mixed> $settings
    *   The settings being tested.
    * @param array $options
    *   The options being tested.
