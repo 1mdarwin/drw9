@@ -178,7 +178,7 @@ class SlickFormatterTest extends BlazyKernelTestBase {
   /**
    * Tests for \Drupal\slick\SlickFormatter.
    *
-   * @param array $settings
+   * @param array<string, mixed> $settings
    *   The settings being tested.
    * @param mixed|bool|string $expected
    *   The expected output.

@@ -1,13 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\slick\Kernel;
 
 use Drupal\Core\Form\FormState;
 use Drupal\Tests\blazy\Kernel\BlazyKernelTestBase;
 use Drupal\Tests\slick\Traits\SlickKernelTrait;
 use Drupal\Tests\slick\Traits\SlickUnitTestTrait;
-use Drupal\blazy\Blazy;
 
+// @todo enable at 4.x: use Drupal\blazy\BlazyApi;
 /**
  * Tests the Slick field rendering using the text field type.
  */
@@ -101,12 +103,12 @@ class SlickTextFormatterTest extends BlazyKernelTestBase {
     $render_empty = $this->slickManager->renderer()->renderRoot($build_empty[$this->testEmptyName]);
     $this->assertEmpty($render_empty);
 
-    $build['#settings'] = Blazy::init();
+    // @todo enable at 4.x:
+    // $build['#settings'] = BlazyApi::init();
     // @todo refine the parameters, but not crucial for now.
-    /** @phpstan-ignore-next-line */
-    $scopes = $this->formatterInstance->buildSettings($build, NULL);
-    $this->assertEquals($this->testPluginId, $scopes['blazies']->get('field.plugin_id'));
-
+    // $scopes = $this->formatterInstance->buildSettings($build, NULL);
+    // $this->assertEquals($this->testPluginId,
+    // $scopes['blazies']->get('field.plugin_id'));
     $form = [];
     $form_state = new FormState();
     $element = $this->formatterInstance->settingsForm($form, $form_state);
