@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Unit;
 
 use Drupal\Tests\UnitTestCase;
@@ -87,10 +89,14 @@ class BlazyManagerUnitTest extends UnitTestCase {
    * @dataProvider providerTestGetBlazy
    */
   public function testGetBlazy($uri, $content, $expected_image, $expected_render) {
-    $build = [];
-    $build['#item'] = NULL;
-    $build['content'] = $content;
-    $build['#settings']['uri'] = $uri;
+    /** @var array $build */
+    $build = [
+      '#item' => NULL,
+      'content' => $content,
+      '#settings' => [
+        'uri' => $uri,
+      ],
+    ];
 
     $theme = ['#theme' => 'blazy', '#build' => []];
     /** @phpstan-ignore-next-line */
@@ -109,7 +115,9 @@ class BlazyManagerUnitTest extends UnitTestCase {
    * @return array
    *   An array of tested data.
    */
-  public static function providerTestGetBlazy() {
+  public static function providerTestGetBlazy(): array {
+    /** @var array<int, mixed> $data */
+    $data = [];
     $data[] = [
       '',
       '',
@@ -137,7 +145,7 @@ class BlazyManagerUnitTest extends UnitTestCase {
    *
    * @depends testConfigLoad
    */
-  public function testAttach() {
+  public function testAttach(): void {
     $attach = [
       'blazy'        => TRUE,
       'grid'         => 0,

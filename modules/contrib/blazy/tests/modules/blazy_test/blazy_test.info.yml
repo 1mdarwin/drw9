@@ -9,7 +9,7 @@ dependencies:
   - drupal:responsive_image
   - drupal:views
 
-# Information added by Drupal.org packaging script on 2026-01-10
-version: '3.0.17'
+# Information added by Drupal.org packaging script on 2026-08-26
+version: '3.0.19'
 project: 'blazy'
-datestamp: 1768032944
+datestamp: 1787772245

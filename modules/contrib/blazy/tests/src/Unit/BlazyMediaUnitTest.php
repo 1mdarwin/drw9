@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
-use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyApi;
+use Drupal\blazy\Internals\Internals;
 
 /**
  * Testing Blazy Media.
@@ -26,20 +29,25 @@ class BlazyMediaUnitTest extends UnitTestCase {
   /**
    * Tests \Drupal\blazy\Media\BlazyMedia::view().
    *
+   * @param array $markup
+   *   The markup being tested.
+   *
    * @dataProvider providerTestBlazyMediaBuild
    */
-  public function testBlazyMediaBuild($markup) {
+  public function testBlazyMediaBuild(array $markup) {
     $source_field = $this->randomMachineName();
     $view_mode = 'default';
+
+    /** @var array $settings */
     $settings = [
       'image_style'  => 'blazy_crop',
       'ratio'        => 'fluid',
       'view_mode'    => 'default',
       'media_switch' => 'media',
       // @todo 'bundle' => 'entity_test',
-    ] + Blazy::init();
+    ] + BlazyApi::init();
 
-    $blazies = $settings['blazies'];
+    $blazies = Internals::getBlazies($settings);
     $info = [
       // 'input_url'    => $input_url,
       'source_field' => $source_field,
@@ -108,7 +116,10 @@ class BlazyMediaUnitTest extends UnitTestCase {
       ],
     ];
 
-    $markup['#markup'] = '<iframe src="//www.youtube.com/watch?v=E03HFA923kw" class="b-lazy"></iframe>';
+    /** @var array<string, string> $markup */
+    $markup = [
+      '#markup' => '<iframe src="//www.youtube.com/watch?v=E03HFA923kw" class="b-lazy"></iframe>',
+    ];
 
     return [
       'With children, has iframe tag' => [

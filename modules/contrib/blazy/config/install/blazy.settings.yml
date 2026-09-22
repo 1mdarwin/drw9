@@ -1,4 +1,6 @@
 admin_css: true
+use_custom_css: false
+css_scope: ''
 nojs:
   lazy: '0'
   classlist: '0'

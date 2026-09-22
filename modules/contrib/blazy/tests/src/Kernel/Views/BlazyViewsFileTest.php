@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Kernel\Views;
 
 use Drupal\Core\Form\FormState;

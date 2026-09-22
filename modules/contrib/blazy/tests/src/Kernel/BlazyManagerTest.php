@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Kernel;
 
-use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyApi;
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Internals\Internals;
 use Drupal\blazy\Theme\BlazyTheme;
 
 /**
@@ -55,7 +58,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
     $url = $settings['content_url'] ?? '';
     $this->blazyManager->postSettings($settings);
 
-    $blazies = $settings['blazies'];
+    $blazies = Internals::getBlazies($settings);
     $blazies->set('count', $this->maxItems)
       ->set('entity.url', $url)
       ->set('media.embed_url', $settings['embed_url'] ?? '')
@@ -70,7 +73,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
     $element = $this->doPreRenderImage($build);
 
-    $blazies = $build['#settings']['blazies'];
+    $blazies = Internals::getBlazies($build['#settings']);
     if ($url && $blazies->get('switch') == 'content') {
       $this->assertEquals($blazies->get('entity.url'), $element['#url']);
       $this->assertArrayHasKey('#url', $element);
@@ -82,7 +85,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
     /*
     // @todo re-check why failed since 2.9-DEV.
-    // $blazies = $element['#settings']['blazies'];
+    // $blazies = Internals::getBlazies($element['#settings']);
     // $this->assertEquals($expected_has_responsive_image,
     // !empty($blazies->get('resimage.id')));
      */
@@ -146,10 +149,12 @@ class BlazyManagerTest extends BlazyKernelTestBase {
   public function testPreprocessBlazy(array $settings, $use_uri, $use_item, $iframe, $expected) {
     $variables = ['attributes' => []];
     $input_url = $settings['input_url'] ?? NULL;
-    $settings  = array_merge($this->getFormatterSettings(), $settings);
-    $settings += Blazy::init();
-    $blazies   = $settings['blazies'];
-    $id        = 'blazy';
+
+    /** @var array $settings */
+    $settings = array_merge($this->getFormatterSettings(), $settings);
+    $settings += BlazyApi::init();
+    $blazies = Internals::getBlazies($settings);
+    $id = 'blazy';
 
     $blazies->set('item.id', $id)
       ->set('is.blazy', TRUE)
@@ -165,7 +170,8 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
     $this->blazyManager->postSettings($settings);
 
-    $blazies = $settings['blazies']->reset($settings);
+    // @todo recheck $blazies = $settings['blazies']->reset($settings);.
+    $blazies = Internals::getBlazies($settings)->reset($settings);
     $item    = $use_item ? $this->testItem : NULL;
 
     if ($input_url) {
@@ -187,6 +193,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
     $variables['element']['#item'] = $item;
     $variables['element']['#settings'] = $settings;
 
+    // @todo update to ThemeHooks::preprocessBlazy($variables).
     BlazyTheme::blazy($variables);
 
     $image  = $expected == TRUE ? !empty($variables['image']) : empty($variables['image']);
@@ -275,6 +282,7 @@ class BlazyManagerTest extends BlazyKernelTestBase {
 
       $variables['img_element']['#uri'] = $this->uri;
 
+      // @todo update to ThemeHooks::preprocessResponsiveImage($variables).
       BlazyTheme::responsiveImage($variables);
 
       $this->assertEquals($expected, $variables['output_image_tag']);

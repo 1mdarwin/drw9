@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Unit\Form;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
@@ -73,6 +75,7 @@ class BlazyAdminFormatterUnitTest extends UnitTestCase {
     $definition['_views'] = TRUE;
 
     $this->blazyAdminFormatter->openingForm($form, $definition);
+    /** @var array $form */
     $this->assertEquals($vanilla, !empty($form['vanilla']));
 
     $this->blazyAdminFormatter->buildSettingsForm($form, $definition);

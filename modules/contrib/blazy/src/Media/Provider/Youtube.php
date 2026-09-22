@@ -20,8 +20,8 @@ class Youtube {
    * normally seen at BlazyFilter with youtube embed copy/paste, without
    * creating media entities. Or when given an embed code by VEF, etc.
    *
-   * @param string $input
-   *   The given url.
+   * @param string|null $input
+   *   The given url or null.
    * @param bool $privacy
    *   Whether to prioritize privacy, or default.
    *
@@ -30,7 +30,8 @@ class Youtube {
    */
   public static function fromEmbed($input, $privacy = FALSE): ?string {
     if ($input) {
-      if (strpos($input, 'youtube.com') !== FALSE || strpos($input, 'youtu.be') !== FALSE) {
+      if (strpos($input, 'youtube.com') !== FALSE
+        || strpos($input, 'youtu.be') !== FALSE) {
         if (strpos($input, 'youtube.com/embed') !== FALSE) {
           $search = '/youtube\.com\/embed\/([a-zA-Z0-9]+)/smi';
           $replace = "youtube.com/watch?v=$1";

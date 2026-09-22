@@ -11,14 +11,21 @@
 
   /* Reset padding hack */
   .media.media--ratio:not(.media--ratio--fluid) {
-    padding-bottom: 0;
+    /* @todo remove !important after proper migrations */
+    padding-bottom: 0 !important; /* csslint allow: known-properties, important */
   }
 
+  /* Do not override Native Grid. */
+  .blazy:not(.b-nativegrid) .media--ratio:not(.media--ratio--fluid) {
+    height: auto;
+  }
+
+  /*
   .media--ratio:not(.b-bg),
   .media.media--ratio:not(.media--ratio--fluid, .b-bg) {
     height: auto;
   }
-
+  */
   .media--ratio:not(.media--ratio--fluid) .media__element,
   .media--ratio:not(.media--ratio--fluid) svg {
     position: static;
@@ -30,7 +37,7 @@
     position: absolute;
     left: 0;
     top: 50%;
-    transform: translateY(50%);
+    transform: translateY(-50%);
     width: 100%;
   }
 

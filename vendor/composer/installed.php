@@ -3,7 +3,7 @@
         'name' => 'drupal/legacy-project',
         'pretty_version' => 'dev-master',
         'version' => 'dev-master',
-        'reference' => '9412c6776d295bd3f4c55bfa4f43a6e9f961424f',
+        'reference' => '7e5337e51f49de676bdaab8e6bea12cfff689910',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -242,9 +242,9 @@
             ),
         ),
         'drupal/blazy' => array(
-            'pretty_version' => '3.0.17',
-            'version' => '3.0.17.0',
-            'reference' => '3.0.17',
+            'pretty_version' => '3.0.19',
+            'version' => '3.0.19.0',
+            'reference' => '3.0.19',
             'type' => 'drupal-module',
             'install_path' => __DIR__ . '/../../modules/contrib/blazy',
             'aliases' => array(),
@@ -432,7 +432,7 @@
             'version' => '10.6.15.0',
             'reference' => '9cc5cb2a58e9dc0e2aec634308ceb406443fb5a7',
             'type' => 'metapackage',
-            'install_path' => NULL,
+            'install_path' => null,
             'aliases' => array(),
             'dev_requirement' => false,
         ),
@@ -604,7 +604,7 @@
         'drupal/legacy-project' => array(
             'pretty_version' => 'dev-master',
             'version' => 'dev-master',
-            'reference' => '9412c6776d295bd3f4c55bfa4f43a6e9f961424f',
+            'reference' => '7e5337e51f49de676bdaab8e6bea12cfff689910',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -970,7 +970,7 @@
         'npm-asset/blazy' => array(
             'pretty_version' => '1.8.2',
             'version' => '1.8.2.0',
-            'reference' => NULL,
+            'reference' => null,
             'type' => 'npm-asset',
             'install_path' => __DIR__ . '/../../libraries/blazy',
             'aliases' => array(),
@@ -979,7 +979,7 @@
         'npm-asset/dropzone' => array(
             'pretty_version' => '5.9.3',
             'version' => '5.9.3.0',
-            'reference' => NULL,
+            'reference' => null,
             'type' => 'npm-asset',
             'install_path' => __DIR__ . '/../../libraries/dropzone',
             'aliases' => array(),
@@ -1117,8 +1117,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '1.1|2.0',
+                0 => '1.1|2.0',
+                1 => '^1.0',
             ),
         ),
         'psr/event-dispatcher' => array(

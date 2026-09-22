@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Kernel;
 
 /**
@@ -29,6 +31,7 @@ class BlazyEntityTest extends BlazyKernelTestBase {
 
     $bundle = $this->bundle;
 
+    $settings = [];
     $settings['fields']['field_text_multiple'] = 'text';
 
     $this->setUpContentTypeTest($bundle, $settings);

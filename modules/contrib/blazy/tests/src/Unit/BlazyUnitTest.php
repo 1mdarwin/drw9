@@ -1,12 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Drupal\Tests\blazy\Unit;
 
 use Drupal\Tests\UnitTestCase;
 use Drupal\Tests\blazy\Traits\BlazyManagerUnitTestTrait;
 use Drupal\Tests\blazy\Traits\BlazyUnitTestTrait;
-use Drupal\blazy\Blazy;
+use Drupal\blazy\BlazyApi;
 use Drupal\blazy\BlazyDefault;
+use Drupal\blazy\Internals\Internals;
 use Drupal\blazy\Theme\Attributes;
 use Drupal\blazy\Theme\BlazyTheme;
 
@@ -41,12 +44,15 @@ class BlazyUnitTest extends UnitTestCase {
    * @dataProvider providerTestBuildIframe
    */
   public function testBuildIframe(array $data, $expected) {
+    /** @var array $variables */
     $variables = ['attributes' => [], 'image' => []];
-    $settings  = Blazy::init();
+
+    /** @var array $settings */
+    $settings  = BlazyApi::init();
     $uri       = 'public://example.jpg';
     $embed_url = '//www.youtube.com/watch?v=E03HFA923kw';
+    $blazies   = Internals::getBlazies($settings);
 
-    $blazies = $settings['blazies'];
     $blazies->set('media.embed_url', $embed_url)
       ->set('media.bundle', 'remote_video')
       ->set('media.type', 'video')
@@ -84,7 +90,7 @@ class BlazyUnitTest extends UnitTestCase {
   }
 
   /**
-   * Tests \Drupal\blazy\Theme\BlazyTheme::blazy.
+   * Tests \Drupal\blazy\Hook\ThemeHooks::preprocessBlazy.
    *
    * @param array $settings
    *   The settings being tested.
@@ -98,11 +104,14 @@ class BlazyUnitTest extends UnitTestCase {
    * @dataProvider providerPreprocessBlazy
    */
   public function testPreprocessBlazy(array $settings, $item, $expected_image, $expected_iframe) {
+    /** @var array $variables */
     $variables = ['attributes' => []];
     $build     = $this->data;
-    $settings  = array_merge($build['#settings'], $settings);
-    $settings += Blazy::init();
-    $blazies   = $settings['blazies'];
+
+    /** @var array $settings */
+    $settings = array_merge($build['#settings'], $settings);
+    $settings += BlazyApi::init();
+    $blazies = Internals::getBlazies($settings);
     $embed_url = $settings['embed_url'] ?? '';
 
     $settings['image_style']     = '';
@@ -121,15 +130,19 @@ class BlazyUnitTest extends UnitTestCase {
     $variables['element']['#item'] = $item == TRUE ? $this->mockItem : NULL;
     $variables['element']['#settings'] = $settings;
 
+    // @todo update to ThemeHooks::preprocessBlazy($variables).
     BlazyTheme::blazy($variables);
 
-    $image = $expected_image == TRUE ? !empty($variables['image']) : empty($variables['image']);
-    $iframe = $expected_iframe == TRUE ? !empty($variables['iframe']) : empty($variables['iframe']);
+    $image = $variables['image'] ?? [];
+    $iframe = $variables['iframe'] ?? [];
+
+    $image = $expected_image == TRUE ? !empty($image) : empty($image);
+    $iframe = $expected_iframe == TRUE ? !empty($iframe) : empty($iframe);
 
     $this->assertTrue($image);
     $this->assertTrue($iframe);
 
-    $processed = $variables['settings']['blazies'];
+    $processed = Internals::getBlazies($settings);
     $this->assertEquals($blazies->get('lazy.id'), $processed->get('lazy.id'));
   }
 
@@ -138,7 +151,8 @@ class BlazyUnitTest extends UnitTestCase {
    */
   public static function providerPreprocessBlazy() {
     $uri = 'public://example.jpg';
-
+    /** @var array $data */
+    $data = [];
     $data[] = [
       [
         'background' => FALSE,
@@ -194,7 +208,7 @@ class BlazyUnitTest extends UnitTestCase {
   /**
    * Tests BlazyManager image with lightbox support.
    *
-   * This is here as we need BlazyFile::transformRelative() for
+   * This is here as we need Uri::transformRelative() for
    * both Blazy and its lightbox.
    *
    * @param array $settings
@@ -203,10 +217,13 @@ class BlazyUnitTest extends UnitTestCase {
    * @dataProvider providerTestPreRenderImageLightbox
    */
   public function todoTestPreRenderImageLightbox(array $settings = []) {
-    $build                       = $this->data;
-    $settings                   += Blazy::init();
-    $blazies                     = $settings['blazies'];
-    $settings['box_style']       = '';
+    /** @var array $build */
+    $build = $this->data;
+
+    /** @var array $settings */
+    $settings += BlazyApi::init();
+    $blazies = Internals::getBlazies($settings);
+    $settings['box_style'] = '';
     $settings['box_media_style'] = '';
 
     $blazies->set('entity.url', $settings['content_url'] ?? '')
@@ -222,9 +239,10 @@ class BlazyUnitTest extends UnitTestCase {
       $build[$key . '_attributes']['class'][] = $key . '-test';
     }
 
+    /** @var array $element */
     $element = $this->doPreRenderImage($build);
+    $blazies = Internals::getBlazies($build['#settings']);
 
-    $blazies = $build['#settings']['blazies'];
     if ($settings['media_switch'] == 'content') {
       $this->assertEquals($blazies->get('entity.url'), $element['#url']);
       $this->assertArrayHasKey('#url', $element);
@@ -242,6 +260,8 @@ class BlazyUnitTest extends UnitTestCase {
    *   An array of tested data.
    */
   public static function providerTestPreRenderImageLightbox() {
+    /** @var array $data */
+    $data = [];
     $data[] = [
       [
         'box_caption' => '',
