@@ -35,7 +35,7 @@
     {% endif %}
 
     {% if item.children is not empty %}
-      {{ item.link_menuparent|merge({'#attributes': {'role': 'menuitem', 'aria-haspopup': 'true', 'aria-expanded': 'false'}}) }}
+      {{ item.link_menuparent|merge({'#attributes': {'role': 'menuitem', 'aria-haspopup': 'menu', 'aria-expanded': 'false'}}) }}
     {% else %}
       {{ item.link|merge({'#attributes': {'role': 'menuitem'}}) }}
     {% endif %}

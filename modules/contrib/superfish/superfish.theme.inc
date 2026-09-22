@@ -11,6 +11,7 @@ use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Menu\InaccessibleMenuLink;
 use Drupal\Core\Template\Attribute;
 use Drupal\Core\Url;
+use Drupal\superfish\Utility\SuperfishUtility;
 
 /**
  * Prepares variables for the Superfish menu template.
@@ -58,7 +59,7 @@ function template_preprocess_superfish(array &$variables) {
   else {
     $menu_classes[] = Html::cleanCssIdentifier($element['#settings']['ulclass']);
   }
-  $menu_classes = implode(' ', superfish_array_filter($menu_classes));
+  $menu_classes = implode(' ', SuperfishUtility::arrayFilter($menu_classes));
 
   $variables['id'] = $element['#html_id'];
   $variables['menu_classes'] = $menu_classes;
@@ -273,7 +274,7 @@ function template_preprocess_superfish_menu_items(array &$variables) {
     $counter++;
 
     // Preparing <li> classes for the theme.
-    $item_class = implode(' ', superfish_array_filter($item_class));
+    $item_class = implode(' ', SuperfishUtility::arrayFilter($item_class));
 
     // Merging link classes.
     if (!empty($item['options']['attributes']['class'])) {
@@ -283,10 +284,10 @@ function template_preprocess_superfish_menu_items(array &$variables) {
       }
       $link_class = array_merge(
         $link_class_current,
-        superfish_array_filter($link_class)
+        SuperfishUtility::arrayFilter($link_class)
       );
     }
-    $item['options']['attributes']['class'] = superfish_array_filter($link_class);
+    $item['options']['attributes']['class'] = SuperfishUtility::arrayFilter($link_class);
 
     // Dirty fix! to only add a "menuparent" class.
     $item['options_menuparent'] = $item['options'];

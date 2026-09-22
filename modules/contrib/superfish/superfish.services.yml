@@ -4,3 +4,15 @@ services:
     arguments: ['@menu_link.static.overrides']
   superfish.menu_tree_manipulator:
     class: 'Drupal\superfish\Menu\MenuTreeManipulator'
+
+  Drupal\superfish\Hook\CoreHooks:
+    class: \Drupal\superfish\Hook\CoreHooks
+    autowire: true
+
+  Drupal\superfish\Hook\LibraryHooks:
+    class: \Drupal\superfish\Hook\LibraryHooks
+    autowire: true
+
+  Drupal\superfish\Hook\ThemeHooks:
+    class: \Drupal\superfish\Hook\ThemeHooks
+    autowire: true

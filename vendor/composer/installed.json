@@ -4151,28 +4151,28 @@
         },
         {
             "name": "drupal/superfish",
-            "version": "1.15.0",
-            "version_normalized": "1.15.0.0",
+            "version": "1.16.0",
+            "version_normalized": "1.16.0.0",
             "source": {
                 "type": "git",
                 "url": "https://git.drupalcode.org/project/superfish.git",
-                "reference": "8.x-1.15"
+                "reference": "8.x-1.16"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://ftp.drupal.org/files/projects/superfish-8.x-1.15.zip",
-                "reference": "8.x-1.15",
-                "shasum": "693964345c83102f5961f825dfe975b09513ae24"
+                "url": "https://ftp.drupal.org/files/projects/superfish-8.x-1.16.zip",
+                "reference": "8.x-1.16",
+                "shasum": "03cd6c274d09aa6669c0536603aedffd9843f337"
             },
             "require": {
                 "drupal/core": "^9 || ^10 || ^11",
-                "lobsterr/drupal-superfish": "2.3.10"
+                "lobsterr/drupal-superfish": "2.3.11"
             },
             "type": "drupal-module",
             "extra": {
                 "drupal": {
-                    "version": "8.x-1.15",
-                    "datestamp": "1786096843",
+                    "version": "8.x-1.16",
+                    "datestamp": "1788648013",
                     "security-coverage": {
                         "status": "covered",
                         "message": "Covered by Drupal's security advisory policy"
@@ -5615,20 +5615,20 @@
         },
         {
             "name": "lobsterr/drupal-superfish",
-            "version": "2.3.10",
-            "version_normalized": "2.3.10.0",
+            "version": "2.3.11",
+            "version_normalized": "2.3.11.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/LOBsTerr/drupal-superfish.git",
-                "reference": "618cb095efa3c95ae64c34f626dda6c3a642bfac"
+                "reference": "1d5e18f696448cf9398e45832e9244099a5311a7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/LOBsTerr/drupal-superfish/zipball/618cb095efa3c95ae64c34f626dda6c3a642bfac",
-                "reference": "618cb095efa3c95ae64c34f626dda6c3a642bfac",
+                "url": "https://api.github.com/repos/LOBsTerr/drupal-superfish/zipball/1d5e18f696448cf9398e45832e9244099a5311a7",
+                "reference": "1d5e18f696448cf9398e45832e9244099a5311a7",
                 "shasum": ""
             },
-            "time": "2025-05-28T08:48:57+00:00",
+            "time": "2026-08-18T07:42:18+00:00",
             "type": "drupal-library",
             "installation-source": "dist",
             "notification-url": "https://packagist.org/downloads/",
