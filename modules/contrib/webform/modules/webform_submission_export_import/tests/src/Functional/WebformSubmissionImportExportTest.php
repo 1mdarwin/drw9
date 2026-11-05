@@ -2,7 +2,6 @@
 
 namespace Drupal\Tests\webform_submission_export_import\Functional;
 
-use Drupal\Tests\webform\Functional\WebformBrowserTestBase;
 use Drupal\file\Entity\File;
 use Drupal\webform\Entity\Webform;
 use Drupal\webform\Entity\WebformSubmission;
@@ -13,20 +12,10 @@ use Drupal\webform\Utility\WebformElementHelper;
  *
  * @group webform_submission_import_export
  */
-class WebformSubmissionImportExportFunctionalTest extends WebformBrowserTestBase {
+class WebformSubmissionImportExportTest extends WebformSubmissionImportExportTestBase {
 
   /**
-   * {@inheritdoc}
-   */
-  protected static $modules = [
-    'file',
-    'webform',
-    'webform_submission_export_import',
-    'webform_submission_export_import_test',
-  ];
-
-  /**
-   * Test submission import.
+   * Test submission export.
    */
   public function testSubmissionExport(): void {
     $this->drupalLogin($this->rootUser);
@@ -161,12 +150,19 @@ class WebformSubmissionImportExportFunctionalTest extends WebformBrowserTestBase
    * Test submission import.
    */
   public function testSubmissionImport(): void {
+    $this->setRemoteCsvUrlHosts();
+    $this->setRemoteFileUrlHosts();
+
     /** @var \Drupal\Core\File\FileUrlGeneratorInterface $file_url_generator */
     $file_url_generator = \Drupal::service('file_url_generator');
 
     $assert_session = $this->assertSession();
 
-    $this->drupalLogin($this->rootUser);
+    $submission_import_account = $this->drupalCreateUser([
+      'edit any webform submission',
+      'access webform submission export import',
+    ]);
+    $this->drupalLogin($submission_import_account);
 
     $webform_csv_url = $file_url_generator->generateAbsoluteString('public://test_submission_export_import-webform.csv');
     $external_csv_url = $file_url_generator->generateAbsoluteString('public://test_submission_export_import-external.csv');
@@ -205,7 +201,7 @@ class WebformSubmissionImportExportFunctionalTest extends WebformBrowserTestBase
     $submission_1 = $this->loadSubmissionByProperty('notes', 'valid');
     $this->assertEquals('valid', $submission_1->getElementData('summary'));
     $this->assertEquals('e1d59c85-7096-4bee-bafa-1bd6798862e2', $submission_1->uuid());
-    $this->assertEquals($this->rootUser->id(), $submission_1->getOwnerId());
+    $this->assertEquals($submission_import_account->id(), $submission_1->getOwnerId());
 
     // Check submission 1 data.
     $submission_1_expected_data = [
@@ -401,10 +397,10 @@ class WebformSubmissionImportExportFunctionalTest extends WebformBrowserTestBase
     // Import the external.csv.
     $this->submitForm(['confirm' => TRUE], 'Import');
 
-    // Check that 1 external submission created.
+    // Check that 1 external submission was created.
     $assert_session->responseContains('Submission import completed. (total: 1; created: 1; updated: 0; skipped: 0)');
 
-    // Check that external submissions exists.
+    // Check that external submissions exist.
     $submission_4 = $this->loadSubmissionByProperty('notes', 'valid external data');
     $this->assertEquals('valid external data', $submission_4->getElementData('summary'));
 
@@ -416,32 +412,19 @@ class WebformSubmissionImportExportFunctionalTest extends WebformBrowserTestBase
     // Re-import the external.csv.
     $this->submitForm(['confirm' => TRUE], 'Import');
 
-    // Check that 1 external submission updated.
+    // Check that 1 external submission was updated.
     $assert_session->responseContains('Submission import completed. (total: 1; created: 0; updated: 1; skipped: 0)');
-  }
 
-  /* ************************************************************************ */
-
-  /**
-   * Load a webform submission using a property value.
-   *
-   * @param string $property
-   *   A submission property.
-   * @param string|int $value
-   *   A property value.
-   *
-   * @return \Drupal\webform\WebformSubmissionInterface
-   *   A webform submission.
-   */
-  protected function loadSubmissionByProperty($property, $value) {
-    /** @var \Drupal\webform\WebformSubmissionStorageInterface $submission_storage */
-    $submission_storage = \Drupal::entityTypeManager()->getStorage('webform_submission');
-
-    // Always reset the cache.
-    $submission_storage->resetCache();
-
-    $submissions = $submission_storage->loadByProperties([$property => $value]);
-    return reset($submissions);
+    // Check that an invalid public CSV URL does not leave a temporary file
+    // behind.
+    $invalid_csv_uri = 'public://test_submission_export_import-invalid.csv';
+    $invalid_csv_url = $file_url_generator->generateAbsoluteString($invalid_csv_uri);
+    file_put_contents($invalid_csv_uri, 'Invalid CSV data');
+    $before_temporary_files = $this->getTemporaryImportFiles();
+    $this->drupalGet('/admin/structure/webform/manage/test_submission_export_import/results/upload');
+    $this->submitForm(['import_url' => $invalid_csv_url], 'Continue');
+    $after_temporary_files = $this->getTemporaryImportFiles();
+    $this->assertEquals($before_temporary_files, $after_temporary_files);
   }
 
 }
