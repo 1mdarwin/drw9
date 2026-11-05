@@ -109,11 +109,13 @@ class EntityqueueDragtableWidget extends EntityReferenceAutocompleteWidget {
     // Stop offering the 'add item' control once a subqueue is full; the widget
     // can also be used on ordinary entity reference fields, which have no max.
     $at_max = FALSE;
+    $add_to_top = FALSE;
     $entity = $items->getEntity();
     if ($entity instanceof EntitySubqueueInterface) {
       $queue = $entity->getQueue();
       $max_size = $queue->getMaximumSize();
       $at_max = $max_size && !$queue->getActAsQueue() && $field_state['items_count'] >= $max_size;
+      $add_to_top = $queue->isReversed();
     }
 
     if ($wrapper_id && !$at_max && !$form_state->isProgrammed()) {
@@ -132,6 +134,7 @@ class EntityqueueDragtableWidget extends EntityReferenceAutocompleteWidget {
           '#name' => strtr($id_prefix, '-', '_') . '_add_more',
           '#value' => $this->t('Add item'),
           '#attributes' => ['class' => ['field-add-more-submit']],
+          '#add_to_top' => $add_to_top,
           // Validate only the new item, not the whole field, so adding to a
           // required field is not blocked by its empty NotNull constraint.
           '#limit_validation_errors' => [array_merge($form['#parents'], [$field_name, 'add_more', 'new_item'])],
@@ -262,7 +265,16 @@ class EntityqueueDragtableWidget extends EntityReferenceAutocompleteWidget {
       $user_input = $form_state->getUserInput();
       $items_path = array_merge($parents, [$field_name]);
       $rows = NestedArray::getValue($user_input, $items_path) ?: [];
-      $rows[$delta] = ['target_id' => $row_value, '_weight' => $delta];
+
+      // Reversed queues show new items at the top, so the new row gets a
+      // weight below every existing row. Rows are sorted by weight both when
+      // the table is rendered and when the submitted values are extracted.
+      $weight = $delta;
+      if (!empty($button['#add_to_top'])) {
+        $weights = array_map('intval', array_column($rows, '_weight'));
+        $weight = $weights ? min($weights) - 1 : 0;
+      }
+      $rows[$delta] = ['target_id' => $row_value, '_weight' => $weight];
       NestedArray::setValue($user_input, $items_path, $rows);
 
       // Clear the 'add item' autocomplete so it's blank for the next entry.
@@ -271,6 +283,33 @@ class EntityqueueDragtableWidget extends EntityReferenceAutocompleteWidget {
     }
 
     $form_state->setRebuild();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function deleteSubmit(&$form, FormStateInterface $form_state) {
+    // Core renumbers the submitted rows with array_values(), which also turns
+    // the 'add_more' input into a row. Every row posted after it then shifts
+    // by one, e.g. when a theme renders the add control above the table. Set
+    // the 'add_more' input aside while core removes the row.
+    $button = $form_state->getTriggeringElement();
+    $element = NestedArray::getValue($form, array_merge(array_slice($button['#array_parents'], 0, -4), ['widget']));
+    $add_more_parents = array_merge($element['#parents'], ['add_more']);
+    $user_input = $form_state->getUserInput();
+    $add_more = NestedArray::getValue($user_input, $add_more_parents, $exists);
+    if ($exists) {
+      NestedArray::unsetValue($user_input, $add_more_parents);
+      $form_state->setUserInput($user_input);
+    }
+
+    parent::deleteSubmit($form, $form_state);
+
+    if ($exists) {
+      $user_input = $form_state->getUserInput();
+      NestedArray::setValue($user_input, $add_more_parents, $add_more);
+      $form_state->setUserInput($user_input);
+    }
   }
 
   /**

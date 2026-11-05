@@ -5,7 +5,7 @@ dependencies: {  }
 _core:
   default_config_hash: Da5YWhJdKLxaJ9gDRI1u5oCbm5WBxiiDgA4M1QrOEPQ
 id: '403'
-label: '403 acceso denegado'
+label: '403 access denied'
 tags:
-  shortlink: '[site:url]'
-  canonical_url: '[site:url]'
+  shortlink: '<none>'
+  canonical_url: '<none>'

@@ -80,6 +80,11 @@ class EntityqueueDragtableWidgetTest extends WebDriverTestBase {
     $this->assertCount(2, $this->removeButtons());
     $assert->fieldValueEquals('items[add_more][new_item][target_id]', '');
 
+    // Move the add control above the table, the way some themes render it.
+    // Its input is then posted before the rows, which must not shift them.
+    // @see https://www.drupal.org/project/entityqueue/issues/3624745
+    $this->getSession()->executeScript("document.querySelector('.field-multiple-table').before(document.querySelector('[name=\"items[add_more][new_item][target_id]\"]').closest('.form--inline'));");
+
     // Removing the first row leaves only the second.
     $page->pressButton('items_0_remove_button');
     $assert->assertWaitOnAjaxRequest();

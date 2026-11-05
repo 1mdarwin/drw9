@@ -4,7 +4,7 @@ namespace Drupal\metatag_views\Controller;
 
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\EntityStorageInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
 use Drupal\Core\Url;
 use Drupal\metatag\MetatagManagerInterface;
@@ -17,18 +17,18 @@ use Symfony\Component\HttpFoundation\RequestStack;
 class MetatagViewsTranslationController extends ControllerBase {
 
   /**
-   * The View storage interface.
+   * The entity type manager interface.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $viewStorage;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Metatag manager.
    *
    * @var \Drupal\metatag\MetatagManagerInterface
    */
-  protected $metatagManager;
+  protected MetatagManagerInterface $metatagManager;
 
   /**
    * The language manager.
@@ -42,7 +42,7 @@ class MetatagViewsTranslationController extends ControllerBase {
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The configuration factory.
@@ -54,10 +54,10 @@ class MetatagViewsTranslationController extends ControllerBase {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityStorageInterface $viewStorage, MetatagManagerInterface $metatagManager, LanguageManagerInterface $languageManager, RequestStack $request_stack, ConfigFactoryInterface $config_factory) {
-    $this->viewStorage = $viewStorage;
-    $this->metatagManager = $metatagManager;
-    $this->languageManager = $languageManager;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, MetatagManagerInterface $metatag_manager, LanguageManagerInterface $language_manager, RequestStack $request_stack, ConfigFactoryInterface $config_factory) {
+    $this->entityTypeManager = $entity_type_manager;
+    $this->metatagManager = $metatag_manager;
+    $this->languageManager = $language_manager;
     $this->requestStack = $request_stack;
     $this->configFactory = $config_factory;
   }
@@ -67,7 +67,7 @@ class MetatagViewsTranslationController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')->getStorage('view'),
+      $container->get('entity_type.manager'),
       $container->get('metatag.manager'),
       $container->get('language_manager'),
       $container->get('request_stack'),
@@ -82,12 +82,12 @@ class MetatagViewsTranslationController extends ControllerBase {
    *   Page render array.
    */
   public function itemPage() {
-    // @todo This method doesn't exist?
-    $view_id = $this->requestStack->get('view_id');
-    // @todo This method doesn't exist?
-    $display_id = $this->requestStack->get('display_id');
+    /** @var \Symfony\Component\HttpFoundation\InputBag $request_params */
+    $request_params = $this->requestStack->getCurrentRequest()->request;
+    $view_id = $request_params->has('view_id') ? $request_params->all()['view_id'] : [];
+    $display_id = $request_params->has('display_id') ? $request_params->all()['display_id'] : [];
 
-    $view = $this->viewStorage->load($view_id);
+    $view = $this->entityTypeManager->getStorage('view')->load($view_id);
     $original_langcode = $view->language()->getId();
 
     $config_name = $view->getConfigDependencyName();
@@ -125,9 +125,9 @@ class MetatagViewsTranslationController extends ControllerBase {
       }
       else {
         // Get the metatag translation for this language.
-        // @todo The getLanguageConfigOverride() method doesn't exist?
-        $config_translation = $this->languageManager
-          ->getLanguageConfigOverride($langcode, $config_name)
+        /** @var \Drupal\language\ConfigurableLanguageManagerInterface $config_translation */
+        $config_translation = $this->languageManager;
+        $config_translation->getLanguageConfigOverride($langcode, $config_name)
           ->get($config_path);
 
         // If no translation exists for this language, link to add one.

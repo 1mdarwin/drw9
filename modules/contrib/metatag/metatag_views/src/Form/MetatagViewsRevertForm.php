@@ -6,6 +6,7 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\ConfirmFormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Url;
+use Drupal\views\ViewEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -14,18 +15,18 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MetatagViewsRevertForm extends ConfirmFormBase {
 
   /**
-   * Entity manager for views entities.
+   * The entity type manager interface.
    *
    * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $viewsManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The view entity to revert meta tags on.
    *
    * @var \Drupal\views\ViewEntityInterface
    */
-  protected $view;
+  protected ViewEntityInterface $view;
 
   /**
    * The view's display id.
@@ -38,7 +39,7 @@ class MetatagViewsRevertForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager) {
-    $this->viewsManager = $entity_type_manager->getStorage('view');
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -102,8 +103,9 @@ class MetatagViewsRevertForm extends ConfirmFormBase {
    * {@inheritdoc}
    */
   public function buildForm(array $form, FormStateInterface $form_state, $view_id = NULL, $display_id = NULL) {
-    // @todo This method doesn't exist.
-    $this->view = $this->viewsManager->load($view_id);
+    /** @var \Drupal\views\ViewExecutable $executable */
+    $executable = $this->entityTypeManager->getStorage('view')->load($view_id);
+    $this->view = $executable;
     $this->displayId = $display_id;
 
     return parent::buildForm($form, $form_state);

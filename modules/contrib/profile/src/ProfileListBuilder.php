@@ -2,6 +2,7 @@
 
 namespace Drupal\profile;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Entity\EntityListBuilder;
 use Drupal\Core\Entity\EntityTypeInterface;
@@ -115,8 +116,9 @@ class ProfileListBuilder extends EntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getDefaultOperations(EntityInterface $entity) {
-    $operations = parent::getDefaultOperations($entity);
+  public function getDefaultOperations(EntityInterface $entity/* , ?CacheableMetadata $cacheability = NULL */) {
+    $cacheability = func_num_args() > 1 ? func_get_arg(1) : NULL;
+    $operations = parent::getDefaultOperations($entity, $cacheability);
 
     $destination = $this->redirectDestination->getAsArray();
     foreach ($operations as $key => $operation) {
@@ -124,7 +126,11 @@ class ProfileListBuilder extends EntityListBuilder {
     }
 
     /** @var \Drupal\profile\Entity\ProfileInterface $entity */
-    if ($entity->access('update') && $entity->isPublished() && !$entity->isDefault()) {
+    $update_access = $entity->access('update', NULL, TRUE);
+    if ($cacheability instanceof CacheableMetadata) {
+      $cacheability->addCacheableDependency($update_access);
+    }
+    if ($update_access->isAllowed() && $entity->isPublished() && !$entity->isDefault()) {
       $operations['set_default'] = [
         'title' => $this->t('Mark as default'),
         'url' => $entity->toUrl('set-default'),

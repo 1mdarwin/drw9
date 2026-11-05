@@ -77,6 +77,10 @@ class MultipleAssetLibraryTest extends AssetLibraryTestBase {
         'gpl-compatible' => TRUE,
       ]
     ];
+    // Drupal 11.4+ adds an empty 'fonts' key to every library definition.
+    if (isset($library['fonts'])) {
+      $expected['fonts'] = [];
+    }
     $this->assertEquals($expected, $library);
 
     $library = $this->coreLibraryDiscovery->getLibraryByName('libraries', 'test_asset_multiple_library.second');
@@ -102,6 +106,10 @@ class MultipleAssetLibraryTest extends AssetLibraryTestBase {
         'gpl-compatible' => TRUE,
       ]
     ];
+    // Drupal 11.4+ adds an empty 'fonts' key to every library definition.
+    if (isset($library['fonts'])) {
+      $expected['fonts'] = [];
+    }
     $this->assertEquals($expected, $library);
   }
 
@@ -140,6 +148,10 @@ class MultipleAssetLibraryTest extends AssetLibraryTestBase {
         'gpl-compatible' => TRUE,
       ]
     ];
+    // Drupal 11.4+ adds an empty 'fonts' key to every library definition.
+    if (isset($library['fonts'])) {
+      $expected['fonts'] = [];
+    }
     $this->assertEquals($expected, $library);
 
     $library = $this->coreLibraryDiscovery->getLibraryByName('libraries', 'test_asset_multiple_library.second');
@@ -166,6 +178,10 @@ class MultipleAssetLibraryTest extends AssetLibraryTestBase {
         'gpl-compatible' => TRUE,
       ]
     ];
+    // Drupal 11.4+ adds an empty 'fonts' key to every library definition.
+    if (isset($library['fonts'])) {
+      $expected['fonts'] = [];
+    }
     $this->assertEquals($expected, $library);
   }
 

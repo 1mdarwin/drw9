@@ -76,7 +76,7 @@ class EntitySubqueueAccessControlHandler extends EntityAccessControlHandler {
 
     if ($entity_bundle) {
       $queue = EntityQueue::load($entity_bundle);
-      $access_result = AccessResult::allowedIf(!$queue->getHandlerPlugin()->hasAutomatedSubqueues());
+      $access_result = $access_result->andIf(AccessResult::allowedIf(!$queue->getHandlerPlugin()->hasAutomatedSubqueues()));
       $access_result->addCacheableDependency($queue);
     }
 

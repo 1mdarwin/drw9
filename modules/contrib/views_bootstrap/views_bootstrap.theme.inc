@@ -227,18 +227,21 @@ function template_preprocess_views_bootstrap_carousel(array &$vars): void {
   $vars['attributes']['class'][] = 'media-list';
 
   // Carousel options.
+  $columns = max(1, (int) $options['columns']);
+  $has_multiple_slides = count($vars['rows']) > $columns;
   $vars['interval'] = $options['interval'];
-  $vars['navigation'] = $options['navigation'];
-  $vars['indicators'] = $options['indicators'];
+  $vars['keyboard'] = $options['keyboard'];
+  $vars['navigation'] = $options['navigation'] && $has_multiple_slides;
+  $vars['indicators'] = $options['indicators'] && $has_multiple_slides;
   $vars['pause'] = $options['pause'] ? 'hover' : FALSE;
   $vars['wrap'] = $options['wrap'];
   $vars['effect'] = $options['effect'];
-  $vars['columns'] = $options['columns'];
+  $vars['columns'] = $columns;
   $prefix = ViewsBootstrap::getColumnPrefix($options['breakpoints']);
-  $column_width = intval(12 / $options['columns']);
+  $column_width = intval(12 / $columns);
   // Add mobile-first responsive columns: full width on small screens,
   // multi-column at the selected breakpoint and above.
-  if ($options['breakpoints'] != 'xs' && $options['columns'] > 1) {
+  if ($options['breakpoints'] != 'xs') {
     $vars['breakpoints'] = 'col-12 ' . $prefix . '-' . $column_width;
   }
   else {
@@ -368,6 +371,17 @@ function template_preprocess_views_bootstrap_grid(array &$vars): void {
     $grid_class = explode(' ', $options['grid_class']);
     $grid_classes = array_map([Html::class, 'cleanCssIdentifier'], array_filter($grid_class));
     $attributes->addClass($grid_classes);
+  }
+
+  // When grouping is enabled, Views passes the rendered grouping field as the
+  // title variable. This may include theme debug HTML comments and extra
+  // whitespace that should be cleaned up before display.
+  if (!empty($vars['title']) && !is_array($vars['title'])) {
+    $title = $vars['title'];
+    // Normalize whitespace.
+    $title = preg_replace('/\s+/', ' ', trim($title));
+    // Convert to render array to prevent Twig auto-escaping.
+    $vars['title'] = ['#markup' => $title];
   }
 
   $col_classes = [];
@@ -555,6 +569,51 @@ function template_preprocess_views_bootstrap_table(array &$vars): void {
     $option_classes = array_filter(explode(' ', $options['table_class_custom']));
     $classes = array_map([Html::class, 'cleanCssIdentifier'], $option_classes);
     $vars['attributes']->addClass($classes);
+  }
+
+  // Detect if caption is created from grouping (title field) vs explicit
+  // caption.
+  // When grouping is used, the title becomes the caption but needs different
+  // styling.
+  $vars['caption_is_from_grouping'] = FALSE;
+  if (!empty($vars['caption_needed']) && !empty($vars['title'])) {
+    // Check if there's no explicit caption set - if not, caption comes from
+    // title (grouping).
+    $handler = $vars['view']->style_plugin;
+    if (empty($handler->options['caption'])) {
+      $vars['caption_is_from_grouping'] = TRUE;
+
+      // Apply the grouping field's configured wrapper element and classes to
+      // the caption content.
+      $view = $vars['view'];
+      $grouping_level = $vars['grouping_level'] ?? 0;
+      if (!empty($view->style_plugin->options['grouping'][$grouping_level]['field'])) {
+        $grouping_field_id = $view->style_plugin->options['grouping'][$grouping_level]['field'];
+        if (isset($view->field[$grouping_field_id])) {
+          $grouping_field = $view->field[$grouping_field_id];
+          $wrapper_type = $grouping_field->elementWrapperType(TRUE, TRUE);
+
+          // If a wrapper element is configured, wrap the caption content.
+          if ($wrapper_type) {
+            $row_index = array_key_first($vars['result'] ?? []);
+            $wrapper_classes = $grouping_field->elementWrapperClasses($row_index);
+            $caption = $vars['caption'];
+
+            // Build the wrapped caption as a render array.
+            $vars['caption'] = [
+              '#type' => 'html_tag',
+              '#tag' => $wrapper_type,
+              'content' => $caption,
+            ];
+
+            // Add wrapper classes if configured.
+            if ($wrapper_classes) {
+              $vars['caption']['#attributes']['class'] = explode(' ', $wrapper_classes);
+            }
+          }
+        }
+      }
+    }
   }
 
 }

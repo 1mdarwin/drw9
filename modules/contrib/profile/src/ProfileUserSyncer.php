@@ -28,7 +28,12 @@ final class ProfileUserSyncer {
    *   The profile.
    */
   public function addPreparedProfile(UserInterface $user, ProfileInterface $profile): void {
-    $this->preparedProfiles[$user->uuid()][] = $profile;
+    $uuid = $user->uuid();
+    // The same profile can be handed over twice: once by the form widget and
+    // once by the computed profile field when the account is saved.
+    if (!in_array($profile, $this->preparedProfiles[$uuid] ?? [], TRUE)) {
+      $this->preparedProfiles[$uuid][] = $profile;
+    }
   }
 
   /**

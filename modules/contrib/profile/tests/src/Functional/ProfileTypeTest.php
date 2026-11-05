@@ -4,12 +4,14 @@ namespace Drupal\Tests\profile\Functional;
 
 use Drupal\profile\Entity\Profile;
 use Drupal\profile\Entity\ProfileType;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests the profile type UI.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class ProfileTypeTest extends ProfileTestBase {
 
   /**

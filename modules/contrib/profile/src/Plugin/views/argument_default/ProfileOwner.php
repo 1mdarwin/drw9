@@ -4,18 +4,19 @@ namespace Drupal\profile\Plugin\views\argument_default;
 
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
+use Drupal\views\Attribute\ViewsArgumentDefault;
 use Drupal\views\Plugin\views\argument_default\ArgumentDefaultPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Default argument plugin to extract a user from a profile.
- *
- * @ViewsArgumentDefault(
- *   id = "profile_owner",
- *   title = @Translation("User ID from profile route match")
- * )
  */
+#[ViewsArgumentDefault(
+  id: 'profile_owner',
+  title: new TranslatableMarkup('User ID from profile route match'),
+)]
 class ProfileOwner extends ArgumentDefaultPluginBase implements CacheableDependencyInterface {
 
   /**

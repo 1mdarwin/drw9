@@ -6,12 +6,14 @@ use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Test\AssertMailTrait;
 use Drupal\user\UserInterface;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests attaching of profile entity forms to other forms.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class ProfileRegisterFormTest extends ProfileTestBase {
 
   use AssertMailTrait;
@@ -21,6 +23,7 @@ class ProfileRegisterFormTest extends ProfileTestBase {
    */
   protected static $modules = [
     'token',
+    'profile_test',
   ];
 
   /**
@@ -86,7 +89,11 @@ class ProfileRegisterFormTest extends ProfileTestBase {
     $this->assertEquals(1, count($mails));
     $this->assertMailString('body', $full_name, 1);
 
-    $new_user = user_load_by_name($name);
+    $users = $this->container->get('entity_type.manager')->getStorage('user')->loadByProperties(['name' => $name]);
+    $new_user = reset($users);
+    // Verify hook_profile_insert() saw the new account as the owner.
+    \Drupal::state()->resetCache();
+    $this->assertSame([(int) $new_user->id()], \Drupal::state()->get('profile_test.insert_owners'));
     $this->assertTrue($new_user->isActive(), 'New account is active after registration.');
 
     /** @var \Drupal\profile\ProfileStorageInterface $storage */

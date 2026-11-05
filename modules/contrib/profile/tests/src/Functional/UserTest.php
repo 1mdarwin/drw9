@@ -5,12 +5,14 @@ namespace Drupal\Tests\profile\Functional;
 use Drupal\Core\Url;
 use Drupal\profile\Entity\Profile;
 use Drupal\user\Entity\User;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests the user pages.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class UserTest extends ProfileTestBase {
 
   /**

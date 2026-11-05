@@ -5,7 +5,7 @@
   "homepage": "https://drupal.org/project/profile",
   "license": "GPL-2.0-or-later",
   "require": {
-    "php": "^7.4 || ^8.0",
+    "php": "^8.1",
     "drupal/entity": "^1.0"
   },
   "require-dev": {

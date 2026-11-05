@@ -4,12 +4,14 @@ namespace Drupal\Tests\profile\Functional;
 
 use Drupal\Core\Url;
 use Drupal\profile\Entity\Profile;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests "default" functionality via the UI.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class ProfileDefaultTest extends ProfileTestBase {
 
   /**
@@ -79,7 +81,7 @@ class ProfileDefaultTest extends ProfileTestBase {
     $this->drupalLogin($this->rootUser);
 
     // Check that profile field is configurable on user display mode.
-    $this->drupalGet('admin/config/people/accounts/display');
+    $this->drupalGet('admin/config/people/accounts/display/default');
     $field_label = $this->type->label() . ' profiles';
     $this->assertSession()->pageTextContains($field_label);
     $edit = ["fields[{$id}_profiles][label]" => 'inline'];

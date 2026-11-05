@@ -1,10 +1,45 @@
 parameters:
 	ignoreErrors:
 		-
-			message: """
-				#^Call to deprecated method renderPlain\\(\\) of interface Drupal\\\\Core\\\\Render\\\\RendererInterface\\:
-				in drupal\\:10\\.3\\.0 and is removed from drupal\\:12\\.0\\.0\\. Use
-				  \\\\Drupal\\\\Core\\\\Render\\\\RendererInterface\\:\\:renderInIsolation\\(\\) instead\\.$#
-			"""
+			message: '''
+				#^Class Drupal\\profile\\Plugin\\migrate\\source\\d7\\Profile2Type extends deprecated class Drupal\\migrate_drupal\\Plugin\\migrate\\source\\DrupalSqlBase\:
+				in drupal\:11\.3\.0 and is removed from drupal\:12\.0\.0\. There is no
+				replacement\.$#
+			'''
+			identifier: class.extendsDeprecatedClass
+			count: 1
+			path: src/Plugin/migrate/source/d7/Profile2Type.php
+
+		-
+			message: '#^Method Drupal\\profile\\ProfileListBuilder\:\:getDefaultOperations\(\) is missing the CacheableMetadata parameter added in Drupal 11\.3\. Update the signature to\: getDefaultOperations\(\\Drupal\\Core\\Entity\\EntityInterface \$entity, \?\\Drupal\\Core\\Cache\\CacheableMetadata \$cacheability \= NULL\)\.$#'
+			identifier: drupal.entityListBuilderMissingCacheabilityParameter
+			count: 1
+			path: src/ProfileListBuilder.php
+
+		-
+			message: '#^Method Drupal\\profile\\ProfileTypeListBuilder\:\:getOperations\(\) is missing the CacheableMetadata parameter added in Drupal 11\.3\. Update the signature to\: getOperations\(\\Drupal\\Core\\Entity\\EntityInterface \$entity, \?\\Drupal\\Core\\Cache\\CacheableMetadata \$cacheability \= NULL\)\.$#'
+			identifier: drupal.entityListBuilderMissingCacheabilityParameter
+			count: 1
+			path: src/ProfileTypeListBuilder.php
+
+		-
+			message: '#^Storing entity storage as a class property is not recommended\. Call Drupal\\Core\\Entity\\EntityTypeManagerInterface\:\:getStorage\(\) at the call\-site instead\.$#'
+			identifier: drupal.entityStoragePropertyAssignment
+			count: 1
+			path: tests/src/Kernel/ProfileTest.php
+
+		-
+			message: '#^Storing entity storage as a class property is not recommended\. Call Drupal\\Core\\Entity\\EntityTypeManagerInterface\:\:getStorage\(\) at the call\-site instead\.$#'
+			identifier: drupal.entityStoragePropertyAssignment
 			count: 1
 			path: tests/src/Kernel/ProfileTokenTest.php
+
+		-
+			message: "#^Attribute class Drupal\\\\Core\\\\Hook\\\\Attribute\\\\(Hook|LegacyHook|LegacyModuleImplementsAlter) does not exist\\.$#"
+			reportUnmatched: false
+		-
+			message: "#^Access to constant First on an unknown class Drupal\\\\Core\\\\Hook\\\\Order\\\\Order\\.$#"
+			reportUnmatched: false
+		-
+			message: "#^Attribute class PHPUnit\\\\Framework\\\\Attributes\\\\RunTestsInSeparateProcesses does not exist\\.$#"
+			reportUnmatched: false

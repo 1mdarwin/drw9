@@ -5,12 +5,14 @@ namespace Drupal\Tests\profile\Functional;
 use Drupal\profile\ProfileTestTrait;
 use Drupal\Tests\views\Functional\ViewTestBase;
 use Drupal\views\Views;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests the profile module view handlers.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class ProfileViewHandlersTest extends ViewTestBase {
   use ProfileTestTrait;
 

@@ -11,6 +11,7 @@
  *   slide item. If false, carousel will not automatically cycle.
  * - pause: Pauses the cycling of the carousel on mouseenter and
  *   resumes the cycling of the carousel on mouseleave.
+ * - keyboard: Whether the carousel should react to keyboard events.
  * - wrap: Whether the carousel should cycle continuously or have
  *   hard stops.
  * - columns: The number of items displayed per slide on larger screens.
@@ -26,17 +27,19 @@
  */
 #}
 {{ attach_library('views_bootstrap/components') }}
-<div id="{{ id }}" class="carousel {{ effect }}" {% if ride %} data-bs-ride="{{ ride }}"
-     data-bs-interval="{{ interval }}"{% endif %} data-bs-pause="{% if pause %}hover{% else %}false{% endif %}"
-     data-wrap="{{ wrap }}">
+<div id="{{ id }}" class="carousel {{ effect }}"{% if ride %} data-bs-ride="{{ ride }}"
+     data-bs-interval="{{ interval }}"{% endif %} data-bs-keyboard="{{ keyboard ? 'true' : 'false' }}"
+     data-bs-pause="{{ pause ? 'hover' : 'false' }}" data-bs-wrap="{{ wrap ? 'true' : 'false' }}">
 
   {# Carousel indicators #}
   {% if indicators %}
     <div class="carousel-indicators">
-      {% for key, row in rows %}
-        {% if key % columns == 0 %}
-          {% set indicator_classes = [loop.first ? 'active'] %}
-          <button class="{{ indicator_classes|join(' ') }}" data-bs-target="#{{ id }}" data-bs-slide-to="{{ key/columns }}" aria-label="{{ 'Slide'|t ~ ' ' ~ loop.index }}"></button>
+      {% for row in rows %}
+        {% if loop.index0 % columns == 0 %}
+          {% set slide_index = (loop.index0 / columns)|round(0, 'floor') %}
+          <button type="button" data-bs-target="#{{ id }}" data-bs-slide-to="{{ slide_index }}"
+            {% if loop.first %}class="active" aria-current="true"{% endif %}
+            aria-label="{{ 'Slide @number'|t({'@number': slide_index + 1}) }}"></button>
         {% endif %}
       {% endfor %}
     </div>
@@ -87,13 +90,13 @@
   </div>
   {# Controls #}
   {% if navigation %}
-    <a class="carousel-control-prev" href="#{{ id }}" role="button" data-bs-slide="prev">
+    <button class="carousel-control-prev" type="button" data-bs-target="#{{ id }}" data-bs-slide="prev">
       <span class="carousel-control-prev-icon" aria-hidden="true"></span>
       <span class="visually-hidden">{{ 'Previous'|t }}</span>
-    </a>
-    <a class="carousel-control-next" href="#{{ id }}" role="button" data-bs-slide="next">
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#{{ id }}" data-bs-slide="next">
       <span class="carousel-control-next-icon" aria-hidden="true"></span>
       <span class="visually-hidden">{{ 'Next'|t }}</span>
-    </a>
+    </button>
   {% endif %}
 </div>

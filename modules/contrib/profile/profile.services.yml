@@ -6,3 +6,20 @@ services:
 
   profile.user_syncer:
     class: Drupal\profile\ProfileUserSyncer
+  Drupal\profile\ProfileUserSyncer: '@profile.user_syncer'
+
+  Drupal\profile\Hook\ProfileHooks:
+    class: Drupal\profile\Hook\ProfileHooks
+    autowire: true
+
+  Drupal\profile\Hook\ProfileThemeHooks:
+    class: Drupal\profile\Hook\ProfileThemeHooks
+    autowire: true
+
+  Drupal\profile\Hook\ProfileTokensHooks:
+    class: Drupal\profile\Hook\ProfileTokensHooks
+    autowire: true
+
+  Drupal\profile\Hook\ProfileViewsHooks:
+    class: Drupal\profile\Hook\ProfileViewsHooks
+    autowire: true

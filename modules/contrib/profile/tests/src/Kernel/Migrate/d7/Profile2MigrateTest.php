@@ -20,6 +20,7 @@ class Profile2MigrateTest extends MigrateDrupal7TestBase {
     'comment',
     'datetime',
     'datetime_range',
+    'filter',
     'image',
     'language',
     'link',

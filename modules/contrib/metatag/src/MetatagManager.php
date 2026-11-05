@@ -4,10 +4,12 @@ namespace Drupal\metatag;
 
 use Drupal\Component\Render\PlainTextOutput;
 use Drupal\Core\Config\ConfigFactoryInterface;
+use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\ContentEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\Language\LanguageManagerInterface;
+use Drupal\Core\Logger\LoggerChannelInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Path\PathMatcherInterface;
 use Drupal\Core\Render\BubbleableMetadata;
@@ -32,70 +34,70 @@ class MetatagManager implements MetatagManagerInterface {
    *
    * @var \Drupal\metatag\MetatagGroupPluginManager
    */
-  protected $groupPluginManager;
+  protected MetatagGroupPluginManager $groupPluginManager;
 
   /**
    * The tag plugin manager.
    *
    * @var \Drupal\metatag\MetatagTagPluginManager
    */
-  protected $tagPluginManager;
-
-  /**
-   * The Metatag defaults.
-   *
-   * @var \Drupal\metatag\Entity\MetatagDefaults
-   */
-  protected $metatagDefaults;
+  protected MetatagTagPluginManager $tagPluginManager;
 
   /**
    * The Metatag token.
    *
    * @var \Drupal\metatag\MetatagToken
    */
-  protected $tokenService;
+  protected MetatagToken $tokenService;
+
+  /**
+   * The entity type manager interface.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * Config factory.
    *
-   * @var Drupal\Core\Config\ConfigFactoryInterface
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
    */
-  protected $configFactory;
+  protected ConfigFactoryInterface $configFactory;
 
   /**
    * The Metatag logging channel.
    *
    * @var \Drupal\Core\Logger\LoggerChannelInterface
    */
-  protected $logger;
+  protected LoggerChannelInterface $logger;
 
   /**
    * The path matcher.
    *
    * @var \Drupal\Core\Path\PathMatcherInterface
    */
-  protected $pathMatcher;
+  protected PathMatcherInterface $pathMatcher;
 
   /**
    * The route match.
    *
    * @var \Drupal\Core\Routing\RouteMatchInterface
    */
-  protected $routeMatch;
+  protected RouteMatchInterface $routeMatch;
 
   /**
    * The request stack.
    *
    * @var \Symfony\Component\HttpFoundation\RequestStack
    */
-  protected $requestStack;
+  protected RequestStack $requestStack;
 
   /**
    * The language manager.
    *
    * @var \Drupal\Core\Language\LanguageManagerInterface
    */
-  protected $languageManager;
+  protected LanguageManagerInterface $languageManager;
 
   /**
    * Caches processed strings, keyed by tag name.
@@ -103,6 +105,20 @@ class MetatagManager implements MetatagManagerInterface {
    * @var array
    */
   protected $processedTokenCache = [];
+
+  /**
+   * Cache for sorted groups.
+   *
+   * @var array|null
+   */
+  protected $sortedGroupsCache = NULL;
+
+  /**
+   * Cache for sorted tags.
+   *
+   * @var array|null
+   */
+  protected $sortedTagsCache = NULL;
 
   /**
    * Constructor for MetatagManager.
@@ -144,7 +160,7 @@ class MetatagManager implements MetatagManagerInterface {
     $this->tagPluginManager = $tagPluginManager;
     $this->tokenService = $token;
     $this->logger = $channelFactory->get('metatag');
-    $this->metatagDefaults = $entityTypeManager->getStorage('metatag_defaults');
+    $this->entityTypeManager = $entityTypeManager;
     $this->pathMatcher = $pathMatcher;
     $this->routeMatch = $routeMatch;
     $this->requestStack = $requestStack;
@@ -199,19 +215,22 @@ class MetatagManager implements MetatagManagerInterface {
    */
   public function defaultTagsFromEntity(ContentEntityInterface $entity): array {
     /** @var \Drupal\metatag\Entity\MetatagDefaults $metatags */
-    $metatags = $this->metatagDefaults->load('global');
+    $metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+      ->load('global');
     if (!$metatags || !$metatags->status()) {
       return [];
     }
     // Add/overwrite with tags set on the entity type.
     /** @var \Drupal\metatag\Entity\MetatagDefaults $entity_type_tags */
-    $entity_type_tags = $this->metatagDefaults->load($entity->getEntityTypeId());
+    $entity_type_tags = $this->entityTypeManager->getStorage('metatag_defaults')
+      ->load($entity->getEntityTypeId());
     if (!is_null($entity_type_tags) && $entity_type_tags->status()) {
       $metatags->overwriteTags($entity_type_tags->get('tags'));
     }
     // Add/overwrite with tags set on the entity bundle.
     /** @var \Drupal\metatag\Entity\MetatagDefaults $bundle_metatags */
-    $bundle_metatags = $this->metatagDefaults->load($entity->getEntityTypeId() . '__' . $entity->bundle());
+    $bundle_metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+      ->load($entity->getEntityTypeId() . '__' . $entity->bundle());
     if (!is_null($bundle_metatags) && $bundle_metatags->status()) {
       $metatags->overwriteTags($bundle_metatags->get('tags'));
     }
@@ -242,6 +261,11 @@ class MetatagManager implements MetatagManagerInterface {
    * {@inheritdoc}
    */
   public function sortedGroups(): array {
+    // Return cached result if available.
+    if ($this->sortedGroupsCache !== NULL) {
+      return $this->sortedGroupsCache;
+    }
+
     $metatag_groups = $this->groupDefinitions();
 
     // Pull the data from the definitions into a new array.
@@ -258,6 +282,9 @@ class MetatagManager implements MetatagManagerInterface {
       'sortByWeightElement',
     ]);
 
+    // Cache the sorted groups.
+    $this->sortedGroupsCache = $groups;
+
     return $groups;
   }
 
@@ -265,6 +292,11 @@ class MetatagManager implements MetatagManagerInterface {
    * {@inheritdoc}
    */
   public function sortedTags(): array {
+    // Return cached result if available.
+    if ($this->sortedTagsCache !== NULL) {
+      return $this->sortedTagsCache;
+    }
+
     $metatag_tags = $this->tagDefinitions();
 
     // Pull the data from the definitions into a new array.
@@ -298,6 +330,9 @@ class MetatagManager implements MetatagManagerInterface {
         $this->logger->error('Expected an array but got null or other type for group: @group_name', ['@group_name' => $group_name]);
       }
     }
+
+    // Cache the sorted tags.
+    $this->sortedTagsCache = $sorted_tags;
 
     return $sorted_tags;
   }
@@ -505,7 +540,9 @@ class MetatagManager implements MetatagManagerInterface {
    *   The global meta tags or NULL.
    */
   public function getGlobalMetatags(): MetatagDefaults|NULL {
-    $metatags = $this->metatagDefaults->load('global');
+    /** @var \Drupal\metatag\Entity\MetatagDefaults $metatags */
+    $metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+      ->load('global');
     return (!empty($metatags) && $metatags->status()) ? $metatags : NULL;
   }
 
@@ -519,15 +556,19 @@ class MetatagManager implements MetatagManagerInterface {
     $metatags = NULL;
 
     if ($this->pathMatcher->isFrontPage()) {
-      $metatags = $this->metatagDefaults->load('front');
+      $metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+        ->load('front');
     }
     elseif ($this->routeMatch->getRouteName() == 'system.403') {
-      $metatags = $this->metatagDefaults->load('403');
+      $metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+        ->load('403');
     }
     elseif ($this->routeMatch->getRouteName() == 'system.404') {
-      $metatags = $this->metatagDefaults->load('404');
+      $metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+        ->load('404');
     }
 
+    /** @var \Drupal\metatag\Entity\MetatagDefaults $metatags */
     if ($metatags && !$metatags->status()) {
       // Do not return disabled special metatags.
       return NULL;
@@ -547,7 +588,8 @@ class MetatagManager implements MetatagManagerInterface {
    */
   public function getEntityDefaultMetatags(ContentEntityInterface $entity): array {
     /** @var \Drupal\metatag\Entity\MetatagDefaults $entity_metatags */
-    $entity_metatags = $this->metatagDefaults->load($entity->getEntityTypeId());
+    $entity_metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+      ->load($entity->getEntityTypeId());
     $metatags = [];
     if ($entity_metatags != NULL && $entity_metatags->status()) {
       // Merge with global defaults.
@@ -556,7 +598,8 @@ class MetatagManager implements MetatagManagerInterface {
 
     // Finally, check if we should apply bundle overrides.
     /** @var \Drupal\metatag\Entity\MetatagDefaults $bundle_metatags */
-    $bundle_metatags = $this->metatagDefaults->load($entity->getEntityTypeId() . '__' . $entity->bundle());
+    $bundle_metatags = $this->entityTypeManager->getStorage('metatag_defaults')
+      ->load($entity->getEntityTypeId() . '__' . $entity->bundle());
     if ($bundle_metatags != NULL && $bundle_metatags->status()) {
       // Merge with existing defaults.
       $metatags = array_merge($metatags, $bundle_metatags->get('tags'));
@@ -594,12 +637,15 @@ class MetatagManager implements MetatagManagerInterface {
       return [];
     }
 
-    // Use the entity's language code, if one is defined.
+    // Use the entity's language code, if one is defined. Views should probably
+    // get the current language instead of the configuration object language.
     $langcode = NULL;
     // Prepare any tokens that might exist.
     $token_replacements = [];
     if ($entity) {
-      $langcode = $entity->language()->getId();
+      if (!$entity instanceof ConfigEntityInterface) {
+        $langcode = $entity->language()->getId();
+      }
       // @todo This needs a better way of discovering the context.
       if ($entity instanceof ViewEntityInterface) {
         // Views tokens require the ViewExecutable, not the config entity.
@@ -678,9 +724,10 @@ class MetatagManager implements MetatagManagerInterface {
     }
 
     $entity_identifier = '_none';
-    // Use the entity's language code, if one is defined.
+    // Use the entity's language code, if one is defined. Config objects should
+    // get the current language instead of the configuration object language.
     $langcode = NULL;
-    if ($entity) {
+    if ($entity && !$entity instanceof ConfigEntityInterface) {
       $langcode = $entity->language()->getId();
       $entity_identifier = $entity->getEntityTypeId() . ':' . ($entity->uuid() ?? $entity->id()) . ':' . $langcode;
     }
