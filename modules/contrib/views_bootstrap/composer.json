@@ -8,7 +8,7 @@
         "issues": "https://www.drupal.org/project/issues/views_bootstrap"
     },
     "require": {
-        "drupal/core": "^9 || ^10 || ^11"
+        "drupal/core": "^10.1 || ^11 || ^12"
     },
     "require-dev": {
         "drupal/viewsreference": "^2.0"

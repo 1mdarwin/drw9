@@ -22,11 +22,10 @@ views.style.views_bootstrap_accordion:
         all: "All Items Open"
         specify: "Specify Behavior by Section"
     sections:
-      type: array
+      type: sequence
       label: "Open Elements"
-      items:
+      sequence:
         type: string
-      default: []
 
 views.style.views_bootstrap_cards:
   type: views_style

@@ -1,5 +1,37 @@
 # Views Bootstrap 5.5.x Release Notes
 
+## Version 5.5.3
+
+### Features
+
+**[#3625898](https://www.drupal.org/project/views_bootstrap/issues/3625898) - Bootstrap Table: Add indicator class to caption when created from grouping**
+- NEW: Added `views-bootstrap-table-caption-grouping` CSS class to `<caption>` elements when they are created from grouping
+- NEW: Grouping captions now preserve HTML wrapper elements configured on the grouping field
+  - If you configure a field with an HTML wrapper element (e.g., `<h2>`, `<h3>`) in the field settings, that wrapper is now applied to the caption when grouping by that field
+  - Previously, only the plain text of the field was shown in the caption, ignoring the wrapper element configuration
+  - Wrapper classes are also preserved
+- Allows independent styling of grouping captions (typically shown above table) vs regular captions (typically shown below table)
+- Previously, there was no way to distinguish between these two caption types in CSS
+- Added `caption_is_from_grouping` template variable for themers
+- Theme developers can now use `.views-bootstrap-table-caption-grouping` selector in their theme CSS to style grouping captions differently
+
+**Impact:** This enables proper visual differentiation between regular table captions and grouping headers, and ensures semantic HTML markup is preserved in grouping captions, improving both styling flexibility and accessibility when using Views grouping with Bootstrap Table displays.
+
+**Example theme CSS:**
+```css
+/* Display grouping caption above table */
+.views-bootstrap-table-caption-grouping {
+  caption-side: top;
+}
+
+/* Display regular captions below table */
+table caption:not(.views-bootstrap-table-caption-grouping) {
+  caption-side: bottom;
+}
+```
+
+---
+
 ## Version 5.5.2
 
 ### Documentation Improvements
