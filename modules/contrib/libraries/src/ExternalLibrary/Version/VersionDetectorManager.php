@@ -2,6 +2,7 @@
 
 namespace Drupal\libraries\ExternalLibrary\Version;
 
+use Drupal\Component\Plugin\Attribute\PluginID;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -26,7 +27,7 @@ class VersionDetectorManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/libraries/VersionDetector', $namespaces, $module_handler, VersionDetectorInterface::class, VersionDetector::class);
+    parent::__construct('Plugin/libraries/VersionDetector', $namespaces, $module_handler, VersionDetectorInterface::class, PluginID::class, VersionDetector::class);
     $this->alterInfo('libraries_version_detector_info');
     $this->setCacheBackend($cache_backend, 'libraries_version_detector_info');
   }

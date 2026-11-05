@@ -2,6 +2,7 @@
 
 namespace Drupal\libraries\ExternalLibrary\Local;
 
+use Drupal\Component\Plugin\Attribute\PluginID;
 use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Plugin\DefaultPluginManager;
@@ -26,7 +27,7 @@ class LocatorManager extends DefaultPluginManager {
    *   The module handler to invoke the alter hook with.
    */
   public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler) {
-    parent::__construct('Plugin/libraries/Locator', $namespaces, $module_handler, LocatorInterface::class, Locator::class);
+    parent::__construct('Plugin/libraries/Locator', $namespaces, $module_handler, LocatorInterface::class, PluginID::class, Locator::class);
     $this->alterInfo('libraries_locator_info');
     $this->setCacheBackend($cache_backend, 'libraries_locator_info');
   }

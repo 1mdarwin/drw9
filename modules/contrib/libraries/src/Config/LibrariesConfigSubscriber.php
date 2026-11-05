@@ -44,7 +44,7 @@ class LibrariesConfigSubscriber implements EventSubscriberInterface {
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
+  public static function getSubscribedEvents(): array {
     return [ConfigEvents::SAVE => 'onConfigSave'];
   }
 
