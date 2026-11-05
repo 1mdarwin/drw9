@@ -4,12 +4,14 @@ namespace Drupal\Tests\profile\Functional;
 
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests profile field access functionality.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class ProfileFieldAccessTest extends ProfileTestBase {
 
   /**

@@ -3,25 +3,24 @@
 namespace Drupal\profile\Plugin\Field\FieldWidget;
 
 use Drupal\Core\Entity\Entity\EntityFormDisplay;
+use Drupal\Core\Field\Attribute\FieldWidget;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\Core\Field\WidgetBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
 use Drupal\profile\Entity\ProfileInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Plugin implementation of the 'profile_form' widget.
- *
- * @FieldWidget(
- *   id = "profile_form",
- *   label = @Translation("Profile form"),
- *   field_types = {
- *     "entity_reference"
- *   }
- * )
  */
+#[FieldWidget(
+  id: 'profile_form',
+  label: new TranslatableMarkup('Profile form'),
+  field_types: ['entity_reference'],
+)]
 class ProfileFormWidget extends WidgetBase implements ContainerFactoryPluginInterface {
 
   /**

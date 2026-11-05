@@ -34,8 +34,9 @@ class ProfileTypeListBuilder extends ConfigEntityListBuilder {
   /**
    * {@inheritdoc}
    */
-  public function getOperations(EntityInterface $entity) {
-    $operations = parent::getOperations($entity);
+  public function getOperations(EntityInterface $entity/* , ?CacheableMetadata $cacheability = NULL */) {
+    $cacheability = func_num_args() > 1 ? func_get_arg(1) : NULL;
+    $operations = parent::getOperations($entity, $cacheability);
     // Place the edit operation after the operations added by field_ui.module
     // which have the weights 15, 20, 25.
     if (isset($operations['edit'])) {

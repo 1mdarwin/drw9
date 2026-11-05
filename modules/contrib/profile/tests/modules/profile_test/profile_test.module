@@ -1,0 +1,18 @@
+<?php
+
+/**
+ * @file
+ * Test module for Profile.
+ */
+
+use Drupal\profile\Entity\ProfileInterface;
+
+/**
+ * Implements hook_profile_insert().
+ */
+function profile_test_profile_insert(ProfileInterface $profile) {
+  // Record the owner seen by hook_profile_insert() implementations.
+  $owners = \Drupal::state()->get('profile_test.insert_owners', []);
+  $owners[] = (int) $profile->getOwnerId();
+  \Drupal::state()->set('profile_test.insert_owners', $owners);
+}

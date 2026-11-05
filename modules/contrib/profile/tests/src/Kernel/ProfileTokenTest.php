@@ -122,7 +122,7 @@ class ProfileTokenTest extends EntityKernelTestBase {
 
     /** @var \Drupal\Core\Render\RendererInterface $renderer */
     $renderer = \Drupal::service('renderer');
-    $rendered_field = $renderer->renderPlain($field_view);
+    $rendered_field = $renderer->renderInIsolation($field_view);
     $rendered_entity = $renderer->renderRoot($entity_view);
 
     // Verify the tokens matches the rendered values.

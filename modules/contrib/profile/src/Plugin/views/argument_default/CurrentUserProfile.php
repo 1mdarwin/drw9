@@ -5,17 +5,18 @@ namespace Drupal\profile\Plugin\views\argument_default;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableDependencyInterface;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\views\Attribute\ViewsArgumentDefault;
 use Drupal\views\Plugin\views\argument_default\ArgumentDefaultPluginBase;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Default argument plugin to extract the current user's profile.
- *
- * @ViewsArgumentDefault(
- *   id = "current_user_profile",
- *   title = @Translation("Profile ID from logged in user")
- * )
  */
+#[ViewsArgumentDefault(
+  id: 'current_user_profile',
+  title: new TranslatableMarkup('Profile ID from logged in user'),
+)]
 class CurrentUserProfile extends ArgumentDefaultPluginBase implements CacheableDependencyInterface {
 
   /**

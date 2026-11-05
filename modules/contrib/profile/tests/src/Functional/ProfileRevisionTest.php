@@ -7,12 +7,14 @@ use Drupal\Core\Entity\Entity\EntityViewDisplay;
 use Drupal\Core\Url;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\profile\Entity\ProfileType;
+use PHPUnit\Framework\Attributes\RunTestsInSeparateProcesses;
 
 /**
  * Tests using revisions with profiles.
  *
  * @group profile
  */
+#[RunTestsInSeparateProcesses]
 class ProfileRevisionTest extends ProfileTestBase {
 
   /**

@@ -4,13 +4,13 @@ namespace Drupal\profile\Plugin\views\relationship;
 
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\profile\Entity\ProfileType;
+use Drupal\views\Attribute\ViewsRelationship;
 use Drupal\views\Plugin\views\relationship\RelationshipPluginBase;
 
 /**
  * Provides a views relationship to select profile content by a profile_type.
- *
- * @ViewsRelationship("profile_relationship")
  */
+#[ViewsRelationship('profile_relationship')]
 class ProfileViewsRelationship extends RelationshipPluginBase {
 
   /**

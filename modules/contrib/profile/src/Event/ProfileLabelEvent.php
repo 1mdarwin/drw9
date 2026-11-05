@@ -13,20 +13,6 @@ use Symfony\Contracts\EventDispatcher\Event;
 class ProfileLabelEvent extends Event {
 
   /**
-   * The profile.
-   *
-   * @var \Drupal\profile\Entity\ProfileInterface
-   */
-  protected $profile;
-
-  /**
-   * The label.
-   *
-   * @var string|null
-   */
-  protected $label;
-
-  /**
    * Constructs a new ProfileLabelEvent object.
    *
    * @param \Drupal\profile\Entity\ProfileInterface $profile
@@ -34,10 +20,10 @@ class ProfileLabelEvent extends Event {
    * @param string|null $label
    *   The profile label.
    */
-  public function __construct(ProfileInterface $profile, ?string $label) {
-    $this->profile = $profile;
-    $this->label = $label;
-  }
+  public function __construct(
+    protected ProfileInterface $profile,
+    protected ?string $label,
+  ) {}
 
   /**
    * Gets the profile.

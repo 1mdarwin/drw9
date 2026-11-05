@@ -21,7 +21,7 @@ class ProfileLocalAction extends LocalActionDefault {
    *
    * @var \Drupal\Core\Routing\RedirectDestinationInterface
    */
-  private $redirectDestination;
+  protected $redirectDestination;
 
   /**
    * The current route match.
