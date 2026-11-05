@@ -1572,8 +1572,7 @@ class SuperfishBlock extends SystemMenuBlock {
           break;
 
         case 1:
-          $ab = (int) $this->configuration['smallabt'];
-          $plugins['smallscreen']['accordionButton'] = $ab != 1 ? $ab : 0;
+          $plugins['smallscreen']['accordionButton'] = (int) $this->configuration['smallabt'];
           if ($this->t('Expand') != 'Expand') {
             $plugins['smallscreen']['expandText'] = $this->t('Expand');
           }
