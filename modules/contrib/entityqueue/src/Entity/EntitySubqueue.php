@@ -289,7 +289,21 @@ class EntitySubqueue extends EditorialContentEntityBase implements EntitySubqueu
    * {@inheritdoc}
    */
   public function addItem(EntityInterface $entity) {
-    $this->get('items')->appendItem($entity->id());
+    $items = $this->get('items');
+    $queue = $this->getQueue();
+
+    // Reversed queues get new items at the top. Generic list operations like
+    // ::appendItem() must keep appending, since widgets and serializers rely
+    // on it.
+    if ($queue && $queue->isReversed()) {
+      $values = $items->getValue();
+      array_unshift($values, ['target_id' => $entity->id()]);
+      $items->setValue($values);
+    }
+    else {
+      $items->appendItem($entity->id());
+    }
+
     return $this;
   }
 
@@ -317,7 +331,7 @@ class EntitySubqueue extends EditorialContentEntityBase implements EntitySubqueu
   public function getItemPosition(EntityInterface $entity) {
     $subqueue_items = $this->get('items')->getValue();
     $subqueue_items_ids = array_map(function ($item) {
-      return $item['target_id'];
+      return $item['target_id'] ?? NULL;
     }, $subqueue_items);
 
     return array_search($entity->id(), $subqueue_items_ids);

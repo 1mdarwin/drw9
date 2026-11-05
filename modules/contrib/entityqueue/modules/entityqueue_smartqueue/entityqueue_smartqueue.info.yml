@@ -7,7 +7,7 @@ core_version_requirement: ^10.2 || ^11 || ^12
 dependencies:
   - entityqueue:entityqueue
 
-# Information added by Drupal.org packaging script on 2026-07-14
-version: '8.x-1.12'
+# Information added by Drupal.org packaging script on 2026-10-06
+version: '8.x-1.13'
 project: 'entityqueue'
-datestamp: 1784059697
+datestamp: 1791273775

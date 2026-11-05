@@ -115,7 +115,7 @@ class EntityQueueUiTest extends BrowserTestBase {
     $this->createContentType(['type' => 'article', 'name' => 'Article']);
     $first = $this->createNode(['type' => 'article', 'title' => 'First article']);
     $second = $this->createNode(['type' => 'article', 'title' => 'Second article']);
-    $this->createNodeQueue('q');
+    $queue = $this->createNodeQueue('q');
 
     $url = '/admin/structure/entityqueue/q/q';
     $this->drupalGet($url);
@@ -144,6 +144,17 @@ class EntityQueueUiTest extends BrowserTestBase {
     $this->assertCount(1, $this->removeButtons());
     $this->submitForm([], 'Save');
     $this->assertSame([(int) $first->id()], $this->queuedIds('q'));
+
+    // A reversed queue adds each new item above the existing ones, and
+    // removing a row keeps that order.
+    $queue->set('queue_settings', ['min_size' => 0, 'max_size' => 0, 'act_as_queue' => FALSE, 'reverse' => TRUE])->save();
+    $third = $this->createNode(['type' => 'article', 'title' => 'Third article']);
+    $this->drupalGet($url);
+    $this->submitForm(['items[add_more][new_item][target_id]' => 'Second article (' . $second->id() . ')'], 'Add item');
+    $this->submitForm(['items[add_more][new_item][target_id]' => 'Third article (' . $third->id() . ')'], 'Add item');
+    $this->submitForm([], 'items_0_remove_button');
+    $this->submitForm([], 'Save');
+    $this->assertSame([(int) $third->id(), (int) $second->id()], $this->queuedIds('q'));
   }
 
   /**
