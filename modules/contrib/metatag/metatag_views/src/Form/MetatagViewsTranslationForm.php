@@ -6,12 +6,14 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Language\LanguageInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use Drupal\language\ConfigurableLanguageManagerInterface;
 use Drupal\metatag\MetatagManagerInterface;
 use Drupal\metatag\MetatagTagPluginManager;
 use Drupal\metatag\MetatagToken;
 use Drupal\metatag_views\MetatagViewsValuesCleanerTrait;
+use Drupal\views\ViewEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -27,44 +29,44 @@ class MetatagViewsTranslationForm extends FormBase {
   /**
    * Drupal\metatag\MetatagManager definition.
    *
-   * @var \Drupal\metatag\MetatagManager
+   * @var \Drupal\metatag\MetatagManagerInterface
    */
-  protected $metatagManager;
+  protected MetatagManagerInterface $metatagManager;
 
   /**
    * The language manager.
    *
    * @var \Drupal\language\ConfigurableLanguageManagerInterface
    */
-  protected $languageManager;
+  protected ConfigurableLanguageManagerInterface $languageManager;
 
   /**
-   * The Views manager.
+   * The entity type manager.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $viewsManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
    * The Metatag token service.
    *
    * @var \Drupal\metatag\MetatagToken
    */
-  protected $tokenService;
+  protected MetatagToken $tokenService;
 
   /**
    * The Metatag tag plugin manager.
    *
    * @var \Drupal\metatag\MetatagTagPluginManager
    */
-  protected $tagPluginManager;
+  protected MetatagTagPluginManager $tagPluginManager;
 
   /**
    * The View entity object.
    *
    * @var \Drupal\views\ViewEntityInterface
    */
-  protected $view;
+  protected ViewEntityInterface $view;
 
   /**
    * View ID.
@@ -85,14 +87,14 @@ class MetatagViewsTranslationForm extends FormBase {
    *
    * @var \Drupal\Core\Language\LanguageInterface
    */
-  protected $language;
+  protected LanguageInterface $language;
 
   /**
    * The language of the translation source.
    *
    * @var \Drupal\Core\Language\LanguageInterface
    */
-  protected $sourceLanguage;
+  protected LanguageInterface $sourceLanguage;
 
   /**
    * An array of base language data.
@@ -113,7 +115,7 @@ class MetatagViewsTranslationForm extends FormBase {
    */
   public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_type_manager, MetatagToken $token, MetatagTagPluginManager $tagPluginManager, ConfigurableLanguageManagerInterface $language_manager, ModuleHandlerInterface $moduleHandler) {
     $this->metatagManager = $metatag_manager;
-    $this->viewsManager = $entity_type_manager->getStorage('view');
+    $this->entityTypeManager = $entity_type_manager;
     $this->tokenService = $token;
     $this->tagPluginManager = $tagPluginManager;
     $this->languageManager = $language_manager;
@@ -174,7 +176,7 @@ class MetatagViewsTranslationForm extends FormBase {
     $this->displayId = $this->getRequest()->get('display_id');
     $langcode = $this->getRequest()->get('langcode');
 
-    $this->view = $this->viewsManager->load($this->viewId);
+    $this->view = $this->entityTypeManager->getStorage('view')->load($this->viewId);
     $this->language = $this->languageManager->getLanguage($langcode);
     $this->sourceLanguage = $this->view->language();
 

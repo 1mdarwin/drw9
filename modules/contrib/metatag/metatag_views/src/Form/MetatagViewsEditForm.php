@@ -6,7 +6,10 @@ use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\metatag\MetatagManagerInterface;
+use Drupal\metatag\MetatagTagPluginManager;
+use Drupal\metatag\MetatagToken;
 use Drupal\metatag_views\MetatagViewsValuesCleanerTrait;
+use Drupal\views\ViewEntityInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -19,18 +22,18 @@ class MetatagViewsEditForm extends FormBase {
   use MetatagViewsValuesCleanerTrait;
 
   /**
-   * Drupal\metatag\MetatagManager definition.
+   * The entity type manager interface.
    *
-   * @var \Drupal\metatag\MetatagManager
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $metatagManager;
+  protected EntityTypeManagerInterface $entityTypeManager;
 
   /**
-   * The Views manager.
+   * Drupal\metatag\MetatagManagerInterface definition.
    *
-   * @var \Drupal\Core\Entity\EntityStorageInterface
+   * @var \Drupal\metatag\MetatagManagerInterface
    */
-  protected $viewsManager;
+  protected MetatagManagerInterface $metatagManager;
 
   /**
    * Array of display settings from ViewEntityInterface::getDisplay().
@@ -44,14 +47,30 @@ class MetatagViewsEditForm extends FormBase {
    *
    * @var \Drupal\views\ViewEntityInterface
    */
-  protected $view;
+  protected ViewEntityInterface $view;
+
+  /**
+   * The Metatag token service.
+   *
+   * @var \Drupal\metatag\MetatagToken
+   */
+  protected MetatagToken $tokenService;
+
+  /**
+   * The Metatag tag plugin manager.
+   *
+   * @var \Drupal\metatag\MetatagTagPluginManager
+   */
+  protected MetatagTagPluginManager $tagPluginManager;
 
   /**
    * {@inheritdoc}
    */
-  public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(MetatagManagerInterface $metatag_manager, EntityTypeManagerInterface $entity_type_manager, MetatagToken $token, MetatagTagPluginManager $tagPluginManager) {
     $this->metatagManager = $metatag_manager;
-    $this->viewsManager = $entity_type_manager->getStorage('view');
+    $this->entityTypeManager = $entity_type_manager;
+    $this->tokenService = $token;
+    $this->tagPluginManager = $tagPluginManager;
   }
 
   /**
@@ -60,7 +79,9 @@ class MetatagViewsEditForm extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('metatag.manager'),
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('metatag.token'),
+      $container->get('plugin.manager.metatag.tag')
     );
   }
 
@@ -137,7 +158,6 @@ class MetatagViewsEditForm extends FormBase {
           // Only act on tags in the included tags list, unless that is null.
           if (is_null($included_tags) || in_array($tag_id, $included_tags)) {
             // Make an instance of the tag.
-            // @todo This needs to be added via DI.
             $tag = $this->tagPluginManager->createInstance($tag_id);
 
             // Set the value to the stored value, if any.
@@ -167,7 +187,7 @@ class MetatagViewsEditForm extends FormBase {
     $metatags = $this->clearMetatagViewsDisallowedValues($metatags);
 
     /** @var \Drupal\views\ViewEntityInterface $view */
-    $view = $this->viewsManager->load($view_id);
+    $view = $this->entityTypeManager->getStorage('view')->load($view_id);
 
     // Store the meta tags on the view.
     $config_name = $view->getConfigDependencyName();
