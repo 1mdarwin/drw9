@@ -2052,17 +2052,17 @@
         },
         {
             "name": "drupal/core",
-            "version": "10.6.20",
-            "version_normalized": "10.6.20.0",
+            "version": "10.6.22",
+            "version_normalized": "10.6.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core.git",
-                "reference": "588d0bd03df6e90243f415a7734da6095e02887b"
+                "reference": "e775021854e2878f00dafe47f3090b3a1fdbf0ab"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core/zipball/588d0bd03df6e90243f415a7734da6095e02887b",
-                "reference": "588d0bd03df6e90243f415a7734da6095e02887b",
+                "url": "https://api.github.com/repos/drupal/core/zipball/e775021854e2878f00dafe47f3090b3a1fdbf0ab",
+                "reference": "e775021854e2878f00dafe47f3090b3a1fdbf0ab",
                 "shasum": ""
             },
             "require": {
@@ -2153,7 +2153,7 @@
             "suggest": {
                 "ext-zip": "Needed to extend the plugin.manager.archiver service capability with the handling of files in the ZIP format."
             },
-            "time": "2026-10-21T10:27:21+00:00",
+            "time": "2026-11-18T14:44:58+00:00",
             "type": "drupal-core",
             "extra": {
                 "drupal-scaffold": {
@@ -2229,14 +2229,14 @@
             ],
             "description": "Drupal is an open source content management platform powering millions of websites and applications.",
             "support": {
-                "source": "https://github.com/drupal/core/tree/10.6.20"
+                "source": "https://github.com/drupal/core/tree/10.6.22"
             },
             "install-path": "../../core"
         },
         {
             "name": "drupal/core-composer-scaffold",
-            "version": "10.6.20",
-            "version_normalized": "10.6.20.0",
+            "version": "10.6.22",
+            "version_normalized": "10.6.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-composer-scaffold.git",
@@ -2282,14 +2282,14 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-composer-scaffold/tree/10.6.20"
+                "source": "https://github.com/drupal/core-composer-scaffold/tree/10.6.22"
             },
             "install-path": "../drupal/core-composer-scaffold"
         },
         {
             "name": "drupal/core-project-message",
-            "version": "10.6.20",
-            "version_normalized": "10.6.20.0",
+            "version": "10.6.22",
+            "version_normalized": "10.6.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-project-message.git",
@@ -2332,17 +2332,17 @@
         },
         {
             "name": "drupal/core-recommended",
-            "version": "10.6.20",
-            "version_normalized": "10.6.20.0",
+            "version": "10.6.22",
+            "version_normalized": "10.6.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-recommended.git",
-                "reference": "d3dc1b15fdec3a23ea1c2d3abfd705e434807845"
+                "reference": "95a684ce2e8a0320f9295744b692c456b665c90b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/drupal/core-recommended/zipball/d3dc1b15fdec3a23ea1c2d3abfd705e434807845",
-                "reference": "d3dc1b15fdec3a23ea1c2d3abfd705e434807845",
+                "url": "https://api.github.com/repos/drupal/core-recommended/zipball/95a684ce2e8a0320f9295744b692c456b665c90b",
+                "reference": "95a684ce2e8a0320f9295744b692c456b665c90b",
                 "shasum": ""
             },
             "require": {
@@ -2350,7 +2350,7 @@
                 "composer/semver": "~3.4.4",
                 "doctrine/deprecations": "~1.1.5",
                 "doctrine/lexer": "~2.1.1",
-                "drupal/core": "10.6.20",
+                "drupal/core": "10.6.22",
                 "egulias/email-validator": "~4.0.4",
                 "masterminds/html5": "~2.10.0",
                 "mck89/peast": "~v1.17.4",
@@ -2371,28 +2371,28 @@
                 "symfony/error-handler": "~v6.4.36",
                 "symfony/event-dispatcher": "~v6.4.37",
                 "symfony/event-dispatcher-contracts": "~v3.7.0",
-                "symfony/filesystem": "~v6.4.39",
+                "symfony/filesystem": "~v6.4.50",
                 "symfony/finder": "~v6.4.34",
-                "symfony/http-foundation": "~v6.4.48",
-                "symfony/http-kernel": "~v6.4.40",
+                "symfony/http-foundation": "~v6.4.50",
+                "symfony/http-kernel": "~v6.4.50",
                 "symfony/mailer": "~v6.4.40",
-                "symfony/mime": "~v6.4.40",
+                "symfony/mime": "~v6.4.49",
                 "symfony/process": "~v6.4.39",
                 "symfony/psr-http-message-bridge": "~v6.4.32",
-                "symfony/routing": "~v6.4.41",
-                "symfony/serializer": "~v6.4.37",
+                "symfony/routing": "~v6.4.50",
+                "symfony/serializer": "~v6.4.50",
                 "symfony/service-contracts": "~v3.7.0",
                 "symfony/string": "~v6.4.39",
                 "symfony/translation-contracts": "~v3.7.0",
-                "symfony/validator": "~v6.4.37",
+                "symfony/validator": "~v6.4.50",
                 "symfony/var-dumper": "~v6.4.36",
                 "symfony/var-exporter": "~v6.4.37",
-                "symfony/yaml": "~v6.4.48"
+                "symfony/yaml": "~v6.4.50"
             },
             "conflict": {
                 "webflo/drupal-core-strict": "*"
             },
-            "time": "2026-10-21T10:27:21+00:00",
+            "time": "2026-11-18T14:44:58+00:00",
             "type": "metapackage",
             "notification-url": "https://packagist.org/downloads/",
             "license": [
@@ -2400,14 +2400,14 @@
             ],
             "description": "Core and its dependencies with known-compatible minor versions. Require this project INSTEAD OF drupal/core.",
             "support": {
-                "source": "https://github.com/drupal/core-recommended/tree/10.6.20"
+                "source": "https://github.com/drupal/core-recommended/tree/10.6.22"
             },
             "install-path": null
         },
         {
             "name": "drupal/core-vendor-hardening",
-            "version": "10.6.20",
-            "version_normalized": "10.6.20.0",
+            "version": "10.6.22",
+            "version_normalized": "10.6.22.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/drupal/core-vendor-hardening.git",
@@ -2444,7 +2444,7 @@
                 "drupal"
             ],
             "support": {
-                "source": "https://github.com/drupal/core-vendor-hardening/tree/10.6.20"
+                "source": "https://github.com/drupal/core-vendor-hardening/tree/10.6.22"
             },
             "install-path": "../drupal/core-vendor-hardening"
         },
@@ -5131,23 +5131,23 @@
         },
         {
             "name": "guzzlehttp/guzzle",
-            "version": "7.16.1",
-            "version_normalized": "7.16.1.0",
+            "version": "7.17.0",
+            "version_normalized": "7.17.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/guzzle.git",
-                "reference": "81755d989b3007ca7f88a069857553cd08e7dc2e"
+                "reference": "f61ba5ea0a55032a55ddbb72cab7d307c1043654"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/81755d989b3007ca7f88a069857553cd08e7dc2e",
-                "reference": "81755d989b3007ca7f88a069857553cd08e7dc2e",
+                "url": "https://api.github.com/repos/guzzle/guzzle/zipball/f61ba5ea0a55032a55ddbb72cab7d307c1043654",
+                "reference": "f61ba5ea0a55032a55ddbb72cab7d307c1043654",
                 "shasum": ""
             },
             "require": {
                 "ext-json": "*",
-                "guzzlehttp/promises": "^2.6",
-                "guzzlehttp/psr7": "^2.13.2",
+                "guzzlehttp/promises": "^2.6.2",
+                "guzzlehttp/psr7": "^2.13.6",
                 "php": "^7.2.5 || ^8.0",
                 "psr/http-client": "^1.0",
                 "symfony/deprecation-contracts": "^2.5 || ^3.0",
@@ -5170,7 +5170,7 @@
                 "ext-intl": "Required for Internationalized Domain Name (IDN) support",
                 "psr/log": "Required for using the Log middleware"
             },
-            "time": "2026-10-25T21:35:21+00:00",
+            "time": "2026-11-22T16:49:11+00:00",
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -5242,7 +5242,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/guzzle/issues",
-                "source": "https://github.com/guzzle/guzzle/tree/7.16.1"
+                "source": "https://github.com/guzzle/guzzle/tree/7.17.0"
             },
             "funding": [
                 {
@@ -5262,17 +5262,17 @@
         },
         {
             "name": "guzzlehttp/promises",
-            "version": "2.6.0",
-            "version_normalized": "2.6.0.0",
+            "version": "2.6.2",
+            "version_normalized": "2.6.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/promises.git",
-                "reference": "3d88c829bd5f13d13847b39067dbf09a60af2154"
+                "reference": "72e93ed2b1f3d8c09d1460c950bd5726face7ccd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/promises/zipball/3d88c829bd5f13d13847b39067dbf09a60af2154",
-                "reference": "3d88c829bd5f13d13847b39067dbf09a60af2154",
+                "url": "https://api.github.com/repos/guzzle/promises/zipball/72e93ed2b1f3d8c09d1460c950bd5726face7ccd",
+                "reference": "72e93ed2b1f3d8c09d1460c950bd5726face7ccd",
                 "shasum": ""
             },
             "require": {
@@ -5283,7 +5283,7 @@
                 "bamarni/composer-bin-plugin": "^1.8.2",
                 "phpunit/phpunit": "^8.5.52 || ^9.6.34"
             },
-            "time": "2026-10-18T12:46:59+00:00",
+            "time": "2026-11-21T03:45:23+00:00",
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -5329,7 +5329,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/promises/issues",
-                "source": "https://github.com/guzzle/promises/tree/2.6.0"
+                "source": "https://github.com/guzzle/promises/tree/2.6.2"
             },
             "funding": [
                 {
@@ -5349,17 +5349,17 @@
         },
         {
             "name": "guzzlehttp/psr7",
-            "version": "2.13.2",
-            "version_normalized": "2.13.2.0",
+            "version": "2.13.6",
+            "version_normalized": "2.13.6.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/guzzle/psr7.git",
-                "reference": "adee536f95101929f262b8c59e8a61472f347d58"
+                "reference": "2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/guzzle/psr7/zipball/adee536f95101929f262b8c59e8a61472f347d58",
-                "reference": "adee536f95101929f262b8c59e8a61472f347d58",
+                "url": "https://api.github.com/repos/guzzle/psr7/zipball/2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2",
+                "reference": "2bd3dccf56e99cdacf74b1ad5e06a08a5a7739f2",
                 "shasum": ""
             },
             "require": {
@@ -5383,7 +5383,7 @@
             "suggest": {
                 "laminas/laminas-httphandlerrunner": "Emit PSR-7 responses"
             },
-            "time": "2026-10-17T23:49:46+00:00",
+            "time": "2026-11-21T23:48:40+00:00",
             "type": "library",
             "extra": {
                 "bamarni-bin": {
@@ -5451,7 +5451,7 @@
             ],
             "support": {
                 "issues": "https://github.com/guzzle/psr7/issues",
-                "source": "https://github.com/guzzle/psr7/tree/2.13.2"
+                "source": "https://github.com/guzzle/psr7/tree/2.13.6"
             },
             "funding": [
                 {
