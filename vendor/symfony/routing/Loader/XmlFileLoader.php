@@ -14,6 +14,7 @@ namespace Symfony\Component\Routing\Loader;
 use Symfony\Component\Config\Loader\FileLoader;
 use Symfony\Component\Config\Resource\FileResource;
 use Symfony\Component\Config\Util\XmlUtils;
+use Symfony\Component\Routing\Loader\Configurator\Traits\GlobResourceTrait;
 use Symfony\Component\Routing\Loader\Configurator\Traits\HostTrait;
 use Symfony\Component\Routing\Loader\Configurator\Traits\LocalizedRouteTrait;
 use Symfony\Component\Routing\Loader\Configurator\Traits\PrefixTrait;
@@ -27,6 +28,7 @@ use Symfony\Component\Routing\RouteCollection;
  */
 class XmlFileLoader extends FileLoader
 {
+    use GlobResourceTrait;
     use HostTrait;
     use LocalizedRouteTrait;
     use PrefixTrait;
@@ -187,7 +189,7 @@ class XmlFileLoader extends FileLoader
 
         $exclude = [];
         foreach ($node->childNodes as $child) {
-            if ($child instanceof \DOMElement && $child->localName === $exclude && self::NAMESPACE_URI === $child->namespaceURI) {
+            if ($child instanceof \DOMElement && 'exclude' === $child->localName && self::NAMESPACE_URI === $child->namespaceURI) {
                 $exclude[] = $child->nodeValue;
             }
         }
@@ -200,6 +202,7 @@ class XmlFileLoader extends FileLoader
         }
 
         $this->setCurrentDir(\dirname($path));
+        $this->trackGlobResource($resource, $collection);
 
         /** @var RouteCollection[] $imported */
         $imported = $this->import($resource, '' !== $type ? $type : null, false, $file, $exclude) ?: [];
@@ -294,6 +297,7 @@ class XmlFileLoader extends FileLoader
                     $condition = trim($n->textContent);
                     break;
                 case 'resource':
+                case 'exclude':
                     break;
                 default:
                     throw new \InvalidArgumentException(\sprintf('Unknown tag "%s" used in file "%s". Expected "default", "requirement", "option" or "condition".', $n->localName, $path));
